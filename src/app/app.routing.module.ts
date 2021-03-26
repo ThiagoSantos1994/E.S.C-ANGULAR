@@ -1,10 +1,11 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { NotFoundComponent } from "./errors/not-found/not-found.component";
+
 import { LoginFormComponent } from "./views/login-form/login-form.component";
+import { NotFoundComponent } from "./views/not-found/not-found.component";
 
 const routes: Routes = [
-    { path: 'esc/login', component: LoginFormComponent },
+    { path: '', component: LoginFormComponent },
     //Rota Default quando colocar uma URL qualquer
     { path: '**', component: NotFoundComponent }
 ];

@@ -1,2 +1,37 @@
-<h1>TELA DE LOGIN - STARTER</h1>
-<button>Entrar</button>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <!-- Tabs Titles -->
+
+        <!-- Icon -->
+        <div class="fadeIn first">
+            <div id="formFooter">
+                <h3>E.S.C - Login</h3>
+            </div>
+        </div>
+
+        <form [formGroup]="loginForm" class="form mt-4" (submit)="login()">
+            
+            <div class="form-group">
+                <input formControlName="userName" class="fadeIn second" placeholder="Digite o usuario" autofocus>
+                <app-vmessage *ngIf="loginForm.get('userName').errors?.required" text = 'Usuario é obrigatório!'></app-vmessage>
+            </div>
+            
+            <div class="form-group">
+                <input formControlName="password" type="password" class="fadeIn third" placeholder="Digite a senha">
+                <app-vmessage *ngIf="loginForm.get('password').errors?.required" text = 'Senha é obrigatório!'></app-vmessage>
+            </div>
+            
+            <input [disabled]="loginForm.invalid" type="submit" class="fadeIn fourth" value="Entrar">
+
+            <!-- Remind Passowrd -->
+            <div id="formFooter">
+                <a class="underlineHover" href="#">Esqueceu sua senha?</a>
+            </div>
+        </form>
+    </div>
+</div>
