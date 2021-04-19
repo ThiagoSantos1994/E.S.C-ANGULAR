@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from 'src/app/core/auth.service';
+import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
+import { Usuario } from 'src/app/core/interfaces/usuario';
+import { UsuarioService } from 'src/app/core/services/usuario.service';
+import { LoginService } from 'src/app/core/services/login.service';
 
 @Component({
   templateUrl: './login-form.component.html',
@@ -9,10 +13,14 @@ import { AuthService } from 'src/app/core/auth.service';
 export class LoginFormComponent implements OnInit {
   
   loginForm: FormGroup;
+  
+  //Seta o focus do campo caso o login esteja invalido
+  @ViewChild('userNameFocus') userNameInput: ElementRef;
 
   constructor( 
       private formBuilder: FormBuilder,
-      private authService: AuthService
+      private loginService: LoginService,
+      private router: Router
     ) { }
 
   ngOnInit(): void {
@@ -23,18 +31,30 @@ export class LoginFormComponent implements OnInit {
   }
   
   login() {
-        const userName = this.loginForm.get('userName').value;
-        const password = this.loginForm.get('password').value;
+      const userName = this.loginForm.get('userName').value;
+      const password = this.loginForm.get('password').value;
 
-        this.authService.authenticate(userName, password).subscribe(() => alert('acesso autorizado!'),
-        err => {
-            console.log(err);
-            
-            alert('Usuario ou senha inválidos!');
+      this.loginService.autenticar(userName, password).subscribe((response: Usuario) => {
+        this.validarUsuario(response);
+      }, 
+      err => {
+          console.log(err); 
+          alert('Usuario ou senha inválidos!');
+          this.resetForm();
+      });   
+  }
 
-            this.loginForm.reset();
-        });
-    }
- 
-  
+  validarUsuario(usuario: Usuario) {
+      if(!usuario.tp_UsuarioBloqueado) {
+          this.router.navigate(['home']);
+      } else {
+          alert("Usuario Bloqueado! Contate o administrador do sistema.");
+          this.resetForm();
+      }
+  }
+
+  resetForm() {
+    this.loginForm.reset();
+    this.userNameInput.nativeElement.focus();
+  }
 }

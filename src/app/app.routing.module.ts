@@ -1,11 +1,13 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
+import { HomeFormComponent } from "./views/home-form/home-form.component";
 
 import { LoginFormComponent } from "./views/login-form/login-form.component";
 import { NotFoundComponent } from "./views/not-found/not-found.component";
 
 const routes: Routes = [
-    { path: '', component: LoginFormComponent },
+    { path: 'login', component: LoginFormComponent },
+    { path: 'home', component: HomeFormComponent },
     //Rota Default quando colocar uma URL qualquer
     { path: '**', component: NotFoundComponent }
 ];

@@ -17,7 +17,7 @@
         <form [formGroup]="loginForm" class="form mt-4" (submit)="login()">
             
             <div class="form-group">
-                <input formControlName="userName" class="fadeIn second" placeholder="Digite o usuario" autofocus>
+                <input #userNameFocus formControlName="userName" class="fadeIn second" placeholder="Digite o usuario" autofocus>
                 <app-vmessage *ngIf="loginForm.get('userName').errors?.required" text = 'Usuario é obrigatório!'></app-vmessage>
             </div>
             
