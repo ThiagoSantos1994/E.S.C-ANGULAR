@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Usuario } from 'src/app/core/interfaces/usuario';
+import { Usuario } from 'src/app/core/interfaces/usuario.interface';
 import { TokenService } from 'src/app/core/services/token.service';
 import { HomeService } from 'src/app/core/services/home.service';
+import { LoginDomain } from 'src/app/core/domain/login.domain';
+import { Observable } from 'rxjs';
+import { UsuarioService } from 'src/app/core/services/usuario.service';
 
 @Component({
   selector: 'app-home-form',
@@ -11,19 +14,30 @@ import { HomeService } from 'src/app/core/services/home.service';
 })
 export class HomeFormComponent implements OnInit {
 
-  private usuario: Usuario;
-
+  usuario$: Observable<Usuario>;
+  
   constructor(
       private homeService: HomeService,
-      private tokenService: TokenService,
+      private usuarioService: UsuarioService,
+      private loginDomain: LoginDomain,
       private router: Router
-  ) { }
-
-  ngOnInit() {
-    this.getDadosUsuario();
+  ) { 
+      this.usuario$ = usuarioService.getUsuarioToken();
   }
 
-  getDadosUsuario() {
+  ngOnInit() {
+    this.validaSessao();
+    //this.getDadosUsuario();
+  }
+
+  validaSessao() {
+      if (!this.usuarioService.isLogged()) {
+          alert('Desculpe! ocorreu um erro ao carregar os dados da pagina, estamos redirecionando para a pagina de login!');
+          this.usuarioService.logout();
+          this.router.navigate(['login']);
+      }
+  }
+  /*getDadosUsuario() {
     const id_Login = this.tokenService.getToken();
 
     this.homeService.getDadosUsuario(id_Login).subscribe((response: Usuario) => {
@@ -35,5 +49,5 @@ export class HomeFormComponent implements OnInit {
         this.tokenService.removeToken();
         this.router.navigate(['login']);
     });
-  }
+  }*/
 }

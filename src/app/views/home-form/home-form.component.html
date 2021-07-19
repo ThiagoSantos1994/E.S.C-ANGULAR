@@ -1,21 +1,18 @@
 <header class="fixed-top">
     <nav class="navbar navbar-light bg-white">
         <a class="navbar-brand">Administração das minhas Despesas - Seja Bem Vindo(a)</a>
-
-        <i class="fa fa-user-circle mr-1"></i>
-        <a class="mr-1">{{ usuario.ds_NomeLogin }}</a>
         
-        <!--<div *ngIf="(usuario$ | async) as user; else login">
+        <div *ngIf="(usuario$ | async) as user; else login">
             <i class="fa fa-user-circle mr-1"></i>
-            <a class="mr-1">{{ usuario.ds_NomeLogin }}</a>
-            <a (click)="logout()">(Logout)</a>
+            <a class="mr-1">{{ user.ds_NomeLogin }}</a>
+            <a class="underlineHover" href="login">(Sair)</a>
         </div>
 
         <ng-template #login>
             <span class="navbar-text">
-                <a [routerLink]="['']">Please, login!</a>
+                <a [routerLink]="['']">Fazer Login!</a>
             </span>
-        </ng-template> -->
+        </ng-template>
 
     </nav>
 </header>

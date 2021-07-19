@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Usuario } from '../interfaces/usuario';
+import { Usuario } from '../interfaces/usuario.interface';
 
 const httpHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 const URI_LOGIN = 'http://localhost:8002/api';

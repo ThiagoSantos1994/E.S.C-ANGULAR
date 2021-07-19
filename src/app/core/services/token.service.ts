@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Usuario } from '../interfaces/usuario';
+import { Usuario } from '../interfaces/usuario.interface';
 
 const KEY = 'tokenID';
 
@@ -10,10 +10,10 @@ export class TokenService {
         return !!this.getToken();
     }
 
-    setToken(token: Usuario) {
-        window.localStorage.setItem(KEY, token.id_Login.toString());
+    setToken(token: string) {
+        window.localStorage.setItem(KEY, token);
     }
-
+    
     getToken() {
         return window.localStorage.getItem(KEY);
     }
