@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { UsuarioService } from 'src/app/core/services/usuario.service';
+import { SessaoService } from 'src/app/core/services/sessao.service';
+
 
 @Component({
   selector: 'app-not-found',
@@ -8,9 +9,9 @@ import { UsuarioService } from 'src/app/core/services/usuario.service';
 })
 export class NotFoundComponent implements OnInit {
 
-  constructor(private usuarioService: UsuarioService) { }
+  constructor(private sessaoService: SessaoService) { }
 
   ngOnInit() {
-    this.usuarioService.logout();
+    this.sessaoService.logout();
   }
 }

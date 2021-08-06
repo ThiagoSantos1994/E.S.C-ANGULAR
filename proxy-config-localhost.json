@@ -1,0 +1,20 @@
+{
+  "/springboot-open-esc-login/*": {
+    "target": "http://localhost:8015",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "/springboot-open-esc-login": "/"
+    }
+  },
+  "/springboot-esc-backend/*": {
+    "target": "http://localhost:8002",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "/springboot-esc-backend": "/"
+    }
+  }
+}

@@ -1,9 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UsuarioService } from 'src/app/core/services/usuario.service';
 import { LoginService } from 'src/app/core/services/login.service';
-import { Usuario } from 'src/app/core/interfaces/usuario.interface';
+import { DadosLogin } from 'src/app/core/interfaces/dados-login.interface';
+import { SessaoService } from 'src/app/core/services/sessao.service';
 
 @Component({
   templateUrl: './login-form.component.html',
@@ -19,12 +19,12 @@ export class LoginFormComponent implements OnInit {
   constructor( 
       private formBuilder: FormBuilder,
       private loginService: LoginService,
-      private usuarioService: UsuarioService,
+      private sessaoService: SessaoService,
       private router: Router
     ) { }
 
   ngOnInit(): void {
-      this.usuarioService.logout();
+      this.sessaoService.logout();
       this.loginForm = this.formBuilder.group({
           userName: ['', Validators.required],
           password: ['', Validators.required]
@@ -36,41 +36,28 @@ export class LoginFormComponent implements OnInit {
       const password = this.loginForm.get('password').value;
 
       this.loginService.autenticar(userName, password).toPromise().then(res => {
-          this.validarUsuario(res);
+          this.validar(res);
       }, 
       err => {
           console.log(err); 
           alert('Usuario ou senha inválidos!');
-          this.resetForm();
+          this.reloadForm();
       }); 
   }
 
-  validarUsuario(usuario: Usuario) {
-      if(!usuario.tp_UsuarioBloqueado) {
-          this.usuarioService.setTokenAutenticador(usuario);  
+  validar(login: DadosLogin) {
+      if(true == login.autorizado) {
+          this.sessaoService.setTokenAutenticador(login.autenticacao, login.id_Login);  
           this.router.navigate(['home']);
       } else {
-          alert("Usuario Bloqueado! Contate o administrador do sistema.");
-          this.resetForm();
+          alert("Usuario ou senha inválidos!");
+          this.reloadForm();
       }
   }
 
-  resetForm() {
+  reloadForm() {
     this.loginForm.reset();
     this.userNameInput.nativeElement.focus();
   }
 
-  /*login() {
-      const userName = this.loginForm.get('userName').value;
-      const password = this.loginForm.get('password').value;
-
-      this.loginService.autenticar(userName, password).subscribe((response: Usuario) => {
-        this.validarUsuario(response);
-      }, 
-      err => {
-          console.log(err); 
-          alert('Usuario ou senha inválidos!');
-          this.resetForm();
-      });   
-  }*/
 }
