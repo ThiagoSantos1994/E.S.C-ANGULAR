@@ -17,7 +17,9 @@ export class HomeFormComponent implements OnInit {
 
   usuario$: Observable<DadosUsuario>;
   despesas$: Observable<DespesasMensais>;
-  despesas: string[] = ['FATURA 1', 'FATURA 2', 'FATURA 3'];
+  despesas: DespesasMensais;
+
+  //teste: string[] = ['FATURA 1', 'FATURA 2', 'FATURA 3'];
   
   constructor(
       private homeService: HomeService,
@@ -28,7 +30,7 @@ export class HomeFormComponent implements OnInit {
   ngOnInit() {
     this.validaSessao();
     this.getDadosUsuario();
-    //this.getListaDespesas();
+    this.getListaDespesas();
   }
 
   validaSessao() {
@@ -40,8 +42,14 @@ export class HomeFormComponent implements OnInit {
   }
 
   getListaDespesas() {
-      //this.homeService.getDespesasMensais().subscribe(res => this.despesas = res);
-      this.despesas$ = this.homeService.getDespesasMensais();
+      this.homeService.getDespesasMensais()
+      .subscribe((res) => {
+        this.despesas = res
+      });
+  }
+
+  getListaDespesas2() {
+    this.despesas$ = this.homeService.getDespesasMensais2();
   }
 
   getDadosUsuario() {

@@ -45,18 +45,41 @@
   
     <!-- Jumbotron -->
     <div class="p-5 text-center bg-light">
-        <table class="table table-bordered align-middle table-sm ">
+      <div class="row"> 
+        <div class="col-sm-4">
+          <table class="table table-bordered align-middle table-sm ">
             <thead>
               <tr class="table-active">
                 <th scope="col">Nome Despesa</th>
+                <th scope="col">Limite</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let despesa of despesas">
-                <td>{{ despesa }}</td>  
+              <tr *ngFor="let despesa of despesas.listaDespesasMensais">
+                <td>{{ despesa.ds_NomeDespesa }}</td>  
+                <td>{{ despesa.vl_Limite }}</td>  
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <div class="col-sm-8">
+          <table class="table table-bordered align-middle table-sm ">
+            <thead>
+              <tr class="table-active">
+                <th scope="col">Nome Despesa</th>
+                <th scope="col">Limite</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let despesa of despesas.listaDespesasMensais">
+                <td>{{ despesa.ds_NomeDespesa }}</td>  
+                <td>{{ despesa.vl_Limite }}</td>  
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
     
     <!-- Jumbotron -->

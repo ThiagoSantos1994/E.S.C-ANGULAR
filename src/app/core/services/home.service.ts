@@ -20,7 +20,13 @@ export class HomeService {
         .pipe(catchError(this.handleError));
   }
   
-  getDespesasMensais(): Observable<DespesasMensais> {
+  getDespesasMensais() {
+    return this.http.get<DespesasMensais>('springboot-esc-backend/api/obterListaDespesasMensais/2/61')
+        .pipe(map((response) => {return response}), 
+         catchError(this.handleError));
+  }
+  
+  getDespesasMensais2(): Observable<DespesasMensais> {
     return this.http.get<DespesasMensais>('springboot-esc-backend/api/obterListaDespesasMensais/2/61')
         .pipe(catchError(this.handleError));
   }
