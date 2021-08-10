@@ -6,6 +6,7 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
 import { HomeService } from 'src/app/core/services/home.service';
 import { DadosUsuario } from 'src/app/core/interfaces/dados-usuario.interface';
 import { DespesasMensais } from 'src/app/core/interfaces/despesas-mensais.interface';
+import { DespesasFixasMensais } from 'src/app/core/interfaces/despesas-fixas-mensais.interface';
 
 
 @Component({
@@ -16,11 +17,9 @@ import { DespesasMensais } from 'src/app/core/interfaces/despesas-mensais.interf
 export class HomeFormComponent implements OnInit {
 
   usuario$: Observable<DadosUsuario>;
-  despesas$: Observable<DespesasMensais>;
   despesas: DespesasMensais;
+  despesasFixas: DespesasFixasMensais;
 
-  //teste: string[] = ['FATURA 1', 'FATURA 2', 'FATURA 3'];
-  
   constructor(
       private homeService: HomeService,
       private sessaoService: SessaoService,
@@ -30,7 +29,8 @@ export class HomeFormComponent implements OnInit {
   ngOnInit() {
     this.validaSessao();
     this.getDadosUsuario();
-    this.getListaDespesas();
+    this.obterDespesasFixasMensais();
+    this.obterDespesasMensais();
   }
 
   validaSessao() {
@@ -41,15 +41,16 @@ export class HomeFormComponent implements OnInit {
       }
   }
 
-  getListaDespesas() {
-      this.homeService.getDespesasMensais()
-      .subscribe((res) => {
+  obterDespesasMensais() {
+      this.homeService.getDespesasMensais().subscribe((res) => {
         this.despesas = res
       });
   }
 
-  getListaDespesas2() {
-    this.despesas$ = this.homeService.getDespesasMensais2();
+  obterDespesasFixasMensais() {
+      this.homeService.getDespesasFixasMensais().subscribe((res) => {
+        this.despesasFixas = res
+      });
   }
 
   getDadosUsuario() {

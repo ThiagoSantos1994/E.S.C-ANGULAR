@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { DadosUsuario } from '../interfaces/dados-usuario.interface';
+import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.interface';
 import { DespesasMensais } from '../interfaces/despesas-mensais.interface';
 
 const httpHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -26,9 +27,10 @@ export class HomeService {
          catchError(this.handleError));
   }
   
-  getDespesasMensais2(): Observable<DespesasMensais> {
-    return this.http.get<DespesasMensais>('springboot-esc-backend/api/obterListaDespesasMensais/2/61')
-        .pipe(catchError(this.handleError));
+  getDespesasFixasMensais() {
+    return this.http.get<DespesasFixasMensais>('springboot-esc-backend/api/obterListaDespesasFixasMensais/8/2021/2')
+        .pipe(map((response) => {return response}), 
+        catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {

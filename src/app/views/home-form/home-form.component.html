@@ -43,37 +43,45 @@
     </nav>
     <!-- Navbar -->
   
-    <!-- Jumbotron -->
+    <!-- Tables Despesas -->
     <div class="p-5 text-center bg-light">
       <div class="row"> 
-        <div class="col-sm-4">
+        <div class="col-sm-3">
           <table class="table table-bordered align-middle table-sm ">
             <thead>
               <tr class="table-active">
-                <th scope="col">Nome Despesa</th>
-                <th scope="col">Limite</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Total R$</th>
+                <th scope="col">TP</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let despesa of despesas.listaDespesasMensais">
-                <td>{{ despesa.ds_NomeDespesa }}</td>  
-                <td>{{ despesa.vl_Limite }}</td>  
+              <tr *ngFor="let despesasFixas of despesasFixas.listaDespesasFixasMensais">
+                <td>{{ despesasFixas.ds_Descricao }}</td>  
+                <td>{{ despesasFixas.vl_Total }}</td>  
+                <td>{{ despesasFixas.tp_Status}}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <div class="col-sm-8">
+        <div class="col-sm-9">
           <table class="table table-bordered align-middle table-sm ">
             <thead>
               <tr class="table-active">
-                <th scope="col">Nome Despesa</th>
-                <th scope="col">Limite</th>
+                <th scope="col">Total R$</th>
+                <th scope="col">%</th>
+                <th scope="col">DESCRIÇÃO</th>
+                <th scope="col">STATUS</th>
+                <th scope="col">PAGO R$</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let despesa of despesas.listaDespesasMensais">
+                <td>{{ despesa.vl_Total}}</td>
+                <td>{{ despesa.percentual}}</td>
                 <td>{{ despesa.ds_NomeDespesa }}</td>  
+                <td>{{ despesa.tp_Status}}</td>
                 <td>{{ despesa.vl_Limite }}</td>  
               </tr>
             </tbody>
