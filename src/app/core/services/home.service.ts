@@ -1,19 +1,38 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Usuario } from '../interfaces/usuario.interface';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { DadosUsuario } from '../interfaces/dados-usuario.interface';
+import { DespesasMensais } from '../interfaces/despesas-mensais.interface';
 
 const httpHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
-const URI_LOGIN = 'http://localhost:8002/api';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class HomeService {
 
   constructor(private http: HttpClient) { }
   
-  getDadosUsuario(id: string): Observable<Usuario> {
-    return this.http.get<Usuario>(URI_LOGIN + '/login/obterDados/' + id);
+  getDadosUsuario(id: string): Observable<DadosUsuario> {
+    return this.http.get<DadosUsuario>('springboot-esc-backend/api/login/obterDados/' + id)
+        .pipe(catchError(this.handleError));
+  }
+  
+  getDespesasMensais(): Observable<DespesasMensais> {
+    return this.http.get<DespesasMensais>('springboot-esc-backend/api/obterListaDespesasMensais/2/61')
+        .pipe(catchError(this.handleError));
+  }
+
+  private handleError(error: HttpErrorResponse) {
+      if (error.error instanceof ErrorEvent){
+        console.error('Ocorreu um erro:', error.error.message);
+      } else {
+        console.error(
+            `Backend codigo de erro ${error.status}, ` +
+            `request foi: ${error.error}`);
+      }
+      return throwError(error);
   }
 }

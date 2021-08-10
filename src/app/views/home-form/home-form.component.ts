@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Usuario } from 'src/app/core/interfaces/usuario.interface';
-import { TokenService } from 'src/app/core/services/token.service';
-import { HomeService } from 'src/app/core/services/home.service';
-import { LoginDomain } from 'src/app/core/domain/login.domain';
+
 import { Observable } from 'rxjs';
-import { UsuarioService } from 'src/app/core/services/usuario.service';
+import { SessaoService } from 'src/app/core/services/sessao.service';
+import { HomeService } from 'src/app/core/services/home.service';
+import { DadosUsuario } from 'src/app/core/interfaces/dados-usuario.interface';
+import { DespesasMensais } from 'src/app/core/interfaces/despesas-mensais.interface';
+
 
 @Component({
   selector: 'app-home-form',
@@ -14,40 +15,47 @@ import { UsuarioService } from 'src/app/core/services/usuario.service';
 })
 export class HomeFormComponent implements OnInit {
 
-  usuario$: Observable<Usuario>;
+  usuario$: Observable<DadosUsuario>;
+  despesas$: Observable<DespesasMensais>;
+  despesas: string[] = ['FATURA 1', 'FATURA 2', 'FATURA 3'];
   
   constructor(
       private homeService: HomeService,
-      private usuarioService: UsuarioService,
-      private loginDomain: LoginDomain,
+      private sessaoService: SessaoService,
       private router: Router
-  ) { 
-      this.usuario$ = usuarioService.getUsuarioToken();
-  }
+  ) {}
 
   ngOnInit() {
     this.validaSessao();
-    //this.getDadosUsuario();
+    this.getDadosUsuario();
+    //this.getListaDespesas();
   }
 
   validaSessao() {
-      if (!this.usuarioService.isLogged()) {
+      if (!this.sessaoService.isLogged()) {
           alert('Desculpe! ocorreu um erro ao carregar os dados da pagina, estamos redirecionando para a pagina de login!');
-          this.usuarioService.logout();
+          this.sessaoService.logout();
           this.router.navigate(['login']);
       }
   }
-  /*getDadosUsuario() {
-    const id_Login = this.tokenService.getToken();
 
-    this.homeService.getDadosUsuario(id_Login).subscribe((response: Usuario) => {
-      this.usuario = response;
+  getListaDespesas() {
+      //this.homeService.getDespesasMensais().subscribe(res => this.despesas = res);
+      this.despesas$ = this.homeService.getDespesasMensais();
+  }
+
+  getDadosUsuario() {
+    const tokenId = this.sessaoService.getToken();
+    this.usuario$ = this.homeService.getDadosUsuario(this.sessaoService.getIdLogin());
+    
+    /*this.homeService.getDadosUsuario(idLogin).subscribe((response: Usuario) => {
+      this.usuario$ = response;
     },
     err => {
         console.log(err); 
         alert('Desculpe! ocorreu um erro ao carregar os dados da pagina, estamos redirecionando para a pagina de login!');
-        this.tokenService.removeToken();
+        this.sessaoService.logout();
         this.router.navigate(['login']);
-    });
-  }*/
+    });*/
+  }
 }
