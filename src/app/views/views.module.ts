@@ -8,12 +8,15 @@ import { VMessageModule } from "../shared/components/vmessage/vmessage.module";
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { RouterModule } from "@angular/router";
 import { HomeFormComponent } from './home-form/home-form.component';
+import { LancamentosFinanceirosFormComponent } from './lancamentos-financeiros-form/lancamentos-financeiros-form.component';
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @NgModule({
     declarations: [
         LoginFormComponent,
         NotFoundComponent,
-        HomeFormComponent
+        HomeFormComponent,
+        LancamentosFinanceirosFormComponent
     ],
     imports: [
         CommonModule, /*Todo modulo que for criado, é importante importar esse cara*/
@@ -24,4 +27,4 @@ import { HomeFormComponent } from './home-form/home-form.component';
     ]
 })
 
-export class ViewsModule{}
+export class ViewsModule { }

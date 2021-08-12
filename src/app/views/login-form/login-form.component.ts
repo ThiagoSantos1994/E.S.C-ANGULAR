@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { LoginService } from 'src/app/core/services/login.service';
 import { DadosLogin } from 'src/app/core/interfaces/dados-login.interface';
 import { SessaoService } from 'src/app/core/services/sessao.service';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   templateUrl: './login-form.component.html',
@@ -12,7 +13,11 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
 export class LoginFormComponent implements OnInit {
   
   loginForm: FormGroup;
-  
+  closeResult = '';
+  modalReference: any;
+
+  @ViewChild('content') modalTela: any;
+
   //Seta o focus do campo caso o login esteja invalido
   @ViewChild('userNameFocus') userNameInput: ElementRef;
 
@@ -20,7 +25,8 @@ export class LoginFormComponent implements OnInit {
       private formBuilder: FormBuilder,
       private loginService: LoginService,
       private sessaoService: SessaoService,
-      private router: Router
+      private router: Router,
+      private modalService: NgbModal
     ) { }
 
   ngOnInit(): void {
@@ -50,7 +56,9 @@ export class LoginFormComponent implements OnInit {
           this.sessaoService.setTokenAutenticador(login.autenticacao, login.id_Login);  
           this.router.navigate(['home']);
       } else {
-          alert("Usuario ou senha inválidos!");
+          //alert("Usuario ou senha inválidos!");
+          
+          this.open(this.modalTela);
           this.reloadForm();
       }
   }
@@ -58,6 +66,14 @@ export class LoginFormComponent implements OnInit {
   reloadForm() {
     this.loginForm.reset();
     this.userNameInput.nativeElement.focus();
+  }
+
+  open(content) {
+    this.modalReference = this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'});
+  }
+  
+  close() {
+    this.modalReference.close();
   }
 
 }
