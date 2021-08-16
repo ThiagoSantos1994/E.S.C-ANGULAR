@@ -15,17 +15,20 @@
         </div>
 
         <form [formGroup]="loginForm" class="form mt-4" (submit)="login()">
-            
+
             <div class="form-group">
-                <input #userNameFocus formControlName="userName" class="fadeIn second" placeholder="Digite o usuario" autofocus>
-                <app-vmessage *ngIf="loginForm.get('userName').errors?.required" text = 'Usuario é obrigatório!'></app-vmessage>
+                <input #userNameFocus formControlName="userName" class="fadeIn second" placeholder="Digite o usuario"
+                    autofocus>
+                <app-vmessage *ngIf="loginForm.get('userName').errors?.required" text='Usuario é obrigatório!'>
+                </app-vmessage>
             </div>
-            
+
             <div class="form-group">
                 <input formControlName="password" type="password" class="fadeIn third" placeholder="Digite a senha">
-                <app-vmessage *ngIf="loginForm.get('password').errors?.required" text = 'Senha é obrigatório!'></app-vmessage>
+                <app-vmessage *ngIf="loginForm.get('password').errors?.required" text='Senha é obrigatório!'>
+                </app-vmessage>
             </div>
-            
+
             <input [disabled]="loginForm.invalid" type="submit" class="fadeIn fourth" value="Entrar">
 
             <!-- Remind Passowrd -->
@@ -36,19 +39,17 @@
     </div>
 </div>
 
-<ng-template #content let-modal>
+<ng-template #modalLoginInvalido let-modal>
     <div class="modal-header">
-      <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
-      <button type="button" class="close" aria-label="Close" (click)="close()">
-        <span aria-hidden="true">&times;</span>
-      </button>
+        <h4 class="modal-title" id="modal-basic-title">Oops!!</h4>
+        <button type="button" class="close" aria-label="Close" (click)="close()">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
     <div class="modal-body">
-      <h2>teste</h2>
+        <p>Usuario ou Senha Inválido!</p>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-outline-dark" (click)="close()">Save</button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()">Ok Entendi!</button>
     </div>
-  </ng-template>
-  
-  <button class="btn btn-lg btn-outline-primary" (click)="open(content)">Launch demo modal</button>
+</ng-template>

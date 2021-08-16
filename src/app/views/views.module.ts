@@ -9,7 +9,6 @@ import { NotFoundComponent } from "./not-found/not-found.component";
 import { RouterModule } from "@angular/router";
 import { HomeFormComponent } from './home-form/home-form.component';
 import { LancamentosFinanceirosFormComponent } from './lancamentos-financeiros-form/lancamentos-financeiros-form.component';
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @NgModule({
     declarations: [
