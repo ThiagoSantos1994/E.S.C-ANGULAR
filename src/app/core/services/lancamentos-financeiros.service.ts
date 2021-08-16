@@ -14,7 +14,7 @@ export class LancamentosFinanceirosService {
   constructor(
     private http: HttpClient,
     private token: TokenService) { }
-  
+
   getDespesasMensais() {
     let headers = new HttpHeaders().append('Authorization', this.token.getToken());
 
@@ -23,10 +23,10 @@ export class LancamentosFinanceirosService {
         catchError(this.handleError));
   }
 
-  getDespesasFixasMensais() {
+  getDespesasFixasMensais(mes: String, ano: String, idUsuario: String) {
     let headers = new HttpHeaders().append('Authorization', this.token.getToken());
 
-    return this.http.get<DespesasFixasMensais>('springboot-esc-backend/api/obterListaDespesasFixasMensais/08/2021/2', { headers: headers })
+    return this.http.get<DespesasFixasMensais>('springboot-esc-backend/api/obterListaDespesasFixasMensais/' + mes + '/' + ano + '/' + idUsuario, { headers: headers })
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
   }
