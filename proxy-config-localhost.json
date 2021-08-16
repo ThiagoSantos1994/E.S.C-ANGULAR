@@ -9,7 +9,7 @@
     }
   },
   "/springboot-esc-backend/*": {
-    "target": "http://localhost:8002",
+    "target": "http://localhost:8020",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",

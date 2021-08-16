@@ -2,10 +2,8 @@ import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/core/services/login.service';
-import { DadosLogin } from 'src/app/core/interfaces/dados-login.interface';
 import { SessaoService } from 'src/app/core/services/sessao.service';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalInformativoComponent } from '../modal-informativo/modal-informativo.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   templateUrl: './login-form.component.html',

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { DadosUsuario } from '../interfaces/dados-usuario.interface';
+import { TokenService } from './token.service';
 
 const httpHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 
@@ -12,10 +13,14 @@ const httpHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 
 export class HomeService {
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private token: TokenService) { }
 
   getDadosUsuario(id: string): Observable<DadosUsuario> {
-    return this.http.get<DadosUsuario>('springboot-esc-backend/api/login/obterDados/' + id)
+    let headers = new HttpHeaders().append('Authorization', this.token.getToken());
+
+    return this.http.get<DadosUsuario>('springboot-esc-backend/api/login/obterDados/' + id, { headers: headers })
       .pipe(catchError(this.handleError));
   }
 
