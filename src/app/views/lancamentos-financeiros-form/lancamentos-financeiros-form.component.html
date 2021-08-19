@@ -18,7 +18,7 @@
 <label>Ano:</label>
 <select id=cbAno>
   <option value=""></option>
-  <option value="2009">2009</option>
+  <!--<option value="2009">2009</option>
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
@@ -28,7 +28,7 @@
   <option value="2016">2016</option>
   <option value="2017">2017</option>
   <option value="2018">2018</option>
-  <option value="2019">2019</option>
+  <option value="2019">2019</option>-->
   <option value="2020">2020</option>
   <option value="2021">2021</option>
   <option value="2022">2022</option>
@@ -49,7 +49,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let despesasFixas of despesasFixas.listaDespesasFixasMensais">
+          <tr *ngFor="let despesasFixas of listaDespesasFixas$.listaDespesasFixasMensais">
             <td>{{ despesasFixas.ds_Descricao }}</td>
             <td>{{ despesasFixas.vl_Total }}</td>
             <td>{{ despesasFixas.tp_Status}}</td>
@@ -73,7 +73,7 @@
             <th scope="col"></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody *ngIf="despesas">
           <tr *ngFor="let despesa of despesas.listaDespesasMensais">
             <td>{{ despesa.vl_Total}}</td>
             <td>{{ despesa.percentual}}</td>

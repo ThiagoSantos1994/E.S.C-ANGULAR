@@ -1,7 +1,8 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { DespesasFixas } from '../domain/despesas-fixas.domain';
 import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.interface';
 import { DespesasMensais } from '../interfaces/despesas-mensais.interface';
 import { TokenService } from './token.service';
@@ -13,7 +14,8 @@ export class LancamentosFinanceirosService {
 
   constructor(
     private http: HttpClient,
-    private token: TokenService) { }
+    private token: TokenService,
+    private despesasFixasDomain: DespesasFixas) { }
 
   getDespesasMensais() {
     let headers = new HttpHeaders().append('Authorization', this.token.getToken());
@@ -23,12 +25,13 @@ export class LancamentosFinanceirosService {
         catchError(this.handleError));
   }
 
-  getDespesasFixasMensais(mes: String, ano: String, idUsuario: String) {
+  getDespesasFixasMensais(mes: String, ano: String, idUsuario: String): Observable<DespesasFixasMensais> {
     let headers = new HttpHeaders().append('Authorization', this.token.getToken());
 
-    return this.http.get<DespesasFixasMensais>('springboot-esc-backend/api/obterListaDespesasFixasMensais/' + mes + '/' + ano + '/' + idUsuario, { headers: headers })
-      .pipe(map((response) => { return response }),
-        catchError(this.handleError));
+    return this.http.get<DespesasFixasMensais>(`springboot-esc-backend/api/obterListaDespesasFixasMensais/${mes}/${ano}/${idUsuario}`, { headers: headers })
+      .pipe(tap(res => {
+        this.despesasFixasDomain.setDespesas(res);
+      }), catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {
