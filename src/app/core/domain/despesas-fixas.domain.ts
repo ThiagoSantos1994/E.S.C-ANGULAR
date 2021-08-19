@@ -1,12 +1,11 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { DespesasFixasMensais } from "../interfaces/despesas-fixas-mensais.interface";
-import * as jtw_decode from 'jwt-decode';
 
 @Injectable({
     providedIn: 'root'
 })
-export class DespesasFixas {
+export class DespesasFixasDomain {
 
     private _despesasFixas = new BehaviorSubject<DespesasFixasMensais>(null);
 

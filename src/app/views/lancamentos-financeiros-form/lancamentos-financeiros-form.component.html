@@ -73,8 +73,8 @@
             <th scope="col"></th>
           </tr>
         </thead>
-        <tbody *ngIf="despesas">
-          <tr *ngFor="let despesa of despesas.listaDespesasMensais">
+        <tbody *ngIf="listaDespesas">
+          <tr *ngFor="let despesa of listaDespesas.listaDespesasMensais">
             <td>{{ despesa.vl_Total}}</td>
             <td>{{ despesa.percentual}}</td>
             <td>{{ despesa.ds_NomeDespesa }}</td>
