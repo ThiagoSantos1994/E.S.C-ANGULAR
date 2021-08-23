@@ -8,7 +8,7 @@ export interface DespesasMensais{
     vl_Total: string;
     vl_TotalPendente: string;
     vl_TotalPago: string;
-    percentual: String;
+    percentual: string;
     tp_Emprestimo: string;
     tp_Poupanca: string;
     tp_Anotacao: string;

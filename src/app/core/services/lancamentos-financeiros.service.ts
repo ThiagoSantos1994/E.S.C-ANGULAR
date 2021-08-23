@@ -5,6 +5,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { DespesasFixasDomain } from '../domain/despesas-fixas.domain';
 import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.interface';
 import { DespesasMensais } from '../interfaces/despesas-mensais.interface';
+import { DetalheDespesasMensais } from '../interfaces/detalhe-despesas-mensais.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
 
@@ -20,6 +21,15 @@ export class LancamentosFinanceirosService {
     private despesasFixasDomain: DespesasFixasDomain
   ) { }
 
+  getDespesasFixasMensais(mes: String, ano: String): Observable<DespesasFixasMensais> {
+    let headers = new HttpHeaders().append('Authorization', this.token.getToken());
+
+    return this.http.get<DespesasFixasMensais>(`springboot-esc-backend/api/obterListaDespesasFixasMensais/${mes}/${ano}/${this.sessao.getIdLogin()}`, { headers: headers })
+      .pipe(tap(res => {
+        this.despesasFixasDomain.setDespesas(res);
+      }), catchError(this.handleError));
+  }
+
   getDespesasMensais(idDespesa: number) {
     let headers = new HttpHeaders().append('Authorization', this.token.getToken());
 
@@ -28,13 +38,12 @@ export class LancamentosFinanceirosService {
         catchError(this.handleError));
   }
 
-  getDespesasFixasMensais(mes: String, ano: String): Observable<DespesasFixasMensais> {
+  getDetalheDespesasMensais(idDespesa: number, idDetalheDespesa: number) {
     let headers = new HttpHeaders().append('Authorization', this.token.getToken());
 
-    return this.http.get<DespesasFixasMensais>(`springboot-esc-backend/api/obterListaDespesasFixasMensais/${mes}/${ano}/${this.sessao.getIdLogin()}`, { headers: headers })
-      .pipe(tap(res => {
-        this.despesasFixasDomain.setDespesas(res);
-      }), catchError(this.handleError));
+    return this.http.get<DetalheDespesasMensais>(`springboot-esc-backend/api/obterDetalheDespesasMensais/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}`, { headers: headers })
+       .pipe(map((response) => { return response }),
+        catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {
