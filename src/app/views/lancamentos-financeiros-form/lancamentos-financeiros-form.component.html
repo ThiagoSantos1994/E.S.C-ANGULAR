@@ -1,12 +1,12 @@
 <label>Mês:</label>
 <select id=cbMes>
-  <option value=""></option>
+  <!--<option value=""></option>
   <option value="01">Janeiro</option>
   <option value="02">Fevereiro</option>
   <option value="03">Março</option>
   <option value="04">Abril</option>
   <option value="05">Maio</option>
-  <option value="06">Junho</option>
+  <option value="06">Junho</option>-->
   <option value="07">Julho</option>
   <option value="08">Agosto</option>
   <option value="09">Setembro</option>
@@ -17,7 +17,7 @@
 
 <label>Ano:</label>
 <select id=cbAno>
-  <option value=""></option>
+  <!--<option value=""></option>
   <option value="2009">2009</option>
   <option value="2010">2010</option>
   <option value="2011">2011</option>
@@ -29,7 +29,7 @@
   <option value="2017">2017</option>
   <option value="2018">2018</option>
   <option value="2019">2019</option>
-  <option value="2020">2020</option>
+  <option value="2020">2020</option>-->
   <option value="2021">2021</option>
 </select>
 
@@ -54,14 +54,32 @@
             <td>{{ despesasFixas.tp_Status}}</td>
           </tr>
         </tbody>
-
       </table>
+      
       <button type="button" class="btn btn-primary">Adicionar</button>
+      
+      <div *ngIf="subTotalDespesaMes">
+        <br>
+        <label for="nome">Saldo Positivo Mês:</label>
+        <div>
+          <label for="nome">{{subTotalDespesaMes.vl_SaldoPositivoMes}}</label>
+        </div>
+        <br>
+        <label for="nome">Total Pendente para Pagamento:</label>
+        <div>
+          <label for="nome">{{subTotalDespesaMes.vl_SaldoPendentePagamentoMes}}</label>
+        </div>
+        <br>
+        <label for="nome">Saldo disponivel mês atual:</label>
+        <div>
+          <label for="nome">{{subTotalDespesaMes.vl_SaldoSubTotalMes}}</label>
+        </div>
+      </div>
     </div>
 
     <!-- Tabela Lancamentos Fixos Mensais -->
     <div class="col-sm-8">
-      <table id='minhaTabela' class="table table-bordered align-middle table-sm ">
+      <table class="table table-bordered align-middle table-sm ">
         <thead>
           <tr class="thead-dark">
             <th scope="col">Total R$</th>
@@ -78,7 +96,7 @@
             <td>{{ despesa.percentual}}</td>
             <td>{{ despesa.ds_NomeDespesa }}</td>
             <td>{{ despesa.tp_Status}}</td>
-            <td>{{ despesa.vl_Limite }}</td>
+            <td>{{ despesa.vl_TotalPago }}</td>
             <td>
               <button *ngIf="despesa.tp_LinhaSeparacao == null" type="button" class="btn btn-success btn-sm"
                 (click)="abrirDespesa(despesa)">Abrir
@@ -103,10 +121,11 @@
     </button>
   </div>
 
-  <div class="modal-body">
+  <!-- Tabela Detalhe Despesas Mensais -->
+  <div style="overflow: scroll; width: 780px; height: 300px; border:solid 1px">
     <table id='tabelaDetalheDespesas' class="table table-bordered align-middle table-sm ">
       <thead>
-        <tr class="thead-dark">
+        <tr class="thead-dark" style='text-align:center'>
           <th scope="col">X</th>
           <th scope="col">Total R$</th>
           <th scope="col">Descrição</th>
@@ -118,13 +137,19 @@
       </thead>
       <tbody *ngIf="listaDetalheDespesas">
         <tr *ngFor="let detalheDespesas of listaDetalheDespesas.listaDetalheDespesasMensais">
-          <td></td>
-          <td>{{ detalheDespesas.vl_Total}}</td>
-          <td>{{ detalheDespesas.ds_Descricao}}</td>
-          <td>{{ detalheDespesas.vl_TotalPago }}</td>
+          <td><input type="checkbox"></td>
+          <td style='text-align:center'>{{ detalheDespesas.vl_Total}}</td>
+          <td>
+            <div style="width: 510px"> {{ detalheDespesas.ds_Descricao}} </div>
+          </td>
+          <td style='text-align:center'>{{ detalheDespesas.vl_TotalPago }}</td>
           <td>{{ detalheDespesas.tp_Status}}</td>
-          <td>{{ detalheDespesas.ds_Observacao }}</td>
-          <td>{{ detalheDespesas.ds_Observacao2 }}</td>
+          <td>
+            <div style="width: 600px"> {{ detalheDespesas.ds_Observacao}} </div>
+          </td>
+          <td>
+            <div style="width: 600px"> {{ detalheDespesas.ds_Observacao2}} </div>
+          </td>
         </tr>
       </tbody>
     </table>

@@ -6,6 +6,7 @@ import { DespesasFixasDomain } from '../domain/despesas-fixas.domain';
 import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.interface';
 import { DespesasMensais } from '../interfaces/despesas-mensais.interface';
 import { DetalheDespesasMensais } from '../interfaces/detalhe-despesas-mensais.interface';
+import { SubtotalDespesasMensais } from '../interfaces/subtotal-despesas-mensais.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
 
@@ -42,6 +43,14 @@ export class LancamentosFinanceirosService {
     let headers = new HttpHeaders().append('Authorization', this.token.getToken());
 
     return this.http.get<DetalheDespesasMensais>(`springboot-esc-backend/api/obterDetalheDespesasMensais/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}`, { headers: headers })
+       .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
+
+  getSubTotalMes(mes: String, ano: String, idDespesa: number) {
+    let headers = new HttpHeaders().append('Authorization', this.token.getToken());
+
+    return this.http.get<SubtotalDespesasMensais>(`springboot-esc-backend/api/obterSubtotalDespesaMensal/${mes}/${ano}/${idDespesa}/${this.sessao.getIdLogin()}`, { headers: headers })
        .pipe(map((response) => { return response }),
         catchError(this.handleError));
   }

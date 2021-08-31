@@ -1,4 +1,4 @@
-#minhaTabela{
+  #minhaTabela{
     width:80%;
     margin:0 auto;
     border:0;
@@ -54,4 +54,24 @@
     margin: 10px auto;
     padding:10px 0;
     display: block;
+  }
+
+  #tabelaDetalheDespesas{
+    display: block;
+    white-space: nowrap;
+  }
+
+  /**Cores**/
+  #tabelaDetalheDespesas tr:nth-child(odd){
+    background-color: #eee;
+  }
+  
+  /**Cor quando passar por cima**/
+  #tabelaDetalheDespesas tr:hover td{
+    background-color: #feffb7;
+  }
+  
+  /**Cor quando selecionado**/
+  #tabelaDetalheDespesas tr.selecionado td{
+    background-color: #aff7ff;
   }
