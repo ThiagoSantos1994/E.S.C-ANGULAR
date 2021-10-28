@@ -47,13 +47,13 @@ export class LancamentosFinanceirosService {
         catchError(this.handleError));
   }
 
-  getSubTotalMes(mes: String, ano: String, idDespesa: number) {
+  /*getSubTotalMes(mes: String, ano: String, idDespesa: number) {
     let headers = new HttpHeaders().append('Authorization', this.token.getToken());
 
     return this.http.get<SubtotalDespesasMensais>(`springboot-esc-backend/api/obterSubtotalDespesaMensal/${mes}/${ano}/${idDespesa}/${this.sessao.getIdLogin()}`, { headers: headers })
        .pipe(map((response) => { return response }),
         catchError(this.handleError));
-  }
+  }*/
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

@@ -15,7 +15,6 @@ import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos
 export class LancamentosFinanceirosFormComponent implements OnInit {
 
   listaDespesasFixas$: Observable<DespesasFixasMensais[]> = new Observable<DespesasFixasMensais[]>();
-  subTotalDespesaMes: SubtotalDespesasMensais;
   listaDespesas: DespesasMensais;
   listaDetalheDespesas: DetalheDespesasMensais;
   
@@ -51,7 +50,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.getDespesasFixasMensais(mes.value, ano.value).subscribe((res: any) => {
       this.listaDespesasFixas$ = res;
       this.carregarListaDespesasMensais(res.listaDespesasFixasMensais[0].id_Despesa);
-      this.carregarSubTotalMes(mes.value, ano.value, res.listaDespesasFixasMensais[0].id_Despesa);
     });
   }
 
@@ -59,12 +57,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa).subscribe((res) => {
       this.listaDetalheDespesas = res;
       this.openModal(this.modalDetalheDespesasMensais);
-    });
-  }
-
-  carregarSubTotalMes(mes: string, ano: string, idDespesa: number) {
-    this.lancamentosService.getSubTotalMes(mes, ano, idDespesa).subscribe((res) => {
-      this.subTotalDespesaMes = res;
     });
   }
 
