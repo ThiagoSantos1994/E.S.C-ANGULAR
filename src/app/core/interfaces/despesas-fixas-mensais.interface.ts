@@ -1,10 +1,12 @@
-import { SubtotalDespesasMensais } from "./subtotal-despesas-mensais.interface";
-
 export interface DespesasFixasMensais{
-    id_Despesa: number,
-    id_Ordem: number,
-    ds_Descricao: string;
-    vl_Total: string,
-    tp_Status: string
-    subTotalDespesasMensais: SubtotalDespesasMensais;
+    idDespesa: number;
+    dsDescricao: string;
+    vlTotal: string;
+    tpStatus: string;
+    dsMes: string;
+    dsAno: string;
+    idFuncionario: number;
+    idOrdem: number;
+    tpFixasObrigatorias: string;
+    tpDespesaDebitoCartao: string;
 }

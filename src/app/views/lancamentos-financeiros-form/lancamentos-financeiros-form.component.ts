@@ -1,10 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
-import { DespesasFixasMensais } from 'src/app/core/interfaces/despesas-fixas-mensais.interface';
-import { DespesasMensais } from 'src/app/core/interfaces/despesas-mensais.interface';
-import { DetalheDespesasMensais } from 'src/app/core/interfaces/detalhe-despesas-mensais.interface';
-import { SubtotalDespesasMensais } from 'src/app/core/interfaces/subtotal-despesas-mensais.interface';
+import { LancamentosFinanceiros } from 'src/app/core/interfaces/lancamentos-financeiros.interface';
+import { DetalheLancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais-detalhe.interface';
+import { LancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais.interface';
 import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
 
 @Component({
@@ -14,9 +13,8 @@ import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos
 })
 export class LancamentosFinanceirosFormComponent implements OnInit {
 
-  listaDespesasFixas$: Observable<DespesasFixasMensais[]> = new Observable<DespesasFixasMensais[]>();
-  listaDespesas: DespesasMensais;
-  listaDetalheDespesas: DetalheDespesasMensais;
+  listaDetalheDespesas: DetalheLancamentosMensais;
+  lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]> = new Observable<LancamentosFinanceiros[]>();
   
   tituloDespesa: String = "";
   modalReference: any;
@@ -27,43 +25,34 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     private modalService: NgbModal
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() { 
+    this.carregarLancamentosFinanceiros();
+  }
 
   carregarDespesas() {
-    this.carregarListaDespesasFixasMensais();
+    this.carregarLancamentosFinanceiros();
   }
 
-  carregarListaDespesasMensais(idDespesa: number) {
-    /*this.despesasDomain.getDespesasAsObservable().subscribe((res: any) => {
-      this.id_Despesa = res.listaDespesasFixasMensais[0].id_Despesa;
-    });*/
-
-    this.lancamentosService.getDespesasMensais(idDespesa).subscribe((res) => {
-      this.listaDespesas = res;
-    });
-  }
-
-  carregarListaDespesasFixasMensais() {
+  carregarLancamentosFinanceiros() {
     let mes = <HTMLInputElement>document.getElementById("cbMes");
     let ano = <HTMLInputElement>document.getElementById("cbAno");
     
-    this.lancamentosService.getDespesasFixasMensais(mes.value, ano.value).subscribe((res: any) => {
-      this.listaDespesasFixas$ = res;
-      this.carregarListaDespesasMensais(res.listaDespesasFixasMensais[0].id_Despesa);
+    this.lancamentosService.getLancamentosFinanceiros(mes.value, ano.value).subscribe((res: any) => {
+      this.lancamentosFinanceiros$ = res;
     });
   }
-
-  carregarDetalheDespesas(idDespesa: number, idDetalheDespesa: number) {
-    this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa).subscribe((res) => {
+  
+  carregarDetalheDespesas(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
+    this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
       this.listaDetalheDespesas = res;
       this.openModal(this.modalDetalheDespesasMensais);
     });
   }
 
-  abrirDespesa(despesa: DespesasMensais) {
+  abrirDespesa(despesa: LancamentosMensais) {
     console.log(despesa);
-    this.tituloDespesa = despesa.ds_NomeDespesa;
-    this.carregarDetalheDespesas(despesa.id_Despesa, despesa.id_DetalheDespesa);
+    this.tituloDespesa = despesa.dsTituloDespesa;
+    this.carregarDetalheDespesas(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao);
   }
 
   adicionarDespesaMensal() {

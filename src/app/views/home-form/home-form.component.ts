@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SessaoService } from 'src/app/core/services/sessao.service';
 import { HomeService } from 'src/app/core/services/home.service';
-import { DadosUsuario } from 'src/app/core/interfaces/dados-usuario.interface';
+//import { DadosUsuario } from 'src/app/core/interfaces/dados-usuario.interface';
 
 
 @Component({
@@ -14,10 +14,11 @@ import { DadosUsuario } from 'src/app/core/interfaces/dados-usuario.interface';
 })
 export class HomeFormComponent implements OnInit {
 
-  usuario$: Observable<DadosUsuario>;
+  //usuario$: Observable<DadosUsuario>;
+  usuarioLogado : string;
 
   constructor(
-    private homeService: HomeService,
+    //private homeService: HomeService,
     private sessaoService: SessaoService,
     private router: Router
   ) { }
@@ -33,14 +34,15 @@ export class HomeFormComponent implements OnInit {
       this.router.navigate(['login']);
     }
 
-    this.getDadosUsuario();
+    this.usuarioLogado = this.sessaoService.getUserName();
+    //this.getDadosUsuario();
   }
 
-  getDadosUsuario() {
+  /*getDadosUsuario() {
     const tokenId = this.sessaoService.getToken();
     this.usuario$ = this.homeService.getDadosUsuario(this.sessaoService.getIdLogin());
 
-    /*this.homeService.getDadosUsuario(idLogin).subscribe((response: Usuario) => {
+    this.homeService.getDadosUsuario(idLogin).subscribe((response: Usuario) => {
       this.usuario$ = response;
     },
     err => {
@@ -48,6 +50,7 @@ export class HomeFormComponent implements OnInit {
         alert('Desculpe! ocorreu um erro ao carregar os dados da pagina, estamos redirecionando para a pagina de login!');
         this.sessaoService.logout();
         this.router.navigate(['login']);
-    });*/
-  }
+    });
+  }*/
+
 }

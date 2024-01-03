@@ -2,11 +2,16 @@
 <html lang="pt-br">
   
   <header id="header">
-    <div class="p-2 text-center bg-light" *ngIf="(usuario$ | async) as user; else logoff">
-      <h1 class="navbar-brand">Administração das minhas Despesas - Seja Bem Vindo(a) {{ user.ds_NomeLogin }}</h1>
+    <!--<div class="p-2 text-center bg-light" *ngIf="(usuarioLogado | async) as user; else logoff">
+      <h1 class="navbar-brand">Administração das minhas Despesas - Seja Bem Vindo(a) {{ user }}</h1>
+      <a class="underlineHover" href="/login">(Sair)</a>
+    </div>-->
+  
+    <div class="p-2 text-center bg-light">
+      <h1 class="navbar-brand">Administração das minhas Despesas - Seja Bem Vindo(a)  {{ usuarioLogado }}</h1>
       <a class="underlineHover" href="/login">(Sair)</a>
     </div>
-  
+
     <ng-template #logoff>
       <span class="navbar-text">
         <a [routerLink]="['/login']"></a>

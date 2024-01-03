@@ -2,13 +2,12 @@
   <div class="p-2 text-center bg-light">
     <label id="label">Mês:</label>
     <select id=cbMes>
-      <!--<option value=""></option>
       <option value="01">Janeiro</option>
       <option value="02">Fevereiro</option>
       <option value="03">Março</option>
       <option value="04">Abril</option>
       <option value="05">Maio</option>
-      <option value="06">Junho</option>-->
+      <option value="06">Junho</option>
       <option value="07">Julho</option>
       <option value="08">Agosto</option>
       <option value="09">Setembro</option>
@@ -19,7 +18,11 @@
 
     <label id="label">Ano:</label>
     <select id=cbAno>
+      <option value="2024">2024</option>
+      <option value="2023">2023</option>
+      <option value="2022">2022</option>
       <option value="2021">2021</option>
+      <option value="2020">2020</option>
     </select>
     <button class="button" type="button" class="btn btn-primary" (click)="carregarDespesas()">Pesquisar</button>
   </div>
@@ -30,7 +33,7 @@
         <div class="card text-white bg-success mb-3" style="max-width: 50rem;">
           <div class="card-header">Saldo Positivo:</div>
           <div class="card-body">
-            <h4 class="card-title">{{listaDespesasFixas$.subTotalDespesasMensais.vl_SaldoPositivoMes}} R$</h4>
+            <h4 class="card-title">{{lancamentosFinanceiros$.vlSaldoPositivo}} R$</h4>
           </div>
         </div>
       </div>
@@ -39,7 +42,7 @@
         <div class="card text-white bg-warning mb-3" style="max-width: 50rem">
           <div class="card-header">Pendente para Pagamento:</div>
           <div class="card-body">
-            <h4 class="card-title">{{listaDespesasFixas$.subTotalDespesasMensais.vl_SaldoPendentePagamentoMes}} R$</h4>
+            <h4 class="card-title">{{lancamentosFinanceiros$.vlTotalPendentePagamento}} R$</h4>
           </div>
         </div>
       </div>
@@ -48,7 +51,7 @@
         <div class="card text-white bg-primary mb-3" style="max-width: 50rem;">
           <div class="card-header">Saldo Disponível:</div>
           <div class="card-body">
-            <h4 class="card-title">{{listaDespesasFixas$.subTotalDespesasMensais.vl_SaldoSubTotalMes}} R$</h4>
+            <h4 class="card-title">{{lancamentosFinanceiros$.vlSaldoDisponivelMes}} R$</h4>
           </div>
         </div>
       </div>
@@ -70,10 +73,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let despesasFixas of listaDespesasFixas$.listaDespesasFixasMensais">
-              <td>{{ despesasFixas.ds_Descricao }}</td>
-              <td>{{ despesasFixas.vl_Total }}</td>
-              <td>{{ despesasFixas.tp_Status}}</td>
+            <tr *ngFor="let despesasFixas of lancamentosFinanceiros$.despesasFixasMensais">
+              <td>{{ despesasFixas.dsDescricao }}</td>
+              <td>{{ despesasFixas.vlTotal }}</td>
+              <td>{{ despesasFixas.tpStatus}}</td>
             </tr>
           </tbody>
         </table>
@@ -95,15 +98,15 @@
               <th scope="col"></th>
             </tr>
           </thead>
-          <tbody *ngIf="listaDespesas">
-            <tr *ngFor="let despesa of listaDespesas.listaDespesasMensais">
-              <td>{{ despesa.vl_Total}}</td>
-              <td>{{ despesa.percentual}}</td>
-              <td>{{ despesa.ds_NomeDespesa }}</td>
-              <td>{{ despesa.tp_Status}}</td>
-              <td>{{ despesa.vl_TotalPago }}</td>
+          <tbody *ngIf="lancamentosFinanceiros$.lancamentosMensais">
+            <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais">
+              <td>{{ despesa.vlTotalDespesa}}</td>
+              <td>{{ despesa.percentualUtilizacao}}</td>
+              <td>{{ despesa.dsTituloDespesa }}</td>
+              <td>{{ despesa.tpStatus}}</td>
+              <td>{{ despesa.vlTotalDespesaPaga }}</td>
               <td>
-                <button *ngIf="despesa.tp_LinhaSeparacao == null" type="button" class="btn btn-success btn-sm"
+                <button *ngIf="despesa.tpLinhaSeparacao == 'N'" type="button" class="btn btn-success btn-sm"
                   (click)="abrirDespesa(despesa)">Abrir
                 </button>
               </td>
@@ -148,19 +151,19 @@
         </tr>
       </thead>
       <tbody *ngIf="listaDetalheDespesas">
-        <tr *ngFor="let detalheDespesas of listaDetalheDespesas.listaDetalheDespesasMensais">
+        <tr *ngFor="let detalheDespesas of listaDetalheDespesas.detalheDespesaMensal">
           <td><input type="checkbox"></td>
-          <td style='text-align:center'>{{ detalheDespesas.vl_Total}}</td>
+          <td style='text-align:center'>{{ detalheDespesas.vlTotal}}</td>
           <td>
-            <div style="width: 510px"> {{ detalheDespesas.ds_Descricao}} </div>
+            <div style="width: 510px"> {{ detalheDespesas.dsTituloDespesa}} </div>
           </td>
-          <td style='text-align:center'>{{ detalheDespesas.vl_TotalPago }}</td>
+          <td style='text-align:center'>{{ detalheDespesas.vlTotalPago }}</td>
           <td>{{ detalheDespesas.tp_Status}}</td>
           <td>
-            <div style="width: 600px"> {{ detalheDespesas.ds_Observacao}} </div>
+            <div style="width: 600px"> {{ detalheDespesas.dsObservacao}} </div>
           </td>
           <td>
-            <div style="width: 600px"> {{ detalheDespesas.ds_Observacao2}} </div>
+            <div style="width: 600px"> {{ detalheDespesas.dsObservacao2}} </div>
           </td>
         </tr>
       </tbody>
