@@ -106,7 +106,7 @@
               <td>{{ despesa.tpStatus}}</td>
               <td>{{ despesa.vlTotalDespesaPaga }}</td>
               <td>
-                <button *ngIf="despesa.tpLinhaSeparacao == 'N'" type="button" class="btn btn-success btn-sm"
+                <button *ngIf="despesa.tpLinhaSeparacao == 'N'" type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalDetalheDespesasMensais"
                   (click)="abrirDespesa(despesa)">Abrir
                 </button>
               </td>
@@ -123,54 +123,120 @@
   </div>
 </body>
 
+<!-- Modal Detalhe Despesas Mensais -->
+<div class="modal fade" id="ModalDetalheDespesasMensais" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="card text-center">
+        <h6>Detalhes da Despesa:  Neste mês será quitado 10/10 Despesas Paceladas, Totalizando 500,00R$</h6>
 
-<!--MODAL DETALHE DESPESAS MENSAIS-->
-<ng-template #modalDetalheDespesasMensais let-modal>
-  <div class="modal-header">
-    <div class="form-group">
-      <label for="exampleFormControlInput1">Titulo:</label>
-      <input type="email" class="form-control" id="tituloDespesa" value={{tituloDespesa}} placeholder="Fatura Cartão 1">
+        
+
+        <div class="form-inline card-header">
+          <input type="email" class="form-control" id="tituloDespesa" value={{tituloDespesa}} aria-describedby="emailHelp" placeholder="Digite o nome da despesa.">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Importar</button>
+          
+          <div class="card">
+            <div class="card-body">
+              <footer class="footer">Limite Despesa</footer>
+              <h5>{{listaDetalheDespesas.despesaMensal.vlLimite}}</h5>
+            </div>
+          </div>
+          
+        </div>
+        
+        <div class="card-body">
+          <div class="row">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkEmprestimosAReceber">
+              <label class="form-check-label" for="inlineCheckbox1">Emprestimos á Receber*</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkDespesaRascunho">
+              <label class="form-check-label" for="inlineCheckbox1">Despesa Rascunho</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkDespesaDebitoAutomatico">
+              <label class="form-check-label" for="inlineCheckbox1">Débito Automático</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkPoupancaPositiva">
+              <label class="form-check-label" for="inlineCheckbox1">P(+)</label>
+            </div>
+            
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkEmprestimosAPagar">
+              <label class="form-check-label" for="inlineCheckbox1">Emprestimos á Pagar*</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkDespesaRelatorio">
+              <label class="form-check-label" for="inlineCheckbox1">Despesa Relatório</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkDespesaDebitoCartao">
+              <label class="form-check-label" for="inlineCheckbox1">Débito Cartão</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkPoupancaNegativa">
+              <label class="form-check-label" for="inlineCheckbox1">P(-)</label>
+            </div>
+          </div>
+          
+        </div>
+        <div class="card-footer text-muted">
+        </div>
+      </div>
+
+      <!--<div class="modal-header">
+        <div class="form-group">
+          <label for="tituloDespesa">Nome da Despesa:</label>
+          <input type="email" class="form-control" id="tituloDespesa" value={{tituloDespesa}} aria-describedby="emailHelp" placeholder="Digite o nome da despesa.">
+          <small id="emailHelp" class="form-text text-muted">Ex: Despesa de Cartão de Crédito.</small>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>-->
+
+      
+      
+      <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar modal-header">
+        <table id='tabelaDetalheDespesas' class="table table-sm">
+          <thead>
+            <tr>
+              <th scope="col">X</th>
+              <th scope="col">Total R$</th>
+              <th scope="col">Descrição</th>
+              <th scope="col">Pago R$</th>
+              <th scope="col">Status</th>
+              <th scope="col">Observações</th>
+              <th scope="col">Observações Complementares</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="listaDetalheDespesas">
+            <tr *ngFor="let detalheDespesas of listaDetalheDespesas.detalheDespesaMensal">
+              <td><input type="checkbox"></td>
+              <td style='text-align:center'>{{ detalheDespesas.vlTotal}}</td>
+              <td>
+                <div style="width: 510px"> {{ detalheDespesas.dsTituloDespesa}} </div>
+              </td>
+              <td style='text-align:center'>{{ detalheDespesas.vlTotalPago }}</td>
+              <td>{{ detalheDespesas.tp_Status}}</td>
+              <td>
+                <div style="width: 600px"> {{ detalheDespesas.dsObservacao}} </div>
+              </td>
+              <td>
+                <div style="width: 600px"> {{ detalheDespesas.dsObservacao2}} </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-primary">Salvar mudanças</button>
+      </div>
     </div>
-    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
-      <span aria-hidden="true">&times;</span>
-    </button>
   </div>
-
-  <!-- Tabela Detalhe Despesas Mensais -->
-  <div id="modalDetalheDespesasMensais">
-    <table id='tabelaDetalheDespesas' class="table table-bordered align-middle table-sm">
-      <thead>
-        <tr class="thead-dark" style='text-align:center'>
-          <th scope="col">X</th>
-          <th scope="col">Total R$</th>
-          <th scope="col">Descrição</th>
-          <th scope="col">Pago R$</th>
-          <th scope="col">Status</th>
-          <th scope="col">Observacoes</th>
-          <th scope="col">Observacoes complementares</th>
-        </tr>
-      </thead>
-      <tbody *ngIf="listaDetalheDespesas">
-        <tr *ngFor="let detalheDespesas of listaDetalheDespesas.detalheDespesaMensal">
-          <td><input type="checkbox"></td>
-          <td style='text-align:center'>{{ detalheDespesas.vlTotal}}</td>
-          <td>
-            <div style="width: 510px"> {{ detalheDespesas.dsTituloDespesa}} </div>
-          </td>
-          <td style='text-align:center'>{{ detalheDespesas.vlTotalPago }}</td>
-          <td>{{ detalheDespesas.tp_Status}}</td>
-          <td>
-            <div style="width: 600px"> {{ detalheDespesas.dsObservacao}} </div>
-          </td>
-          <td>
-            <div style="width: 600px"> {{ detalheDespesas.dsObservacao2}} </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="closeModal()">Fechar</button>
-  </div>
-</ng-template>
+</div>

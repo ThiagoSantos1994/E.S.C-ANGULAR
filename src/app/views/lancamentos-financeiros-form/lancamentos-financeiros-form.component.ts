@@ -45,7 +45,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   carregarDetalheDespesas(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
     this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
       this.listaDetalheDespesas = res;
-      this.openModal(this.modalDetalheDespesasMensais);
+      //this.openModal(this.modalDetalheDespesasMensais);
     });
   }
 

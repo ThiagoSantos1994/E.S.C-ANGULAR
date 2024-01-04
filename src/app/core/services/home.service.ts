@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { DadosUsuario } from '../interfaces/dados-usuario.interface';
+//import { DadosUsuario } from '../interfaces/dados-usuario.interface';
 import { TokenService } from './token.service';
 
 const httpHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -17,12 +17,12 @@ export class HomeService {
     private http: HttpClient,
     private token: TokenService) { }
 
-  getDadosUsuario(id: string): Observable<DadosUsuario> {
+  /*getDadosUsuario(id: string): Observable<DadosUsuario> {
     let headers = new HttpHeaders().append('Authorization', this.token.getToken());
 
     return this.http.get<DadosUsuario>('springboot-esc-backend/api/login/obterDados/' + id, { headers: headers })
       .pipe(catchError(this.handleError));
-  }
+  }*/
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
