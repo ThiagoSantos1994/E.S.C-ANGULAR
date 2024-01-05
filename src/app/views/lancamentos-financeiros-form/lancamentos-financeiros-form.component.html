@@ -1,33 +1,185 @@
-<header id="header">
-  <div class="p-2 text-center bg-light">
-    <label id="label">Mês:</label>
-    <select id=cbMes>
-      <option value="01">Janeiro</option>
-      <option value="02">Fevereiro</option>
-      <option value="03">Março</option>
-      <option value="04">Abril</option>
-      <option value="05">Maio</option>
-      <option value="06">Junho</option>
-      <option value="07">Julho</option>
-      <option value="08">Agosto</option>
-      <option value="09">Setembro</option>
-      <option value="10">Outubro</option>
-      <option value="11">Novembro</option>
-      <option value="12">Dezembro</option>
-    </select>
+<!DOCTYPE html>
+<html>
 
-    <label id="label">Ano:</label>
-    <select id=cbAno>
-      <option value="2024">2024</option>
-      <option value="2023">2023</option>
-      <option value="2022">2022</option>
-      <option value="2021">2021</option>
-      <option value="2020">2020</option>
-    </select>
-    <button class="button" type="button" class="btn btn-primary" (click)="carregarDespesas()">Pesquisar</button>
-  </div>
+<head>
+  <title>Font Awesome Icons</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
 
-  <div class="p-2 text-center bg-light">
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="col-auto">
+      <i class="fa fa-line-chart" style="font-size:24px"></i>
+    </div>
+
+    <h5>Minhas Despesas Mensais</h5>
+
+    <hr>
+    <div class="p-1 text-center bg-light">
+      <div class="col-lg-12">
+        <div class="row">
+          <div class="col-lg-6 col-md-3 col-sm-12 p-0.3">
+            <select class="form-control search-slt" id=cbMes>
+              <option value="01">Janeiro</option>
+              <option value="02">Fevereiro</option>
+              <option value="03">Março</option>
+              <option value="04">Abril</option>
+              <option value="05">Maio</option>
+              <option value="06">Junho</option>
+              <option value="07">Julho</option>
+              <option value="08">Agosto</option>
+              <option value="09">Setembro</option>
+              <option value="10">Outubro</option>
+              <option value="11">Novembro</option>
+              <option value="12">Dezembro</option>
+            </select>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-12 p-0">
+            <select class="form-control search-slt" id="cbAno">
+              <option value="2024">2024</option>
+              <option value="2023">2023</option>
+              <option value="2022">2022</option>
+              <option value="2021">2021</option>
+              <option value="2020">2020</option>
+            </select>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-12 p-0">
+            <button type="button" class="btn btn-primary wrn-btn" (click)="carregarDespesas()">Search</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--<div class="p-2 text-center bg-light">
+      <label id="label">Mês:</label>
+      <select id=cbMes>
+        <option value="01">Janeiro</option>
+        <option value="02">Fevereiro</option>
+        <option value="03">Março</option>
+        <option value="04">Abril</option>
+        <option value="05">Maio</option>
+        <option value="06">Junho</option>
+        <option value="07">Julho</option>
+        <option value="08">Agosto</option>
+        <option value="09">Setembro</option>
+        <option value="10">Outubro</option>
+        <option value="11">Novembro</option>
+        <option value="12">Dezembro</option>
+      </select>
+
+      <label id="label">Ano:</label>
+      <select id=cbAno>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+        <option value="2022">2022</option>
+        <option value="2021">2021</option>
+        <option value="2020">2020</option>
+      </select>
+      <button class="button" type="button" class="btn btn-primary" (click)="carregarDespesas()">Pesquisar</button>
+    </div>-->
+  </nav>
+  <header id="header">
+    <div class="row">
+      
+      <!-- Saldo Positivo Mês-->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-90 py-2">
+
+          
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                  Receita (Mês)</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {{lancamentosFinanceiros$.vlSaldoPositivo}}</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                  Despesas</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {{lancamentosFinanceiros$.vlTotalDespesas}}</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                  Á Pagar</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">R$
+                  {{lancamentosFinanceiros$.vlTotalPendentePagamento}}</div>
+              </div>
+              <div class="col-auto">
+                <i class="far fa-handshake fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Saldo Disponível
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {{lancamentosFinanceiros$.vlSaldoDisponivelMes}}
+                </div>
+                <div class="row no-gutters align-items-center">
+                  <div class="col-auto">
+                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                  </div>
+                  <div class="col">
+                    <div class="progress progress-sm mr-2">
+                      <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Total Despesa Mês-->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-90 py-2">
+          
+        </div>
+      </div>
+
+      <!-- Saldo Pendente Mês-->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-90 py-2">
+          
+        </div>
+      </div>
+
+      <!-- Saldo Disponivel Mês-->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-90 py-2">
+          
+        </div>
+      </div>
+    </div>
+
+    <!--<div class="p-2 text-center bg-light">
     <div class="row">
       <div class="col-sm-4">
         <div class="card text-white bg-success mb-3" style="max-width: 50rem;">
@@ -56,138 +208,141 @@
         </div>
       </div>
     </div>
-  </div>
-</header>
+  </div>-->
+  </header>
 
-<body class="body">
-  <div class="p-2 text-center bg-light">
-    <div class="row">
-      <!-- Tabela Lancamentos Fixos Mensais -->
-      <div class="col-sm-4">
-        <table id="tabelaLancamentosFixos" class="table table-bordered align-middle table-sm ">
-          <thead>
-            <tr class="thead-dark">
-              <th scope="col">Descrição</th>
-              <th scope="col">Total R$</th>
-              <th scope="col">TP</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let despesasFixas of lancamentosFinanceiros$.despesasFixasMensais">
-              <td>{{ despesasFixas.dsDescricao }}</td>
-              <td>{{ despesasFixas.vlTotal }}</td>
-              <td>{{ despesasFixas.tpStatus}}</td>
-            </tr>
-          </tbody>
-        </table>
-        <br>
-        <button type="button" class="btn btn-primary">Adicionar</button>
-        <button class="button" type="button" class="btn btn-danger">Excluir</button>
-      </div>
-
-      <!-- Tabela Lancamentos Fixos Mensais -->
-      <div class="col-sm-8">
-        <table id="tabelaPadrao" class="table table-bordered align-middle table-sm ">
-          <thead>
-            <tr class="thead-dark">
-              <th scope="col">Total R$</th>
-              <th scope="col">%</th>
-              <th scope="col">DESCRIÇÃO</th>
-              <th scope="col">STATUS</th>
-              <th scope="col">PAGO R$</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody *ngIf="lancamentosFinanceiros$.lancamentosMensais">
-            <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais">
-              <td>{{ despesa.vlTotalDespesa}}</td>
-              <td>{{ despesa.percentualUtilizacao}}</td>
-              <td>{{ despesa.dsTituloDespesa }}</td>
-              <td>{{ despesa.tpStatus}}</td>
-              <td>{{ despesa.vlTotalDespesaPaga }}</td>
-              <td>
-                <button *ngIf="despesa.tpLinhaSeparacao == 'N'" type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalDetalheDespesasMensais"
-                  (click)="abrirDespesa(despesa)">Abrir
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div>
+  <body class="body">
+    <div class="p-2 text-center bg-light">
+      <div class="row">
+        <!-- Tabela Lancamentos Fixos Mensais -->
+        <div class="col-sm-4">
+          <table id="tabelaLancamentosFixos" class="table table-bordered align-middle table-sm ">
+            <thead>
+              <tr class="thead-dark">
+                <th scope="col">Descrição</th>
+                <th scope="col">Total R$</th>
+                <th scope="col">TP</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let despesasFixas of lancamentosFinanceiros$.despesasFixasMensais">
+                <td>{{ despesasFixas.dsDescricao }}</td>
+                <td>{{ despesasFixas.vlTotal }}</td>
+                <td>{{ despesasFixas.tpStatus}}</td>
+              </tr>
+            </tbody>
+          </table>
           <br>
-          <button type="button" class="btn btn-primary" (click)="adicionarDespesaMensal()">Adicionar</button>
-          <button class="button" type="button" class="btn btn-danger" (click)="excluirDespesaMensal()">Excluir</button>
+          <button type="button" class="btn btn-primary">Adicionar</button>
+          <button class="button" type="button" class="btn btn-danger">Excluir</button>
+        </div>
+
+        <!-- Tabela Lancamentos Fixos Mensais -->
+        <div class="col-sm-8">
+          <table id="tabelaPadrao" class="table table-bordered align-middle table-sm ">
+            <thead>
+              <tr class="thead-dark">
+                <th scope="col">Total R$</th>
+                <th scope="col">%</th>
+                <th scope="col">DESCRIÇÃO</th>
+                <th scope="col">STATUS</th>
+                <th scope="col">PAGO R$</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody *ngIf="lancamentosFinanceiros$.lancamentosMensais">
+              <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais">
+                <td>{{ despesa.vlTotalDespesa}}</td>
+                <td>{{ despesa.percentualUtilizacao}}</td>
+                <td>{{ despesa.dsTituloDespesa }}</td>
+                <td>{{ despesa.tpStatus}}</td>
+                <td>{{ despesa.vlTotalDespesaPaga }}</td>
+                <td>
+                  <button *ngIf="despesa.tpLinhaSeparacao == 'N'" type="button" class="btn btn-primary"
+                    data-toggle="modal" data-target="#ModalDetalheDespesasMensais" (click)="abrirDespesa(despesa)">Abrir
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div>
+            <br>
+            <button type="button" class="btn btn-primary" (click)="adicionarDespesaMensal()">Adicionar</button>
+            <button class="button" type="button" class="btn btn-danger"
+              (click)="excluirDespesaMensal()">Excluir</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</body>
+  </body>
 
-<!-- Modal Detalhe Despesas Mensais -->
-<div class="modal fade" id="ModalDetalheDespesasMensais" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
-  <div class="modal-dialog modal-xl" role="document">
-    <div class="modal-content">
-      <div class="card text-center">
-        <h6>Detalhes da Despesa:  Neste mês será quitado 10/10 Despesas Paceladas, Totalizando 500,00R$</h6>
+  <!-- Modal Detalhe Despesas Mensais -->
+  <div class="modal fade" id="ModalDetalheDespesasMensais" tabindex="-1" role="dialog"
+    aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="card text-center">
+          <h6>Detalhes da Despesa: Neste mês será quitado 10/10 Despesas Paceladas, Totalizando 500,00R$</h6>
 
-        
 
-        <div class="form-inline card-header">
-          <input type="email" class="form-control" id="tituloDespesa" value={{tituloDespesa}} aria-describedby="emailHelp" placeholder="Digite o nome da despesa.">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Importar</button>
-          
-          <div class="card">
-            <div class="card-body">
-              <footer class="footer">Limite Despesa</footer>
-              <h5>{{listaDetalheDespesas.despesaMensal.vlLimite}}</h5>
+
+          <div class="form-inline card-header">
+            <input type="email" class="form-control" id="tituloDespesa" value={{tituloDespesa}}
+              aria-describedby="emailHelp" placeholder="Digite o nome da despesa.">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Importar</button>
+
+            <div class="card">
+              <div class="card-body">
+                <footer class="footer">Limite Despesa</footer>
+                <h5>{{listaDetalheDespesas.despesaMensal.vlLimite}}</h5>
+              </div>
             </div>
+
           </div>
-          
-        </div>
-        
-        <div class="card-body">
-          <div class="row">
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkEmprestimosAReceber">
-              <label class="form-check-label" for="inlineCheckbox1">Emprestimos á Receber*</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkDespesaRascunho">
-              <label class="form-check-label" for="inlineCheckbox1">Despesa Rascunho</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkDespesaDebitoAutomatico">
-              <label class="form-check-label" for="inlineCheckbox1">Débito Automático</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkPoupancaPositiva">
-              <label class="form-check-label" for="inlineCheckbox1">P(+)</label>
-            </div>
-            
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkEmprestimosAPagar">
-              <label class="form-check-label" for="inlineCheckbox1">Emprestimos á Pagar*</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkDespesaRelatorio">
-              <label class="form-check-label" for="inlineCheckbox1">Despesa Relatório</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkDespesaDebitoCartao">
-              <label class="form-check-label" for="inlineCheckbox1">Débito Cartão</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkPoupancaNegativa">
-              <label class="form-check-label" for="inlineCheckbox1">P(-)</label>
-            </div>
-          </div>
-          
-        </div>
-        <div class="card-footer text-muted">
-        </div>
-      </div>
 
-      <!--<div class="modal-header">
+          <div class="card-body">
+            <div class="row">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkEmprestimosAReceber">
+                <label class="form-check-label" for="inlineCheckbox1">Emprestimos á Receber*</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkDespesaRascunho">
+                <label class="form-check-label" for="inlineCheckbox1">Despesa Rascunho</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkDespesaDebitoAutomatico">
+                <label class="form-check-label" for="inlineCheckbox1">Débito Automático</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkPoupancaPositiva">
+                <label class="form-check-label" for="inlineCheckbox1">P(+)</label>
+              </div>
+
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkEmprestimosAPagar">
+                <label class="form-check-label" for="inlineCheckbox1">Emprestimos á Pagar*</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkDespesaRelatorio">
+                <label class="form-check-label" for="inlineCheckbox1">Despesa Relatório</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkDespesaDebitoCartao">
+                <label class="form-check-label" for="inlineCheckbox1">Débito Cartão</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="chkPoupancaNegativa">
+                <label class="form-check-label" for="inlineCheckbox1">P(-)</label>
+              </div>
+            </div>
+
+          </div>
+          <div class="card-footer text-muted">
+          </div>
+        </div>
+
+        <!--<div class="modal-header">
         <div class="form-group">
           <label for="tituloDespesa">Nome da Despesa:</label>
           <input type="email" class="form-control" id="tituloDespesa" value={{tituloDespesa}} aria-describedby="emailHelp" placeholder="Digite o nome da despesa.">
@@ -198,45 +353,45 @@
         </button>
       </div>-->
 
-      
-      
-      <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar modal-header">
-        <table id='tabelaDetalheDespesas' class="table table-sm">
-          <thead>
-            <tr>
-              <th scope="col">X</th>
-              <th scope="col">Total R$</th>
-              <th scope="col">Descrição</th>
-              <th scope="col">Pago R$</th>
-              <th scope="col">Status</th>
-              <th scope="col">Observações</th>
-              <th scope="col">Observações Complementares</th>
-            </tr>
-          </thead>
-          <tbody *ngIf="listaDetalheDespesas">
-            <tr *ngFor="let detalheDespesas of listaDetalheDespesas.detalheDespesaMensal">
-              <td><input type="checkbox"></td>
-              <td style='text-align:center'>{{ detalheDespesas.vlTotal}}</td>
-              <td>
-                <div style="width: 510px"> {{ detalheDespesas.dsTituloDespesa}} </div>
-              </td>
-              <td style='text-align:center'>{{ detalheDespesas.vlTotalPago }}</td>
-              <td>{{ detalheDespesas.tp_Status}}</td>
-              <td>
-                <div style="width: 600px"> {{ detalheDespesas.dsObservacao}} </div>
-              </td>
-              <td>
-                <div style="width: 600px"> {{ detalheDespesas.dsObservacao2}} </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-  
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-        <button type="button" class="btn btn-primary">Salvar mudanças</button>
+
+
+        <div class="table-responsive table-wrapper-scroll-y my-custom-scrollbar modal-header">
+          <table id='tabelaDetalheDespesas' class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">X</th>
+                <th scope="col">Total R$</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Pago R$</th>
+                <th scope="col">Status</th>
+                <th scope="col">Observações</th>
+                <th scope="col">Observações Complementares</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="listaDetalheDespesas">
+              <tr *ngFor="let detalheDespesas of listaDetalheDespesas.detalheDespesaMensal">
+                <td><input type="checkbox"></td>
+                <td style='text-align:center'>{{ detalheDespesas.vlTotal}}</td>
+                <td>
+                  <div style="width: 510px"> {{ detalheDespesas.dsTituloDespesa}} </div>
+                </td>
+                <td style='text-align:center'>{{ detalheDespesas.vlTotalPago }}</td>
+                <td>{{ detalheDespesas.tp_Status}}</td>
+                <td>
+                  <div style="width: 600px"> {{ detalheDespesas.dsObservacao}} </div>
+                </td>
+                <td>
+                  <div style="width: 600px"> {{ detalheDespesas.dsObservacao2}} </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          <button type="button" class="btn btn-primary">Salvar mudanças</button>
+        </div>
       </div>
     </div>
   </div>
-</div>

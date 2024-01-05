@@ -1,107 +1,108 @@
-  header{
-    padding: 52px 0 0;
+  header {
+    padding: 15px 0 0;
   }
-  
-  button{
+
+  button {
     margin: 0 10px;
   }
 
-  label{
-    margin: 0 5px;  
+  label {
+    margin: 0 5px;
   }
 
-  #tabelaLancamentosFixos{
-    width:90%;
-    margin:0 auto;
-    border:0;
+  #tabelaLancamentosFixos {
+    width: 90%;
+    margin: 0 auto;
+    border: 0;
     box-shadow: 0 5px 30px darkgrey;
     border-radius: 10px;
     border-spacing: 0;
-  } 
-  
-  #tabelaPadrao{
-    width:90%;
-    margin:0 auto;
-    border:0;
+  }
+
+  #tabelaPadrao {
+    width: 90%;
+    margin: 0 auto;
+    border: 0;
     box-shadow: 0 5px 30px darkgrey;
     border-spacing: 0;
     border-radius: 10px;
   }
-  
-  #tabelaPadrao thead th{
+
+  #tabelaPadrao thead th {
     font-weight: bold;
     background-color: rgb(61, 60, 60);
-    color:white;
-    padding:5px 10px;
+    color: white;
+    padding: 5px 10px;
   }
-  
-  #tabelaPadrao tr td{
-    padding:5px 10px;
+
+  #tabelaPadrao tr td {
+    padding: 5px 10px;
     text-align: center;
-    
-    cursor: pointer; /**importante para não mostrar cursor de texto**/
+
+    cursor: pointer;
+    /**importante para não mostrar cursor de texto**/
   }
-  
-  #tabelaPadrao tr td:last-child{
+
+  #tabelaPadrao tr td:last-child {
     text-align: right;
   }
-  
+
   /**Cores**/
-  #tabelaPadrao tr:nth-child(odd){
+  #tabelaPadrao tr:nth-child(odd) {
     background-color: #eee;
   }
-  
+
   /**Cor quando passar por cima**/
-  #tabelaPadrao tr:hover td{
+  #tabelaPadrao tr:hover td {
     background-color: #feffb7;
   }
-  
+
   /**Cor quando selecionado**/
-  #tabelaPadrao tr.selecionado td{
+  #tabelaPadrao tr.selecionado td {
     background-color: #aff7ff;
   }
-  
-  button#adicionar{
+
+  button#adicionar {
     border: 1px solid black;
-    width:10%;
+    width: 10%;
     margin: 10px auto;
-    padding:10px 0;
+    padding: 10px 0;
     display: block;
   }
 
-  button#excluir{
+  button#excluir {
     border: 1px solid black;
-    width:10%;
+    width: 10%;
     margin: 10px auto;
-    padding:10px 0;
+    padding: 10px 0;
     display: block;
   }
 
-  #tabelaDetalheDespesas{
+  #tabelaDetalheDespesas {
     display: block;
     white-space: nowrap;
   }
 
   /**Cores**/
-  #tabelaDetalheDespesas tr:nth-child(odd){
+  #tabelaDetalheDespesas tr:nth-child(odd) {
     background-color: #eee;
   }
-  
+
   /**Cor quando passar por cima**/
-  #tabelaDetalheDespesas tr:hover td{
+  #tabelaDetalheDespesas tr:hover td {
     background-color: #feffb7;
   }
-  
+
   /**Cor quando selecionado**/
-  #tabelaDetalheDespesas tr.selecionado td{
+  #tabelaDetalheDespesas tr.selecionado td {
     background-color: #aff7ff;
   }
 
-  #modalDetalheDespesasMensais{
+  #modalDetalheDespesasMensais {
     overflow: scroll;
-    width: 780px; 
-    height: 300px; 
-    border:solid 1px;
+    width: 780px;
+    height: 300px;
+    border: solid 1px;
     position: center;
   }
 
@@ -110,7 +111,16 @@
     height: 320px;
     overflow: auto;
   }
-  
+
   .table-wrapper-scroll-y {
     display: block;
   }
+
+
+  /*THIAGO*/
+  .card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.25rem;
+  }
+  

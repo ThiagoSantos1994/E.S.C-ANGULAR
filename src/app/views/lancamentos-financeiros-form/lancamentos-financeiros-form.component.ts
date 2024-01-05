@@ -15,7 +15,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   listaDetalheDespesas: DetalheLancamentosMensais;
   lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]> = new Observable<LancamentosFinanceiros[]>();
-  
+
   tituloDespesa: String = "";
   modalReference: any;
   @ViewChild('modalDetalheDespesasMensais') modalDetalheDespesasMensais: any;
@@ -25,7 +25,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     private modalService: NgbModal
   ) { }
 
-  ngOnInit() { 
+  ngOnInit() {
     this.carregarLancamentosFinanceiros();
   }
 
@@ -36,12 +36,12 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   carregarLancamentosFinanceiros() {
     let mes = <HTMLInputElement>document.getElementById("cbMes");
     let ano = <HTMLInputElement>document.getElementById("cbAno");
-    
+
     this.lancamentosService.getLancamentosFinanceiros(mes.value, ano.value).subscribe((res: any) => {
       this.lancamentosFinanceiros$ = res;
     });
   }
-  
+
   carregarDetalheDespesas(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
     this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
       this.listaDetalheDespesas = res;
