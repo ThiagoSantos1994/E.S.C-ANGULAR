@@ -4,7 +4,9 @@ import { Observable } from 'rxjs';
 import { LancamentosFinanceiros } from 'src/app/core/interfaces/lancamentos-financeiros.interface';
 import { DetalheLancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais-detalhe.interface';
 import { LancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais.interface';
+import { DespesasFixasMensais } from 'src/app/core/interfaces/despesas-fixas-mensais.interface';
 import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
+import { forEach } from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'app-lancamentos-financeiros-form',
@@ -47,6 +49,32 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.listaDetalheDespesas = res;
       //this.openModal(this.modalDetalheDespesasMensais);
     });
+  }
+
+  /* Receitas Fixas Mensais*/
+
+  excluirReceita(receita: any) {
+    console.log(receita)
+    let checkReceita = document.getElementById('tabela-thiago');
+/*
+    let checkBoxes = document.getElementsByClassName("check")
+    let noCheckedBoxes = true
+*/
+    let arr = receita;
+
+    for (var index in arr) {
+      alert(index); // prints indexes: 0, 1, 2, 3
+    }
+
+
+    /*for (let i = 0; i < checkBoxes.length; ++i) {
+      if (checkBoxes[i].checked) {
+        noCheckedBoxes = false
+      }
+    }
+    if (noCheckedBoxes) {
+      checkBoxes[0].checked = true
+    }*/
   }
 
   abrirDespesa(despesa: LancamentosMensais) {

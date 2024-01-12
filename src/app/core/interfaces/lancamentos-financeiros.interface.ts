@@ -12,6 +12,7 @@ export interface LancamentosFinanceiros{
     vlSaldoInicialMes: string;
     pcUtilizacaoDespesasMes: string;
     labelQuitacaoParcelasMes: string;
+    statusSaldoMes: string;
     despesasFixasMensais: DespesasFixasMensais[];
     lancamentosMensais: LancamentosMensais[];
 }

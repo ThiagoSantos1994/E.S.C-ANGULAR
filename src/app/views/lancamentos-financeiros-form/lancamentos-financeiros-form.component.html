@@ -129,8 +129,15 @@
               <div class="col mr-1">
                 <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Saldo Disponível
                 </div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">R$
-                  {{lancamentosFinanceiros$.vlSaldoDisponivelMes}}</div>
+                <div *ngIf="lancamentosFinanceiros$.statusSaldoMes == 'Negativo'"
+                  class="h5 mb-0 font-weight-bold text-danger">
+                  R$ {{lancamentosFinanceiros$.vlSaldoDisponivelMes}}
+                </div>
+
+                <div *ngIf="lancamentosFinanceiros$.statusSaldoMes == 'Positivo'"
+                  class="h5 mb-0 font-weight-bold text-gray-800">R$
+                  {{lancamentosFinanceiros$.vlSaldoDisponivelMes}}
+                </div>
               </div>
               <div class="col-auto">
                 <i class="fa fa-pie-chart fa-2x text-gray-300"></i>
@@ -140,6 +147,13 @@
         </div>
       </div>
     </div>
+
+    <div class="labelQuitacaoMes">
+      <span class="badge badge-info rounded-pill d-inline">
+        <i class="fas fa-bullhorn"></i>
+      </span>
+      <span> {{lancamentosFinanceiros$.labelQuitacaoParcelasMes}}</span>
+    </div>
   </header>
 
   <body class="body">
@@ -148,7 +162,7 @@
         <div class="row">
           <!-- Tabela Lancamentos Fixos Mensais -->
           <div class="col-sm-4">
-            <table class="table table-receita">
+            <table id="tabela-thiago" class="table table-receita">
               <thead class="thead-light">
                 <tr>
                   <th></th>
@@ -161,7 +175,7 @@
                 <tr *ngFor="let despesasFixas of lancamentosFinanceiros$.despesasFixasMensais">
                   <th>
                     <label class="customcheckbox">
-                      <input type="checkbox" class="listCheckboxReceita">
+                      <input type="checkbox" class="checkBoxReceita">
                       <span class="checkmark"></span>
                     </label>
                   </th>
@@ -187,7 +201,7 @@
                   </td>
 
                   <td>
-                    <span *ngIf="despesasFixas.tpStatus == '+'" class="badge badge-success rounded-pill d-inline"><i
+                    <span *ngIf="despesasFixas.tpStatus == '+'" (click)="excluirReceita(tabela-thiago)" class="badge badge-success rounded-pill d-inline"><i
                         class="fas fa-plus"></i></span>
                     <span *ngIf="despesasFixas.tpStatus == '-'" class="badge badge-danger rounded-pill d-inline"><i
                         class="fas fa-minus"></i></span>
@@ -204,7 +218,7 @@
                         <i class="fas fa-plus"></i> Adicionar
                       </button>
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
-                        role="button">
+                        role="button" (click)="excluirReceita(despesasFixas)">
                         <i class="fas fa-trash-alt"></i> Excluir
                       </button>
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #7b6d88;" href="#!"
@@ -251,24 +265,37 @@
 
                   <td>
                     <span *ngIf="despesa.tpLinhaSeparacao == 'N'">
-                      <span>{{ despesa.vlTotalDespesa}}</span>
+                      <span>{{ despesa.svlTotalDespesa}}</span>
                     </span>
                   </td>
 
-                  <td class="text-right">
-                    <span *ngIf="despesa.tpLinhaSeparacao == 'N'" class="text-success">
+                  <td class="text-right" *ngIf="despesa.tpLinhaSeparacao == 'N'">
+                    <span class="text-info" *ngIf="despesa.statusPercentual == 'Baixo'">
                       <i class="fas fa-caret-down me-1"></i><span>{{ despesa.percentualUtilizacao}}</span>
+                    </span>
+                    <span class="text-success" *ngIf="despesa.statusPercentual == 'Medio'">
+                      <i class="fas fa-caret-down me-1"></i><span>{{ despesa.percentualUtilizacao}}</span>
+                    </span>
+                    <span class="text-warning" *ngIf="despesa.statusPercentual == 'Alto'">
+                      <i class="fas fa-caret-up me-1"></i><span>{{ despesa.percentualUtilizacao}}</span>
+                    </span>
+                    <span class="text-danger" *ngIf="despesa.statusPercentual == 'Altissimo'">
+                      <i class="fas fa-caret-up me-1"></i><span>{{ despesa.percentualUtilizacao}}</span>
                     </span>
                   </td>
 
                   <td class="font-weight-bold">{{ despesa.dsTituloDespesa }}</td>
 
                   <td>
-                    <span *ngIf="despesa.tpLinhaSeparacao == 'N'" class="badge badge-warning rounded-pill d-inline">Á
-                      Pagar</span>
+                    <span *ngIf="despesa.statusPagamento == 'Pendente'"
+                      class="badge badge-warning rounded-pill d-inline">Á Pagar
+                    </span>
+                    <span *ngIf="despesa.statusPagamento == 'Pago'"
+                      class="badge badge-success rounded-pill d-inline">Pago
+                    </span>
                   </td>
 
-                  <td>{{ despesa.vlTotalDespesaPaga }}</td>
+                  <td>{{ despesa.svlTotalDespesaPaga }}</td>
 
                   <td>
                     <button *ngIf="despesa.tpLinhaSeparacao == 'N'" type="button" class="btn btn-link btn-sm px-0"
@@ -285,7 +312,7 @@
                   <br>
                   <div class="d-grid gap-2 d-md-block btn-group-sm">
                     <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
-                      data-toggle="modal" data-target="#ModalDetalheDespesasMensais" (click)="abrirDespesa(despesa)">
+                      data-toggle="modal" data-target="#ModalDetalheDespesasMensais" (click)="adicionarDespesaMensal(despesa)">
                       <i class="fas fa-plus"></i> Nova Despesa
                     </button>
                     <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
@@ -319,6 +346,7 @@
       </div>
     </div>
   </body>
+
 
   <div class="container d-flex justify-content-center">
     <div id="ModalDetalheDespesasMensais" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
