@@ -83,10 +83,11 @@
   }
 
   .table-receita {
-    width: 105%;
-    max-width: 105%;
+    width: 110%;
+    max-width: 107%;
     margin-bottom: 1rem;
     background-color: #f8f9fa;
+    font-size: 93%;
   }
 
   .table-despesas {
@@ -94,6 +95,7 @@
     max-width: 100%;
     margin-bottom: 1rem;
     background-color: #f8f9fa;
+    
   }
 
   .table-detalhe-despesas {
@@ -272,6 +274,7 @@
     font-size: .875rem;
     line-height: 1.5;
     border-radius: 0.2rem;
+    margin: 1%;
   }
 
   .btn-link {
@@ -298,6 +301,10 @@
     text-align: right !important;
   }
 
+  .coluna-acoes-receita {
+
+  }
+
   .row {
     margin-right: -8px;
   }
@@ -308,6 +315,14 @@
     max-width: 66.666667%;
     padding-right: 0.6%;
     padding-left: 3%;
+  }
+
+  .font-color-receita-positiva {
+    color: rgb(66, 165, 57);
+  }
+
+  .font-color-receita-negativa {
+    color: rgb(204, 65, 30);
   }
 
   .font-color-receita-anotacao {
@@ -342,4 +357,10 @@
   element.style {
     display: block;
     padding-right: 0px;
+  }
+
+  .modalConfirmacaoExcluirReceita {
+    text-align: center;
+    width: 55%;
+    margin: 1.75rem auto;
   }

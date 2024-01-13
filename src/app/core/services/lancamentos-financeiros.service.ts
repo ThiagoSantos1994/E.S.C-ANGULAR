@@ -33,8 +33,22 @@ export class LancamentosFinanceirosService {
     //let headers = new HttpHeaders().append('Authorization', this.token.getToken());
 
     return this.http.get<DetalheLancamentosMensais>(`springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/consultar/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/${ordemExibicao}`/*, { headers: headers }*/)
-       .pipe(map((response) => { return response }),
+      .pipe(map((response) => { return response }),
         catchError(this.handleError));
+  }
+
+  atualizarOrdemLinhaReceita(idDespesa: number, iOrdemAtual: number, iNovaOrdem: number) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/alterarOrdemRegistroDespesasFixas/${idDespesa}/${iOrdemAtual}/${iNovaOrdem}/${this.sessao.getIdLogin()}`;
+    return this.http.post(url, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  excluirReceita(idDespesa: number, iOrdemReceita: number) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/despesasFixasMensais/excluir/${idDespesa}/${iOrdemReceita}/${this.sessao.getIdLogin()}`;
+    return this.http.post(url, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
   }
 
   private handleError(error: HttpErrorResponse) {
