@@ -222,8 +222,9 @@
                       title="Editar receita">
                       <i class="fas fa-edit"></i>
                     </button>
-                    <button type="button" class="btn btn-link btn-sm px-0" data-toggle="modal" data-target="#modalConfirmacaoExcluirReceita" 
-                      title="Excluir receita" (click)="setReceitaSelecionada(despesasFixas)">
+                    <button type="button" class="btn btn-link btn-sm px-0" data-toggle="modal"
+                      data-target="#modalConfirmacaoExcluirReceita" title="Excluir receita"
+                      (click)="setReceitaSelecionada(despesasFixas)">
                       <i class="far fa-calendar-times"></i>
                     </button>
                     <button type="button" class="btn btn-link btn-sm px-0" title="Subir item"
@@ -241,8 +242,8 @@
                     <br>
                     <div class="d-grid gap-2 d-md-block btn-group-sm">
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" href="#!"
-                        role="button">
-                        <i class="fas fa-plus"></i> Adicionar Receita
+                        role="button" data-toggle="modal" data-target="#modalNovaReceita">
+                        <i class="fas fa-plus"></i> Nova Receita
                       </button>
                     </div>
                   <td></td>
@@ -253,7 +254,7 @@
           </div>
 
           <div class="col-sm-8">
-            <table class="table table-despesas">
+            <table class="table table-despesas" id="tableDespesasMensais">
               <thead class="thead-light">
                 <tr>
                   <th></th>
@@ -328,7 +329,7 @@
                       <i class="fas fa-plus"></i> Nova Despesa
                     </button>
                     <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
-                      role="button">
+                      role="button" (click)="excluirDespesaMensal(despesa)">
                       <i class="fas fa-trash-alt"></i> Excluir Despesa
                     </button>
                     <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
@@ -578,8 +579,59 @@
       </div>
     </div>
 
+    <!--Modal criar nova receita-->
+    <form [formGroup]="modalNovaReceitaForm">
+      <div class="form-group modal fade" id="modalNovaReceita">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content modalNovaReceita">
+            <!--<div class="modal-header">
+              <div class="col-auto">
+                <i class="fa fa-plus" style="font-size:24px"></i>
+              </div>
+
+              <h6>Adicionar Receita Mensal</h6>
+
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>-->
+            
+            <div class="form-group modal-body">
+              <label>Titulo da Receita:</label>
+              <input class="form-control form-control-sm" type="text" formControlName="nomeReceita"
+                placeholder="Ex: Convênio médico">
+
+              <label>Valor R$:</label>
+              <input class="form-control form-control-sm" type="number" formControlName="valorReceita"
+                placeholder="Ex: 500,00">
+
+              <label for="exampleFormControlSelect1">Categoria</label>
+              <select class="form-control form-control-sm" formControlName="tipoReceita">
+                <option value="+">Receita ( + )</option>
+                <option value="-">Despesa ( - )</option>
+                <option value="< X >">Linha Separacao</option>
+                <option value="< i >">Informacao ( i )</option>
+                <option value="P(+)">Poupança Positiva ( P+ )</option>
+                <option value="P(-)">Poupança Negativa ( P- )</option>
+              </select>
+              
+              
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;" (click)="gravarReceita()">
+                <i class="fas fa-plus"></i> Salvar
+              </button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
     <!--Modal Confirmacao Exclusao Receita-->
-    <div class="modal fade" id="modalConfirmacaoExcluirReceita" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modalConfirmacaoExcluirReceita" tabindex="-1" role="dialog"
+      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content modalConfirmacaoExcluirReceita">
           <div class="modal-header">

@@ -7,6 +7,7 @@ import { TokenService } from './token.service';
 import { LancamentosFinanceiros } from '../interfaces/lancamentos-financeiros.interface';
 import { LancamentosFinanceirosDomain } from '../domain/lancamentos-financeiros.domain';
 import { DetalheLancamentosMensais } from '../interfaces/lancamentos-mensais-detalhe.interface';
+import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class LancamentosFinanceirosService {
     private sessao: SessaoService,
     private lancamentosFinanceirosDomain: LancamentosFinanceirosDomain
   ) { }
+
 
   getLancamentosFinanceiros(mes: String, ano: String): Observable<LancamentosFinanceiros> {
     //let headers = new HttpHeaders().append('Authorization', this.token.getToken());
@@ -44,13 +46,20 @@ export class LancamentosFinanceirosService {
     );
   }
 
+  gravarReceita(receita: DespesasFixasMensais) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/despesasFixasMensais/gravar`;
+    return this.http.post(url, receita).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   excluirReceita(idDespesa: number, iOrdemReceita: number) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/despesasFixasMensais/excluir/${idDespesa}/${iOrdemReceita}/${this.sessao.getIdLogin()}`;
     return this.http.post(url, {}).pipe(
       catchError(error => this.handleError(error))
     );
   }
-
+  
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('Ocorreu um erro:', error.error.message);
