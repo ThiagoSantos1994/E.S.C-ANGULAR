@@ -162,7 +162,7 @@
         <div class="row">
           <!-- Tabela Lancamentos Fixos Mensais -->
           <div class="col-sm-4">
-            <table id="tabela-thiago" class="table table-receita">
+            <table class="table table-receita">
               <thead class="thead-light">
                 <tr>
                   <th scope="col">Descrição Receita</th>
@@ -195,6 +195,16 @@
                       {{despesasFixas.dsDescricao }}
                     </span>
 
+                    <span *ngIf="despesasFixas.tpStatus == 'P(+)'" class="font-color-poupanca-positiva">
+                      <i class="fa fa-key"></i>
+                      {{despesasFixas.dsDescricao }}
+                    </span>
+
+                    <span *ngIf="despesasFixas.tpStatus == 'P(-)'" class="font-color-poupanca-negativa">
+                      <i class="fa fa-key"></i>
+                      {{despesasFixas.dsDescricao }}
+                    </span>
+
                     <span *ngIf="despesasFixas.tpStatus == '< X >'" class="font-color-linha-separacao">
                       {{ despesasFixas.dsDescricao }}
                     </span>
@@ -210,6 +220,12 @@
                     <span *ngIf="despesasFixas.tpStatus == '< X >'" class="font-color-linha-separacao">
                       {{ despesasFixas.vlTotal }}
                     </span>
+                    <span *ngIf="despesasFixas.tpStatus == 'P(+)'" class="font-color-poupanca-positiva">
+                      {{ despesasFixas.vlTotal }}
+                    </span>
+                    <span *ngIf="despesasFixas.tpStatus == 'P(-)'" class="font-color-poupanca-negativa">
+                      {{ despesasFixas.vlTotal }}
+                    </span>
                   </td>
 
                   <td class="text-left">
@@ -218,8 +234,8 @@
                       <i class="fas fa-edit"></i>
                     </button>
                     <button *ngIf="despesasFixas.tpStatus != '< X >'" type="button" class="btn btn-link btn-sm px-0"
-                      data-toggle="modal" data-target="#ModalDetalheDespesasMensais" (click)="abrirDespesa(despesa)"
-                      title="Editar receita">
+                      data-toggle="modal" data-target="#modalCriarEditarReceita"
+                      (click)="editarReceitaSelecionada(despesasFixas)" title="Editar receita">
                       <i class="fas fa-edit"></i>
                     </button>
                     <button type="button" class="btn btn-link btn-sm px-0" data-toggle="modal"
@@ -242,7 +258,8 @@
                     <br>
                     <div class="d-grid gap-2 d-md-block btn-group-sm">
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" href="#!"
-                        role="button" data-toggle="modal" data-target="#modalNovaReceita">
+                        role="button" data-toggle="modal" (click)="resetModalCriarEditarReceita()"
+                        data-target="#modalCriarEditarReceita">
                         <i class="fas fa-plus"></i> Nova Receita
                       </button>
                     </div>
@@ -480,7 +497,7 @@
                     </div>
 
                     <div class="col-sm-8-detalhe-despesas scrollme-detalhe-despesas">
-                      <table class="table table-detalhe-despesas">
+                      <table class="table table-detalhe-despesas table-bordered">
                         <thead class="thead-light">
                           <tr>
                             <th></th>
@@ -579,33 +596,21 @@
       </div>
     </div>
 
-    <!--Modal criar nova receita-->
-    <form [formGroup]="modalNovaReceitaForm">
-      <div class="form-group modal fade" id="modalNovaReceita">
+    <!--Modal editar receita-->
+    <form [formGroup]="modalCriarEditarReceitaForm">
+      <div class="form-group modal fade" id="modalCriarEditarReceita">
         <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content modalNovaReceita">
-            <!--<div class="modal-header">
-              <div class="col-auto">
-                <i class="fa fa-plus" style="font-size:24px"></i>
-              </div>
-
-              <h6>Adicionar Receita Mensal</h6>
-
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>-->
-            
+          <div class="modal-content modalCriarEditarReceita">
             <div class="form-group modal-body">
               <label>Titulo da Receita:</label>
               <input class="form-control form-control-sm" type="text" formControlName="nomeReceita"
                 placeholder="Ex: Convênio médico">
 
               <label>Valor R$:</label>
-              <input class="form-control form-control-sm" type="number" formControlName="valorReceita"
+              <input class="form-control form-control-sm" type="text" formControlName="valorReceita"
                 placeholder="Ex: 500,00">
 
-              <label for="exampleFormControlSelect1">Categoria</label>
+              <label>Categoria</label>
               <select class="form-control form-control-sm" formControlName="tipoReceita">
                 <option value="+">Receita ( + )</option>
                 <option value="-">Despesa ( - )</option>
@@ -614,12 +619,19 @@
                 <option value="P(+)">Poupança Positiva ( P+ )</option>
                 <option value="P(-)">Poupança Negativa ( P- )</option>
               </select>
-              
-              
+
+              <div class="row">
+                <div class="form-check-inline checkBoxCadReceita">
+                  <input class="form-check-input" type="checkbox" formControlName="checkDespesaObrigatoria">
+                  <label class="form-check-label" for="inlineCheckbox1"
+                    style="font-size: smaller; color: #a7444e!important" title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">*Despesa\Receita obrigatória.</label>
+                </div>
+              </div>
             </div>
 
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;" (click)="gravarReceita()">
+              <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
+                (click)="gravarReceita()">
                 <i class="fas fa-plus"></i> Salvar
               </button>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>

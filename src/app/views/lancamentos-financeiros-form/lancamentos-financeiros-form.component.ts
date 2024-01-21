@@ -17,7 +17,7 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
 export class LancamentosFinanceirosFormComponent implements OnInit {
 
   lancamentosForm: FormGroup;
-  modalNovaReceitaForm: FormGroup;
+  modalCriarEditarReceitaForm: FormGroup;
 
   listaDetalheDespesas: DetalheLancamentosMensais;
   lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]> = new Observable<LancamentosFinanceiros[]>();
@@ -28,19 +28,21 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   modalReference: any;
 
   @ViewChild('modalDetalheDespesasMensais') modalDetalheDespesasMensais: any;
+  @ViewChild('modalCriarEditarReceita') modalCriarEditarReceita: any;
 
   constructor(
     private formBuilder: FormBuilder,
     private sessao: SessaoService,
     private lancamentosService: LancamentosFinanceirosService,
-    private modalService: NgbModal
+    //private modalService: NgbModal
   ) { }
 
   ngOnInit() {
-    this.modalNovaReceitaForm = this.formBuilder.group({
+    this.modalCriarEditarReceitaForm = this.formBuilder.group({
       nomeReceita: ['', Validators.required],
       valorReceita: ['', Validators.required],
-      tipoReceita: ['', Validators.required]
+      tipoReceita: ['', Validators.required],
+      checkDespesaObrigatoria: ['']
     })
     this.carregarLancamentosFinanceiros();
   }
@@ -82,36 +84,58 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   setReceitaSelecionada(receita: DespesasFixasMensais) {
+    this.despesasFixasMensaisTemp = null;
     this.despesasFixasMensaisTemp = receita;
+  }
+
+  editarReceitaSelecionada(receita: DespesasFixasMensais) {
+    this.setReceitaSelecionada(receita);
+    this.modalCriarEditarReceitaForm.setValue({
+      nomeReceita: receita.dsDescricao,
+      valorReceita: receita.vlTotal,
+      tipoReceita: receita.tpStatus,
+      checkDespesaObrigatoria: (receita.tpFixasObrigatorias == "S" ? true : false)
+    });
+  }
+
+  resetModalCriarEditarReceita() {
+    this.despesasFixasMensaisTemp = null;
+    this.modalCriarEditarReceitaForm.setValue({
+      nomeReceita: '',
+      valorReceita: '',
+      tipoReceita: '+',
+      checkDespesaObrigatoria: true
+    });
   }
 
   gravarReceita() {
     let mes = <HTMLInputElement>document.getElementById("cbMes");
     let ano = <HTMLInputElement>document.getElementById("cbAno");
+    let checkDespesaObrigatoria = this.modalCriarEditarReceitaForm.get('checkDespesaObrigatoria').value;
+    let ordem = (null != this.despesasFixasMensaisTemp ? this.despesasFixasMensaisTemp.idOrdem : null);
 
     let request: DespesasFixasMensais = {
       idDespesa: this.idDespesaRef,
-      dsDescricao: this.modalNovaReceitaForm.get('nomeReceita').value,
-      vlTotal: this.modalNovaReceitaForm.get('valorReceita').value,
-      tpStatus: this.modalNovaReceitaForm.get('tipoReceita').value,
+      dsDescricao: this.modalCriarEditarReceitaForm.get('nomeReceita').value,
+      vlTotal: this.modalCriarEditarReceitaForm.get('valorReceita').value,
+      tpStatus: this.modalCriarEditarReceitaForm.get('tipoReceita').value,
       dsMes: mes.value,
       dsAno: ano.value,
       idFuncionario: Number(this.sessao.getIdLogin()),
-      idOrdem: null,
-      tpFixasObrigatorias: 'S',
+      idOrdem: ordem,
+      tpFixasObrigatorias: (checkDespesaObrigatoria == true ? 'S' : 'N'),
       tpDespesaDebitoCartao: 'N'
     };
 
     this.lancamentosService.gravarReceita(request).toPromise().then(res => {
-      this.despesasFixasMensaisTemp = null;
-      alert('Item gravado com sucesso!')
+      this.resetModalCriarEditarReceita();
       this.carregarDespesas();
+      alert('Item gravado com sucesso!')
     },
       err => {
         alert("Desculpe, ocorreu um erro no servidor. Tente novamente!")
         console.log(err);
       });
-
   }
 
   excluirReceita() {
@@ -119,8 +143,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     this.lancamentosService.excluirReceita(receita.idDespesa, receita.idOrdem).toPromise().then(res => {
       this.despesasFixasMensaisTemp = null;
-      alert('Item Excluido com Sucesso!')
       this.carregarDespesas();
+      alert('Item Excluido com Sucesso!')
     },
       err => {
         /*if (err.status == 401) {
@@ -156,13 +180,13 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     alert('excluindo')
   }
 
-  openModal(content) {
+  /*openModal(content) {
     this.modalReference = this.modalService.open(content, { size: 'lg', backdrop: 'static' });
   }
 
   closeModal() {
     this.modalReference.close();
-  }
+  }*/
 
-  
+
 }

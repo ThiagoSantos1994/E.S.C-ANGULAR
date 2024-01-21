@@ -95,7 +95,7 @@
     max-width: 100%;
     margin-bottom: 1rem;
     background-color: #f8f9fa;
-    
+
   }
 
   .table-detalhe-despesas {
@@ -301,9 +301,6 @@
     text-align: right !important;
   }
 
-  .coluna-acoes-receita {
-
-  }
 
   .row {
     margin-right: -8px;
@@ -327,6 +324,14 @@
 
   .font-color-receita-anotacao {
     color: darkgray;
+  }
+
+  .font-color-poupanca-positiva {
+    color: #3b6bd3;
+  }
+
+  .font-color-poupanca-negativa {
+    color: #ee5569;
   }
 
   .font-color-linha-separacao {
@@ -365,9 +370,16 @@
     margin: 1.75rem auto;
   }
 
-  .modalNovaReceita{
+  .modalCriarEditarReceita {
     text-align: center;
     width: 35%;
     margin: 1.75rem auto;
   }
-  
+
+  .checkBoxCadReceita {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 15px;
+    margin-right: 0.75rem;
+    padding-top: 6px;
+  }
