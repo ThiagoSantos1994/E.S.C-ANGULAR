@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { DespesasFixasMensais } from 'src/app/core/interfaces/despesas-fixas-mensais.interface';
 import { LancamentosFinanceiros } from 'src/app/core/interfaces/lancamentos-financeiros.interface';
 import { DetalheLancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais-detalhe.interface';
@@ -21,20 +21,25 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   listaDetalheDespesas: DetalheLancamentosMensais;
   lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]> = new Observable<LancamentosFinanceiros[]>();
+  private _despesasCheckbox = new BehaviorSubject<LancamentosMensais[]>([]);
 
   idDespesaRef: number;
-  despesasFixasMensaisTemp: DespesasFixasMensais;
+  receitaSelecionada: DespesasFixasMensais;
   tituloDespesa: String = "";
-  modalReference: any;
 
-  @ViewChild('modalDetalheDespesasMensais') modalDetalheDespesasMensais: any;
-  @ViewChild('modalCriarEditarReceita') modalCriarEditarReceita: any;
+  @ViewChild('modalDetalheDespesasMensais') modalDetalheDespesasMensais;
+  @ViewChild('modalCriarEditarReceita') modalCriarEditarReceita;
+  @ViewChild('modalConfirmacaoExcluirReceita') modalConfirmacaoExcluirReceita;
+  @ViewChild('modalConfirmacaoExcluirDespesa') modalConfirmacaoExcluirDespesa;
+  @ViewChild('modalConfirmacaoQuitarDespesas') modalConfirmacaoQuitarDespesas;
+
+  modalRef: BsModalRef;
 
   constructor(
     private formBuilder: FormBuilder,
     private sessao: SessaoService,
     private lancamentosService: LancamentosFinanceirosService,
-    //private modalService: NgbModal
+    private modalService: BsModalService
   ) { }
 
   ngOnInit() {
@@ -43,11 +48,18 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       valorReceita: ['', Validators.required],
       tipoReceita: ['', Validators.required],
       checkDespesaObrigatoria: ['']
-    })
+    });
+
+    /*this.modalConfirmacaoQuitarDespesas = this.formBuilder.group({
+      observacaoPagamento: ['testee']
+    });*/
+
     this.carregarLancamentosFinanceiros();
   }
 
   carregarDespesas() {
+    this.receitaSelecionada = null;
+    this.resetDespesasCheckbox();
     this.carregarLancamentosFinanceiros();
   }
 
@@ -64,7 +76,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   carregarDetalheDespesas(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
     this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
       this.listaDetalheDespesas = res;
-      //this.openModal(this.modalDetalheDespesasMensais);
     });
   }
 
@@ -84,8 +95,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   setReceitaSelecionada(receita: DespesasFixasMensais) {
-    this.despesasFixasMensaisTemp = null;
-    this.despesasFixasMensaisTemp = receita;
+    this.receitaSelecionada = receita;
   }
 
   editarReceitaSelecionada(receita: DespesasFixasMensais) {
@@ -99,7 +109,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   resetModalCriarEditarReceita() {
-    this.despesasFixasMensaisTemp = null;
+    this.receitaSelecionada = null;
     this.modalCriarEditarReceitaForm.setValue({
       nomeReceita: '',
       valorReceita: '',
@@ -112,7 +122,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let mes = <HTMLInputElement>document.getElementById("cbMes");
     let ano = <HTMLInputElement>document.getElementById("cbAno");
     let checkDespesaObrigatoria = this.modalCriarEditarReceitaForm.get('checkDespesaObrigatoria').value;
-    let ordem = (null != this.despesasFixasMensaisTemp ? this.despesasFixasMensaisTemp.idOrdem : null);
+    let ordem = (null != this.receitaSelecionada ? this.receitaSelecionada.idOrdem : null);
 
     let request: DespesasFixasMensais = {
       idDespesa: this.idDespesaRef,
@@ -130,7 +140,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.gravarReceita(request).toPromise().then(res => {
       this.resetModalCriarEditarReceita();
       this.carregarDespesas();
-      alert('Item gravado com sucesso!')
     },
       err => {
         alert("Desculpe, ocorreu um erro no servidor. Tente novamente!")
@@ -138,18 +147,19 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       });
   }
 
-  excluirReceita() {
-    const receita = this.despesasFixasMensaisTemp;
+  onReceitaSelecionada(receita: DespesasFixasMensais) {
+    this.setReceitaSelecionada(receita);
+    this.modalRef = this.modalService.show(this.modalConfirmacaoExcluirReceita);
+  }
+
+  confirmExcluirReceita() {
+    const receita = this.receitaSelecionada;
 
     this.lancamentosService.excluirReceita(receita.idDespesa, receita.idOrdem).toPromise().then(res => {
-      this.despesasFixasMensaisTemp = null;
+      this.closeModal();
       this.carregarDespesas();
-      alert('Item Excluido com Sucesso!')
     },
       err => {
-        /*if (err.status == 401) {
-          this.open(this.modalUsuarioInvalido);
-        }*/
         console.log(err);
       });
   }
@@ -159,9 +169,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.carregarDespesas();
     },
       err => {
-        /*if (err.status == 401) {
-          this.open(this.modalUsuarioInvalido);
-        }*/
         console.log(err);
       });
   }
@@ -172,21 +179,77 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.carregarDetalheDespesas(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao);
   }
 
+  onQuitarDespesa() {
+    this.modalRef = this.modalService.show(this.modalConfirmacaoQuitarDespesas);
+  }
+
+  confirmQuitarDespesas() {
+    const despesas = this.getDespesasChecked();
+
+    despesas.forEach((d) => {
+      alert("idDespesa" + d.idDespesa + "idDetalheDespesa" + d.idDetalheDespesa);
+    })
+  }
+
   adicionarDespesaMensal() {
     alert('Adicionando')
   }
 
-  excluirDespesaMensal() {
-    alert('excluindo')
+  onExcluirDespesa() {
+    this.modalRef = this.modalService.show(this.modalConfirmacaoExcluirDespesa);
   }
 
-  /*openModal(content) {
-    this.modalReference = this.modalService.open(content, { size: 'lg', backdrop: 'static' });
+  confirmExcluirDespesas() {
+    const despesas = this.getDespesasChecked();
+
+    despesas.forEach((despesa) => {
+      this.lancamentosService.excluirDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao).toPromise().then(res => { },
+        err => {
+          console.log(err);
+        });
+
+      this.lancamentosService.excluirDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao).toPromise().then(res => { },
+        err => {
+          console.log(err);
+        });
+    })
+
+    this.closeModal();
+    this.carregarDespesas();
   }
 
-  closeModal() {
-    this.modalReference.close();
+  closeModal(): void {
+    this.modalRef.hide();
+  }
+
+  onCheckDespesaChange(checked, despesa) {
+    despesa.checked = checked;
+
+    const despesas = this._despesasCheckbox.getValue();
+    const index = despesas.findIndex((d) => d.idDetalheDespesa === despesa.idDetalheDespesa);
+
+    if (index >= 0) {
+      //despesas.slice(index, 1); quando for para alterar o objeto inteiro
+      despesas[index].checked = false;
+    } else {
+      despesas.push({ ...despesa });
+    }
+
+    this._despesasCheckbox.next(despesas);
+  }
+
+  getDespesasChecked() {
+    return this._despesasCheckbox.getValue().filter((d) => d.checked === true);
+  }
+
+  resetDespesasCheckbox() {
+    this._despesasCheckbox.next([]);
+    /*const despesas = this._despesasCheckbox.getValue();
+    despesas.forEach((d) => d.checked = false);
+    this.set(despesas);*/
+  }
+
+  /*set(despesas: LancamentosMensais[]) {
+    this._despesasCheckbox.next(despesas);
   }*/
-
-
 }

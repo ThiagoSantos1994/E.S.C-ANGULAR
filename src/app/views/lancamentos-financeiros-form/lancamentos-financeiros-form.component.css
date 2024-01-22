@@ -363,13 +363,7 @@
     display: block;
     padding-right: 0px;
   }
-
-  .modalConfirmacaoExcluirReceita {
-    text-align: center;
-    width: 55%;
-    margin: 1.75rem auto;
-  }
-
+  
   .modalCriarEditarReceita {
     text-align: center;
     width: 35%;

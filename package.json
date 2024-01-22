@@ -26,6 +26,7 @@
     "jquery": "^3.7.1",
     "jwt-decode": "^2.2.0",
     "ng-bootstrap": "^1.6.3",
+    "ngx-bootstrap": "^3.0.1",
     "rxjs": "^6.0.0",
     "zone.js": "^0.8.26"
   },

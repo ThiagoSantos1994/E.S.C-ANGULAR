@@ -20,4 +20,5 @@ export interface LancamentosMensais{
     tpRelatorio: string;
     tpReferenciaSaldoMesAnterior: string;
     tpDespesaCompartilhada: string;
+    checked?: boolean;
 }
