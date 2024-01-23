@@ -1,7 +1,9 @@
+import { formatDate } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
 import { DespesasFixasMensais } from 'src/app/core/interfaces/despesas-fixas-mensais.interface';
 import { LancamentosFinanceiros } from 'src/app/core/interfaces/lancamentos-financeiros.interface';
 import { DetalheLancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais-detalhe.interface';
@@ -16,24 +18,24 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
 })
 export class LancamentosFinanceirosFormComponent implements OnInit {
 
-  lancamentosForm: FormGroup;
-  modalCriarEditarReceitaForm: FormGroup;
-
-  listaDetalheDespesas: DetalheLancamentosMensais;
-  lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]> = new Observable<LancamentosFinanceiros[]>();
+  private lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]> = new Observable<LancamentosFinanceiros[]>();
   private _despesasCheckbox = new BehaviorSubject<LancamentosMensais[]>([]);
+  private detalheLancamentos: DetalheLancamentosMensais;
 
-  idDespesaRef: number;
-  receitaSelecionada: DespesasFixasMensais;
-  tituloDespesa: String = "";
+  private lancamentosForm: FormGroup;
+  private modalCriarEditarReceitaForm: FormGroup;
+  private modalConfirmacaoQuitarDespesasForm: FormGroup;
+  private modalRef: BsModalRef;
+
+  private despesaReferencia: number;
+  private receitaSelecionada: DespesasFixasMensais;
+  private tituloDespesa: String = "";
 
   @ViewChild('modalDetalheDespesasMensais') modalDetalheDespesasMensais;
   @ViewChild('modalCriarEditarReceita') modalCriarEditarReceita;
   @ViewChild('modalConfirmacaoExcluirReceita') modalConfirmacaoExcluirReceita;
   @ViewChild('modalConfirmacaoExcluirDespesa') modalConfirmacaoExcluirDespesa;
   @ViewChild('modalConfirmacaoQuitarDespesas') modalConfirmacaoQuitarDespesas;
-
-  modalRef: BsModalRef;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -50,9 +52,9 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       checkDespesaObrigatoria: ['']
     });
 
-    /*this.modalConfirmacaoQuitarDespesas = this.formBuilder.group({
-      observacaoPagamento: ['testee']
-    });*/
+    this.modalConfirmacaoQuitarDespesasForm = this.formBuilder.group({
+      observacaoPagamento: ['']
+    });
 
     this.carregarLancamentosFinanceiros();
   }
@@ -69,13 +71,13 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     this.lancamentosService.getLancamentosFinanceiros(mes.value, ano.value).subscribe((res: any) => {
       this.lancamentosFinanceiros$ = res;
-      this.idDespesaRef = res.idDespesa;
+      this.despesaReferencia = res.idDespesa;
     });
   }
 
   carregarDetalheDespesas(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
     this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
-      this.listaDetalheDespesas = res;
+      this.detalheLancamentos = res;
     });
   }
 
@@ -125,7 +127,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let ordem = (null != this.receitaSelecionada ? this.receitaSelecionada.idOrdem : null);
 
     let request: DespesasFixasMensais = {
-      idDespesa: this.idDespesaRef,
+      idDespesa: this.despesaReferencia,
       dsDescricao: this.modalCriarEditarReceitaForm.get('nomeReceita').value,
       vlTotal: this.modalCriarEditarReceitaForm.get('valorReceita').value,
       tpStatus: this.modalCriarEditarReceitaForm.get('tipoReceita').value,
@@ -173,6 +175,15 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       });
   }
 
+  atualizarOrdemLinhaDespesaService(idDespesa: number, iOrdemAtual: number, iNovaOrdem) {
+    this.lancamentosService.atualizarOrdemLinhaDespesa(idDespesa, iOrdemAtual, iNovaOrdem).toPromise().then(res => {
+      this.carregarDespesas();
+    },
+      err => {
+        console.log(err);
+      });
+  }
+
   abrirDespesa(despesa: LancamentosMensais) {
     console.log(despesa);
     this.tituloDespesa = despesa.dsTituloDespesa;
@@ -180,15 +191,59 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   onQuitarDespesa() {
-    this.modalRef = this.modalService.show(this.modalConfirmacaoQuitarDespesas);
+    const despesas = this.getDespesasChecked();
+
+    if (despesas.length === 0) {
+      alert("Necessário marcar alguma despesa para pagar.");
+    } else {
+      this.modalRef = this.modalService.show(this.modalConfirmacaoQuitarDespesas);
+
+      this.modalConfirmacaoQuitarDespesasForm.setValue({
+        observacaoPagamento: 'Pagamento realizado em ' + this.getDataAtual()
+      });
+    }
   }
 
   confirmQuitarDespesas() {
     const despesas = this.getDespesasChecked();
 
+    let checkDespesaObrigatoria = this.modalConfirmacaoQuitarDespesasForm.get('observacaoPagamento').value;
+
     despesas.forEach((d) => {
-      alert("idDespesa" + d.idDespesa + "idDetalheDespesa" + d.idDetalheDespesa);
+      alert("idDespesa" + d.idDespesa + "idDetalheDespesa" + checkDespesaObrigatoria);
     })
+  }
+
+  onNovaLinhaSeparacao() {
+    let request: DespesaMensal = {
+      idDespesa: this.despesaReferencia,
+      idDetalheDespesa: -1,
+      tpReprocessar: 'N',
+      tpLinhaSeparacao: 'S',
+      idFuncionario: Number(this.sessao.getIdLogin()),
+      tpDespesaCompartilhada: 'N'
+    };
+
+    this.lancamentosService.gravarDespesaMensal(request).toPromise().then(res => {
+      this.carregarDespesas();
+    },
+      err => {
+        console.log(err);
+      });
+  }
+
+  subirLinhaDespesa(despesa : DespesaMensal) {
+    let iOrdemAtual = despesa.idOrdemExibicao;
+    let iNovaOrdem = (despesa.idOrdemExibicao - 1);
+
+    this.atualizarOrdemLinhaDespesaService(despesa.idDespesa, iOrdemAtual, iNovaOrdem);
+  }
+
+  descerLinhaDespesa(despesa : DespesaMensal) {
+    let iOrdemAtual = despesa.idOrdemExibicao;
+    let iNovaOrdem = (despesa.idOrdemExibicao + 1);
+
+    this.atualizarOrdemLinhaDespesaService(despesa.idDespesa, iOrdemAtual, iNovaOrdem);
   }
 
   adicionarDespesaMensal() {
@@ -196,7 +251,13 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   onExcluirDespesa() {
-    this.modalRef = this.modalService.show(this.modalConfirmacaoExcluirDespesa);
+    const despesas = this.getDespesasChecked();
+
+    if (despesas.length === 0) {
+      alert("Necessário marcar alguma despesa para excluir.");
+    } else {
+      this.modalRef = this.modalService.show(this.modalConfirmacaoExcluirDespesa);
+    }
   }
 
   confirmExcluirDespesas() {
@@ -230,7 +291,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     if (index >= 0) {
       //despesas.slice(index, 1); quando for para alterar o objeto inteiro
-      despesas[index].checked = false;
+      despesas[index].checked = checked;
     } else {
       despesas.push({ ...despesa });
     }
@@ -252,4 +313,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   /*set(despesas: LancamentosMensais[]) {
     this._despesasCheckbox.next(despesas);
   }*/
+
+  getDataAtual() {
+    return formatDate(Date.now(), 'dd/MM/yyyy', 'en-US');
+  }
 }

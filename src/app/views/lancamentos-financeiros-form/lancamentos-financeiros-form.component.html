@@ -149,7 +149,7 @@
     </div>
 
     <div class="labelQuitacaoMes">
-      <span class="badge badge-info rounded-pill d-inline">
+      <span class="badge badge-info d-inline">
         <i class="fas fa-bullhorn"></i>
       </span>
       <span> {{lancamentosFinanceiros$.labelQuitacaoParcelasMes}}</span>
@@ -175,33 +175,37 @@
 
                   <td class="text-left">
                     <span *ngIf="despesasFixas.tpStatus == '+'" class="font-color-receita-positiva">
-                      <span class="badge badge-success rounded-pill d-inline">
+                      <span class="badge badge-success d-inline">
                         <i class="fas fa-plus"></i>
                       </span>
                       {{ despesasFixas.dsDescricao }}
                     </span>
 
                     <span *ngIf="despesasFixas.tpStatus == '-'" class="font-color-receita-negativa">
-                      <span class="badge badge-danger rounded-pill d-inline">
+                      <span class="badge badge-danger d-inline">
                         <i class="fas fa-minus"></i>
                       </span>
                       {{ despesasFixas.dsDescricao }}
                     </span>
 
                     <span *ngIf="despesasFixas.tpStatus == '< i >'" class="font-color-receita-anotacao">
-                      <span class="badge badge-info rounded-pill d-inline">
+                      <span class="badge badge-info d-inline">
                         <i class="far fa-sticky-note"></i>
                       </span>
                       {{despesasFixas.dsDescricao }}
                     </span>
 
                     <span *ngIf="despesasFixas.tpStatus == 'P(+)'" class="font-color-poupanca-positiva">
-                      <i class="fa fa-key"></i>
+                      <span class="badge badge-info d-inline" style="background-color: #3b6bd3">
+                        <i class="fa fa-key"></i>
+                      </span>
                       {{despesasFixas.dsDescricao }}
                     </span>
 
                     <span *ngIf="despesasFixas.tpStatus == 'P(-)'" class="font-color-poupanca-negativa">
-                      <i class="fa fa-key"></i>
+                      <span class="badge badge-info d-inline" style="background-color: #ee5569">
+                        <i class="fa fa-key"></i>
+                      </span>
                       {{despesasFixas.dsDescricao }}
                     </span>
 
@@ -325,11 +329,24 @@
 
                   <td>{{ despesa.svlTotalDespesaPaga }}</td>
 
-                  <td>
+                  <td *ngIf="despesa.tpLinhaSeparacao == 'S'"></td>
+                  <td class="text-left">
+                    <button *ngIf="despesa.tpLinhaSeparacao == 'S'" type="button" disabled
+                      class="btn btn-link btn-sm px-0">
+                      <i class="fas fa-edit"></i>
+                    </button>
                     <button *ngIf="despesa.tpLinhaSeparacao == 'N'" type="button" class="btn btn-link btn-sm px-0"
                       data-toggle="modal" data-target="#ModalDetalheDespesasMensais" (click)="abrirDespesa(despesa)"
                       title="Editar despesa">
                       <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-link btn-sm px-0" title="Subir item"
+                      (click)="subirLinhaDespesa(despesa)">
+                      <i class="fa fa-chevron-up"></i>
+                    </button>
+                    <button type="button" class="btn btn-link btn-sm px-0" title="Descer item"
+                      (click)="descerLinhaDespesa(despesa)">
+                      <i class="fa fa-chevron-down"></i>
                     </button>
                   </td>
                 </tr>
@@ -345,7 +362,7 @@
                       <i class="fas fa-plus"></i> Nova Despesa
                     </button>
                     <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
-                      role="button" (click)="onExcluirDespesa(despesa)">
+                      role="button" (click)="onExcluirDespesa()">
                       <i class="fas fa-trash-alt"></i> Excluir Despesa
                     </button>
                     <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
@@ -353,16 +370,8 @@
                       <i class="far fa-calendar-check"></i> Pagar Despesa
                     </button>
                     <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
-                      role="button">
+                      role="button" (click)="onNovaLinhaSeparacao()">
                       <i class="fas fa-bars"></i> Nova Linha
-                    </button>
-                    <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b056e;" href="#!"
-                      role="button" title="Subir item">
-                      <i class="fas fa-sort-amount-up"></i>
-                    </button>
-                    <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b056e;" href="#!"
-                      role="button" title="Descer item">
-                      <i class="fas fa-sort-amount-down"></i>
                     </button>
                   </div>
                 </td>
@@ -508,8 +517,8 @@
                             <th scope="col"></th>
                           </tr>
                         </thead>
-                        <tbody *ngIf="listaDetalheDespesas">
-                          <tr *ngFor="let detalheDespesas of listaDetalheDespesas.detalheDespesaMensal">
+                        <tbody *ngIf="detalheLancamentos">
+                          <tr *ngFor="let detalheDespesa of detalheLancamentos.detalheDespesaMensal">
                             <th>
                               <label class="customcheckbox">
                                 <input type="checkbox" class="listCheckboxDespesa">
@@ -518,28 +527,28 @@
                             </th>
 
                             <td>
-                              <span *ngIf="detalheDespesas.tpLinhaSeparacao == 'N'">
-                                <div contenteditable="true" style="width: 70px"> {{ detalheDespesas.vlTotal}} </div>
+                              <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                                <div contenteditable="true" style="width: 70px"> {{ detalheDespesa.vlTotal}} </div>
                               </span>
                             </td>
 
                             <td>
-                              <div contenteditable="true" style="width: 590px"> {{ detalheDespesas.dsTituloDespesa}}
+                              <div contenteditable="true" style="width: 590px"> {{ detalheDespesa.dsTituloDespesa}}
                               </div>
                             </td>
 
                             <td>
-                              <span *ngIf="detalheDespesas.tpLinhaSeparacao == 'N'">
-                                <div contenteditable="true" style="width: 70px"> {{ detalheDespesas.vlTotalPago}} </div>
+                              <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                                <div contenteditable="true" style="width: 70px"> {{ detalheDespesa.vlTotalPago}} </div>
                               </span>
                             </td>
 
-                            <td>{{ detalheDespesas.tp_Status}}</td>
+                            <td>{{ detalheDespesa.tp_Status}}</td>
                             <td>
-                              <div style="width: 400px"> {{ detalheDespesas.dsObservacao}} </div>
+                              <div style="width: 400px"> {{ detalheDespesa.dsObservacao}} </div>
                             </td>
                             <td>
-                              <div style="width: 400px"> {{ detalheDespesas.dsObservacao2}} </div>
+                              <div style="width: 400px"> {{ detalheDespesa.dsObservacao2}} </div>
                             </td>
                           </tr>
                         </tbody>
@@ -605,7 +614,7 @@
                 placeholder="Ex: Convênio médico">
 
               <label>Valor R$:</label>
-              <input class="form-control form-control-sm" type="text" formControlName="valorReceita"
+              <input class="form-control form-control-sm" type="text" formControlName="valorReceita" id="valorReceita"
                 placeholder="Ex: 500,00">
 
               <label>Categoria</label>
@@ -644,7 +653,10 @@
     <!--Modal Confirmacao Exclusao Receita-->
     <ng-template #modalConfirmacaoExcluirReceita>
       <div class="modal-header">
-        <h6 class="modal-title" id="exampleModalLongTitle">Confirmação</h6>
+        <h6 class="modal-title">
+          <i class="fa fa-question-circle-o" style="font-size: 130%;" aria-hidden="true"></i>
+          Confirmação
+        </h6>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -662,15 +674,18 @@
     <!--Modal Confirmacao Exclusao Despesa-->
     <ng-template #modalConfirmacaoExcluirDespesa>
       <div class="modal-header">
-        <h6 class="modal-title" id="exampleModalLongTitle">Confirmação</h6>
+        <h6 class="modal-title">
+          <i class="fa fa-question-circle-o" style="font-size: 130%;" aria-hidden="true"></i>
+          Confirmação
+        </h6>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         Deseja realmente excluir a(s) despesa(s) selecionada(s)?
-        <label class="form-check-label" 
-          style="font-size: smaller; color: #a7444e!important">Atenção: Esta ação não podera ser desfeita.</label>
+        <label class="form-check-label" style="font-size: smaller; color: #a7444e!important">Atenção: Esta ação não
+          podera ser desfeita.</label>
         <br>
       </div>
       <div class="modal-footer">
@@ -681,26 +696,31 @@
     </ng-template>
 
     <!--Modal Confirmacao Quitar Despesas-->
-    <ng-template #modalConfirmacaoQuitarDespesas>
-      <div class="modal-header">
-        <h6 class="modal-title" id="exampleModalLongTitle">Confirmação</h6>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        Deseja realmente quitar as despesas marcadas?
-        <br>
-        <br>
-        <div>
-          <input class="form-control form-control-sm" type="text" formControlName="observacaoPagamento"
-            placeholder="Descreva uma observação para o pagamento (opcional)">
+    <form [formGroup]="modalConfirmacaoQuitarDespesasForm">
+      <ng-template #modalConfirmacaoQuitarDespesas>
+        <div class="modal-header">
+          <h6 class="modal-title">
+            <i class="fa fa-question-circle-o" style="font-size: 130%;" aria-hidden="true"></i>
+            Confirmação
+          </h6>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-      </div>
+        <div class="form-group modal-body">
+          Deseja realmente quitar as despesas marcadas?
+          <br>
+          <br>
+          <div>
+            <input class="form-control form-control-sm" type="text" style="color: #aa101f!important"
+              formControlName="observacaoPagamento" placeholder="Descreva uma observação para o pagamento (opcional)">
+          </div>
+        </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal"
-          (click)="confirmQuitarDespesas()">Sim</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Não</button>
-      </div>
-    </ng-template>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal"
+            (click)="confirmQuitarDespesas()">Sim</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Não</button>
+        </div>
+      </ng-template>
+    </form>
