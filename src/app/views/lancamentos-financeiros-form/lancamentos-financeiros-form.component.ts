@@ -1,8 +1,9 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { TIPOS_MASCARA } from 'src/app/core/constants/mascaras';
 import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
 import { DespesasFixasMensais } from 'src/app/core/interfaces/despesas-fixas-mensais.interface';
 import { LancamentosFinanceiros } from 'src/app/core/interfaces/lancamentos-financeiros.interface';
@@ -31,6 +32,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private receitaSelecionada: DespesasFixasMensais;
   private tituloDespesa: String = "";
 
+  private valorReceitaControl = new FormControl();
+
   @ViewChild('modalDetalheDespesasMensais') modalDetalheDespesasMensais;
   @ViewChild('modalCriarEditarReceita') modalCriarEditarReceita;
   @ViewChild('modalConfirmacaoExcluirReceita') modalConfirmacaoExcluirReceita;
@@ -47,7 +50,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   ngOnInit() {
     this.modalCriarEditarReceitaForm = this.formBuilder.group({
       nomeReceita: ['', Validators.required],
-      valorReceita: ['', Validators.required],
       tipoReceita: ['', Validators.required],
       checkDespesaObrigatoria: ['']
     });
@@ -102,9 +104,11 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   editarReceitaSelecionada(receita: DespesasFixasMensais) {
     this.setReceitaSelecionada(receita);
+
+    this.valorReceitaControl.setValue(receita.vlTotal);
+
     this.modalCriarEditarReceitaForm.setValue({
       nomeReceita: receita.dsDescricao,
-      valorReceita: receita.vlTotal,
       tipoReceita: receita.tpStatus,
       checkDespesaObrigatoria: (receita.tpFixasObrigatorias == "S" ? true : false)
     });
@@ -112,9 +116,9 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   resetModalCriarEditarReceita() {
     this.receitaSelecionada = null;
+    this.valorReceitaControl.setValue(null);
     this.modalCriarEditarReceitaForm.setValue({
       nomeReceita: '',
-      valorReceita: '',
       tipoReceita: '+',
       checkDespesaObrigatoria: true
     });
@@ -125,12 +129,13 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let ano = <HTMLInputElement>document.getElementById("cbAno");
     let checkDespesaObrigatoria = this.modalCriarEditarReceitaForm.get('checkDespesaObrigatoria').value;
     let ordem = (null != this.receitaSelecionada ? this.receitaSelecionada.idOrdem : null);
+    let valorReceita = this.valorReceitaControl.value;
 
     let request: DespesasFixasMensais = {
       idDespesa: this.despesaReferencia,
       dsDescricao: this.modalCriarEditarReceitaForm.get('nomeReceita').value,
-      vlTotal: this.modalCriarEditarReceitaForm.get('valorReceita').value,
       tpStatus: this.modalCriarEditarReceitaForm.get('tipoReceita').value,
+      vlTotal: valorReceita,
       dsMes: mes.value,
       dsAno: ano.value,
       idFuncionario: Number(this.sessao.getIdLogin()),
@@ -232,14 +237,14 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       });
   }
 
-  subirLinhaDespesa(despesa : DespesaMensal) {
+  subirLinhaDespesa(despesa: DespesaMensal) {
     let iOrdemAtual = despesa.idOrdemExibicao;
     let iNovaOrdem = (despesa.idOrdemExibicao - 1);
 
     this.atualizarOrdemLinhaDespesaService(despesa.idDespesa, iOrdemAtual, iNovaOrdem);
   }
 
-  descerLinhaDespesa(despesa : DespesaMensal) {
+  descerLinhaDespesa(despesa: DespesaMensal) {
     let iOrdemAtual = despesa.idOrdemExibicao;
     let iNovaOrdem = (despesa.idOrdemExibicao + 1);
 
@@ -317,4 +322,5 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   getDataAtual() {
     return formatDate(Date.now(), 'dd/MM/yyyy', 'en-US');
   }
+
 }

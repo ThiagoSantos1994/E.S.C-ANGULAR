@@ -26,6 +26,7 @@
     "jquery": "^3.7.1",
     "jwt-decode": "^2.2.0",
     "ng-bootstrap": "^1.6.3",
+    "ng2-currency-mask": "^5.3.1",
     "ngx-bootstrap": "^3.0.1",
     "ngx-mask": "7.4.3",
     "rxjs": "^6.3.3",

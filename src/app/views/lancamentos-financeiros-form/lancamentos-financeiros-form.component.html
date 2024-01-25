@@ -614,7 +614,8 @@
                 placeholder="Ex: Convênio médico">
 
               <label>Valor R$:</label>
-              <input class="form-control form-control-sm" type="text" formControlName="valorReceita" id="valorReceita"
+              <input class="form-control text-left form-control-sm" [formControl]="valorReceitaControl" currencyMask
+                maxlength="16" autocomplete="off" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
                 placeholder="Ex: 500,00">
 
               <label>Categoria</label>
