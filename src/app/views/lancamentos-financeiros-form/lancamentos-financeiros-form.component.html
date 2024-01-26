@@ -19,19 +19,19 @@
     <div class="d-grid gap-2 d-md-block btn-group-sm">
       <div class="btn-group mr-2" role="group" aria-label="First group">
         <button class="btn text-white" data-mdb-ripple-init style="background-color: #3e0068;" href="#!" role="button"
-          title="Processar Importação">
+          title="Processar Importação" (click)="processarImportacao()">
           <i class="fas fa-cloud-download-alt"></i>
         </button>
         <button class="btn text-white" data-mdb-ripple-init style="background-color: #690303;" href="#!" role="button"
-          title="Excluir Tudo">
+          title="Excluir Tudo" (click)="excluirTodosLancamentos()">
           <i class="fas fa-trash-alt"></i>
         </button>
       </div>
     </div>
 
-    <div class="row">
+    <div class="row" [formGroup]="pesquisaForm">
       <div class="col-lg-6 col-md-3 col-sm-12 p-0.3">
-        <select class="form-control search-slt" id=cbMes>
+        <select class="form-control search-slt" formControlName="cbMes">
           <option value="01">Janeiro</option>
           <option value="02">Fevereiro</option>
           <option value="03">Março</option>
@@ -47,7 +47,7 @@
         </select>
       </div>
       <div class="col-lg-4 col-md-3 col-sm-12 p-0">
-        <select class="form-control search-slt" id="cbAno">
+        <select class="form-control search-slt" formControlName="cbAno">
           <option value="2024">2024</option>
           <option value="2023">2023</option>
           <option value="2022">2022</option>
@@ -289,7 +289,15 @@
               <tbody *ngIf="lancamentosFinanceiros$.lancamentosMensais">
                 <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais">
                   <th>
-                    <label class="customcheckbox">
+                    <!--<label class="customcheckbox">
+                      <input type="checkbox" (click)="onCheckDespesaChange($event.target.checked, despesa)">
+                      <span class="checkmark"></span>
+                    </label>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox"
+                        (click)="onCheckDespesaChange($event.target.checked, despesa)">
+                    </div>-->
+                    <label class="checkbox-wrap checkbox-primary">
                       <input type="checkbox" (click)="onCheckDespesaChange($event.target.checked, despesa)">
                       <span class="checkmark"></span>
                     </label>
@@ -394,6 +402,7 @@
             <div class="card border-0 ">
 
               <div class="card-header pb-0 bg-white border-0 text-center px-sm-4">
+
                 <h6 class="text-left mt-0 font-weight-bold mb-0">
                   <span>
                     <button type="button" class="close text-left my-auto" data-dismiss="modal" aria-label="Close">
@@ -412,55 +421,74 @@
                       <i class="fas fa-cloud-download-alt"></i> Importar
                     </button>
                     <span class="input-group-text" id="tituloDespesa">3960,00</span>
+                  </div>
+                </div>
 
-                    <!--<div class="card border-success mb-3" style="max-width: 18rem;">
-                      <div class="card-header bg-transparent border-success">Header</div>
-                      <div class="card-body text-success">
-                        <h5 class="card-title">Success card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                      </div>
-                      <div class="card-footer bg-transparent border-success">Footer</div>
-                    </div>-->
-
+                <div class="card">
+                  <div class="form-check form-check-inline">
+                    <span class="badge badge-success d-inline">
+                      <i class="fa fa-check-circle"> Emprestimos (Receber)</i>
+                    </span>
+                    <div class="form-check form-check-inline">
+                      <span class="badge badge-success d-inline">
+                        <i class="fa fa-check-circle"> Despesa Rascunho</i>
+                      </span>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <span class="badge badge-success d-inline">
+                        <i class="fa fa-check-circle"> Débito Automático</i>
+                      </span>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <span class="badge badge-success d-inline">
+                        <i class="fa fa-check-circle"> Débito Cartão</i>
+                      </span>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <span class="badge badge-success d-inline">
+                        <i class="fa fa-check-circle"> Poupança (+)</i>
+                      </span>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <span class="badge badge-success d-inline">
+                        <i class="fa fa-check-circle"> Poupança (-)</i>
+                      </span>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="form-check form-check-inline">
+                    <span class="badge badge-success d-inline">
+                      <i class="fa fa-check-circle"> Emprestimos (Receber)</i>
+                    </span>
+                    <div class="form-check form-check-inline">
+                      <span class="badge badge-success d-inline">
+                        <i class="fa fa-check-circle"> Despesa Rascunho</i>
+                      </span>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <span class="badge badge-success d-inline">
+                        <i class="fa fa-check-circle"> Débito Automático</i>
+                      </span>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <span class="badge badge-success d-inline">
+                        <i class="fa fa-check-circle"> Débito Cartão</i>
+                      </span>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <span class="badge badge-success d-inline">
+                        <i class="fa fa-check-circle"> Poupança (+)</i>
+                      </span>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <span class="badge badge-success d-inline">
+                        <i class="fa fa-check-circle"> Poupança (-)</i>
+                      </span>
+                    </div>
                   </div>
 
                 </div>
 
-
-                <!--<div class="card-body-checkboxes">
-                <div class="form-check form-check-inline">
-                  
-                  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                  <label class="form-check-label" for="inlineCheckbox1">Emprestimos (Receber)</label>
-
-                  <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                  <label class="form-check-label" for="inlineCheckbox2">Despesa Rascunho</label>
-                  
-                  <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                  <label class="form-check-label" for="inlineCheckbox2">Débito Automático</label>
-
-                  <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                  <label class="form-check-label" for="inlineCheckbox2">Débito Cartão</label>
-
-                  <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                  <label class="form-check-label" for="inlineCheckbox2">Poupança (+)</label>
-                  
-                  <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                  <label class="form-check-label" for="inlineCheckbox2">Poupança (-)</label>
-                </div>
-
-              </div>
-              <div class="card-body-checkboxes">
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                  <label class="form-check-label" for="inlineCheckbox1">Emprestimos (Pagar)</label>
-
-                  <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                  <label class="form-check-label" for="inlineCheckbox2">Categoria Relatório</label>
-                  
-                </div>
-
-              </div>-->
 
                 <div class="p-2 text-center bg-light">
                   <div class="center-modal-detalhes">
@@ -629,9 +657,11 @@
               </select>
 
               <div class="row">
-                <div class="form-check-inline checkBoxCadReceita">
-                  <input class="form-check-input" type="checkbox" formControlName="checkDespesaObrigatoria">
-                  <label class="form-check-label" for="inlineCheckbox1"
+                <br>
+                <div class="form-check-inline checkDespesaObrigatoria">
+                  <input class="form-check-input" type="checkbox" formControlName="checkDespesaObrigatoria"
+                    id="chkDespesaObrigatoria">
+                  <label class="form-check-label" for="chkDespesaObrigatoria"
                     style="font-size: smaller; color: #a7444e!important"
                     title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">*Despesa\Receita
                     obrigatória.</label>
@@ -642,7 +672,7 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
                 (click)="gravarReceita()">
-                <i class="fas fa-plus"></i> Salvar
+                <i class="fa fa-floppy-o"></i> Salvar
               </button>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
             </div>
@@ -650,27 +680,6 @@
         </div>
       </div>
     </form>
-
-    <!--Modal Confirmacao Exclusao Receita-->
-    <ng-template #modalConfirmacaoExcluirReceita>
-      <div class="modal-header">
-        <h6 class="modal-title">
-          <i class="fa fa-question-circle-o" style="font-size: 130%;" aria-hidden="true"></i>
-          Confirmação
-        </h6>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        Deseja realmente excluir esta receita?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal"
-          (click)="confirmExcluirReceita()">Sim</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Não</button>
-      </div>
-    </ng-template>
 
     <!--Modal Confirmacao Exclusao Despesa-->
     <ng-template #modalConfirmacaoExcluirDespesa>
@@ -721,6 +730,25 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal"
             (click)="confirmQuitarDespesas()">Sim</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Não</button>
+        </div>
+      </ng-template>
+    </form>
+
+    <!--Modal Confirmacao Eventos Generico-->
+    <form>
+      <ng-template #modalConfirmacaoEventos>
+        <div class="modal-header">
+          <h6 class="modal-title">
+            <i class="fa fa-question-circle" style="font-size: 130%;" aria-hidden="true"></i> Confirmação
+          </h6>
+        </div>
+        <div class="form-group modal-body">
+          {{mensagemModalConfirmacao}}
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmEventModal()">Sim</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Não</button>
         </div>
       </ng-template>

@@ -1,14 +1,15 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+import { LancamentosFinanceirosDomain } from '../domain/lancamentos-financeiros.domain';
+import { ConfiguracaoLancamentos } from '../interfaces/configuracao-lancamentos.interface';
+import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
+import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.interface';
+import { LancamentosFinanceiros } from '../interfaces/lancamentos-financeiros.interface';
+import { DetalheLancamentosMensais } from '../interfaces/lancamentos-mensais-detalhe.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { LancamentosFinanceiros } from '../interfaces/lancamentos-financeiros.interface';
-import { LancamentosFinanceirosDomain } from '../domain/lancamentos-financeiros.domain';
-import { DetalheLancamentosMensais } from '../interfaces/lancamentos-mensais-detalhe.interface';
-import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.interface';
-import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -33,9 +34,13 @@ export class LancamentosFinanceirosService {
   }
 
   getDetalheDespesasMensais(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number): Observable<DetalheLancamentosMensais> {
-    //let headers = new HttpHeaders().append('Authorization', this.token.getToken());
+    return this.http.get<DetalheLancamentosMensais>(`springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/consultar/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/${ordemExibicao}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
 
-    return this.http.get<DetalheLancamentosMensais>(`springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/consultar/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/${ordemExibicao}`/*, { headers: headers }*/)
+  getConfiguracaoLancamentos(): Observable<ConfiguracaoLancamentos> {
+    return this.http.get<ConfiguracaoLancamentos>(`springboot-esc-backend/api/parametros/obterConfiguracaoLancamentos/${this.sessao.getIdLogin()}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
   }
@@ -85,6 +90,20 @@ export class LancamentosFinanceirosService {
   gravarDespesaMensal(despesa: DespesaMensal) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/incluir`;
     return this.http.post(url, despesa).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  processarImportacaoLancamentos(idDespesa: number, dsMes: number, dsAno: number) {
+    const url = `springboot-esc-backend/api//lancamentosFinanceiros/importacao/processamento/${idDespesa}/${this.sessao.getIdLogin()}/${dsMes}/${dsAno}`;
+    return this.http.post(url, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  excluirTodosLancamentos(idDespesa: number) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/excluir/${idDespesa}/${this.sessao.getIdLogin()}`;
+    return this.http.post(url, {}).pipe(
       catchError(error => this.handleError(error))
     );
   }

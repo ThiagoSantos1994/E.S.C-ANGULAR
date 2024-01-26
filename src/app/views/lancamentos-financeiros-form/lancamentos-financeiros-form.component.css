@@ -226,6 +226,10 @@
     user-select: none;
   }
 
+  .bg-light {
+    background-color: #f8f9fa !important;
+    padding-left: 0%;
+  }
 
   .customcheckbox input {
     position: absolute;
@@ -363,18 +367,17 @@
     display: block;
     padding-right: 0px;
   }
-  
+
   .modalCriarEditarReceita {
     text-align: center;
     width: 35%;
     margin: 1.75rem auto;
   }
 
-  .checkBoxCadReceita {
+  .checkDespesaObrigatoria {
     display: inline-flex;
     align-items: center;
     padding-left: 15px;
     margin-right: 0.75rem;
     padding-top: 6px;
   }
-  

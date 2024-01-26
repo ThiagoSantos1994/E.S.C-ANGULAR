@@ -2,15 +2,16 @@ import { formatDate } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, concat } from 'rxjs';
 import { TIPOS_MASCARA } from 'src/app/core/constants/mascaras';
 import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
 import { DespesasFixasMensais } from 'src/app/core/interfaces/despesas-fixas-mensais.interface';
 import { LancamentosFinanceiros } from 'src/app/core/interfaces/lancamentos-financeiros.interface';
 import { DetalheLancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais-detalhe.interface';
-import { LancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais.interface';
+import { ConfiguracaoLancamentos } from 'src/app/core/interfaces/configuracao-lancamentos.interface';
 import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
+import { LancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais.interface';
 
 @Component({
   selector: 'app-lancamentos-financeiros-form',
@@ -23,7 +24,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private _despesasCheckbox = new BehaviorSubject<LancamentosMensais[]>([]);
   private detalheLancamentos: DetalheLancamentosMensais;
 
-  private lancamentosForm: FormGroup;
+  private pesquisaForm: FormGroup;
   private modalCriarEditarReceitaForm: FormGroup;
   private modalConfirmacaoQuitarDespesasForm: FormGroup;
   private modalRef: BsModalRef;
@@ -31,14 +32,17 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private despesaReferencia: number;
   private receitaSelecionada: DespesasFixasMensais;
   private tituloDespesa: String = "";
+  private mensagemConfirmacaoImportacao = "";
 
   private valorReceitaControl = new FormControl();
+  private eventModalConfirmacao: String = "";
+  private mensagemModalConfirmacao: String = "";
 
   @ViewChild('modalDetalheDespesasMensais') modalDetalheDespesasMensais;
   @ViewChild('modalCriarEditarReceita') modalCriarEditarReceita;
-  @ViewChild('modalConfirmacaoExcluirReceita') modalConfirmacaoExcluirReceita;
   @ViewChild('modalConfirmacaoExcluirDespesa') modalConfirmacaoExcluirDespesa;
   @ViewChild('modalConfirmacaoQuitarDespesas') modalConfirmacaoQuitarDespesas;
+  @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -48,6 +52,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.carregarConfiguracaoLancamentos();
+
     this.modalCriarEditarReceitaForm = this.formBuilder.group({
       nomeReceita: ['', Validators.required],
       tipoReceita: ['', Validators.required],
@@ -58,7 +64,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       observacaoPagamento: ['']
     });
 
-    this.carregarLancamentosFinanceiros();
+    this.pesquisaForm = this.formBuilder.group({
+      cbMes: [this.getMesAtual(), Validators.required],
+      cbAno: [this.getAnoAtual(), Validators.required]
+    });
   }
 
   carregarDespesas() {
@@ -68,10 +77,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   carregarLancamentosFinanceiros() {
-    let mes = <HTMLInputElement>document.getElementById("cbMes");
-    let ano = <HTMLInputElement>document.getElementById("cbAno");
+    let mes = this.pesquisaForm.get('cbMes').value;
+    let ano = this.pesquisaForm.get('cbAno').value;
 
-    this.lancamentosService.getLancamentosFinanceiros(mes.value, ano.value).subscribe((res: any) => {
+    this.lancamentosService.getLancamentosFinanceiros(mes, ano).subscribe((res: any) => {
       this.lancamentosFinanceiros$ = res;
       this.despesaReferencia = res.idDespesa;
     });
@@ -81,6 +90,22 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
       this.detalheLancamentos = res;
     });
+  }
+
+  carregarConfiguracaoLancamentos() {
+    this.lancamentosService.getConfiguracaoLancamentos().toPromise().then((res: ConfiguracaoLancamentos) => {
+      let mesReferencia = (res.mesReferencia <= 9 ? "0".concat(res.mesReferencia.toString()) : res.mesReferencia);
+
+      this.pesquisaForm = this.formBuilder.group({
+        cbMes: [mesReferencia, Validators.required],
+        cbAno: [this.getAnoAtual(), Validators.required]
+      });
+
+      this.carregarLancamentosFinanceiros();
+    },
+      err => {
+        alert('Ocorreu um erro ao obter os lancamentos mensais, tente novamente mais tarde.');
+      });
   }
 
   /* Receitas Fixas Mensais*/
@@ -105,7 +130,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   editarReceitaSelecionada(receita: DespesasFixasMensais) {
     this.setReceitaSelecionada(receita);
 
-    this.valorReceitaControl.setValue(receita.vlTotal);
+    this.valorReceitaControl.setValue(receita.dvlTotal);
 
     this.modalCriarEditarReceitaForm.setValue({
       nomeReceita: receita.dsDescricao,
@@ -125,19 +150,16 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   gravarReceita() {
-    let mes = <HTMLInputElement>document.getElementById("cbMes");
-    let ano = <HTMLInputElement>document.getElementById("cbAno");
     let checkDespesaObrigatoria = this.modalCriarEditarReceitaForm.get('checkDespesaObrigatoria').value;
     let ordem = (null != this.receitaSelecionada ? this.receitaSelecionada.idOrdem : null);
-    let valorReceita = this.valorReceitaControl.value;
 
     let request: DespesasFixasMensais = {
       idDespesa: this.despesaReferencia,
       dsDescricao: this.modalCriarEditarReceitaForm.get('nomeReceita').value,
       tpStatus: this.modalCriarEditarReceitaForm.get('tipoReceita').value,
-      vlTotal: valorReceita,
-      dsMes: mes.value,
-      dsAno: ano.value,
+      dvlTotal: this.valorReceitaControl.value,
+      dsMes: this.pesquisaForm.get('cbMes').value,
+      dsAno: this.pesquisaForm.get('cbAno').value,
       idFuncionario: Number(this.sessao.getIdLogin()),
       idOrdem: ordem,
       tpFixasObrigatorias: (checkDespesaObrigatoria == true ? 'S' : 'N'),
@@ -156,15 +178,28 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   onReceitaSelecionada(receita: DespesasFixasMensais) {
     this.setReceitaSelecionada(receita);
-    this.modalRef = this.modalService.show(this.modalConfirmacaoExcluirReceita);
+
+    this.eventModalConfirmacao = "ExcluirReceitaSelecionada";
+    this.mensagemModalConfirmacao = "Deseja realmente excluir o item: ".concat(receita.dsDescricao).concat(" ?") ;
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
   confirmExcluirReceita() {
     const receita = this.receitaSelecionada;
 
     this.lancamentosService.excluirReceita(receita.idDespesa, receita.idOrdem).toPromise().then(res => {
-      this.closeModal();
       this.carregarDespesas();
+    },
+      err => {
+        console.log(err);
+      });
+  }
+
+  confirmExcluirTodosLancamentos() {
+    this.lancamentosService.excluirTodosLancamentos(this.despesaReferencia).toPromise().then(res => {
+      this.carregarDespesas();
+      alert("Lançamentos excluido com sucesso!");
     },
       err => {
         console.log(err);
@@ -190,7 +225,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   abrirDespesa(despesa: LancamentosMensais) {
-    console.log(despesa);
     this.tituloDespesa = despesa.dsTituloDespesa;
     this.carregarDetalheDespesas(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao);
   }
@@ -212,10 +246,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   confirmQuitarDespesas() {
     const despesas = this.getDespesasChecked();
 
-    let checkDespesaObrigatoria = this.modalConfirmacaoQuitarDespesasForm.get('observacaoPagamento').value;
+    let labelObsPagamento = this.modalConfirmacaoQuitarDespesasForm.get('observacaoPagamento').value;
 
     despesas.forEach((d) => {
-      alert("idDespesa" + d.idDespesa + "idDetalheDespesa" + checkDespesaObrigatoria);
+      alert("idDespesa" + d.idDespesa + "idDetalheDespesa" + labelObsPagamento);
     })
   }
 
@@ -284,8 +318,49 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.carregarDespesas();
   }
 
-  closeModal(): void {
-    this.modalRef.hide();
+  processarImportacao() {
+    this.eventModalConfirmacao = "ImportacaoLancamentos";
+    this.mensagemModalConfirmacao = (this.despesaReferencia !== null ?
+      "ATENÇÃO: Neste mês esta despesa ja foi processada, deseja atualizar os lançamentos?" :
+      "Deseja realizar o processamento da despesa mensal para este mês?");
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  confirmImportacaoLancamentos() {
+    let idDespesa = (this.despesaReferencia !== null ? this.despesaReferencia : 0);
+    let mesReferencia = this.pesquisaForm.get('cbMes').value;
+    let anoReferencia = this.pesquisaForm.get('cbAno').value;
+
+    this.lancamentosService.processarImportacaoLancamentos(idDespesa, mesReferencia, anoReferencia).toPromise().then(res => {
+      this.carregarDespesas();
+      alert("Processamento concluido com sucesso!");
+    },
+      err => {
+        console.log(err);
+      });
+  }
+
+  excluirTodosLancamentos() {
+    this.eventModalConfirmacao = "ExcluirTodosLancamentos";
+    this.mensagemModalConfirmacao = "Atenção: Deseja realmente excluir todos os lançamentos mensais?";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  confirmEventModal() {
+    this.closeModal();
+    const eventoSelecionado = this.eventModalConfirmacao;
+
+    if (eventoSelecionado == "ImportacaoLancamentos") {
+      this.confirmImportacaoLancamentos();
+    } else if (eventoSelecionado == "ExcluirReceitaSelecionada") {
+      this.confirmExcluirReceita();
+    } else if (eventoSelecionado == "ExcluirTodosLancamentos") {
+      this.confirmExcluirTodosLancamentos();
+    }
+
+    this.eventModalConfirmacao = "";
   }
 
   onCheckDespesaChange(checked, despesa) {
@@ -319,8 +394,20 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this._despesasCheckbox.next(despesas);
   }*/
 
+
+  closeModal(): void {
+    this.modalRef.hide();
+  }
+
   getDataAtual() {
     return formatDate(Date.now(), 'dd/MM/yyyy', 'en-US');
   }
 
+  getMesAtual() {
+    return formatDate(Date.now(), 'yyyy', 'en-US');
+  }
+
+  getAnoAtual() {
+    return formatDate(Date.now(), 'yyyy', 'en-US');
+  }
 }
