@@ -2,16 +2,15 @@ import { formatDate } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, Observable, concat } from 'rxjs';
-import { TIPOS_MASCARA } from 'src/app/core/constants/mascaras';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ConfiguracaoLancamentos } from 'src/app/core/interfaces/configuracao-lancamentos.interface';
 import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
 import { DespesasFixasMensais } from 'src/app/core/interfaces/despesas-fixas-mensais.interface';
 import { LancamentosFinanceiros } from 'src/app/core/interfaces/lancamentos-financeiros.interface';
 import { DetalheLancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais-detalhe.interface';
-import { ConfiguracaoLancamentos } from 'src/app/core/interfaces/configuracao-lancamentos.interface';
+import { LancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais.interface';
 import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
-import { LancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais.interface';
 
 @Component({
   selector: 'app-lancamentos-financeiros-form',
@@ -180,7 +179,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.setReceitaSelecionada(receita);
 
     this.eventModalConfirmacao = "ExcluirReceitaSelecionada";
-    this.mensagemModalConfirmacao = "Deseja realmente excluir o item: ".concat(receita.dsDescricao).concat(" ?") ;
+    this.mensagemModalConfirmacao = "Deseja realmente excluir o item: ".concat(receita.dsDescricao).concat(" ?");
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
@@ -246,11 +245,17 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   confirmQuitarDespesas() {
     const despesas = this.getDespesasChecked();
 
-    let labelObsPagamento = this.modalConfirmacaoQuitarDespesasForm.get('observacaoPagamento').value;
+    //let observacaoPagamento: string = this.modalConfirmacaoQuitarDespesasForm.get('observacaoPagamento').value;
 
     despesas.forEach((d) => {
-      alert("idDespesa" + d.idDespesa + "idDetalheDespesa" + labelObsPagamento);
+      this.lancamentosService.processarPagamentoDespesa(d.idDespesa, d.idDetalheDespesa, null).toPromise().then(res => { },
+        err => {
+          console.log(err);
+        });
     })
+    
+    this.closeModal();
+    this.carregarDespesas();
   }
 
   onNovaLinhaSeparacao() {

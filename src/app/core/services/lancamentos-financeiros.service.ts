@@ -95,7 +95,7 @@ export class LancamentosFinanceirosService {
   }
 
   processarImportacaoLancamentos(idDespesa: number, dsMes: number, dsAno: number) {
-    const url = `springboot-esc-backend/api//lancamentosFinanceiros/importacao/processamento/${idDespesa}/${this.sessao.getIdLogin()}/${dsMes}/${dsAno}`;
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/importacao/processamento/${idDespesa}/${this.sessao.getIdLogin()}/${dsMes}/${dsAno}`;
     return this.http.post(url, {}).pipe(
       catchError(error => this.handleError(error))
     );
@@ -103,6 +103,13 @@ export class LancamentosFinanceirosService {
 
   excluirTodosLancamentos(idDespesa: number) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/excluir/${idDespesa}/${this.sessao.getIdLogin()}`;
+    return this.http.post(url, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  processarPagamentoDespesa(idDespesa: number, idDetalheDespesa: number, observacaoPagamento: string) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/baixarPagamentoDespesa/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/${observacaoPagamento}`;
     return this.http.post(url, {}).pipe(
       catchError(error => this.handleError(error))
     );
