@@ -276,12 +276,7 @@
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" href="#!"
                         role="button" data-toggle="modal" (click)="resetModalCriarEditarReceita()"
                         data-target="#modalCriarEditarReceita">
-                        <i class="fas fa-plus"></i> Nova Receita
-                      </button>
-
-                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" href="#!"
-                        role="button" data-toggle="modal" data-target="#modalEditarValores">
-                        <i class="fas fa-plus"></i> Nova Receita
+                        <i class="fas fa-plus"></i> Adicionar
                       </button>
                     </div>
                   <td></td>
@@ -591,8 +586,11 @@
 
                       <td>
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
-                          <div contenteditable="true" style="width: 70px" data-toggle="modal"
-                            data-target="#modalEditarValores"> {{ detalheDespesa.vlTotal}} </div>
+                          <div contenteditable="false" style="width: 70px" data-toggle="modal"
+                            data-target="#modalEditarValores"
+                            (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)">
+                            {{ detalheDespesa.vlTotal}}
+                          </div>
                         </span>
                       </td>
 
@@ -604,7 +602,10 @@
 
                       <td>
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
-                          <div contenteditable="true" style="width: 70px"> {{ detalheDespesa.vlTotalPago}} </div>
+                          <div contenteditable="false" style="width: 70px" data-toggle="modal"
+                            data-target="#modalEditarValores"
+                            (click)="setModalEditarValores(detalheDespesa.vlTotalPago, 'detalheDespColValorTotalPago', detalheDespesa)">
+                            {{ detalheDespesa.vlTotalPago}} </div>
                         </span>
                       </td>
 
@@ -800,32 +801,39 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content modalCategoriaDespesa">
         <div class="form-group modal-header">
-          <label>Editor de Valores:</label>
+          <label>
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+            Editor de Valores
+          </label>
         </div>
 
-        <form [formGroup]="modalEditarValoresForm">
-          <div class="modal-footer">
-            <div class="input-group mb-3">
-              <span class="input-group-text">Novo Valor:</span>
-              <input type="text" class="form-control" formControlName="inputNovoValor" (click)="onNovoValor()" id="inputNovoValor" currencyMask maxlength="16"
-                autocomplete="off" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }">
+        <div class="modalEditorValores-body">
+          <div class="input-group mb-3">
+            <span class="input-group-text">Novo Valor:</span>
+            <input type="text" class="inputNovoValorEditorValores form-control" (click)="onEditarValores()" id="inputNovoValor"
+              currencyMask maxlength="16" autocomplete="off"
+              [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }">
+            <div>
+              <small class="form-text text-muted">
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                Após digitar o <u>Novo Valor</u>, pressione a tecla ENTER.
+              </small>
             </div>
-            <span class="input-group-text">Resultado</span>
-            <!--<input type="text" readonly class="form-control" formControlName="subTotalValoresControl">-->
-            <input type="text" readonly class="form-control" [formControl]="subTotalValoresControl" currencyMask
-              maxlength="16" autocomplete="off" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
-              placeholder="Ex: 500,00">
           </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
-              (click)="gravarReceita()">
-              <i class="fa fa-floppy-o"></i> Salvar
-            </button>
-            <button type="button" class="btn btn-primary" style="background-color: #137759;">Limpar</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-          </div>
-        </form>
+          <!--<span class="input-group-text">Resultado</span>-->
+          <input type="text" readonly class="inputSubTotalEditorValores form-control" id="subTotalValores" currencyMask
+            maxlength="16" autocomplete="off" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }">
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmGravarEditarValores()"
+            style="background-color: #3b6bd3;">
+            <i class="fa fa-check"></i> Aplicar
+          </button>
+          <button type="button" class="btn btn-primary" (click)="setModalEditarValores(0, 'reset')"
+            style="background-color: #137759;">Limpar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        </div>
       </div>
     </div>
   </div>

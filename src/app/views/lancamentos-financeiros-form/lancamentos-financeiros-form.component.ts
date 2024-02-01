@@ -31,16 +31,17 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private modalConfirmacaoQuitarDespesasForm: FormGroup;
   private modalCategoriaDetalheDespesaForm: FormGroup;
   private modalDetalheDespesasMensaisForm: FormGroup;
-  private modalEditarValoresForm: FormGroup;
   private modalRef: BsModalRef;
 
   private despesaReferencia: number;
   private receitaSelecionada: DespesasFixasMensais;
 
   private valorReceitaControl = new FormControl();
-  private subTotalValoresControl = new FormControl();
   private eventModalConfirmacao: String = "";
   private mensagemModalConfirmacao: String = "";
+
+  private eventModalEditarValores: String = "";
+  private objectModalEditarValores: any;
 
   @ViewChild('modalDetalheDespesasMensais') modalDetalheDespesasMensais;
   @ViewChild('modalConfirmacaoExcluirDespesa') modalConfirmacaoExcluirDespesa;
@@ -89,10 +90,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       checkDespesaEmprestimoAPagar: [''],
       checkDespesaEmprestimoAReceber: ['']
     });
-
-    this.modalEditarValoresForm = this.formBuilder.group({
-      inputNovoValor: ['']
-    })
   }
 
   carregarDespesas() {
@@ -475,25 +472,67 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this._despesasCheckbox.next(despesas);
   }
 
-  onNovoValor() {
-    const novoValor = this.modalEditarValoresForm.get('inputNovoValor').value;
-    console.log(novoValor);
-    this.subTotalValoresControl.setValue(novoValor);
-    /*var input = document.getElementById("inputNovoValor");
+  onEditarValores() {
+    var input = document.getElementById("inputNovoValor");
     input.addEventListener('keyup', function (e) {
       var key = e.which || e.keyCode;
-      if (key == 13) { 
-        const calculo = (1000 + novoValor);
-        document.getElementById("inputNovoValor").value = "";
-        calculoSubTotalEditorValores(calculo);
-      }
-    });*/
+      if (key == 13) {
+        const valorAtual = parseFloat(formatRealNumber((document.getElementById("subTotalValores") as HTMLInputElement).value));
 
-    
+        const inputValue = (document.getElementById("inputNovoValor") as HTMLInputElement).value;
+        const novoValor = parseFloat(formatRealNumber(inputValue));
+
+        const calculo = (isValorNegativo(inputValue) ? (valorAtual - novoValor) : (valorAtual + novoValor))
+          .toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+
+        (<HTMLInputElement>document.getElementById("subTotalValores")).value = calculo;
+
+        //limpa o campo de input
+        (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "0,00";
+      }
+    });
   }
 
-  calculoSubTotalEditor(novoValor) {
-    this.subTotalValoresControl.setValue(novoValor);
+  confirmGravarEditarValores() {
+    const novoValor = (document.getElementById("subTotalValores") as HTMLInputElement).value.replace('R$', '');
+    const objeto = this.objectModalEditarValores;
+
+    switch (this.eventModalEditarValores) {
+      case 'detalheDespColValorTotal': {
+        objeto.vlTotal = novoValor;
+        this.changeDetalheDespesasMensais(objeto);
+        break;
+      }
+      case 'detalheDespColValorTotalPago': {
+        objeto.vlTotalPago = novoValor;
+        this.changeDetalheDespesasMensais(objeto);
+        break;
+      }
+      default: {
+      }
+    }
+
+    this.resetModalEditarValores;
+    this.closeModal;
+  }
+
+  setModalEditarValores(valor, evento, objeto) {
+    (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "0,00";
+    (<HTMLInputElement>document.getElementById("subTotalValores")).value = "0,00";
+
+    this.eventModalEditarValores = (evento == "reset" ? this.eventModalEditarValores : evento);
+    this.objectModalEditarValores = (evento == "reset" ? this.objectModalEditarValores : objeto);
+
+    const valorAtual = parseFloat(formatRealNumber(valor));
+
+    (<HTMLInputElement>document.getElementById("subTotalValores")).value =
+      valorAtual.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+  }
+
+  resetModalEditarValores() {
+    this.objectModalEditarValores = null;
+    (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "0,00";
+    (<HTMLInputElement>document.getElementById("subTotalValores")).value = "0,00";
   }
 
   getDespesasChecked() {
@@ -529,7 +568,20 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 }
 
-function calculoSubTotalEditorValores(calculo: any) {
-  this.subTotalValoresControl.setValue(calculo);
+function parserToInt(str) {
+  return parseInt(str.replace(/[\D]+/g, ''));
 }
 
+function formatRealNumber(str) {
+  var tmp = parserToInt(str) + '';
+  tmp = tmp.replace(/([0-9]{2})$/g, ".$1");
+  if (tmp.length > 6)
+    tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, "$1.$2");
+
+  return tmp;
+}
+
+function isValorNegativo(str) {
+  let regex = new RegExp("-");
+  return regex.test(str);
+}

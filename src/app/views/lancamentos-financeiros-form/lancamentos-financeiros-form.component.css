@@ -365,7 +365,7 @@
 
   .modalCategoriaDespesa {
     text-align: left;
-    width: 25%;
+    width: 24%;
     margin: 1.75rem auto;
   }
 
@@ -424,4 +424,26 @@
 
   .caixaAlta {
     font-variant: small-caps;
+  }
+
+  .modalEditorValores-body {
+    position: relative;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 3%;
+  }
+
+  .inputNovoValorEditorValores {
+    text-align: center !important;
+    font-family: sans-serif;
+    font-size: larger;
+    color: #05462b;
+  }
+
+  .inputSubTotalEditorValores {
+    text-align: center !important;
+    font-family: sans-serif;
+    font-size: larger;
+    color: #1319a2;
   }
