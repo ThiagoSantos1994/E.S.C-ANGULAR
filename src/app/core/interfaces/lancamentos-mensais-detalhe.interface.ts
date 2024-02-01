@@ -2,6 +2,6 @@ import { DespesaMensal } from "./despesa-mensal.interface";
 import { DetalheDespesasMensais } from "./detalhe-despesas-mensais.interface";
 
 export interface DetalheLancamentosMensais{
-    despesaMensal: DespesaMensal[];
+    despesaMensal: DespesaMensal;
     detalheDespesaMensal: DetalheDespesasMensais[];
 }

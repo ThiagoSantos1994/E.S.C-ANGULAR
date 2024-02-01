@@ -3,9 +3,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { CategoriaDespesaEnum, StatusPagamentoEnum } from 'src/app/core/enums/detalhe-despesas-enums';
 import { ConfiguracaoLancamentos } from 'src/app/core/interfaces/configuracao-lancamentos.interface';
 import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
 import { DespesasFixasMensais } from 'src/app/core/interfaces/despesas-fixas-mensais.interface';
+import { DetalheDespesasMensais } from 'src/app/core/interfaces/detalhe-despesas-mensais.interface';
 import { LancamentosFinanceiros } from 'src/app/core/interfaces/lancamentos-financeiros.interface';
 import { DetalheLancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais-detalhe.interface';
 import { LancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais.interface';
@@ -21,27 +23,30 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   private lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]> = new Observable<LancamentosFinanceiros[]>();
   private _despesasCheckbox = new BehaviorSubject<LancamentosMensais[]>([]);
-  private detalheLancamentos: DetalheLancamentosMensais;
+  private _detalheDespesasChange = new BehaviorSubject<DetalheDespesasMensais[]>([]);
+  private detalheDespesaMensal: DetalheLancamentosMensais;
 
   private pesquisaForm: FormGroup;
   private modalCriarEditarReceitaForm: FormGroup;
   private modalConfirmacaoQuitarDespesasForm: FormGroup;
+  private modalCategoriaDetalheDespesaForm: FormGroup;
+  private modalDetalheDespesasMensaisForm: FormGroup;
+  private modalEditarValoresForm: FormGroup;
   private modalRef: BsModalRef;
 
   private despesaReferencia: number;
   private receitaSelecionada: DespesasFixasMensais;
-  private tituloDespesa: String = "";
-  private mensagemConfirmacaoImportacao = "";
 
   private valorReceitaControl = new FormControl();
+  private subTotalValoresControl = new FormControl();
   private eventModalConfirmacao: String = "";
   private mensagemModalConfirmacao: String = "";
 
   @ViewChild('modalDetalheDespesasMensais') modalDetalheDespesasMensais;
-  @ViewChild('modalCriarEditarReceita') modalCriarEditarReceita;
   @ViewChild('modalConfirmacaoExcluirDespesa') modalConfirmacaoExcluirDespesa;
   @ViewChild('modalConfirmacaoQuitarDespesas') modalConfirmacaoQuitarDespesas;
   @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
+  @ViewChild('modalCategoriaDetalheDespesa') modalCategoriaDetalheDespesa;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -67,6 +72,27 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       cbMes: [this.getMesAtual(), Validators.required],
       cbAno: [this.getAnoAtual(), Validators.required]
     });
+
+    this.modalDetalheDespesasMensaisForm = this.formBuilder.group({
+      nomeDespesa: [''],
+      valorLimiteDespesa: ['0,00'],
+      checkDespesaRelatorio: [false]
+    });
+
+    this.modalCategoriaDetalheDespesaForm = this.formBuilder.group({
+      checkDespesaRascunho: [''],
+      checkDespesaRelatorio: [''],
+      checkDespesaDebitoAutomatico: [''],
+      checkDespesaDebitoCartao: [''],
+      checkDespesaPoupancaPositiva: [''],
+      checkDespesaPoupancaNegativa: [''],
+      checkDespesaEmprestimoAPagar: [''],
+      checkDespesaEmprestimoAReceber: ['']
+    });
+
+    this.modalEditarValoresForm = this.formBuilder.group({
+      inputNovoValor: ['']
+    })
   }
 
   carregarDespesas() {
@@ -85,12 +111,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     });
   }
 
-  carregarDetalheDespesas(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
-    this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
-      this.detalheLancamentos = res;
-    });
-  }
-
   carregarConfiguracaoLancamentos() {
     this.lancamentosService.getConfiguracaoLancamentos().toPromise().then((res: ConfiguracaoLancamentos) => {
       let mesReferencia = (res.mesReferencia <= 9 ? "0".concat(res.mesReferencia.toString()) : res.mesReferencia);
@@ -102,7 +122,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
       this.carregarLancamentosFinanceiros();
     },
-      err => {
+      () => {
         alert('Ocorreu um erro ao obter os lancamentos mensais, tente novamente mais tarde.');
       });
   }
@@ -165,7 +185,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       tpDespesaDebitoCartao: 'N'
     };
 
-    this.lancamentosService.gravarReceita(request).toPromise().then(res => {
+    this.lancamentosService.gravarReceita(request).toPromise().then(() => {
       this.resetModalCriarEditarReceita();
       this.carregarDespesas();
     },
@@ -187,7 +207,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   confirmExcluirReceita() {
     const receita = this.receitaSelecionada;
 
-    this.lancamentosService.excluirReceita(receita.idDespesa, receita.idOrdem).toPromise().then(res => {
+    this.lancamentosService.excluirReceita(receita.idDespesa, receita.idOrdem).toPromise().then(() => {
       this.carregarDespesas();
     },
       err => {
@@ -196,7 +216,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   confirmExcluirTodosLancamentos() {
-    this.lancamentosService.excluirTodosLancamentos(this.despesaReferencia).toPromise().then(res => {
+    this.lancamentosService.excluirTodosLancamentos(this.despesaReferencia).toPromise().then(() => {
       this.carregarDespesas();
       alert("Lançamentos excluido com sucesso!");
     },
@@ -206,7 +226,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   atualizarOrdemLinhaReceitaService(idDespesa: number, iOrdemAtual: number, iNovaOrdem) {
-    this.lancamentosService.atualizarOrdemLinhaReceita(idDespesa, iOrdemAtual, iNovaOrdem).toPromise().then(res => {
+    this.lancamentosService.atualizarOrdemLinhaReceita(idDespesa, iOrdemAtual, iNovaOrdem).toPromise().then(() => {
       this.carregarDespesas();
     },
       err => {
@@ -215,7 +235,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   atualizarOrdemLinhaDespesaService(idDespesa: number, iOrdemAtual: number, iNovaOrdem) {
-    this.lancamentosService.atualizarOrdemLinhaDespesa(idDespesa, iOrdemAtual, iNovaOrdem).toPromise().then(res => {
+    this.lancamentosService.atualizarOrdemLinhaDespesa(idDespesa, iOrdemAtual, iNovaOrdem).toPromise().then(() => {
       this.carregarDespesas();
     },
       err => {
@@ -223,9 +243,16 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       });
   }
 
-  abrirDespesa(despesa: LancamentosMensais) {
-    this.tituloDespesa = despesa.dsTituloDespesa;
-    this.carregarDetalheDespesas(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao);
+  abrirDetalheDespesa(despesa: LancamentosMensais) {
+    this.lancamentosService.getDetalheDespesasMensais(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao).subscribe((res) => {
+      this.detalheDespesaMensal = res;
+
+      this.modalDetalheDespesasMensaisForm.setValue({
+        nomeDespesa: (res.despesaMensal.dsNomeDespesa),
+        valorLimiteDespesa: (res.despesaMensal.vlLimite),
+        checkDespesaRelatorio: ('S')
+      });
+    });
   }
 
   onQuitarDespesa() {
@@ -248,12 +275,12 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     //let observacaoPagamento: string = this.modalConfirmacaoQuitarDespesasForm.get('observacaoPagamento').value;
 
     despesas.forEach((d) => {
-      this.lancamentosService.processarPagamentoDespesa(d.idDespesa, d.idDetalheDespesa, null).toPromise().then(res => { },
+      this.lancamentosService.processarPagamentoDespesa(d.idDespesa, d.idDetalheDespesa, null).toPromise().then(() => { },
         err => {
           console.log(err);
         });
     })
-    
+
     this.closeModal();
     this.carregarDespesas();
   }
@@ -268,7 +295,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       tpDespesaCompartilhada: 'N'
     };
 
-    this.lancamentosService.gravarDespesaMensal(request).toPromise().then(res => {
+    this.lancamentosService.gravarDespesaMensal(request).toPromise().then(() => {
       this.carregarDespesas();
     },
       err => {
@@ -308,12 +335,12 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     const despesas = this.getDespesasChecked();
 
     despesas.forEach((despesa) => {
-      this.lancamentosService.excluirDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao).toPromise().then(res => { },
+      this.lancamentosService.excluirDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao).toPromise().then(() => { },
         err => {
           console.log(err);
         });
 
-      this.lancamentosService.excluirDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao).toPromise().then(res => { },
+      this.lancamentosService.excluirDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao).toPromise().then(() => { },
         err => {
           console.log(err);
         });
@@ -337,7 +364,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let mesReferencia = this.pesquisaForm.get('cbMes').value;
     let anoReferencia = this.pesquisaForm.get('cbAno').value;
 
-    this.lancamentosService.processarImportacaoLancamentos(idDespesa, mesReferencia, anoReferencia).toPromise().then(res => {
+    this.lancamentosService.processarImportacaoLancamentos(idDespesa, mesReferencia, anoReferencia).toPromise().then(() => {
       this.carregarDespesas();
       alert("Processamento concluido com sucesso!");
     },
@@ -351,6 +378,71 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.mensagemModalConfirmacao = "Atenção: Deseja realmente excluir todos os lançamentos mensais?";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  carregarCategoriaDetalheDespesa() {
+    const detalheDespesa = this.detalheDespesaMensal.despesaMensal;
+
+    this.modalCategoriaDetalheDespesaForm.setValue({
+      checkDespesaRascunho: (detalheDespesa.tpAnotacao == "S" ? true : false),
+      checkDespesaRelatorio: (detalheDespesa.tpRelatorio == "S" ? true : false),
+      checkDespesaDebitoAutomatico: (detalheDespesa.tpDebitoAutomatico == "S" ? true : false),
+      checkDespesaDebitoCartao: (detalheDespesa.tpDebitoCartao == "S" ? true : false),
+      checkDespesaPoupancaPositiva: (detalheDespesa.tpPoupanca == "S" ? true : false),
+      checkDespesaPoupancaNegativa: (detalheDespesa.tpPoupancaNegativa == "S" ? true : false),
+      checkDespesaEmprestimoAPagar: (detalheDespesa.tpEmprestimo == "S" ? true : false),
+      checkDespesaEmprestimoAReceber: (detalheDespesa.tpEmprestimoAPagar == "S" ? true : false)
+    });
+  }
+
+  onCheckDetalheDespesaChange(checked, detalhe) {
+    detalhe.checked = checked;
+    this.changeDetalheDespesasMensais(detalhe);
+  }
+
+  onCheckDespesaReprocessarChange(checked, detalhe) {
+    detalhe.tpReprocessar = (checked ? 'S' : 'N');
+    this.changeDetalheDespesasMensais(detalhe);
+  }
+
+  onCheckDespesaAnotacao(checked, detalhe) {
+    detalhe.tpAnotacao = (checked ? 'S' : 'N');
+    this.changeDetalheDespesasMensais(detalhe);
+  }
+
+  onCheckDespesaRelatorioChange(checked, detalhe) {
+    detalhe.tpRelatorio = (checked ? 'S' : 'N');
+    this.changeDetalheDespesasMensais(detalhe);
+  }
+
+  onCheckDespesaLinhaSeparacaoChange(checked, detalhe) {
+    detalhe.tpLinhaSeparacao = (checked ? 'S' : 'N');
+    this.changeDetalheDespesasMensais(detalhe);
+  }
+
+  onChangeCategoriaDetalhe(categoria, detalhe) {
+    detalhe.tpCategoriaDespesa = CategoriaDespesaEnum[categoria].replace('_', '\\');
+    this.changeDetalheDespesasMensais(detalhe);
+  }
+
+  onChangeStatusPagamentoDetalhe(status, detalhe) {
+    detalhe.tpStatus = StatusPagamentoEnum[status];
+    this.changeDetalheDespesasMensais(detalhe);
+  }
+
+  changeDetalheDespesasMensais(detalhe: DetalheDespesasMensais) {
+    const detalheDespesa = this._detalheDespesasChange.getValue();
+    const index = detalheDespesa.findIndex((d) => d.idDetalheDespesa === detalhe.idDetalheDespesa && d.idOrdem === detalhe.idOrdem);
+
+    detalhe.changeValues = true;
+
+    if (index >= 0) {
+      detalheDespesa[index] = detalhe;
+    } else {
+      detalheDespesa.push({ ...detalhe });
+    }
+
+    this._detalheDespesasChange.next(detalheDespesa);
   }
 
   confirmEventModal() {
@@ -375,13 +467,33 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     const index = despesas.findIndex((d) => d.idDetalheDespesa === despesa.idDetalheDespesa);
 
     if (index >= 0) {
-      //despesas.slice(index, 1); quando for para alterar o objeto inteiro
       despesas[index].checked = checked;
     } else {
       despesas.push({ ...despesa });
     }
 
     this._despesasCheckbox.next(despesas);
+  }
+
+  onNovoValor() {
+    const novoValor = this.modalEditarValoresForm.get('inputNovoValor').value;
+    console.log(novoValor);
+    this.subTotalValoresControl.setValue(novoValor);
+    /*var input = document.getElementById("inputNovoValor");
+    input.addEventListener('keyup', function (e) {
+      var key = e.which || e.keyCode;
+      if (key == 13) { 
+        const calculo = (1000 + novoValor);
+        document.getElementById("inputNovoValor").value = "";
+        calculoSubTotalEditorValores(calculo);
+      }
+    });*/
+
+    
+  }
+
+  calculoSubTotalEditor(novoValor) {
+    this.subTotalValoresControl.setValue(novoValor);
   }
 
   getDespesasChecked() {
@@ -409,10 +521,15 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   getMesAtual() {
-    return formatDate(Date.now(), 'yyyy', 'en-US');
+    return formatDate(Date.now(), 'MM', 'en-US');
   }
 
   getAnoAtual() {
     return formatDate(Date.now(), 'yyyy', 'en-US');
   }
 }
+
+function calculoSubTotalEditorValores(calculo: any) {
+  this.subTotalValoresControl.setValue(calculo);
+}
+

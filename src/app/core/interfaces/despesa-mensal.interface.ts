@@ -10,6 +10,7 @@ export interface DespesaMensal {
     tpReprocessar?: string;
     tpEmprestimo?: string;
     tpPoupanca?: string;
+    tpPoupancaNegativa?: string;
     tpAnotacao?: string;
     tpDebitoAutomatico?: string;
     tpMeta?: string;

@@ -278,6 +278,11 @@
                         data-target="#modalCriarEditarReceita">
                         <i class="fas fa-plus"></i> Nova Receita
                       </button>
+
+                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" href="#!"
+                        role="button" data-toggle="modal" data-target="#modalEditarValores">
+                        <i class="fas fa-plus"></i> Nova Receita
+                      </button>
                     </div>
                   <td></td>
                   <td></td>
@@ -302,14 +307,6 @@
               <tbody *ngIf="lancamentosFinanceiros$.lancamentosMensais">
                 <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais">
                   <th>
-                    <!--<label class="customcheckbox">
-                      <input type="checkbox" (click)="onCheckDespesaChange($event.target.checked, despesa)">
-                      <span class="checkmark"></span>
-                    </label>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox"
-                        (click)="onCheckDespesaChange($event.target.checked, despesa)">
-                    </div>-->
                     <label class="checkbox-wrap checkbox-primary">
                       <input type="checkbox" (click)="onCheckDespesaChange($event.target.checked, despesa)">
                       <span class="checkmark"></span>
@@ -370,8 +367,8 @@
                       <i class="fas fa-edit"></i>
                     </button>
                     <button *ngIf="despesa.tpLinhaSeparacao == 'N'" type="button" class="btn btn-link btn-sm px-0"
-                      data-toggle="modal" data-target="#ModalDetalheDespesasMensais" (click)="abrirDespesa(despesa)"
-                      title="Editar despesa">
+                      data-toggle="modal" data-target="#modalDetalheDespesasMensais"
+                      (click)="abrirDetalheDespesa(despesa)" title="Editar despesa">
                       <i class="fas fa-edit"></i>
                     </button>
                     <button type="button" class="btn btn-link btn-sm px-0" title="Subir item"
@@ -421,7 +418,7 @@
 
   <!--Modal Detalhe Despesas Mensais-->
   <div class="container d-flex justify-content-center">
-    <div id="ModalDetalheDespesasMensais" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div id="modalDetalheDespesasMensais" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-content modalDetalheDespesasMensais modal-dialog-centered justify-content-center"
         role="document">
         <div class="form-group modalDetalheDespesasMensais-body">
@@ -434,54 +431,95 @@
             Descrição da Despesa:
           </h6>
 
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" aria-label="Sizing example input"
-              aria-describedby="inputGroup-sizing-default" value={{tituloDespesa}}>
-            <button class="btn text-white" data-mdb-ripple-init style="background-color: #d3663b;" role="button"
-              data-toggle="modal" data-target="#ModalDetalheDespesasMensais" (click)="abrirDespesa(despesa)">
-              <i class="fas fa-cloud-download-alt"></i> Importar
-            </button>
-            <span class="input-group-text" id="tituloDespesa">3960,00</span>
-          </div>
+          <form [formGroup]="modalDetalheDespesasMensaisForm">
+            <div class="input-group mb-3">
+              <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa"
+                placeholder="Ex: Fatura cartão crédito">
+              <button class="btn text-white" data-mdb-ripple-init style="background-color: #d3663b;" role="button"
+                data-toggle="modal" data-target="#ModalDetalheDespesasMensais" (click)="abrirDespesa(despesa)">
+                <i class="fas fa-cloud-download-alt"></i> Importar
+              </button>
+              <!--<span class="form-control input-group-text" formControlName="valorLimiteDespesa"></span>-->
+              <span class="input-group-text"> 999,00</span>
+            </div>
 
-          <div class="input-group mb-3">
-            <div class="card-categorias">
-              <div>
-                <div class="form-check form-check-inline">
-                  <div class="form-check form-check-inline checkDetalheDespesas">
-                    <span class="badge checkDetalheDespesasComum d-inline">
-                      <i class="fa fa-cart-plus"> Despesa Comum</i>
-                    </span>
+            <div class="input-group mb-3">
+              <div class="card-categorias">
+                <div>
+                  <div *ngIf="detalheDespesaMensal" class="form-check form-check-inline">
+                    <div *ngIf="detalheDespesaMensal.despesaMensal.tpRelatorio == 'N'"
+                      class="form-check form-check-inline checkDetalheDespesas">
+                      <span class="badge checkDetalheDespesasComum d-inline">
+                        <i class="fa fa-check-circle"> Despesa Comum</i>
+                      </span>
+                    </div>
+
+                    <div *ngIf="detalheDespesaMensal.despesaMensal.tpRelatorio == 'S'"
+                      class="form-check form-check-inline checkDetalheDespesas">
+                      <span class="badge checkDetalheDespesasColor d-inline">
+                        <i class="fa fa-bar-chart" aria-hidden="true"> Despesa Relatório</i>
+                      </span>
+                    </div>
+
+                    <div *ngIf="detalheDespesaMensal.despesaMensal.tpAnotacao == 'S'"
+                      class="form-check form-check-inline checkDetalheDespesas">
+                      <span class="badge checkDetalheDespesasColor d-inline">
+                        <i class="fa fa-check-circle"> Despesa Rascunho</i>
+                      </span>
+                    </div>
+
+                    <div *ngIf="detalheDespesaMensal.despesaMensal.tpEmprestimoAPagar == 'S'"
+                      class="form-check form-check-inline checkDetalheDespesas">
+                      <span class="badge checkDetalheDespesasColor d-inline">
+                        <i class="fa fa-check-circle"> Empréstimo a Pagar</i>
+                      </span>
+                    </div>
+
+                    <div *ngIf="detalheDespesaMensal.despesaMensal.tpEmprestimo == 'S'"
+                      class="form-check form-check-inline checkDetalheDespesas">
+                      <span class="badge checkDetalheDespesasColor d-inline">
+                        <i class="fa fa-check-circle"> Empréstimo a Receber</i>
+                      </span>
+                    </div>
+
+                    <div *ngIf="detalheDespesaMensal.despesaMensal.tpPoupanca == 'S'"
+                      class="form-check form-check-inline checkDetalheDespesas">
+                      <span class="badge checkDetalheDespesasColor d-inline">
+                        <i class="fa fa-check-circle"> Poupança +</i>
+                      </span>
+                    </div>
+
+                    <div *ngIf="detalheDespesaMensal.despesaMensal.tpPoupancaNegativa == 'S'"
+                      class="form-check form-check-inline checkDetalheDespesas">
+                      <span class="badge checkDetalheDespesasColor d-inline">
+                        <i class="fa fa-check-circle"> Poupança -</i>
+                      </span>
+                    </div>
+
+                    <div *ngIf="detalheDespesaMensal.despesaMensal.tpDebitoAutomatico == 'S'"
+                      class="form-check form-check-inline checkDetalheDespesas">
+                      <span class="badge checkDetalheDespesasColor d-inline">
+                        <i class="fa fa-check-circle"> Débito Automatico</i>
+                      </span>
+                    </div>
+
+                    <div *ngIf="detalheDespesaMensal.despesaMensal.tpDebitoCartao == 'S'"
+                      class="form-check form-check-inline checkDetalheDespesas">
+                      <span class="badge checkDetalheDespesasColor d-inline">
+                        <i class="fa fa-check-circle"> Débito Cartão</i>
+                      </span>
+                    </div>
                   </div>
-
-                  <div class="form-check form-check-inline checkDetalheDespesas">
-                    <span class="badge checkDetalheDespesasRelatorio d-inline">
-                      <i class="fa fa-line-chart" aria-hidden="true"> Despesa Relatório</i>
-                    </span>
-                  </div>
-
-                  <div class="form-check form-check-inline checkDetalheDespesas">
-                    <span class="badge checkDetalheDespesasColor d-inline">
-                      <i class="fa fa-check-circle"> Despesa Rascunho</i>
-                    </span>
-                  </div>
-
-                  <div class="form-check form-check-inline checkDetalheDespesas">
-                    <span class="badge checkDetalheDespesasColor d-inline">
-                      <i class="fa fa-check-circle"> Empréstimo a Receber</i>
-                    </span>
-                  </div>
-
                 </div>
               </div>
+
+              <button class="btn text-white " data-mdb-ripple-init style="background-color: #414f8d;" role="button"
+                data-toggle="modal" data-target="#modalCategoriaDetalheDespesa"
+                (click)="carregarCategoriaDetalheDespesa()">
+                <i class="fa fa-star-half-o"></i> Categorias</button>
             </div>
-            <button class="btn text-white " data-mdb-ripple-init style="background-color: #414f8d;" role="button"
-              data-toggle="modal" data-target="#ModalDetalheDespesasMensais" (click)="abrirDespesa(despesa)">
-              <i class="fa fa-star-half-o"></i> Categorias</button>
-          </div>
-
+          </form>
           <hr>
-
           <div class="p-2 text-center bg-light">
             <div class="center-modal-detalhes">
               <div class="col-sm-1">
@@ -534,26 +572,33 @@
                       <th scope="col">Status</th>
                       <th scope="col">Observações</th>
                       <th scope="col">Observações Complementares</th>
-                      <th scope="col"></th>
+                      <th scope="col">Categorias</th>
+                      <th scope="col">Rep.</th>
+                      <th scope="col">Anot.</th>
+                      <th scope="col">Rel*</th>
+                      <th scope="col">Sep\Lin</th>
                     </tr>
                   </thead>
-                  <tbody *ngIf="detalheLancamentos">
-                    <tr *ngFor="let detalheDespesa of detalheLancamentos.detalheDespesaMensal">
-                      <th>
-                        <label class="customcheckbox">
-                          <input type="checkbox" class="listCheckboxDespesa">
+                  <tbody *ngIf="detalheDespesaMensal">
+                    <tr *ngFor="let detalheDespesa of detalheDespesaMensal.detalheDespesaMensal">
+                      <td>
+                        <label class="checkbox-wrap checkbox-primary">
+                          <input type="checkbox"
+                            (click)="onCheckDetalheDespesaChange($event.target.checked, detalheDespesa)">
                           <span class="checkmark"></span>
                         </label>
-                      </th>
+                      </td>
 
                       <td>
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
-                          <div contenteditable="true" style="width: 70px"> {{ detalheDespesa.vlTotal}} </div>
+                          <div contenteditable="true" style="width: 70px" data-toggle="modal"
+                            data-target="#modalEditarValores"> {{ detalheDespesa.vlTotal}} </div>
                         </span>
                       </td>
 
                       <td>
-                        <div contenteditable="true" style="width: 590px"> {{ detalheDespesa.dsTituloDespesa}}
+                        <div class="caixaAlta" contenteditable="true" style="width: 590px"> {{
+                          detalheDespesa.dsTituloDespesa}}
                         </div>
                       </td>
 
@@ -563,12 +608,104 @@
                         </span>
                       </td>
 
-                      <td>{{ detalheDespesa.tp_Status}}</td>
+                      <td>
+                        <div style="width: 100px">
+                          <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                            <select class="form-control form-control-sm"
+                              (change)="onChangeStatusPagamentoDetalhe($event.target.value, detalheDespesa)"
+                              [value]="detalheDespesa.tpStatus !== 'Pago' ? 0 : 1">
+                              <option value="0">Pendente</option>
+                              <option value="1">Pago</option>
+                            </select>
+                          </span>
+                        </div>
+                      </td>
+
                       <td>
                         <div style="width: 400px"> {{ detalheDespesa.dsObservacao}} </div>
                       </td>
+
                       <td>
                         <div style="width: 400px"> {{ detalheDespesa.dsObservacao2}} </div>
+                      </td>
+
+                      <td>
+                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                          <div style="width: 125px">
+                            <select class="form-control form-control-sm"
+                              (change)="onChangeCategoriaDetalhe($event.target.value, detalheDespesa)" [value]="detalheDespesa.tpCategoriaDespesa === 'Supermercado' ? 1 : 
+                              detalheDespesa.tpCategoriaDespesa === 'Combustível' ? 2 :
+                              detalheDespesa.tpCategoriaDespesa === 'Farmácia' ? 3 :
+                              detalheDespesa.tpCategoriaDespesa === 'Fixas\\Mês' ? 4 :
+                              detalheDespesa.tpCategoriaDespesa === 'Empréstimo' ? 5 :
+                              detalheDespesa.tpCategoriaDespesa === 'Outros' ? 6 : 0 ">
+                              <option value="0"></option>
+                              <option value="1">Supermercado</option>
+                              <option value="2">Combustível</option>
+                              <option value="3">Farmácia</option>
+                              <option value="4">Fixas_Mês</option>
+                              <option value="5">Empréstimos</option>
+                              <option value="6">Outros</option>
+                            </select>
+                          </div>
+                        </span>
+                      </td>
+
+                      <td>
+                        <label class="checkbox-wrap checkbox-primary">
+                          <span *ngIf="detalheDespesa.tpReprocessar == 'S'">
+                            <input type="checkbox"
+                              (click)="onCheckDespesaReprocessarChange($event.target.checked, detalheDespesa)" checked>
+                          </span>
+                          <span *ngIf="detalheDespesa.tpReprocessar == 'N'">
+                            <input type="checkbox"
+                              (click)="onCheckDespesaReprocessarChange($event.target.checked, detalheDespesa)">
+                          </span>
+                          <span class="checkmark"></span>
+                        </label>
+                      </td>
+
+                      <td>
+                        <label class="checkbox-wrap checkbox-primary">
+                          <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
+                            <input type="checkbox"
+                              (click)="onCheckDespesaAnotacao($event.target.checked, detalheDespesa)" checked>
+                          </span>
+                          <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
+                            <input type="checkbox"
+                              (click)="onCheckDespesaAnotacao($event.target.checked, detalheDespesa)">
+                          </span>
+                          <span class="checkmark"></span>
+                        </label>
+                      </td>
+
+                      <td>
+                        <label class="checkbox-wrap checkbox-primary">
+                          <span *ngIf="detalheDespesa.tpRelatorio == 'S'">
+                            <input type="checkbox"
+                              (click)="onCheckDespesaRelatorioChange($event.target.checked, detalheDespesa)" checked>
+                          </span>
+                          <span *ngIf="detalheDespesa.tpRelatorio == 'N'">
+                            <input type="checkbox"
+                              (click)="onCheckDespesaRelatorioChange($event.target.checked, detalheDespesa)">
+                          </span>
+                          <span class="checkmark"></span>
+                        </label>
+                      </td>
+
+                      <td>
+                        <label class="checkbox-wrap checkbox-primary">
+                          <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'S'">
+                            <input type="checkbox"
+                              (click)="onCheckDespesaLinhaSeparacaoChange($event.target.checked, detalheDespesa)"
+                              checked>
+                          </span>
+                          <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                            <input type="checkbox"
+                              (click)="onCheckDespesaLinhaSeparacaoChange($event.target.checked, detalheDespesa)">
+                          </span>
+                          <span class="checkmark"></span>
+                        </label>
                       </td>
                     </tr>
                   </tbody>
@@ -593,7 +730,7 @@
               </button>
               <button class="btn text-white" data-mdb-ripple-init style="background-color: #709977;" href="#!"
                 role="button">
-                <i class="far fa-calendar-times"></i> Desfazer Pagamento
+                <i class="far fa-calendar-times"></i> Desfazer
               </button>
 
               <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
@@ -647,6 +784,115 @@
 
           </div>
         </form>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
+            (click)="gravarReceita()">
+            <i class="fa fa-floppy-o"></i> Salvar
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Modal editar valor-->
+  <div class="modal fade" id="modalEditarValores" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content modalCategoriaDespesa">
+        <div class="form-group modal-header">
+          <label>Editor de Valores:</label>
+        </div>
+
+        <form [formGroup]="modalEditarValoresForm">
+          <div class="modal-footer">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Novo Valor:</span>
+              <input type="text" class="form-control" formControlName="inputNovoValor" (click)="onNovoValor()" id="inputNovoValor" currencyMask maxlength="16"
+                autocomplete="off" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }">
+            </div>
+            <span class="input-group-text">Resultado</span>
+            <!--<input type="text" readonly class="form-control" formControlName="subTotalValoresControl">-->
+            <input type="text" readonly class="form-control" [formControl]="subTotalValoresControl" currencyMask
+              maxlength="16" autocomplete="off" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
+              placeholder="Ex: 500,00">
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
+              (click)="gravarReceita()">
+              <i class="fa fa-floppy-o"></i> Salvar
+            </button>
+            <button type="button" class="btn btn-primary" style="background-color: #137759;">Limpar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--Modal categoria despesa mensal-->
+  <div class="modal fade" id="modalCategoriaDetalheDespesa" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content modalCategoriaDespesa">
+        <div class="form-group modal-header">
+          <label>Selecione a categoria da despesa:</label>
+        </div>
+        <form [formGroup]="modalCategoriaDetalheDespesaForm">
+          <div class="modalCategoriaDetalheDespesa-body form-group"
+            style="font-size: medium; color: #a7444e!important;">
+            <input class="form-check-input" type="checkbox" formControlName="checkDespesaRascunho"
+              id="checkDespesaRascunho">
+            <label class="form-check-label" for="checkDespesaRascunho"
+              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Despesa Rascunho
+            </label>
+            <br>
+            <input class="form-check-input" type="checkbox" formControlName="checkDespesaRelatorio"
+              id="checkDespesaRelatorio">
+            <label class="form-check-label" for="checkDespesaRelatorio"
+              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Despesa Relatório
+            </label>
+            <br>
+            <input class="form-check-input" type="checkbox" formControlName="checkDespesaDebitoAutomatico"
+              id="checkDespesaDebitoAutomatico">
+            <label class="form-check-label" for="checkDespesaDebitoAutomatico"
+              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Débito Automatico
+            </label>
+            <br>
+            <input class="form-check-input" type="checkbox" formControlName="checkDespesaDebitoCartao"
+              id="checkDespesaDebitoCartao">
+            <label class="form-check-label" for="checkDespesaDebitoCartao"
+              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Débito Cartão
+            </label>
+            <br>
+            <hr>
+            <input class="form-check-input" type="checkbox" formControlName="checkDespesaEmprestimoAPagar"
+              id="checkDespesaEmprestimoAPagar">
+            <label class="form-check-label" for="checkDespesaEmprestimoAPagar"
+              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Empréstimo a Pagar
+            </label>
+            <br>
+            <input class="form-check-input" type="checkbox" formControlName="checkDespesaEmprestimoAReceber"
+              id="checkDespesaEmprestimoAReceber">
+            <label class="form-check-label" for="checkDespesaEmprestimoAReceber"
+              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Empréstimo a Receber
+            </label>
+            <br>
+            <hr>
+            <input class="form-check-input" type="checkbox" formControlName="checkDespesaPoupancaPositiva"
+              id="checkDespesaPoupancaPositiva">
+            <label class="form-check-label" for="checkDespesaPoupancaPositiva"
+              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Poupança Positiva
+            </label>
+            <br>
+            <input class="form-check-input" type="checkbox" formControlName="checkDespesaPoupancaNegativa"
+              id="checkDespesaPoupancaNegativa">
+            <label class="form-check-label" for="checkDespesaPoupancaNegativa"
+              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Poupança Negativa
+            </label>
+            <br>
+          </div>
+        </form>
+
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
             (click)="gravarReceita()">

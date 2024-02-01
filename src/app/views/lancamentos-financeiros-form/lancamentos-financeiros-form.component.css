@@ -363,10 +363,20 @@
     margin: 1.75rem auto;
   }
 
+  .modalCategoriaDespesa {
+    text-align: left;
+    width: 25%;
+    margin: 1.75rem auto;
+  }
+
   .modalDetalheDespesasMensais {
     text-align: center;
     width: 75%;
     margin: 0.75rem auto;
+  }
+
+  .modalCategoriaDetalheDespesa-body {
+    padding-left: 11%;
   }
 
   .modalDetalheDespesasMensais-body {
@@ -402,18 +412,16 @@
 
   .checkDetalheDespesasColor {
     color: #fff;
-    background-color: #50587a;
+    background-color: #5f6479;
     font-size: 82%;
   }
 
   .checkDetalheDespesasComum {
     color: #fff;
-    background-color: #379456;
+    background-color: #1c793b;
     font-size: 82%;
   }
 
-  .checkDetalheDespesasRelatorio {
-    color: #fff;
-    background-color: #809120;
-    font-size: 82%;
+  .caixaAlta {
+    font-variant: small-caps;
   }
