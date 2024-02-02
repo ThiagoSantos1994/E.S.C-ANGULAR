@@ -11,6 +11,7 @@ import { DetalheDespesasMensais } from 'src/app/core/interfaces/detalhe-despesas
 import { LancamentosFinanceiros } from 'src/app/core/interfaces/lancamentos-financeiros.interface';
 import { DetalheLancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais-detalhe.interface';
 import { LancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais.interface';
+import { PagamentoDespesasRequest } from 'src/app/core/interfaces/pagamento-despesas-request.interface';
 import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
 
@@ -240,20 +241,23 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       });
   }
 
-  abrirDetalheDespesa(despesa: LancamentosMensais) {
-    this.lancamentosService.getDetalheDespesasMensais(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao).subscribe((res) => {
+  carregarDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
+    this.detalheDespesaMensal = null;
+    this.resetDetalheDespesasChange();
+
+    this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
       this.detalheDespesaMensal = res;
 
       this.modalDetalheDespesasMensaisForm.setValue({
         nomeDespesa: (res.despesaMensal.dsNomeDespesa),
-        valorLimiteDespesa: (res.despesaMensal.vlLimite),
-        checkDespesaRelatorio: ('S')
+        valorLimiteDespesa: (res.despesaMensal.vlLimite)
       });
     });
   }
 
-  onQuitarDespesa() {
-    const despesas = this.getDespesasChecked();
+  onQuitarDespesa(evento) {
+    const despesas = (evento == 'despesa' ? this.getDespesasChecked() : this.getDetalheDespesasCheckedPagamento());
+    this.eventModalConfirmacao = evento;
 
     if (despesas.length === 0) {
       alert("Necessário marcar alguma despesa para pagar.");
@@ -267,19 +271,55 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   confirmQuitarDespesas() {
-    const despesas = this.getDespesasChecked();
+    const observacaoPagamento: string = this.modalConfirmacaoQuitarDespesasForm.get('observacaoPagamento').value;
 
-    //let observacaoPagamento: string = this.modalConfirmacaoQuitarDespesasForm.get('observacaoPagamento').value;
+    if (this.eventModalConfirmacao == 'despesa') {
+      const despesas = this.getDespesasChecked();
 
-    despesas.forEach((d) => {
-      this.lancamentosService.processarPagamentoDespesa(d.idDespesa, d.idDetalheDespesa, null).toPromise().then(() => { },
-        err => {
-          console.log(err);
-        });
-    })
+      despesas.forEach((d) => {
+        this.lancamentosService.processarPagamentoDespesa(d.idDespesa, d.idDetalheDespesa, null).toPromise().then(() => { },
+          err => {
+            console.log(err);
+          });
+      });
 
+    } else if (this.eventModalConfirmacao == 'detalheDespesa') {
+      const detalheDespesas = this.getDetalheDespesasCheckedPagamento();
+
+      detalheDespesas.forEach((d) => {
+
+        let request: PagamentoDespesasRequest = {
+          idDespesa: d.idDespesa,
+          idDetalheDespesa: d.idDetalheDespesa,
+          idDespesaParcelada: d.idDespesaParcelada,
+          idParcela: d.idParcela,
+          idOrdem: d.idOrdem,
+          idFuncionario: d.idFuncionario,
+          vlTotal: d.vlTotal,
+          vlTotalPago: d.vlTotal,
+          tpStatus: d.tpStatus,
+          dsObservacoes: (d.dsObservacao.trim() == "" ? observacaoPagamento : d.dsObservacao),
+          dsObservacoesComplementar: d.dsObservacao2,
+          isProcessamentoAdiantamentoParcelas: false
+        };
+
+        this.lancamentosService.processarPagamentoDetalheDespesa(request).toPromise().then(() => {
+          this.carregarDetalheDespesaAberta();
+        },
+          err => {
+            console.log(err);
+          });
+      });
+    }
+
+    this.resetDetalheDespesasChange();
     this.closeModal();
     this.carregarDespesas();
+  }
+
+  carregarDetalheDespesaAberta() {
+    const despesaMensal = this.detalheDespesaMensal.despesaMensal;
+    this.carregarDetalheDespesa(despesaMensal.idDespesa, despesaMensal.idDetalheDespesa, despesaMensal.idOrdemExibicao);
   }
 
   onNovaLinhaSeparacao() {
@@ -337,7 +377,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
           console.log(err);
         });
 
-      this.lancamentosService.excluirDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao).toPromise().then(() => { },
+      this.lancamentosService.excluirDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, -1).toPromise().then(() => { },
         err => {
           console.log(err);
         });
@@ -444,14 +484,26 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   confirmEventModal() {
     this.closeModal();
-    const eventoSelecionado = this.eventModalConfirmacao;
 
-    if (eventoSelecionado == "ImportacaoLancamentos") {
-      this.confirmImportacaoLancamentos();
-    } else if (eventoSelecionado == "ExcluirReceitaSelecionada") {
-      this.confirmExcluirReceita();
-    } else if (eventoSelecionado == "ExcluirTodosLancamentos") {
-      this.confirmExcluirTodosLancamentos();
+    switch (this.eventModalConfirmacao) {
+      case 'ImportacaoLancamentos': {
+        this.confirmImportacaoLancamentos();
+        break;
+      }
+      case 'ExcluirReceitaSelecionada': {
+        this.confirmExcluirReceita();
+        break;
+      }
+      case 'ExcluirTodosLancamentos': {
+        this.confirmExcluirTodosLancamentos();
+        break;
+      }
+      case 'GravarDetalheDespesas': {
+        this.confirmGravarDetalheDespesas();
+        break;
+      }
+      default: {
+      }
     }
 
     this.eventModalConfirmacao = "";
@@ -488,7 +540,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
         (<HTMLInputElement>document.getElementById("subTotalValores")).value = calculo;
 
         //limpa o campo de input
-        (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "0,00";
+        (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
       }
     });
   }
@@ -499,12 +551,12 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     switch (this.eventModalEditarValores) {
       case 'detalheDespColValorTotal': {
-        objeto.vlTotal = novoValor;
+        objeto.vlTotal = novoValor.trim();
         this.changeDetalheDespesasMensais(objeto);
         break;
       }
       case 'detalheDespColValorTotalPago': {
-        objeto.vlTotalPago = novoValor;
+        objeto.vlTotalPago = novoValor.trim();
         this.changeDetalheDespesasMensais(objeto);
         break;
       }
@@ -513,12 +565,12 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     }
 
     this.resetModalEditarValores;
-    this.closeModal;
+    this.closeModal();
   }
 
   setModalEditarValores(valor, evento, objeto) {
-    (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "0,00";
-    (<HTMLInputElement>document.getElementById("subTotalValores")).value = "0,00";
+    (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
+    (<HTMLInputElement>document.getElementById("subTotalValores")).value = "R$ 0,00";
 
     this.eventModalEditarValores = (evento == "reset" ? this.eventModalEditarValores : evento);
     this.objectModalEditarValores = (evento == "reset" ? this.objectModalEditarValores : objeto);
@@ -531,25 +583,96 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   resetModalEditarValores() {
     this.objectModalEditarValores = null;
-    (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "0,00";
-    (<HTMLInputElement>document.getElementById("subTotalValores")).value = "0,00";
+    (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
+    (<HTMLInputElement>document.getElementById("subTotalValores")).value = "R$ 0,00";
+  }
+
+  onChangeDescricaoDespesa(objeto) {
+    var input = document.getElementById("dsDescricaoDespesa");
+
+    input.addEventListener('keyup', () => {
+      const value = (document.getElementById("dsDescricaoDespesa") as HTMLInputElement).value;
+      objeto.dsDescricao = value;
+      objeto.dsTituloDespesa = value;
+
+      this.changeDetalheDespesasMensais(objeto);
+    });
+  }
+
+  onChangeObservacoesDespesa(objeto) {
+    var input = document.getElementById("dsObservacao");
+
+    input.addEventListener('keyup', () => {
+      const value = (document.getElementById("dsObservacao") as HTMLInputElement).value;
+      objeto.dsObservacao = value;
+
+      this.changeDetalheDespesasMensais(objeto);
+    });
+  }
+
+  onChangeObservacoesComplDespesa(objeto) {
+    var input = document.getElementById("dsObservacaoComplementar");
+
+    input.addEventListener('keyup', () => {
+      const value = (document.getElementById("dsObservacaoComplementar") as HTMLInputElement).value;
+      objeto.dsObservacao2 = value;
+
+      this.changeDetalheDespesasMensais(objeto);
+    });
+  }
+
+  gravarDetalheDespesas() {
+    this.eventModalConfirmacao = "GravarDetalheDespesas";
+    this.mensagemModalConfirmacao = "Deseja salvar as alterações ?";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  confirmGravarDetalheDespesas() {
+    const despesas = this.getDetalheDespesasChange();
+
+    despesas.forEach((d) => {
+      d.dsDescricao = d.dsTituloDespesa;
+      d.vlTotal = d.vlTotal.replace('.', '');
+      d.vlTotalPago = d.vlTotalPago.replace('.', '');
+
+      this.lancamentosService.gravarDetalheDespesa(d).toPromise().then(() => {
+        //d.dsDescricao.toUpperCase();
+        //d.dsTituloDespesa.toUpperCase();
+        this.changeDetalheDespesasMensais(d);
+      },
+        err => {
+          console.log(err);
+        });
+    })
+
+    this.closeModal();
+    this.carregarDespesas();
   }
 
   getDespesasChecked() {
     return this._despesasCheckbox.getValue().filter((d) => d.checked === true);
   }
 
-  resetDespesasCheckbox() {
-    this._despesasCheckbox.next([]);
-    /*const despesas = this._despesasCheckbox.getValue();
-    despesas.forEach((d) => d.checked = false);
-    this.set(despesas);*/
+  getDetalheDespesasChecked() {
+    return this._detalheDespesasChange.getValue().filter((d) => d.checked === true);
   }
 
-  /*set(despesas: LancamentosMensais[]) {
-    this._despesasCheckbox.next(despesas);
-  }*/
+  getDetalheDespesasCheckedPagamento() {
+    return this._detalheDespesasChange.getValue().filter((d) => d.checked === true && d.tpAnotacao == 'N' && d.tpLinhaSeparacao == 'N');
+  }
 
+  getDetalheDespesasChange() {
+    return this._detalheDespesasChange.getValue().filter((d) => d.changeValues === true);
+  }
+
+  resetDespesasCheckbox() {
+    this._despesasCheckbox.next([]);
+  }
+
+  resetDetalheDespesasChange() {
+    this._detalheDespesasChange.next([]);
+  }
 
   closeModal(): void {
     this.modalRef.hide();

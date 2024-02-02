@@ -363,7 +363,8 @@
                     </button>
                     <button *ngIf="despesa.tpLinhaSeparacao == 'N'" type="button" class="btn btn-link btn-sm px-0"
                       data-toggle="modal" data-target="#modalDetalheDespesasMensais"
-                      (click)="abrirDetalheDespesa(despesa)" title="Editar despesa">
+                      (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)"
+                      title="Editar despesa">
                       <i class="fas fa-edit"></i>
                     </button>
                     <button type="button" class="btn btn-link btn-sm px-0" title="Subir item"
@@ -392,7 +393,7 @@
                       <i class="fas fa-trash-alt"></i> Excluir Despesa
                     </button>
                     <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
-                      role="button" (click)="onQuitarDespesa()">
+                      role="button" (click)="onQuitarDespesa('despesa')">
                       <i class="far fa-calendar-check"></i> Pagar Despesa
                     </button>
                     <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
@@ -595,9 +596,32 @@
                       </td>
 
                       <td>
-                        <div class="caixaAlta" contenteditable="true" style="width: 590px"> {{
-                          detalheDespesa.dsTituloDespesa}}
-                        </div>
+                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0">
+                          <div style="width: 590px">
+                            <span *ngIf="detalheDespesa.tpReprocessar !== 'S' && detalheDespesa.tpAnotacao !== 'S'">
+                              <input type="text" class="form-control form-control-sm text-center"
+                                (click)="onChangeDescricaoDespesa(detalheDespesa)" id="dsDescricaoDespesa"
+                                value={{detalheDespesa.dsTituloDespesa}} style="color: #000000;">
+                            </span>
+                            <span *ngIf="detalheDespesa.tpReprocessar == 'S'">
+                              <input type="text" class="form-control form-control-sm text-center"
+                                (click)="onChangeDescricaoDespesa(detalheDespesa)" id="dsDescricaoDespesa"
+                                value={{detalheDespesa.dsTituloDespesa}} style="color: #137759;">
+                            </span>
+                            <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
+                              <input type="text" class="form-control form-control-sm text-center"
+                                (click)="onChangeDescricaoDespesa(detalheDespesa)" id="dsDescricaoDespesa"
+                                value={{detalheDespesa.dsTituloDespesa}} style="color: #bdbdbd;">
+                            </span>
+                          </div>
+
+                        </span>
+
+                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada !== 0">
+                          <div style="width: 590px; color: #614404cf">
+                            {{detalheDespesa.dsTituloDespesa}}
+                          </div>
+                        </span>
                       </td>
 
                       <td>
@@ -623,11 +647,19 @@
                       </td>
 
                       <td>
-                        <div style="width: 400px"> {{ detalheDespesa.dsObservacao}} </div>
+                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                          <input type="text" class="form-control form-control-sm"
+                            (click)="onChangeObservacoesDespesa(detalheDespesa)" id="dsObservacao"
+                            value={{detalheDespesa.dsObservacao}} style="width: 400px">
+                        </span>
                       </td>
 
                       <td>
-                        <div style="width: 400px"> {{ detalheDespesa.dsObservacao2}} </div>
+                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                          <input type="text" class="form-control form-control-sm"
+                            (click)="onChangeObservacoesComplDespesa(detalheDespesa)" id="dsObservacaoComplementar"
+                            value={{detalheDespesa.dsObservacao2}} style="width: 400px">
+                        </span>
                       </td>
 
                       <td>
@@ -718,7 +750,7 @@
           <div class="modal-footer">
             <div class="modal-footer-detalhe-right">
               <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
-                data-toggle="modal" data-target="#ModalDetalheDespesasMensais" (click)="abrirDespesa(despesa)">
+                data-toggle="modal" data-target="#ModalDetalheDespesasMensais" (click)="gravarDetalheDespesas()">
                 <i class="fa fa-floppy-o"></i> Salvar
               </button>
               <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
@@ -726,7 +758,7 @@
                 <i class="fas fa-trash-alt"></i> Excluir
               </button>
               <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
-                role="button">
+                role="button" (click)="onQuitarDespesa('detalheDespesa')">
                 <i class="far fa-calendar-check"></i> Pagar
               </button>
               <button class="btn text-white" data-mdb-ripple-init style="background-color: #709977;" href="#!"
@@ -810,8 +842,8 @@
         <div class="modalEditorValores-body">
           <div class="input-group mb-3">
             <span class="input-group-text">Novo Valor:</span>
-            <input type="text" class="inputNovoValorEditorValores form-control" (click)="onEditarValores()" id="inputNovoValor"
-              currencyMask maxlength="16" autocomplete="off"
+            <input type="text" class="inputNovoValorEditorValores form-control" (click)="onEditarValores()"
+              id="inputNovoValor" currencyMask maxlength="16" autocomplete="off"
               [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }">
             <div>
               <small class="form-text text-muted">
@@ -824,7 +856,7 @@
           <input type="text" readonly class="inputSubTotalEditorValores form-control" id="subTotalValores" currencyMask
             maxlength="16" autocomplete="off" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }">
         </div>
-        
+
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmGravarEditarValores()"
             style="background-color: #3b6bd3;">
@@ -948,18 +980,22 @@
         </button>
       </div>
       <div class="form-group modal-body">
-        Deseja realmente quitar as despesas marcadas?
+        Deseja realmente quitar a(s) despesa(s) selecionada(s)?
         <br>
         <br>
         <div>
           <input class="form-control form-control-sm" type="text" style="color: #aa101f!important"
-            formControlName="observacaoPagamento" placeholder="Descreva uma observação para o pagamento (opcional)">
+            formControlName="observacaoPagamento">
+          <small class="form-text text-muted">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            Descreva uma observação para o pagamento (opcional).
+          </small>
         </div>
       </div>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal"
-          (click)="confirmQuitarDespesas()">Sim</button>
+          (click)="confirmQuitarDespesas('despesas')">Sim</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Não</button>
       </div>
     </ng-template>

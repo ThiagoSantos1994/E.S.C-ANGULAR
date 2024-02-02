@@ -10,6 +10,7 @@ import { LancamentosFinanceiros } from '../interfaces/lancamentos-financeiros.in
 import { DetalheLancamentosMensais } from '../interfaces/lancamentos-mensais-detalhe.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
+import { PagamentoDespesasRequest } from '../interfaces/pagamento-despesas-request.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -111,6 +112,20 @@ export class LancamentosFinanceirosService {
   processarPagamentoDespesa(idDespesa: number, idDetalheDespesa: number, observacaoPagamento: string) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/baixarPagamentoDespesa/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/${observacaoPagamento}`;
     return this.http.post(url, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  processarPagamentoDetalheDespesa(request: PagamentoDespesasRequest) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/baixarPagamentoDespesa`;
+    return this.http.post(url, request).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  gravarDetalheDespesa(detalheDespesa) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/incluir`;
+    return this.http.post(url, detalheDespesa).pipe(
       catchError(error => this.handleError(error))
     );
   }
