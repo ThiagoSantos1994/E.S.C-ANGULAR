@@ -600,17 +600,17 @@
                           <div style="width: 590px">
                             <span *ngIf="detalheDespesa.tpReprocessar !== 'S' && detalheDespesa.tpAnotacao !== 'S'">
                               <input type="text" class="form-control form-control-sm text-center"
-                                (click)="onChangeDescricaoDespesa(detalheDespesa)" id="dsDescricaoDespesa"
+                                (input)="onChangeDescricaoDespesa($event.target.value, detalheDespesa)"
                                 value={{detalheDespesa.dsTituloDespesa}} style="color: #000000;">
                             </span>
                             <span *ngIf="detalheDespesa.tpReprocessar == 'S'">
                               <input type="text" class="form-control form-control-sm text-center"
-                                (click)="onChangeDescricaoDespesa(detalheDespesa)" id="dsDescricaoDespesa"
+                                (input)="onChangeDescricaoDespesa($event.target.value, detalheDespesa)"
                                 value={{detalheDespesa.dsTituloDespesa}} style="color: #137759;">
                             </span>
                             <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
                               <input type="text" class="form-control form-control-sm text-center"
-                                (click)="onChangeDescricaoDespesa(detalheDespesa)" id="dsDescricaoDespesa"
+                                (input)="onChangeDescricaoDespesa($event.target.value, detalheDespesa)"
                                 value={{detalheDespesa.dsTituloDespesa}} style="color: #bdbdbd;">
                             </span>
                           </div>
@@ -649,7 +649,7 @@
                       <td>
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
                           <input type="text" class="form-control form-control-sm"
-                            (click)="onChangeObservacoesDespesa(detalheDespesa)" id="dsObservacao"
+                            (input)="onChangeObservacoesDespesa($event.target.value, detalheDespesa)"
                             value={{detalheDespesa.dsObservacao}} style="width: 400px">
                         </span>
                       </td>
@@ -657,7 +657,7 @@
                       <td>
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
                           <input type="text" class="form-control form-control-sm"
-                            (click)="onChangeObservacoesComplDespesa(detalheDespesa)" id="dsObservacaoComplementar"
+                            (input)="onChangeObservacoesComplDespesa($event.target.value, detalheDespesa)"
                             value={{detalheDespesa.dsObservacao2}} style="width: 400px">
                         </span>
                       </td>

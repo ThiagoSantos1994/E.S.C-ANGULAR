@@ -77,8 +77,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     this.modalDetalheDespesasMensaisForm = this.formBuilder.group({
       nomeDespesa: [''],
-      valorLimiteDespesa: ['0,00'],
-      checkDespesaRelatorio: [false]
+      valorLimiteDespesa: ['0,00']
     });
 
     this.modalCategoriaDetalheDespesaForm = this.formBuilder.group({
@@ -247,11 +246,21 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
       this.detalheDespesaMensal = res;
+      this.setDetalheDespesaMensalObservable(res.detalheDespesaMensal);
 
       this.modalDetalheDespesasMensaisForm.setValue({
         nomeDespesa: (res.despesaMensal.dsNomeDespesa),
         valorLimiteDespesa: (res.despesaMensal.vlLimite)
       });
+    });
+  }
+
+  setDetalheDespesaMensalObservable(despesa: DetalheDespesasMensais[]) {
+    const detalheDespesa = this._detalheDespesasChange.getValue();
+
+    despesa.forEach(d => {
+      detalheDespesa.push({ ...d });
+      this._detalheDespesasChange.next(detalheDespesa);
     });
   }
 
@@ -304,7 +313,11 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
         };
 
         this.lancamentosService.processarPagamentoDetalheDespesa(request).toPromise().then(() => {
-          this.carregarDetalheDespesaAberta();
+          d.tpStatus = 'Pago'
+          d.vlTotalPago = d.vlTotal;
+          d.dsObservacao = (d.dsObservacao.trim() == "" ? observacaoPagamento : d.dsObservacao);
+
+          this.changeDetalheDespesasMensais(d);
         },
           err => {
             console.log(err);
@@ -312,7 +325,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       });
     }
 
-    this.resetDetalheDespesasChange();
     this.closeModal();
     this.carregarDespesas();
   }
@@ -587,38 +599,21 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("subTotalValores")).value = "R$ 0,00";
   }
 
-  onChangeDescricaoDespesa(objeto) {
-    var input = document.getElementById("dsDescricaoDespesa");
+  onChangeDescricaoDespesa(inputText, objeto) {
+    objeto.dsDescricao = inputText;
+    objeto.dsTituloDespesa = inputText;
 
-    input.addEventListener('keyup', () => {
-      const value = (document.getElementById("dsDescricaoDespesa") as HTMLInputElement).value;
-      objeto.dsDescricao = value;
-      objeto.dsTituloDespesa = value;
-
-      this.changeDetalheDespesasMensais(objeto);
-    });
+    this.changeDetalheDespesasMensais(objeto);
   }
 
-  onChangeObservacoesDespesa(objeto) {
-    var input = document.getElementById("dsObservacao");
-
-    input.addEventListener('keyup', () => {
-      const value = (document.getElementById("dsObservacao") as HTMLInputElement).value;
-      objeto.dsObservacao = value;
-
-      this.changeDetalheDespesasMensais(objeto);
-    });
+  onChangeObservacoesDespesa(inputText, objeto) {
+    objeto.dsObservacao = inputText;
+    this.changeDetalheDespesasMensais(objeto);
   }
 
-  onChangeObservacoesComplDespesa(objeto) {
-    var input = document.getElementById("dsObservacaoComplementar");
-
-    input.addEventListener('keyup', () => {
-      const value = (document.getElementById("dsObservacaoComplementar") as HTMLInputElement).value;
-      objeto.dsObservacao2 = value;
-
-      this.changeDetalheDespesasMensais(objeto);
-    });
+  onChangeObservacoesComplDespesa(inputText, objeto) {
+    objeto.dsObservacao2 = inputText;
+    this.changeDetalheDespesasMensais(objeto);
   }
 
   gravarDetalheDespesas() {
@@ -637,8 +632,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       d.vlTotalPago = d.vlTotalPago.replace('.', '');
 
       this.lancamentosService.gravarDetalheDespesa(d).toPromise().then(() => {
-        //d.dsDescricao.toUpperCase();
-        //d.dsTituloDespesa.toUpperCase();
+        d.dsDescricao = d.dsDescricao.toUpperCase();
+        d.dsTituloDespesa = d.dsTituloDespesa.toUpperCase();
         this.changeDetalheDespesasMensais(d);
       },
         err => {
@@ -663,7 +658,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   getDetalheDespesasChange() {
-    return this._detalheDespesasChange.getValue().filter((d) => d.changeValues === true);
+    const resultado = this._detalheDespesasChange.getValue().filter((d) => d.changeValues === true);
+    return resultado;
   }
 
   resetDespesasCheckbox() {
