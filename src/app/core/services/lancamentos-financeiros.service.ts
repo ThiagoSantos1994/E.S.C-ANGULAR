@@ -11,6 +11,7 @@ import { DetalheLancamentosMensais } from '../interfaces/lancamentos-mensais-det
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
 import { PagamentoDespesasRequest } from '../interfaces/pagamento-despesas-request.interface';
+import { StringResponse } from '../interfaces/string-response.interface.';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,6 @@ export class LancamentosFinanceirosService {
     private sessao: SessaoService,
     private lancamentosFinanceirosDomain: LancamentosFinanceirosDomain
   ) { }
-
 
   getLancamentosFinanceiros(mes: String, ano: String): Observable<LancamentosFinanceiros> {
     //let headers = new HttpHeaders().append('Authorization', this.token.getToken());
@@ -128,6 +128,20 @@ export class LancamentosFinanceirosService {
     return this.http.post(url, detalheDespesa).pipe(
       catchError(error => this.handleError(error))
     );
+  }
+
+  atualizarOrdemLinhaDetalheDespesa(idDespesa: number, idDetalheDespesa: number, iOrdemAtual: number, iNovaOrdem: number) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/alterarOrdemRegistroDetalheDespesas/${idDespesa}/${idDetalheDespesa}/${iOrdemAtual}/${iNovaOrdem}/${this.sessao.getIdLogin()}`;
+    return this.http.post(url, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  getSubTotalDespesa(idDespesa: number, idDetalheDespesa: number, isDespesaRelatorio: boolean): Observable<StringResponse> {
+    const tipo = (isDespesaRelatorio? "relatorio": "default");
+    return this.http.get<StringResponse>(`springboot-esc-backend/api/lancamentosFinanceiros/obterSubTotalDespesa/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/${tipo}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {

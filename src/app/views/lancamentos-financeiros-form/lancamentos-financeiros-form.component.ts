@@ -25,7 +25,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]> = new Observable<LancamentosFinanceiros[]>();
   private _despesasCheckbox = new BehaviorSubject<LancamentosMensais[]>([]);
   private _detalheDespesasChange = new BehaviorSubject<DetalheDespesasMensais[]>([]);
-  private detalheDespesaMensal: DetalheLancamentosMensais;
+  private detalheLancamentosMensais: DetalheLancamentosMensais;
 
   private pesquisaForm: FormGroup;
   private modalCriarEditarReceitaForm: FormGroup;
@@ -241,11 +241,11 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   carregarDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
-    this.detalheDespesaMensal = null;
+    //this.detalheLancamentosMensais = null;
     this.resetDetalheDespesasChange();
 
     this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
-      this.detalheDespesaMensal = res;
+      this.detalheLancamentosMensais = res;
       this.setDetalheDespesaMensalObservable(res.detalheDespesaMensal);
 
       this.modalDetalheDespesasMensaisForm.setValue({
@@ -330,7 +330,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   carregarDetalheDespesaAberta() {
-    const despesaMensal = this.detalheDespesaMensal.despesaMensal;
+    const despesaMensal = this.detalheLancamentosMensais.despesaMensal;
     this.carregarDetalheDespesa(despesaMensal.idDespesa, despesaMensal.idDetalheDespesa, despesaMensal.idOrdemExibicao);
   }
 
@@ -430,7 +430,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   carregarCategoriaDetalheDespesa() {
-    const detalheDespesa = this.detalheDespesaMensal.despesaMensal;
+    const detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
 
     this.modalCategoriaDetalheDespesaForm.setValue({
       checkDespesaRascunho: (detalheDespesa.tpAnotacao == "S" ? true : false),
@@ -513,6 +513,9 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       case 'GravarDetalheDespesas': {
         this.confirmGravarDetalheDespesas();
         break;
+      }
+      case 'DesfazerPagamentoDespesa': {
+        this.confirmDesfazerPagamentoDespesa();
       }
       default: {
       }
@@ -632,8 +635,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       d.vlTotalPago = d.vlTotalPago.replace('.', '');
 
       this.lancamentosService.gravarDetalheDespesa(d).toPromise().then(() => {
-        d.dsDescricao = d.dsDescricao.toUpperCase();
-        d.dsTituloDespesa = d.dsTituloDespesa.toUpperCase();
         this.changeDetalheDespesasMensais(d);
       },
         err => {
@@ -643,6 +644,53 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     this.closeModal();
     this.carregarDespesas();
+  }
+
+  desfazerPagamentoDespesa() {
+    this.eventModalConfirmacao = "DesfazerPagamentoDespesa";
+    this.mensagemModalConfirmacao = "Deseja alterar o status do pagamento da(s) despesa(s) selecionada(s) ?";
+
+    if (this.getDetalheDespesasChecked().length == 0) {
+      alert('Necessário marcar alguma despesa para alterar o status do pagamento.')
+      return;
+    }
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  confirmDesfazerPagamentoDespesa() {
+    const despesas = this.getDetalheDespesasChecked();
+
+    despesas.forEach((d) => {
+      d.tpStatus = 'Pendente';
+      d.dsObservacao = '';
+
+      this.lancamentosService.gravarDetalheDespesa(d).toPromise().then(() => {
+        this.changeDetalheDespesasMensais(d);
+      },
+        err => {
+          console.log(err);
+        });
+    })
+
+    this.closeModal();
+    this.carregarDespesas();
+  }
+
+  atualizarOrdemLinhaDetalheDespesa(acao, objeto) {
+    const ordemAtual = objeto.idOrdem;
+
+    let novaOrdem = (acao == "UP" ? (objeto.idOrdem - 1) : (objeto.idOrdem + 1));
+    if (novaOrdem <= 0) {
+      novaOrdem = 1;
+    }
+
+    this.lancamentosService.atualizarOrdemLinhaDetalheDespesa(objeto.idDespesa, objeto.idDetalheDespesa, ordemAtual, novaOrdem).toPromise().then(() => {
+      this.carregarDetalheDespesaAberta();
+    },
+      err => {
+        console.log(err);
+      });
   }
 
   getDespesasChecked() {

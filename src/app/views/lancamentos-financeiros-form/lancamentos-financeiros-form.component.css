@@ -17,13 +17,6 @@
     line-height: 0%;
   }
 
-  .card-body {
-    flex: 1 1 auto;
-    min-height: 1px;
-    padding: 1.1rem;
-  }
-
-
   .border-left-receita {
     border-left: 0.25rem solid #63c73b !important;
   }
@@ -38,6 +31,10 @@
 
   .border-left-disponivel {
     border-left: 0.25rem solid #17a2b8 !important;
+  }
+
+  .border-saldo-detalhe-despesa {
+    border-right: 0.25rem !important;
   }
 
   body {
@@ -62,8 +59,6 @@
   }
 
   .card-body {
-    -webkit-box-flex: 1;
-    -ms-flex: 1 1 auto;
     flex: 1 1 auto;
     padding: 1.25rem;
   }
@@ -369,6 +364,12 @@
     margin: 1.75rem auto;
   }
 
+  .modalEditorValores {
+    text-align: left;
+    width: 24%;
+    margin: 1.75rem auto;
+  }
+
   .modalDetalheDespesasMensais {
     text-align: center;
     width: 75%;
@@ -393,8 +394,19 @@
     background-color: #f5f5f5;
     background-clip: border-box;
     border: 1px solid #c8cad1;
-    width: 86%;
+    width: 76.7%;
     border-radius: 0.35rem
+  }
+
+  .input-group-categorias {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 110%;
+    max-width: 110%;
   }
 
   .checkDespesaObrigatoria {
@@ -446,4 +458,17 @@
     font-family: sans-serif;
     font-size: larger;
     color: #1319a2;
+  }
+
+  .row-header-detalhe-despesas-mensais {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+    max-width: 102%;
+    width: 102%;
+  }
+
+  .card-body-saldo-detalhe-despesa {
+    padding: 0.25rem;
   }
