@@ -276,7 +276,12 @@
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" href="#!"
                         role="button" data-toggle="modal" (click)="resetModalCriarEditarReceita()"
                         data-target="#modalCriarEditarReceita">
-                        <i class="fas fa-plus"></i> Adicionar
+                        <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
+                          <i class="fas fa-plus"></i> Criar Nova Receita
+                        </span>
+                        <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes !='0,00'">
+                          <i class="fas fa-plus"></i> Adicionar
+                        </span>
                       </button>
                     </div>
                   <td></td>
@@ -387,23 +392,33 @@
                 <td colspan="7">
                   <br>
                   <div class="d-grid gap-2 d-md-block btn-group-sm">
-                    <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
-                      data-toggle="modal" data-target="#ModalDetalheDespesasMensais"
-                      (click)="adicionarDespesaMensal(despesa)">
-                      <i class="fas fa-plus"></i> Nova Despesa
-                    </button>
-                    <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
-                      role="button" (click)="onExcluirDespesa()">
-                      <i class="fas fa-trash-alt"></i> Excluir Despesa
-                    </button>
-                    <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
-                      role="button" (click)="onQuitarDespesa('despesa')">
-                      <i class="far fa-calendar-check"></i> Pagar Despesa
-                    </button>
-                    <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
-                      role="button" (click)="onNovaLinhaSeparacao()">
-                      <i class="fas fa-bars"></i> Nova Linha
-                    </button>
+                    <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
+                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;"
+                        role="button" data-toggle="modal" data-target="#ModalDetalheDespesasMensais"
+                        (click)="adicionarDespesaMensal(despesa)">
+                        <i class="fas fa-plus"></i> Criar Nova Despesa
+                      </button>
+                    </span>
+
+                    <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes !='0,00'">
+                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;"
+                        role="button" data-toggle="modal" data-target="#ModalDetalheDespesasMensais"
+                        (click)="adicionarDespesaMensal(despesa)">
+                        <i class="fas fa-plus"></i> Nova Despesa
+                      </button>
+                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
+                        role="button" (click)="onExcluirDespesa()">
+                        <i class="fas fa-trash-alt"></i> Excluir Despesa
+                      </button>
+                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
+                        role="button" (click)="onQuitarDespesa('despesa')">
+                        <i class="far fa-calendar-check"></i> Pagar Despesa
+                      </button>
+                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
+                        role="button" (click)="onNovaLinhaSeparacao()">
+                        <i class="fas fa-bars"></i> Nova Linha
+                      </button>
+                    </span>
                   </div>
                 </td>
                 <td></td>
@@ -451,7 +466,7 @@
                         <div *ngIf="detalheLancamentosMensais.despesaMensal.tpRelatorio == 'S'"
                           class="form-check form-check-inline checkDetalheDespesas">
                           <span class="badge checkDetalheDespesasColor d-inline">
-                            <i class="fa fa-bar-chart" aria-hidden="true"> Despesa Relatório</i>
+                            <i class="fa fa-bar-chart"> Despesa Relatório</i>
                           </span>
                         </div>
 
@@ -513,6 +528,12 @@
                     <i class="fa fa-star-half-o"></i> Categorias
                   </button>
                 </div>
+                <div class="text-left" style="padding-top: 1%;">
+                  <small class="form-text text-muted" style="font-size: initial;">
+                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                    {{detalheLancamentosMensais.despesaMensal.dsExtratoDespesa}}
+                  </small>
+                </div>
               </div>
 
               <div class="col-xl-2 col-md-6 mb-1">
@@ -522,11 +543,18 @@
                       <div class="text-center">
                         Limite Despesa
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          <!--<input formControlName="nomeDespesa">-->
-                          {{detalheLancamentosMensais.despesaMensal.vlLimite}} R$
+                          {{detalheLancamentosMensais.despesaMensal.vlLimite}}
                         </div>
                         <small class="form-text text-muted" style="padding-top: 10%;">
-                          1999,99 Disponível
+                          {{detalheLancamentosMensais.despesaMensal.vlTotalDespesa}} Neste Mês
+                        </small>
+                        <small class="form-text text-muted" style="padding-left: 11%;">
+                          <input class="form-check-input" type="checkbox" formControlName="checkLimiteMesAnterior"
+                            id="checkLimiteMesAnterior">
+                          <label class="form-check-label" for="checkLimiteMesAnterior"
+                            title="Utiliza como referencia de limite o valor total da despesa do mês anterior.">Saldo M.
+                            Ant.
+                          </label>
                         </small>
                       </div>
                     </div>
@@ -535,6 +563,7 @@
               </div>
             </div>
           </form>
+
           <hr>
           <div class="p-2 text-center bg-light">
             <div class="center-modal-detalhes">
@@ -566,8 +595,6 @@
                   </button>
                   <br>
                   <br>
-                  <br>
-                  <br>
                 </div>
               </div>
 
@@ -579,7 +606,10 @@
                         style="width: 19.8889px;">
                         <input type="checkbox" name="item[]" value="s" onclick="marcarTodos(this)">
                       </th>-->
-                      <th scope="col"></th>
+                      <th scope="col">
+                        <i class="fa fa-sort-amount-desc" aria-hidden="true"
+                          (click)="onOrdenarRegistrosDetalheDespesas()"></i>
+                      </th>
                       <th scope="col">Ações</th>
                       <th scope="col">Total R$</th>
                       <th scope="col">Descrição</th>
@@ -786,11 +816,11 @@
           <div class="modal-footer">
             <div class="modal-footer-detalhe-right">
               <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
-                data-toggle="modal" data-target="#ModalDetalheDespesasMensais" (click)="gravarDetalheDespesas()">
+                (click)="gravarDetalheDespesas()">
                 <i class="fa fa-floppy-o"></i> Salvar
               </button>
               <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
-                role="button">
+                role="button" (click)="excluirItemDetalheDespesa()">
                 <i class="fas fa-trash-alt"></i> Excluir
               </button>
               <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
@@ -803,7 +833,7 @@
               </button>
 
               <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
-                role="button">
+                role="button" (click)="addNovaLinhaDetalheDespesa(false)">
                 <i class="fas fa-bars"></i> Nova Linha
               </button>
             </div>

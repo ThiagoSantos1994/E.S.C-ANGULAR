@@ -3,7 +3,10 @@ export interface DespesaMensal {
     idDetalheDespesa: number;
     dsTituloDespesa?: string;
     dsNomeDespesa?: string;
+    dsExtratoDespesa? : string;
     vlLimite?: string;
+    vlTotalLimiteUtilizado?: string;
+    vlTotalDespesa?: string;
     idOrdemExibicao?: number;
     idFuncionario: number;
     idEmprestimo?: number;

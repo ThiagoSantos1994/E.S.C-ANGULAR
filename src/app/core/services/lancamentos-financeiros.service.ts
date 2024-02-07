@@ -109,7 +109,7 @@ export class LancamentosFinanceirosService {
     );
   }
 
-  processarPagamentoDespesa(idDespesa: number, idDetalheDespesa: number, observacaoPagamento: string) {
+  processarPagamentoDespesa(idDespesa: number, idDetalheDespesa: number, observacaoPagamento?: string) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/baixarPagamentoDespesa/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/${observacaoPagamento}`;
     return this.http.post(url, {}).pipe(
       catchError(error => this.handleError(error))
@@ -122,10 +122,24 @@ export class LancamentosFinanceirosService {
       catchError(error => this.handleError(error))
     );
   }
-
+  
   gravarDetalheDespesa(detalheDespesa) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/incluir`;
     return this.http.post(url, detalheDespesa).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  excluritemDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemDespesa: number) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/excluir/${idDespesa}/${idDetalheDespesa}/${ordemDespesa}/${this.sessao.getIdLogin()}`;
+    return this.http.post(url, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  organizarListaItensDetalheDespesa(idDespesa: number, idDetalheDespesa: number) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/ordenarListaDespesas/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/'prazo'`;
+    return this.http.post(url, {}).pipe(
       catchError(error => this.handleError(error))
     );
   }
@@ -137,9 +151,8 @@ export class LancamentosFinanceirosService {
     );
   }
 
-  getSubTotalDespesa(idDespesa: number, idDetalheDespesa: number, isDespesaRelatorio: boolean): Observable<StringResponse> {
-    const tipo = (isDespesaRelatorio? "relatorio": "default");
-    return this.http.get<StringResponse>(`springboot-esc-backend/api/lancamentosFinanceiros/obterSubTotalDespesa/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/${tipo}`)
+  getExtratoDetalheDespesa(idDespesa: number, idDetalheDespesa: number): Observable<StringResponse> {
+    return this.http.get<StringResponse>(`springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/obterExtratoDespesasMes/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/detalheDespesas`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
   }
