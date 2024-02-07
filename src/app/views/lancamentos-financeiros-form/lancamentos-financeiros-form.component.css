@@ -470,5 +470,6 @@
   }
 
   .card-body-saldo-detalhe-despesa {
-    padding: 0.25rem;
+    padding-left: 3%;
+    padding-right: 10%;
   }

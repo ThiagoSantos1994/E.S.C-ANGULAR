@@ -319,7 +319,9 @@
 
                   <td>
                     <span *ngIf="despesa.tpLinhaSeparacao == 'N'">
-                      <span>{{ despesa.svlTotalDespesa}}</span>
+                      <span>
+                        {{despesa.svlTotalDespesa}}
+                      </span>
                     </span>
                   </td>
 
@@ -338,7 +340,10 @@
                     </span>
                   </td>
 
-                  <td class="font-weight-bold">{{ despesa.dsTituloDespesa }}</td>
+                  <td class="font-weight-bold" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
+                    (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)">
+                    {{ despesa.dsTituloDespesa }}
+                  </td>
 
                   <td>
                     <span *ngIf="despesa.statusPagamento == 'Pendente' && despesa.tpRelatorio !== 'S' && despesa.tpEmprestimo !== 'S' 
@@ -539,18 +544,21 @@
               <div class="col-xl-2 col-md-6 mb-1">
                 <div class="card border-saldo-detalhe-despesa shadow h-100 py-0">
                   <div class="card-body-saldo-detalhe-despesa">
-                    <div class="row no-gutters" style="padding-left: 9%;">
+                    <div class="row no-gutters">
                       <div class="text-center">
                         Limite Despesa
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          {{detalheLancamentosMensais.despesaMensal.vlLimite}}
+                          <input type="text" class="text-center form-control" id="valorLimiteDespesa" currencyMask
+                            maxlength="16" autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',' }">
                         </div>
+
                         <small class="form-text text-muted" style="padding-top: 10%;">
                           {{detalheLancamentosMensais.despesaMensal.vlTotalDespesa}} Neste Mês
                         </small>
+
                         <small class="form-text text-muted" style="padding-left: 11%;">
                           <input class="form-check-input" type="checkbox" formControlName="checkLimiteMesAnterior"
-                            id="checkLimiteMesAnterior">
+                            id="checkLimiteMesAnterior" (click)="onCheckLimiteMesAnteriorChange($event.target.checked)">
                           <label class="form-check-label" for="checkLimiteMesAnterior"
                             title="Utiliza como referencia de limite o valor total da despesa do mês anterior.">Saldo M.
                             Ant.
@@ -1009,7 +1017,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
-            (click)="gravarReceita()">
+            (click)="gravarCategoriaDespesa()">
             <i class="fa fa-floppy-o"></i> Salvar
           </button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>

@@ -77,7 +77,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     this.modalDetalheDespesasMensaisForm = this.formBuilder.group({
       nomeDespesa: [''],
-      valorLimiteDespesa: ['0,00'],
       checkLimiteMesAnterior: ['']
     });
 
@@ -248,9 +247,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.detalheLancamentosMensais = res;
       this.setDetalheDespesaMensalObservable(res.detalheDespesaMensal);
 
+      (<HTMLInputElement>document.getElementById("valorLimiteDespesa")).value = res.despesaMensal.vlLimiteExibicao;
+
       this.modalDetalheDespesasMensaisForm.setValue({
         nomeDespesa: (res.despesaMensal.dsNomeDespesa),
-        valorLimiteDespesa: (res.despesaMensal.vlLimite),
         checkLimiteMesAnterior: (res.despesaMensal.tpReferenciaSaldoMesAnterior == "S" ? true : false)
       });
     });
@@ -357,12 +357,22 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       tpDespesaCompartilhada: 'N'
     };
 
-    this.lancamentosService.gravarDespesaMensal(request).toPromise().then(() => {
-      this.carregarDespesas();
-    },
-      err => {
-        console.log(err);
-      });
+    this.gravarDespesa(request);
+  }
+
+  gravarCategoriaDespesa() {
+    let request = this.detalheLancamentosMensais.despesaMensal;
+
+    request.tpAnotacao = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaRascunho').value == true ? "S" : "N");
+    request.tpRelatorio = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaRelatorio').value == true ? "S" : "N");
+    request.tpDebitoAutomatico = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaDebitoAutomatico').value == true ? "S" : "N");
+    request.tpDebitoCartao = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaDebitoCartao').value == true ? "S" : "N");
+    request.tpPoupanca = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaPoupancaPositiva').value == true ? "S" : "N");
+    request.tpPoupancaNegativa = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaPoupancaNegativa').value == true ? "S" : "N");
+    request.tpEmprestimo = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaEmprestimoAReceber').value == true ? "S" : "N");
+    request.tpEmprestimoAPagar = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaEmprestimoAPagar').value == true ? "S" : "N");
+
+    this.gravarDespesa(request);
   }
 
   subirLinhaDespesa(despesa: DespesaMensal) {
@@ -490,6 +500,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   onChangeStatusPagamentoDetalhe(status, detalhe) {
     detalhe.tpStatus = StatusPagamentoEnum[status];
     this.changeDetalheDespesasMensais(detalhe);
+  }
+
+  onCheckLimiteMesAnteriorChange(checked) {
+    this.detalheLancamentosMensais.despesaMensal.tpReferenciaSaldoMesAnterior = (checked ? 'S' : 'N');
   }
 
   changeDetalheDespesasMensais(detalhe: DetalheDespesasMensais) {
@@ -648,6 +662,29 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
+  gravarDespesa(despesa: DespesaMensal) {
+    despesa.dsNomeDespesa = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
+
+    if (despesa.tpReferenciaSaldoMesAnterior == "N") {
+      let valorLimiteDespesa = formatRealNumber((document.getElementById("valorLimiteDespesa") as HTMLInputElement).value);
+
+      if (valorLimiteDespesa == "NaN" || valorLimiteDespesa == "0") {
+          alert('Necessário informar o valor Limite Despesa para gravar a despesa.');
+          return;
+      }
+
+      despesa.vlLimite = valorLimiteDespesa;
+    }
+    
+    this.lancamentosService.gravarDespesaMensal(despesa).toPromise().then(() => {
+      this.carregarDespesas();
+      this.carregarDetalheDespesaAberta();
+    },
+      err => {
+        console.log(err);
+      });
+  }
+
   confirmGravarDetalheDespesas() {
     const despesas = this.getDetalheDespesasChange();
 
@@ -656,17 +693,14 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       d.vlTotal = d.vlTotal.replace('.', '');
       d.vlTotalPago = d.vlTotalPago.replace('.', '');
 
-      this.lancamentosService.gravarDetalheDespesa(d).toPromise().then(() => {
-        this.changeDetalheDespesasMensais(d);
-        // TODO - Implementar chamada somente para o cabecalho da despesa.
-      },
+      this.lancamentosService.gravarDetalheDespesa(d).toPromise().then(() => { },
         err => {
           console.log(err);
         });
     })
 
+    this.gravarDespesa(this.detalheLancamentosMensais.despesaMensal);
     this.closeModal();
-    this.carregarDespesas();
   }
 
   desfazerPagamentoDespesa() {
@@ -801,7 +835,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       dsDescricao: '',
       dsObservacao: '',
       dsObservacao2: '',
-      idOrdem: null,
+      idOrdem: null, // Somenta para nova linha
       idParcela: 0,
       idDespesaParcelada: 0,
       idDespesaLinkRelatorio: 0,

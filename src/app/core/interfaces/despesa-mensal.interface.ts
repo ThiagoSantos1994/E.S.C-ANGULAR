@@ -5,7 +5,7 @@ export interface DespesaMensal {
     dsNomeDespesa?: string;
     dsExtratoDespesa? : string;
     vlLimite?: string;
-    vlTotalLimiteUtilizado?: string;
+    vlLimiteExibicao?: string;
     vlTotalDespesa?: string;
     idOrdemExibicao?: number;
     idFuncionario: number;
@@ -17,7 +17,7 @@ export interface DespesaMensal {
     tpAnotacao?: string;
     tpDebitoAutomatico?: string;
     tpMeta?: string;
-    tpLinhaSeparacao: string;
+    tpLinhaSeparacao?: string;
     tpDespesaReversa?: string;
     tpRelatorio?: string;
     tpDebitoCartao?: string;
