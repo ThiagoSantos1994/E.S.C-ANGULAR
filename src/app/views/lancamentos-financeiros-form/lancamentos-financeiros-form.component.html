@@ -164,6 +164,7 @@
     <div class="card">
       <div class="p-2 text-center bg-light">
         <div class="row">
+
           <!-- Tabela Lancamentos Fixos Mensais -->
           <div class="col-sm-4">
             <table class="table table-receita">
@@ -291,6 +292,7 @@
             </table>
           </div>
 
+          <!-- Tabela Despesas Mensais -->
           <div class="col-sm-8">
             <table class="table table-despesas" id="tableDespesasMensais">
               <thead class="thead-light">
@@ -400,15 +402,15 @@
                     <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;"
                         role="button" data-toggle="modal" data-target="#ModalDetalheDespesasMensais"
-                        (click)="adicionarDespesaMensal(despesa)">
+                        (click)="onNovaDespesa()">
                         <i class="fas fa-plus"></i> Criar Nova Despesa
                       </button>
                     </span>
 
                     <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes !='0,00'">
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;"
-                        role="button" data-toggle="modal" data-target="#ModalDetalheDespesasMensais"
-                        (click)="adicionarDespesaMensal(despesa)">
+                        role="button" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
+                        (click)="onNovaDespesa()">
                         <i class="fas fa-plus"></i> Nova Despesa
                       </button>
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
@@ -436,7 +438,7 @@
     </div>
   </body>
 
-  <!--Modal Detalhe Despesas Mensais-->
+  <!------------------------  Modal Detalhe Despesas Mensais ------------------------>
   <div class="container d-flex justify-content-center">
     <div id="modalDetalheDespesasMensais" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-content modalDetalheDespesasMensais modal-dialog-centered justify-content-center"
@@ -536,7 +538,9 @@
                 <div class="text-left" style="padding-top: 1%;">
                   <small class="form-text text-muted" style="font-size: initial;">
                     <i class="fa fa-info-circle" aria-hidden="true"></i>
-                    {{detalheLancamentosMensais.despesaMensal.dsExtratoDespesa}}
+                    <span *ngIf="detalheLancamentosMensais">
+                      {{detalheLancamentosMensais.despesaMensal.dsExtratoDespesa}}
+                    </span>
                   </small>
                 </div>
               </div>
@@ -552,8 +556,10 @@
                             maxlength="16" autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',' }">
                         </div>
 
-                        <small class="form-text text-muted" style="padding-top: 10%;">
-                          {{detalheLancamentosMensais.despesaMensal.vlTotalDespesa}} Neste Mês
+                        <small class="form-text text-muted" style="padding-top: 5%;">
+                          <span *ngIf="detalheLancamentosMensais">
+                            {{detalheLancamentosMensais.despesaMensal.vlTotalDespesa}} Neste Mês
+                          </span>
                         </small>
 
                         <small class="form-text text-muted" style="padding-left: 11%;">
@@ -823,27 +829,39 @@
 
           <div class="modal-footer">
             <div class="modal-footer-detalhe-right">
-              <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
-                (click)="gravarDetalheDespesas()">
-                <i class="fa fa-floppy-o"></i> Salvar
-              </button>
-              <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
-                role="button" (click)="excluirItemDetalheDespesa()">
-                <i class="fas fa-trash-alt"></i> Excluir
-              </button>
-              <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
-                role="button" (click)="onQuitarDespesa('detalheDespesa')">
-                <i class="far fa-calendar-check"></i> Pagar
-              </button>
-              <button class="btn text-white" data-mdb-ripple-init style="background-color: #709977;" href="#!"
-                role="button" (click)="desfazerPagamentoDespesa()">
-                <i class="far fa-calendar-times"></i> Desfazer
-              </button>
+              <span *ngIf="detalheLancamentosMensais">
+                
+                <span *ngIf="detalheLancamentosMensais.despesaMensal.isNovaDespesa">
+                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
+                    (click)="gravarDetalheDespesas()">
+                    <i class="fa fa-floppy-o"></i> Salvar Despesa
+                  </button>
+                </span>
 
-              <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
-                role="button" (click)="addNovaLinhaDetalheDespesa(false)">
-                <i class="fas fa-bars"></i> Nova Linha
-              </button>
+                <span *ngIf="!detalheLancamentosMensais.despesaMensal.isNovaDespesa">
+                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
+                    (click)="gravarDetalheDespesas()">
+                    <i class="fa fa-floppy-o"></i> Salvar
+                  </button>
+                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
+                    role="button" (click)="excluirItemDetalheDespesa()">
+                    <i class="fas fa-trash-alt"></i> Excluir
+                  </button>
+                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
+                    role="button" (click)="onQuitarDespesa('detalheDespesa')">
+                    <i class="far fa-calendar-check"></i> Pagar
+                  </button>
+                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #709977;" href="#!"
+                    role="button" (click)="desfazerPagamentoDespesa()">
+                    <i class="far fa-calendar-times"></i> Desfazer
+                  </button>
+
+                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
+                    role="button" (click)="addNovaLinhaDetalheDespesa()">
+                    <i class="fas fa-bars"></i> Nova Linha
+                  </button>
+                </span>
+              </span>
             </div>
           </div>
         </div>
@@ -851,7 +869,7 @@
     </div>
   </div>
 
-  <!--Modal editar receita-->
+  <!------------------------  Modal Editar Receita ------------------------>
   <div class="modal fade" id="modalCriarEditarReceita" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content modalCriarEditarReceita">
@@ -902,7 +920,7 @@
     </div>
   </div>
 
-  <!--Modal editar valor-->
+  <!------------------------  Modal Editar Valores ------------------------>
   <div class="modal fade" id="modalEditarValores" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content modalEditorValores">
@@ -926,7 +944,6 @@
               </small>
             </div>
           </div>
-          <!--<span class="input-group-text">Resultado</span>-->
           <input type="text" readonly class="inputSubTotalEditorValores form-control" id="subTotalValores" currencyMask
             maxlength="16" autocomplete="off" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }">
         </div>
@@ -944,7 +961,7 @@
     </div>
   </div>
 
-  <!--Modal categoria despesa mensal-->
+  <!------------------------  Modal Categorias - Detalhe Despesas ------------------------>
   <div class="modal fade" id="modalCategoriaDetalheDespesa" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content modalCategoriaDespesa">
@@ -1017,8 +1034,8 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
-            (click)="gravarCategoriaDespesa()">
-            <i class="fa fa-floppy-o"></i> Salvar
+            (click)="aplicarCategoriaDespesa()">
+            <i class="fa fa-floppy-o"></i> Aplicar
           </button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
         </div>
@@ -1026,7 +1043,7 @@
     </div>
   </div>
 
-  <!--Modal Confirmacao Exclusao Despesa-->
+  <!------------------------  Modal Confirmação - Excluir Despesa ------------------------>
   <ng-template #modalConfirmacaoExcluirDespesa>
     <div class="modal-header">
       <h6 class="modal-title">
@@ -1039,8 +1056,10 @@
     </div>
     <div class="modal-body">
       Deseja realmente excluir a(s) despesa(s) selecionada(s)?
-      <label class="form-check-label" style="font-size: smaller; color: #a7444e!important">Atenção: Esta ação não
-        podera ser desfeita.</label>
+      <small class="form-text" style="font-size: revert; color: #a7444e!important">
+        <i class="fa fa-info-circle" aria-hidden="true"></i>
+        Atenção: Esta ação não podera ser desfeita.
+      </small>
       <br>
     </div>
     <div class="modal-footer">
@@ -1049,7 +1068,7 @@
     </div>
   </ng-template>
 
-  <!--Modal Confirmacao Quitar Despesas-->
+  <!------------------------  Modal Confirmação - Quitar Despesa ------------------------>
   <form [formGroup]="modalConfirmacaoQuitarDespesasForm">
     <ng-template #modalConfirmacaoQuitarDespesas>
       <div class="modal-header">
@@ -1083,7 +1102,7 @@
     </ng-template>
   </form>
 
-  <!--Modal Confirmacao Eventos Generico-->
+  <!------------------------  Modal Confirmação - Generico ------------------------>
   <form>
     <ng-template #modalConfirmacaoEventos>
       <div class="modal-header">

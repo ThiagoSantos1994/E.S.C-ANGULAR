@@ -119,12 +119,12 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
       this.carregarLancamentosFinanceiros();
     },
-      () => {
-        alert('Ocorreu um erro ao obter os lancamentos mensais, tente novamente mais tarde.');
+      err => {
+        console.log(err);
       });
   }
 
-  /* Receitas Fixas Mensais*/
+  /* -------------- Receitas Fixas Mensais -------------- */
   subirLinhaReceita(receita: DespesasFixasMensais) {
     let iOrdemAtual = receita.idOrdem;
     let iNovaOrdem = (receita.idOrdem - 1);
@@ -187,7 +187,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.carregarDespesas();
     },
       err => {
-        alert("Desculpe, ocorreu um erro no servidor. Tente novamente!")
         console.log(err);
       });
   }
@@ -212,19 +211,20 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       });
   }
 
-  confirmExcluirTodosLancamentos() {
-    this.lancamentosService.excluirTodosLancamentos(this.despesaReferencia).toPromise().then(() => {
+  atualizarOrdemLinhaReceitaService(idDespesa: number, iOrdemAtual: number, iNovaOrdem) {
+    this.lancamentosService.atualizarOrdemLinhaReceita(idDespesa, iOrdemAtual, iNovaOrdem).toPromise().then(() => {
       this.carregarDespesas();
-      alert("Lançamentos excluido com sucesso!");
     },
       err => {
         console.log(err);
       });
   }
 
-  atualizarOrdemLinhaReceitaService(idDespesa: number, iOrdemAtual: number, iNovaOrdem) {
-    this.lancamentosService.atualizarOrdemLinhaReceita(idDespesa, iOrdemAtual, iNovaOrdem).toPromise().then(() => {
+  /* -------------- Despesas Fixas Mensais -------------- */
+  confirmExcluirTodosLancamentos() {
+    this.lancamentosService.excluirTodosLancamentos(this.despesaReferencia).toPromise().then(() => {
       this.carregarDespesas();
+      alert("Lançamentos excluido com sucesso!");
     },
       err => {
         console.log(err);
@@ -238,43 +238,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       err => {
         console.log(err);
       });
-  }
-
-  carregarDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
-    this.resetDetalheDespesasChange();
-
-    this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
-      this.detalheLancamentosMensais = res;
-      this.setDetalheDespesaMensalObservable(res.detalheDespesaMensal);
-
-      (<HTMLInputElement>document.getElementById("valorLimiteDespesa")).value = res.despesaMensal.vlLimiteExibicao;
-
-      this.modalDetalheDespesasMensaisForm.setValue({
-        nomeDespesa: (res.despesaMensal.dsNomeDespesa),
-        checkLimiteMesAnterior: (res.despesaMensal.tpReferenciaSaldoMesAnterior == "S" ? true : false)
-      });
-    });
-  }
-
-  setDetalheDespesaMensalObservable(despesa: DetalheDespesasMensais[]) {
-    const detalheDespesa = this._detalheDespesasChange.getValue();
-
-    despesa.forEach(d => {
-      detalheDespesa.push({ ...d });
-      this._detalheDespesasChange.next(detalheDespesa);
-    });
-  }
-
-  excluirItemDetalheDespesa() {
-    this.eventModalConfirmacao = "ExcluirItemDetalheDespesa";
-    this.mensagemModalConfirmacao = "Deseja excluir a(s) despesa(s) selecionada(s) ?";
-
-    if (this.getDetalheDespesasChecked().length == 0) {
-      alert('Necessário selecionar alguma despesa para excluir.')
-      return;
-    }
-
-    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
   onQuitarDespesa(evento) {
@@ -342,11 +305,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.carregarDespesas();
   }
 
-  carregarDetalheDespesaAberta() {
-    const despesaMensal = this.detalheLancamentosMensais.despesaMensal;
-    this.carregarDetalheDespesa(despesaMensal.idDespesa, despesaMensal.idDetalheDespesa, despesaMensal.idOrdemExibicao);
-  }
-
   onNovaLinhaSeparacao() {
     let request: DespesaMensal = {
       idDespesa: this.despesaReferencia,
@@ -360,37 +318,55 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.gravarDespesa(request);
   }
 
-  gravarCategoriaDespesa() {
-    let request = this.detalheLancamentosMensais.despesaMensal;
+  onNovaDespesa() {
+    this.resetDetalheDespesasChange();
+    this.detalheLancamentosMensais = null;
 
-    request.tpAnotacao = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaRascunho').value == true ? "S" : "N");
-    request.tpRelatorio = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaRelatorio').value == true ? "S" : "N");
-    request.tpDebitoAutomatico = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaDebitoAutomatico').value == true ? "S" : "N");
-    request.tpDebitoCartao = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaDebitoCartao').value == true ? "S" : "N");
-    request.tpPoupanca = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaPoupancaPositiva').value == true ? "S" : "N");
-    request.tpPoupancaNegativa = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaPoupancaNegativa').value == true ? "S" : "N");
-    request.tpEmprestimo = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaEmprestimoAReceber').value == true ? "S" : "N");
-    request.tpEmprestimoAPagar = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaEmprestimoAPagar').value == true ? "S" : "N");
+    this.lancamentosService.getChaveKey("DETALHEDESPESA").subscribe((res) => {
 
-    this.gravarDespesa(request);
-  }
+      const novaDespesa: DespesaMensal = {
+        idDespesa: this.despesaReferencia,
+        idDetalheDespesa: res.novaChave,
+        dsTituloDespesa: "",
+        dsNomeDespesa: "",
+        dsExtratoDespesa: "Para salvar esta despesa, é necessário digitar a Descrição da Despesa e Limite Despesa.",
+        vlLimite: "0,00",
+        vlLimiteExibicao: "0,00",
+        vlTotalDespesa: "0,00",
+        idOrdemExibicao: null,
+        idFuncionario: Number(this.sessao.getIdLogin()),
+        idEmprestimo: null,
+        tpReprocessar: 'N',
+        tpEmprestimo: 'N',
+        tpPoupanca: 'N',
+        tpPoupancaNegativa: 'N',
+        tpAnotacao: 'N',
+        tpDebitoAutomatico: 'N',
+        tpMeta: 'N',
+        tpLinhaSeparacao: 'N',
+        tpDespesaReversa: 'N',
+        tpRelatorio: 'N',
+        tpDebitoCartao: 'N',
+        tpEmprestimoAPagar: 'N',
+        tpReferenciaSaldoMesAnterior: 'N',
+        tpVisualizacaoTemp: 'N',
+        tpDespesaCompartilhada: 'N',
+        isNovaDespesa: true
+      }
 
-  subirLinhaDespesa(despesa: DespesaMensal) {
-    let iOrdemAtual = despesa.idOrdemExibicao;
-    let iNovaOrdem = (despesa.idOrdemExibicao - 1);
+      this.carregarFormDetalheDespesasMensais(novaDespesa);
 
-    this.atualizarOrdemLinhaDespesaService(despesa.idDespesa, iOrdemAtual, iNovaOrdem);
-  }
+      this.detalheLancamentosMensais = {
+        despesaMensal: novaDespesa,
+        detalheDespesaMensal: []
+      }
 
-  descerLinhaDespesa(despesa: DespesaMensal) {
-    let iOrdemAtual = despesa.idOrdemExibicao;
-    let iNovaOrdem = (despesa.idOrdemExibicao + 1);
+      this.detalheLancamentosMensais.detalheDespesaMensal.push(
+        this.novaLinhaDetalheDespesa(novaDespesa)
+      );
 
-    this.atualizarOrdemLinhaDespesaService(despesa.idDespesa, iOrdemAtual, iNovaOrdem);
-  }
-
-  adicionarDespesaMensal() {
-    alert('Adicionando')
+      this.setDetalheDespesaMensalObservable(this.detalheLancamentosMensais.detalheDespesaMensal);
+    });
   }
 
   onExcluirDespesa() {
@@ -450,6 +426,141 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.mensagemModalConfirmacao = "Atenção: Deseja realmente excluir todos os lançamentos mensais?";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  confirmEventModal() {
+    this.closeModal();
+
+    switch (this.eventModalConfirmacao) {
+      case 'ImportacaoLancamentos': {
+        this.confirmImportacaoLancamentos();
+        break;
+      }
+      case 'ExcluirReceitaSelecionada': {
+        this.confirmExcluirReceita();
+        break;
+      }
+      case 'ExcluirTodosLancamentos': {
+        this.confirmExcluirTodosLancamentos();
+        break;
+      }
+      case 'GravarDetalheDespesas': {
+        this.confirmGravarDetalheDespesas();
+        break;
+      }
+      case 'DesfazerPagamentoDespesa': {
+        this.confirmDesfazerPagamentoDespesa();
+        break;
+      }
+      case 'ExcluirItemDetalheDespesa': {
+        this.confirmExcluirItemDetalheDespesa();
+        break;
+      }
+      case 'OrdenarRegistrosDetalheDespesas': {
+        this.confirmOrganizarRegistrosDetalheDespesa();
+        break;
+      }
+      default: {
+      }
+    }
+
+    this.eventModalConfirmacao = "";
+  }
+
+  onCheckDespesaChange(checked, despesa) {
+    despesa.checked = checked;
+
+    const despesas = this._despesasCheckbox.getValue();
+    const index = despesas.findIndex((d) => d.idDetalheDespesa === despesa.idDetalheDespesa);
+
+    if (index >= 0) {
+      despesas[index].checked = checked;
+    } else {
+      despesas.push({ ...despesa });
+    }
+
+    this._despesasCheckbox.next(despesas);
+  }
+
+  getDespesasChecked() {
+    return this._despesasCheckbox.getValue().filter((d) => d.checked === true);
+  }
+
+  resetDespesasCheckbox() {
+    this._despesasCheckbox.next([]);
+  }
+
+  /* -------------- Modal Detalhe Despesas Mensais -------------- */
+  carregarDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
+    this.resetDetalheDespesasChange();
+
+    this.lancamentosService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
+      this.detalheLancamentosMensais = res;
+      this.setDetalheDespesaMensalObservable(res.detalheDespesaMensal);
+      this.carregarFormDetalheDespesasMensais(res.despesaMensal);
+    });
+  }
+
+  carregarFormDetalheDespesasMensais(despesa: DespesaMensal) {
+    (<HTMLInputElement>document.getElementById("valorLimiteDespesa")).value = despesa.vlLimiteExibicao;
+
+    this.modalDetalheDespesasMensaisForm.setValue({
+      nomeDespesa: (despesa.dsNomeDespesa),
+      checkLimiteMesAnterior: (despesa.tpReferenciaSaldoMesAnterior == "S" ? true : false)
+    });
+  }
+
+  setDetalheDespesaMensalObservable(despesa: DetalheDespesasMensais[]) {
+    const detalheDespesa = this._detalheDespesasChange.getValue();
+
+    despesa.forEach(d => {
+      detalheDespesa.push({ ...d });
+      this._detalheDespesasChange.next(detalheDespesa);
+    });
+  }
+
+  excluirItemDetalheDespesa() {
+    this.eventModalConfirmacao = "ExcluirItemDetalheDespesa";
+    this.mensagemModalConfirmacao = "Deseja excluir a(s) despesa(s) selecionada(s) ?";
+
+    if (this.getDetalheDespesasChecked().length == 0) {
+      alert('Necessário selecionar alguma despesa para excluir.')
+      return;
+    }
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  carregarDetalheDespesaAberta() {
+    const despesaMensal = this.detalheLancamentosMensais.despesaMensal;
+    this.carregarDetalheDespesa(despesaMensal.idDespesa, despesaMensal.idDetalheDespesa, despesaMensal.idOrdemExibicao);
+  }
+
+  aplicarCategoriaDespesa() {
+    let request = this.detalheLancamentosMensais.despesaMensal;
+
+    request.tpAnotacao = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaRascunho').value == true ? "S" : "N");
+    request.tpRelatorio = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaRelatorio').value == true ? "S" : "N");
+    request.tpDebitoAutomatico = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaDebitoAutomatico').value == true ? "S" : "N");
+    request.tpDebitoCartao = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaDebitoCartao').value == true ? "S" : "N");
+    request.tpPoupanca = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaPoupancaPositiva').value == true ? "S" : "N");
+    request.tpPoupancaNegativa = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaPoupancaNegativa').value == true ? "S" : "N");
+    request.tpEmprestimo = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaEmprestimoAReceber').value == true ? "S" : "N");
+    request.tpEmprestimoAPagar = (this.modalCategoriaDetalheDespesaForm.get('checkDespesaEmprestimoAPagar').value == true ? "S" : "N");
+  }
+
+  subirLinhaDespesa(despesa: DespesaMensal) {
+    let iOrdemAtual = despesa.idOrdemExibicao;
+    let iNovaOrdem = (despesa.idOrdemExibicao - 1);
+
+    this.atualizarOrdemLinhaDespesaService(despesa.idDespesa, iOrdemAtual, iNovaOrdem);
+  }
+
+  descerLinhaDespesa(despesa: DespesaMensal) {
+    let iOrdemAtual = despesa.idOrdemExibicao;
+    let iNovaOrdem = (despesa.idOrdemExibicao + 1);
+
+    this.atualizarOrdemLinhaDespesaService(despesa.idDespesa, iOrdemAtual, iNovaOrdem);
   }
 
   carregarCategoriaDetalheDespesa() {
@@ -521,123 +632,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this._detalheDespesasChange.next(detalheDespesa);
   }
 
-  confirmEventModal() {
-    this.closeModal();
-
-    switch (this.eventModalConfirmacao) {
-      case 'ImportacaoLancamentos': {
-        this.confirmImportacaoLancamentos();
-        break;
-      }
-      case 'ExcluirReceitaSelecionada': {
-        this.confirmExcluirReceita();
-        break;
-      }
-      case 'ExcluirTodosLancamentos': {
-        this.confirmExcluirTodosLancamentos();
-        break;
-      }
-      case 'GravarDetalheDespesas': {
-        this.confirmGravarDetalheDespesas();
-        break;
-      }
-      case 'DesfazerPagamentoDespesa': {
-        this.confirmDesfazerPagamentoDespesa();
-        break;
-      }
-      case 'ExcluirItemDetalheDespesa': {
-        this.confirmExcluirItemDetalheDespesa();
-        break;
-      }
-      case 'OrdenarRegistrosDetalheDespesas': {
-        this.confirmOrganizarRegistrosDetalheDespesa();
-        break;
-      }
-      default: {
-      }
-    }
-
-    this.eventModalConfirmacao = "";
-  }
-
-  onCheckDespesaChange(checked, despesa) {
-    despesa.checked = checked;
-
-    const despesas = this._despesasCheckbox.getValue();
-    const index = despesas.findIndex((d) => d.idDetalheDespesa === despesa.idDetalheDespesa);
-
-    if (index >= 0) {
-      despesas[index].checked = checked;
-    } else {
-      despesas.push({ ...despesa });
-    }
-
-    this._despesasCheckbox.next(despesas);
-  }
-
-  onEditarValores() {
-    var input = document.getElementById("inputNovoValor");
-    input.addEventListener('keyup', function (e) {
-      var key = e.which || e.keyCode;
-      if (key == 13) {
-        const valorAtual = parseFloat(formatRealNumber((document.getElementById("subTotalValores") as HTMLInputElement).value));
-
-        const inputValue = (document.getElementById("inputNovoValor") as HTMLInputElement).value;
-        const novoValor = parseFloat(formatRealNumber(inputValue));
-
-        const calculo = (isValorNegativo(inputValue) ? (valorAtual - novoValor) : (valorAtual + novoValor))
-          .toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
-
-        (<HTMLInputElement>document.getElementById("subTotalValores")).value = calculo;
-
-        //limpa o campo de input
-        (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
-      }
-    });
-  }
-
-  confirmGravarEditarValores() {
-    const novoValor = (document.getElementById("subTotalValores") as HTMLInputElement).value.replace('R$', '');
-    const objeto = this.objectModalEditarValores;
-
-    switch (this.eventModalEditarValores) {
-      case 'detalheDespColValorTotal': {
-        objeto.vlTotal = novoValor.trim();
-        this.changeDetalheDespesasMensais(objeto);
-        break;
-      }
-      case 'detalheDespColValorTotalPago': {
-        objeto.vlTotalPago = novoValor.trim();
-        this.changeDetalheDespesasMensais(objeto);
-        break;
-      }
-      default: {
-      }
-    }
-
-    this.resetModalEditarValores;
-    this.closeModal();
-  }
-
-  setModalEditarValores(valor, evento, objeto) {
-    (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
-    (<HTMLInputElement>document.getElementById("subTotalValores")).value = "R$ 0,00";
-
-    this.eventModalEditarValores = (evento == "reset" ? this.eventModalEditarValores : evento);
-    this.objectModalEditarValores = (evento == "reset" ? this.objectModalEditarValores : objeto);
-
-    const valorAtual = parseFloat(formatRealNumber(valor));
-
-    (<HTMLInputElement>document.getElementById("subTotalValores")).value =
-      valorAtual.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
-  }
-
-  resetModalEditarValores() {
-    this.objectModalEditarValores = null;
-    (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
-    (<HTMLInputElement>document.getElementById("subTotalValores")).value = "R$ 0,00";
-  }
-
   onChangeDescricaoDespesa(inputText, objeto) {
     objeto.dsDescricao = inputText;
     objeto.dsTituloDespesa = inputText;
@@ -669,13 +663,13 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       let valorLimiteDespesa = formatRealNumber((document.getElementById("valorLimiteDespesa") as HTMLInputElement).value);
 
       if (valorLimiteDespesa == "NaN" || valorLimiteDespesa == "0") {
-          alert('Necessário informar o valor Limite Despesa para gravar a despesa.');
-          return;
+        alert('Necessário digitar o valor Limite Despesa.');
+        return;
       }
 
       despesa.vlLimite = valorLimiteDespesa;
     }
-    
+
     this.lancamentosService.gravarDespesaMensal(despesa).toPromise().then(() => {
       this.carregarDespesas();
       this.carregarDetalheDespesaAberta();
@@ -784,10 +778,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
-  getDespesasChecked() {
-    return this._despesasCheckbox.getValue().filter((d) => d.checked === true);
-  }
-
   getDetalheDespesasChecked() {
     return this._detalheDespesasChange.getValue().filter((d) => d.checked === true);
   }
@@ -801,33 +791,11 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     return resultado;
   }
 
-  resetDespesasCheckbox() {
-    this._despesasCheckbox.next([]);
-  }
-
   resetDetalheDespesasChange() {
     this._detalheDespesasChange.next([]);
   }
 
-  closeModal(): void {
-    this.modalRef.hide();
-  }
-
-  getDataAtual() {
-    return formatDate(Date.now(), 'dd/MM/yyyy', 'en-US');
-  }
-
-  getMesAtual() {
-    return formatDate(Date.now(), 'MM', 'en-US');
-  }
-
-  getAnoAtual() {
-    return formatDate(Date.now(), 'yyyy', 'en-US');
-  }
-
-  addNovaLinhaDetalheDespesa(isLinhaSeparacao: boolean) {
-    const detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
-
+  novaLinhaDetalheDespesa(detalheDespesa: DetalheDespesasMensais): DetalheDespesasMensais {
     let novoItem: DetalheDespesasMensais = {
       idDespesa: detalheDespesa.idDespesa,
       idDetalheDespesa: detalheDespesa.idDetalheDespesa,
@@ -846,11 +814,24 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       tpReprocessar: 'N',
       tpAnotacao: 'N',
       tpRelatorio: 'N',
-      tpLinhaSeparacao: (isLinhaSeparacao ? 'S' : 'N'),
+      tpLinhaSeparacao: 'N',
       tpParcelaAdiada: 'N',
       tpParcelaAmortizada: 'N',
-      changeValues: false
+      changeValues: true
     };
+
+    return novoItem;
+  }
+
+  addNovaLinhaDetalheDespesa() {
+    const detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
+
+    if (detalheDespesa.isNovaDespesa) {
+      alert('Necessário salvar a despesa para depois adicionar novas linhas.');
+      return;
+    }
+
+    const novoItem = this.novaLinhaDetalheDespesa(detalheDespesa);
 
     this.lancamentosService.gravarDetalheDespesa(novoItem).toPromise().then(() => {
       this.carregarDetalheDespesaAberta();
@@ -859,6 +840,89 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
         console.log(err);
       });
   }
+
+
+  /* -------------- Modal Editor Valores -------------- */
+  onEditarValores() {
+    var input = document.getElementById("inputNovoValor");
+    input.addEventListener('keyup', function (e) {
+      var key = e.which || e.keyCode;
+      if (key == 13) {
+        const valorAtual = parseFloat(formatRealNumber((document.getElementById("subTotalValores") as HTMLInputElement).value));
+
+        const inputValue = (document.getElementById("inputNovoValor") as HTMLInputElement).value;
+        const novoValor = parseFloat(formatRealNumber(inputValue));
+
+        const calculo = (isValorNegativo(inputValue) ? (valorAtual - novoValor) : (valorAtual + novoValor))
+          .toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+
+        (<HTMLInputElement>document.getElementById("subTotalValores")).value = calculo;
+
+        //limpa o campo de input
+        (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
+      }
+    });
+  }
+
+  confirmGravarEditarValores() {
+    const novoValor = (document.getElementById("subTotalValores") as HTMLInputElement).value.replace('R$', '');
+    const objeto = this.objectModalEditarValores;
+
+    switch (this.eventModalEditarValores) {
+      case 'detalheDespColValorTotal': {
+        objeto.vlTotal = novoValor.trim();
+        this.changeDetalheDespesasMensais(objeto);
+        break;
+      }
+      case 'detalheDespColValorTotalPago': {
+        objeto.vlTotalPago = novoValor.trim();
+        this.changeDetalheDespesasMensais(objeto);
+        break;
+      }
+      default: {
+      }
+    }
+
+    this.resetModalEditarValores;
+    this.closeModal();
+  }
+
+  setModalEditarValores(valor, evento, objeto) {
+    (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
+    (<HTMLInputElement>document.getElementById("subTotalValores")).value = "R$ 0,00";
+
+    this.eventModalEditarValores = (evento == "reset" ? this.eventModalEditarValores : evento);
+    this.objectModalEditarValores = (evento == "reset" ? this.objectModalEditarValores : objeto);
+
+    const valorAtual = parseFloat(formatRealNumber(valor));
+
+    (<HTMLInputElement>document.getElementById("subTotalValores")).value =
+      valorAtual.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+  }
+
+  resetModalEditarValores() {
+    this.objectModalEditarValores = null;
+    (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
+    (<HTMLInputElement>document.getElementById("subTotalValores")).value = "R$ 0,00";
+  }
+
+  /* -------------- Metodos Gerais -------------- */
+  closeModal(): void {
+    this.modalRef.hide();
+  }
+
+  getDataAtual() {
+    return formatDate(Date.now(), 'dd/MM/yyyy', 'en-US');
+  }
+
+  getMesAtual() {
+    return formatDate(Date.now(), 'MM', 'en-US');
+  }
+
+  getAnoAtual() {
+    return formatDate(Date.now(), 'yyyy', 'en-US');
+  }
+
 }
 
 function parserToInt(str) {

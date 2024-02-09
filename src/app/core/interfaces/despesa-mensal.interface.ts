@@ -25,4 +25,5 @@ export interface DespesaMensal {
     tpReferenciaSaldoMesAnterior?: string;
     tpVisualizacaoTemp?: string;
     tpDespesaCompartilhada?: string;
+    isNovaDespesa?: boolean
 }

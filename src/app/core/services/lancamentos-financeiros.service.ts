@@ -12,6 +12,7 @@ import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
 import { PagamentoDespesasRequest } from '../interfaces/pagamento-despesas-request.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
+import { ChaveKey } from '../interfaces/chave-key.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -122,7 +123,7 @@ export class LancamentosFinanceirosService {
       catchError(error => this.handleError(error))
     );
   }
-  
+
   gravarDetalheDespesa(detalheDespesa) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/incluir`;
     return this.http.post(url, detalheDespesa).pipe(
@@ -157,6 +158,12 @@ export class LancamentosFinanceirosService {
         catchError(this.handleError));
   }
 
+  getChaveKey(tipoChave: string): Observable<ChaveKey> {
+    return this.http.get<ChaveKey>(`springboot-esc-backend/api/lancamentosFinanceiros/obterNovaChaveKey/${tipoChave}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('Ocorreu um erro:', error.error.message);
@@ -165,6 +172,8 @@ export class LancamentosFinanceirosService {
         `Backend codigo de erro ${error.status}, ` +
         `request foi: ${error.error}`);
     }
+
+    alert('Ops, Ocorreu um erro no servidor, tente novamente mais tarde.')
     return throwError(error);
   }
 }
