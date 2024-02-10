@@ -659,7 +659,6 @@
                             <i class="fa fa-chevron-down"></i>
                           </button>
                         </div>
-
                       </td>
 
                       <td>
@@ -694,13 +693,19 @@
                                 style="color: #bdbdbd;">
                             </span>
                           </div>
-
                         </span>
 
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada !== 0">
-                          <div style="width: 590px; color: #614404cf">
-                            {{detalheDespesa.dsTituloDespesa}}
-                          </div>
+                          <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
+                            <div style="width: 590px; color: #815a06cf">
+                              {{detalheDespesa.dsTituloDespesa}}
+                            </div>
+                          </span>
+                          <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
+                            <div style="width: 590px; color: #bdbdbd">
+                              {{detalheDespesa.dsTituloDespesa}}
+                            </div>
+                          </span>
                         </span>
                       </td>
 

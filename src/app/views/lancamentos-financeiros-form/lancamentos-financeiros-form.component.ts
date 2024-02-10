@@ -306,14 +306,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   onNovaLinhaSeparacao() {
-    let request: DespesaMensal = {
-      idDespesa: this.despesaReferencia,
-      idDetalheDespesa: -1,
-      tpReprocessar: 'N',
-      tpLinhaSeparacao: 'S',
-      idFuncionario: Number(this.sessao.getIdLogin()),
-      tpDespesaCompartilhada: 'N'
-    };
+    let request = this.obterNovaDespesaObjeto(-1);
+    request.tpLinhaSeparacao = 'S';
 
     this.gravarDespesa(request);
   }
@@ -323,36 +317,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.detalheLancamentosMensais = null;
 
     this.lancamentosService.getChaveKey("DETALHEDESPESA").subscribe((res) => {
-
-      const novaDespesa: DespesaMensal = {
-        idDespesa: this.despesaReferencia,
-        idDetalheDespesa: res.novaChave,
-        dsTituloDespesa: "",
-        dsNomeDespesa: "",
-        dsExtratoDespesa: "Para salvar esta despesa, é necessário digitar a Descrição da Despesa e Limite Despesa.",
-        vlLimite: "0,00",
-        vlLimiteExibicao: "0,00",
-        vlTotalDespesa: "0,00",
-        idOrdemExibicao: null,
-        idFuncionario: Number(this.sessao.getIdLogin()),
-        idEmprestimo: null,
-        tpReprocessar: 'N',
-        tpEmprestimo: 'N',
-        tpPoupanca: 'N',
-        tpPoupancaNegativa: 'N',
-        tpAnotacao: 'N',
-        tpDebitoAutomatico: 'N',
-        tpMeta: 'N',
-        tpLinhaSeparacao: 'N',
-        tpDespesaReversa: 'N',
-        tpRelatorio: 'N',
-        tpDebitoCartao: 'N',
-        tpEmprestimoAPagar: 'N',
-        tpReferenciaSaldoMesAnterior: 'N',
-        tpVisualizacaoTemp: 'N',
-        tpDespesaCompartilhada: 'N',
-        isNovaDespesa: true
-      }
+      const novaDespesa = this.obterNovaDespesaObjeto(res.novaChave);
 
       this.carregarFormDetalheDespesasMensais(novaDespesa);
 
@@ -367,6 +332,40 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
       this.setDetalheDespesaMensalObservable(this.detalheLancamentosMensais.detalheDespesaMensal);
     });
+  }
+
+  obterNovaDespesaObjeto(idDetalheDespesa: number) {
+    const novaDespesa: DespesaMensal = {
+      idDespesa: this.despesaReferencia,
+      idDetalheDespesa: idDetalheDespesa,
+      dsTituloDespesa: "",
+      dsNomeDespesa: "",
+      dsExtratoDespesa: "Para salvar esta despesa, é necessário digitar a Descrição da Despesa e Limite Despesa.",
+      vlLimite: "0,00",
+      vlLimiteExibicao: "0,00",
+      vlTotalDespesa: "0,00",
+      idOrdemExibicao: null,
+      idFuncionario: Number(this.sessao.getIdLogin()),
+      idEmprestimo: null,
+      tpReprocessar: 'N',
+      tpEmprestimo: 'N',
+      tpPoupanca: 'N',
+      tpPoupancaNegativa: 'N',
+      tpAnotacao: 'N',
+      tpDebitoAutomatico: 'N',
+      tpMeta: 'N',
+      tpLinhaSeparacao: 'N',
+      tpDespesaReversa: 'N',
+      tpRelatorio: 'N',
+      tpDebitoCartao: 'N',
+      tpEmprestimoAPagar: 'N',
+      tpReferenciaSaldoMesAnterior: 'N',
+      tpVisualizacaoTemp: 'N',
+      tpDespesaCompartilhada: 'N',
+      isNovaDespesa: true
+    }
+
+    return novaDespesa;
   }
 
   onExcluirDespesa() {
@@ -650,14 +649,13 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   gravarDetalheDespesas() {
-    this.eventModalConfirmacao = "GravarDetalheDespesas";
-    this.mensagemModalConfirmacao = "Deseja salvar as alterações ?";
-
-    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
-  }
-
-  gravarDespesa(despesa: DespesaMensal) {
+    const despesa = this.detalheLancamentosMensais.despesaMensal;
     despesa.dsNomeDespesa = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
+
+    if (despesa.dsNomeDespesa == "") {
+      alert('Digite o nome da despesa.');
+      return;
+    }
 
     if (despesa.tpReferenciaSaldoMesAnterior == "N") {
       let valorLimiteDespesa = formatRealNumber((document.getElementById("valorLimiteDespesa") as HTMLInputElement).value);
@@ -670,6 +668,13 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       despesa.vlLimite = valorLimiteDespesa;
     }
 
+    this.eventModalConfirmacao = "GravarDetalheDespesas";
+    this.mensagemModalConfirmacao = "Deseja salvar as alterações ?";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  gravarDespesa(despesa: DespesaMensal) {
     this.lancamentosService.gravarDespesaMensal(despesa).toPromise().then(() => {
       this.carregarDespesas();
       this.carregarDetalheDespesaAberta();
@@ -680,16 +685,13 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   confirmGravarDetalheDespesas() {
-    const despesas = this.getDetalheDespesasChange();
-
-    despesas.forEach((d) => {
+    this.getDetalheDespesasChange().forEach((d) => {
       d.dsDescricao = d.dsTituloDespesa;
       d.vlTotal = d.vlTotal.replace('.', '');
       d.vlTotalPago = d.vlTotalPago.replace('.', '');
 
       this.lancamentosService.gravarDetalheDespesa(d).toPromise().then(() => { },
         err => {
-          console.log(err);
         });
     })
 
