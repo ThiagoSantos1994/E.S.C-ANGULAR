@@ -364,6 +364,12 @@
     margin: 1.75rem auto;
   }
 
+  .modalImportacaoDespesaParcelada {
+    text-align: left;
+    width: 34%;
+    margin: 1.75rem auto;
+  }
+
   .modalEditorValores {
     text-align: left;
     width: 24%;
@@ -378,6 +384,11 @@
 
   .modalCategoriaDetalheDespesa-body {
     padding-left: 11%;
+  }
+
+  .modalImportacaoDespesaParcelada-body {
+    padding-left: 2%;
+    padding-right: 2%;
   }
 
   .modalDetalheDespesasMensais-body {
@@ -410,6 +421,14 @@
   }
 
   .checkDespesaObrigatoria {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 15px;
+    margin-right: 0.75rem;
+    padding-top: 6px;
+  }
+
+  .checkCarregarTodasDespParceladas {
     display: inline-flex;
     align-items: center;
     padding-left: 15px;

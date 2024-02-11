@@ -586,14 +586,16 @@
                   <br>
                   <br>
                   <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b056e;" href="#!"
-                    role="button" title="Descer item">
+                    role="button" title="Importar despesas parceladas" data-toggle="modal"
+                    data-target="#modalImportacaoDespesaParcelada"
+                    (click)="carregarListaDespesasParceladasImportacao()">
                     <i class="fas fa-download"></i>
                   </button>
                   <br>
                   <br>
                   <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b056e;" href="#!"
-                    role="button" title="Descer item">
-                    <i class="far fa-credit-card"></i>
+                    role="button" title="Atualizar Detalhe Despesas">
+                    <i class="fa fa-refresh"></i>
                   </button>
                   <br>
                   <br>
@@ -835,7 +837,7 @@
           <div class="modal-footer">
             <div class="modal-footer-detalhe-right">
               <span *ngIf="detalheLancamentosMensais">
-                
+
                 <span *ngIf="detalheLancamentosMensais.despesaMensal.isNovaDespesa">
                   <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
                     (click)="gravarDetalheDespesas()">
@@ -1125,3 +1127,50 @@
       </div>
     </ng-template>
   </form>
+
+  <!------------------------  Modal Importacao Despesa Parcelada ------------------------>
+  <div class="modal fade" id="modalImportacaoDespesaParcelada" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content modalImportacaoDespesaParcelada">
+        <div class="form-group modal-header">
+          <div>
+            <i class="fa fa-download" aria-hidden="true"></i>
+            Importar Despesas Parceladas
+            <small class="form-text text-muted">
+              <i class="fa fa-info-circle" aria-hidden="true"></i>
+              Selecione abaixo a despesa para importação:
+            </small>
+          </div>
+        </div>
+        <form [formGroup]="modalImportacaoDespesaParceladaForm">
+          <div class="modalImportacaoDespesaParcelada-body form-group">
+            <select class="form-control form-control-sm">
+              <option *ngFor="let despesa of tituloDespesasParceladas.despesas" value={{despesa.idDespesaParcelada}}>
+                {{despesa.tituloDespesa}}
+              </option>
+            </select>
+            <div class="row">
+              <br>
+              <div class="form-check-inline checkCarregarTodasDespParceladas">
+                <input class="form-check-input" type="checkbox" formControlName="checkCarregarTodasDespesasParceladas"
+                  id="checkCarregarTodasDespesasParceladas"
+                  (click)="onCheckCarregarTodasDespParceladas($event.target.checked)">
+                <label class="form-check-label" for="checkCarregarTodasDespesasParceladas"
+                  style="font-size: smaller; color: #a7444e!important">
+                  Carregar todas as despesas parceladas cadastradas no sistema.
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
+            (click)="aplicarCategoriaDespesa()">
+            <i class="fa fa-download"></i> Importar Despesa
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>

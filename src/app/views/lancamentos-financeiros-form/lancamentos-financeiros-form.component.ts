@@ -12,6 +12,7 @@ import { LancamentosFinanceiros } from 'src/app/core/interfaces/lancamentos-fina
 import { DetalheLancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais-detalhe.interface';
 import { LancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais.interface';
 import { PagamentoDespesasRequest } from 'src/app/core/interfaces/pagamento-despesas-request.interface';
+import { TituloDespesaResponse } from 'src/app/core/interfaces/titulo-despesa-response.interface';
 import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
 
@@ -25,6 +26,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]> = new Observable<LancamentosFinanceiros[]>();
   private _despesasCheckbox = new BehaviorSubject<LancamentosMensais[]>([]);
   private _detalheDespesasChange = new BehaviorSubject<DetalheDespesasMensais[]>([]);
+  private tituloDespesasParceladas: TituloDespesaResponse;
   private detalheLancamentosMensais: DetalheLancamentosMensais;
 
   private pesquisaForm: FormGroup;
@@ -32,6 +34,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private modalConfirmacaoQuitarDespesasForm: FormGroup;
   private modalCategoriaDetalheDespesaForm: FormGroup;
   private modalDetalheDespesasMensaisForm: FormGroup;
+  private modalImportacaoDespesaParceladaForm: FormGroup;
   private modalRef: BsModalRef;
 
   private despesaReferencia: number;
@@ -59,6 +62,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   ngOnInit() {
     this.carregarConfiguracaoLancamentos();
+
+    this.tituloDespesasParceladas = {
+      despesas: []
+    }
 
     this.modalCriarEditarReceitaForm = this.formBuilder.group({
       nomeReceita: ['', Validators.required],
@@ -90,6 +97,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       checkDespesaEmprestimoAPagar: [''],
       checkDespesaEmprestimoAReceber: ['']
     });
+
+    this.modalImportacaoDespesaParceladaForm = this.formBuilder.group({
+      checkCarregarTodasDespesasParceladas: ['']
+    })
   }
 
   carregarDespesas() {
@@ -575,6 +586,16 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       checkDespesaEmprestimoAPagar: (detalheDespesa.tpEmprestimo == "S" ? true : false),
       checkDespesaEmprestimoAReceber: (detalheDespesa.tpEmprestimoAPagar == "S" ? true : false)
     });
+  }
+
+  carregarListaDespesasParceladasImportacao(isTodasDespesas: boolean) {
+    this.lancamentosService.getTituloDespesasParceladas(isTodasDespesas).subscribe((res) => {
+      this.tituloDespesasParceladas = res;
+    });
+  }
+
+  onCheckCarregarTodasDespParceladas(checked) {
+    this.carregarListaDespesasParceladasImportacao(checked);
   }
 
   onCheckDetalheDespesaChange(checked, detalhe) {

@@ -3,16 +3,17 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { LancamentosFinanceirosDomain } from '../domain/lancamentos-financeiros.domain';
+import { ChaveKey } from '../interfaces/chave-key.interface';
 import { ConfiguracaoLancamentos } from '../interfaces/configuracao-lancamentos.interface';
 import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
 import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.interface';
 import { LancamentosFinanceiros } from '../interfaces/lancamentos-financeiros.interface';
 import { DetalheLancamentosMensais } from '../interfaces/lancamentos-mensais-detalhe.interface';
-import { SessaoService } from './sessao.service';
-import { TokenService } from './token.service';
 import { PagamentoDespesasRequest } from '../interfaces/pagamento-despesas-request.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
-import { ChaveKey } from '../interfaces/chave-key.interface';
+import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
+import { SessaoService } from './sessao.service';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -160,6 +161,13 @@ export class LancamentosFinanceirosService {
 
   getChaveKey(tipoChave: string): Observable<ChaveKey> {
     return this.http.get<ChaveKey>(`springboot-esc-backend/api/lancamentosFinanceiros/obterNovaChaveKey/${tipoChave}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
+
+  getTituloDespesasParceladas(tpListarTodasDespesas: boolean): Observable<TituloDespesaResponse> {
+    const carregar = (tpListarTodasDespesas ? "default" : "ativas");
+    return this.http.get<TituloDespesaResponse>(`springboot-esc-backend/api/despesasParceladas/importacao/consultarDespesasParceladas/${this.sessao.getIdLogin()}/${carregar}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
   }
