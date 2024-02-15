@@ -172,6 +172,20 @@ export class LancamentosFinanceirosService {
         catchError(this.handleError));
   }
 
+  processarImportacaoDespesasParceladas(idDespesa: number, idDetalheDespesa: number, idDespesaParcelada: number) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/importacao/despesaParcelada/${idDespesa}/${idDetalheDespesa}/${idDespesaParcelada}/${this.sessao.getIdLogin()}`;
+    return this.http.post(url, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  reprocessarImportacaoDetalheDespesa(idDespesa: number, idDetalheDespesa: number, mesReferencia: string, anoReferencia: string, repDespNaoParceladas: boolean) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/importacao/detalheDespesasMensais/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/${mesReferencia}/${anoReferencia}/${repDespNaoParceladas}`;
+    return this.http.post(url, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('Ocorreu um erro:', error.error.message);

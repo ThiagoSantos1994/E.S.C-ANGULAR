@@ -84,7 +84,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     this.modalDetalheDespesasMensaisForm = this.formBuilder.group({
       nomeDespesa: [''],
-      checkLimiteMesAnterior: ['']
+      checkLimiteMesAnterior: [''],
+      checkReprocessarDespesasNaoParceladas: ['']
     });
 
     this.modalCategoriaDetalheDespesaForm = this.formBuilder.group({
@@ -470,6 +471,14 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
         this.confirmOrganizarRegistrosDetalheDespesa();
         break;
       }
+      case 'ImportacaoDespesaParcelada': {
+        this.confirmImportarDespesaParcelada();
+        break;
+      }
+      case 'ImportarLancamentosFinanceiros': {
+        this.confirmAtualizarDetalheDespesas();
+        break;
+      }
       default: {
       }
     }
@@ -516,7 +525,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     this.modalDetalheDespesasMensaisForm.setValue({
       nomeDespesa: (despesa.dsNomeDespesa),
-      checkLimiteMesAnterior: (despesa.tpReferenciaSaldoMesAnterior == "S" ? true : false)
+      checkLimiteMesAnterior: (despesa.tpReferenciaSaldoMesAnterior == "S" ? true : false),
+      checkReprocessarDespesasNaoParceladas: (despesa.tpReprocessar == "S" ? true : false)
     });
   }
 
@@ -594,6 +604,18 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     });
   }
 
+  onImportarDespesaParcelada() {
+    if ((document.getElementById("comboTituloDespesaParcelada") as HTMLInputElement).value == "") {
+      alert('Necessário selecionar alguma despesa para importação.');
+      return;
+    }
+
+    this.eventModalConfirmacao = "ImportacaoDespesaParcelada";
+    this.mensagemModalConfirmacao = "Deseja importar esta despesa parcelada ?";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
   onCheckCarregarTodasDespParceladas(checked) {
     this.carregarListaDespesasParceladasImportacao(checked);
   }
@@ -635,6 +657,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   onCheckLimiteMesAnteriorChange(checked) {
     this.detalheLancamentosMensais.despesaMensal.tpReferenciaSaldoMesAnterior = (checked ? 'S' : 'N');
+  }
+
+  onCheckReprocessarDespesasNaoParceladas(checked) {
+    this.detalheLancamentosMensais.despesaMensal.tpReprocessar = (checked ? 'S' : 'N');
   }
 
   changeDetalheDespesasMensais(detalhe: DetalheDespesasMensais) {
@@ -759,6 +785,20 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       });
   }
 
+  confirmImportarDespesaParcelada() {
+    const idDespesaParcelada = +(document.getElementById("comboTituloDespesaParcelada") as HTMLInputElement).value;
+    const detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
+
+    this.lancamentosService.processarImportacaoDespesasParceladas(detalheDespesa.idDespesa, detalheDespesa.idDetalheDespesa, idDespesaParcelada).toPromise().then(() => {
+      this.carregarListaDespesasParceladasImportacao(false);
+      this.carregarDetalheDespesaAberta();
+      this.carregarDespesas();
+    },
+      err => {
+        console.log(err);
+      });
+  }
+
   confirmDesfazerPagamentoDespesa() {
     const despesas = this.getDetalheDespesasChecked();
 
@@ -844,6 +884,26 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     };
 
     return novoItem;
+  }
+
+  atualizarDetalheDespesasMensais() {
+    this.eventModalConfirmacao = "ImportarLancamentosFinanceiros";
+    this.mensagemModalConfirmacao = "Deseja realizar a importação desta despesas novamente? Obs: Os lançamentos poderão ser atualizados! ";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  confirmAtualizarDetalheDespesas() {
+    const despesa = this.detalheLancamentosMensais.despesaMensal;
+
+    this.lancamentosService.reprocessarImportacaoDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, this.pesquisaForm.get('cbMes').value, this.pesquisaForm.get('cbAno').value, (despesa.tpReprocessar == "S" ? true : false)).toPromise().then(() => {
+      this.carregarDetalheDespesaAberta();
+      this.carregarDespesas();
+      alert('Atualização realizada com sucesso!');
+    },
+      err => {
+        console.log(err);
+      });
   }
 
   addNovaLinhaDetalheDespesa() {
