@@ -1,0 +1,494 @@
+  header {
+    padding: 5px 0 0;
+  }
+
+  button {
+    margin: 0 10px;
+  }
+
+  label {
+    margin: 0 5px;
+  }
+
+  .labelQuitacaoMes {
+    padding: 0px 0 1%;
+    font-family: system-ui;
+    font-size: 85%;
+    line-height: 0%;
+  }
+
+  .border-left-receita {
+    border-left: 0.25rem solid #63c73b !important;
+  }
+
+  .border-left-despesas {
+    border-left: 0.25rem solid #c73b3b !important;
+  }
+
+  .border-left-pendente {
+    border-left: 0.25rem solid #ffc107 !important;
+  }
+
+  .border-left-disponivel {
+    border-left: 0.25rem solid #17a2b8 !important;
+  }
+
+  .border-saldo-detalhe-despesa {
+    border-right: 0.25rem !important;
+  }
+
+  body {
+    font-family: 'Calibri', sans-serif !important;
+    margin-right: 5px;
+  }
+
+  .container {
+    margin-top: 100px;
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid #e3e6f0;
+    border-radius: 0.35rem;
+  }
+
+  .card-body {
+    flex: 1 1 auto;
+    padding: 1.25rem;
+  }
+
+  .card .card-title {
+    position: relative;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+
+  .table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    background-color: transparent;
+  }
+
+  .table-receita {
+    width: 110%;
+    max-width: 107%;
+    margin-bottom: 1rem;
+    background-color: #f8f9fa;
+    font-size: 93%;
+  }
+
+  .table-despesas {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    background-color: #f8f9fa;
+
+  }
+
+  .table-detalhe-despesas {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    background-color: #f8f9fa;
+  }
+
+  .scrollme-detalhe-despesas {
+    max-height: 328px;
+    overflow: auto;
+    display: inline-block;
+  }
+
+  .col-sm-8-detalhe-despesas {
+    flex: 0 0 100%;
+    max-width: 91%;
+    padding-right: 0%;
+    padding-left: 0%;
+  }
+
+  .center-modal-detalhes {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -32px;
+  }
+
+  .modal-footer {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    /* -webkit-box-pack: end; */
+    -ms-flex-pack: end;
+    justify-content: center;
+    padding: 0.5rem;
+    border-top: 0px solid #e9ecef;
+  }
+
+  .form-check-inline {
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding-left: 20px;
+    margin-right: 0.75rem;
+  }
+
+  * {
+    outline: none;
+  }
+
+  .table th,
+  .table thead th {
+    font-weight: 500;
+  }
+
+
+  .table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+  }
+
+
+  .table th {
+    padding: 0.2rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    font-family: system-ui;
+    font-size: smaller;
+  }
+
+
+  .table th,
+  .table thead th {
+    font-weight: 500;
+  }
+
+
+  th {
+    text-align: inherit;
+  }
+
+
+  .m-b-20 {
+    margin-bottom: 20px;
+  }
+
+  .table td {
+    padding: 0.0rem;
+  }
+
+
+  .customcheckbox {
+    display: block;
+    position: relative;
+    padding-left: 24px;
+    font-weight: 100;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .bg-light {
+    background-color: #f8f9fa !important;
+    padding-left: 0%;
+  }
+
+  .customcheckbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .checkmark[_ngcontent-c2][_ngcontent-c2] {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    height: 12px;
+    width: 12px;
+    background-color: #CDCDCD;
+    border-radius: 3px;
+  }
+
+
+  .customcheckbox input:checked~.checkmark {
+    background-color: #2196BB;
+  }
+
+
+  .customcheckbox .checkmark:after {
+    left: 8px;
+    top: 4px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+
+  .btn-group-sm>.btn,
+  .btn-sm {
+    padding: 0.25rem 0.3rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+  }
+
+  .btn-sm {
+    padding: 0rem 0rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+    margin: 1%;
+  }
+
+  .btn-link {
+    font-weight: 400;
+    color: #007bff;
+    background-color: transparent;
+  }
+
+  .btn-link-delete {
+    font-weight: 400;
+    color: #ff0037;
+    background-color: transparent;
+  }
+
+  .text-center {
+    text-align: center !important;
+  }
+
+  .text-left {
+    text-align: left !important;
+  }
+
+  .text-right {
+    text-align: right !important;
+  }
+
+
+  .row {
+    margin-right: -8px;
+  }
+
+  .col-sm-8 {
+    -webkit-box-flex: 0;
+    flex: 0 0 66.666667%;
+    max-width: 66.666667%;
+    padding-right: 0.6%;
+    padding-left: 3%;
+  }
+
+  .font-color-receita-positiva {
+    color: rgb(66, 165, 57);
+  }
+
+  .font-color-receita-negativa {
+    color: rgb(204, 65, 30);
+  }
+
+  .font-color-receita-anotacao {
+    color: darkgray;
+  }
+
+  .font-color-poupanca-positiva {
+    color: #3b6bd3;
+  }
+
+  .font-color-poupanca-negativa {
+    color: #ee5569;
+  }
+
+  .font-color-receita-adiantada {
+    color: #e98c00;
+  }
+
+  .font-color-linha-separacao {
+    color: rgb(250, 247, 247);
+  }
+
+  .checkmark[_ngcontent-c2] {
+    position: absolute;
+    top: -3px;
+    left: 0;
+    height: 12px;
+    width: 12px;
+    background-color: #CDCDCD;
+    border-radius: 3px;
+  }
+
+  /*MODAL*/
+
+  .modal-dialog-centered {
+    min-height: calc(100% - (1.75rem * 2));
+  }
+
+  .modal-dialog {
+    max-width: 100%;
+    margin: 1.75rem auto;
+  }
+
+  element.style {
+    display: block;
+    padding-right: 0px;
+  }
+
+  .modalCriarEditarReceita {
+    text-align: center;
+    width: 25%;
+    margin: 1.75rem auto;
+  }
+
+  .modalCategoriaDespesa {
+    text-align: left;
+    width: 24%;
+    margin: 1.75rem auto;
+  }
+
+  .modalImportacaoDespesaParcelada {
+    text-align: left;
+    width: 34%;
+    margin: 1.75rem auto;
+  }
+
+  .modalEditorValores {
+    text-align: left;
+    width: 24%;
+    margin: 1.75rem auto;
+  }
+
+  .modalDetalheDespesasMensais {
+    text-align: center;
+    width: 75%;
+    margin: 0.75rem auto;
+  }
+
+  .modalCategoriaDetalheDespesa-body {
+    padding-left: 11%;
+  }
+
+  .modalImportacaoDespesaParcelada-body {
+    padding-left: 2%;
+    padding-right: 2%;
+  }
+
+  .modalDetalheDespesasMensais-body {
+    width: 96%;
+    margin: 0.6rem auto;
+  }
+
+  .card-categorias {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #f5f5f5;
+    background-clip: border-box;
+    border: 1px solid #c8cad1;
+    width: 76.7%;
+    border-radius: 0.35rem
+  }
+
+  .input-group-categorias {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 110%;
+    max-width: 110%;
+  }
+
+  .checkDespesaObrigatoria {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 15px;
+    margin-right: 0.75rem;
+    padding-top: 6px;
+  }
+
+  .checkCarregarTodasDespParceladas {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 15px;
+    margin-right: 0.75rem;
+    padding-top: 6px;
+  }
+
+  .checkDetalheDespesas {
+    display: inline-block;
+    padding: 0.35em 0.4em;
+  }
+
+  .checkDetalheDespesasColor {
+    color: #fff;
+    background-color: #5f6479;
+    font-size: 82%;
+  }
+
+  .checkDetalheDespesasComum {
+    color: #fff;
+    background-color: #1c793b;
+    font-size: 82%;
+  }
+
+  .caixaAlta {
+    font-variant: small-caps;
+  }
+
+  .modalEditorValores-body {
+    position: relative;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 3%;
+  }
+
+  .inputNovoValorEditorValores {
+    text-align: center !important;
+    font-family: sans-serif;
+    font-size: larger;
+    color: #05462b;
+  }
+
+  .inputSubTotalEditorValores {
+    text-align: center !important;
+    font-family: sans-serif;
+    font-size: larger;
+    color: #1319a2;
+  }
+
+  .row-header-detalhe-despesas-mensais {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+    max-width: 102%;
+    width: 102%;
+  }
+
+  .card-body-saldo-detalhe-despesa {
+    padding-left: 3%;
+    padding-right: 10%;
+  }

@@ -3,7 +3,7 @@ export interface DespesaMensal {
     idDetalheDespesa: number;
     dsTituloDespesa?: string;
     dsNomeDespesa?: string;
-    dsExtratoDespesa? : string;
+    dsExtratoDespesa?: string;
     vlLimite?: string;
     vlLimiteExibicao?: string;
     vlTotalDespesa?: string;
@@ -25,5 +25,8 @@ export interface DespesaMensal {
     tpReferenciaSaldoMesAnterior?: string;
     tpVisualizacaoTemp?: string;
     tpDespesaCompartilhada?: string;
-    isNovaDespesa?: boolean
+    isNovaDespesa?: boolean;
+    /* variaveis de referencia do form de pesquisa principal*/ 
+    mesPesquisaForm?: string;
+    anoPesquisaForm?: string;
 }
