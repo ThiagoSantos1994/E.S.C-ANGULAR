@@ -27,6 +27,7 @@
               <div class="col-xl-8 col-md-6 mb-1" style="height: min-content;">
                 <div class="input-group-header">
                   <select class="form-control form-control-sm combo-titulo-despesas" id="comboTituloDespesaParcelada">
+                    <option value=""></option>
                     <option *ngFor="let despesa of tituloDespesasParceladas.despesas"
                       value={{despesa.idDespesaParcelada}}>
                       {{despesa.tituloDespesa}}
@@ -45,30 +46,29 @@
                     <i class="fa fa-trash-o" aria-hidden="true"></i>
                   </button>
 
-                  <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa"
-                    style="padding: 2%; width: 9%;" onkeyup="toUpper(this)">
+                  <input class="form-control form-control-sm text-center" type="text" formControlName="parcelaAtual"
+                    style="padding: 2%; width: 9%; font-size: larger;" disabled>
                 </div>
 
-                <div [formGroup]="modalDespesasParceladasForm">
-                  <small class="form-text text-muted" style="margin:-1.6% 11% -2% -47%;">
-                    <input class="form-check-input" type="checkbox"
-                      formControlName="checkReprocessarDespesasNaoParceladas" id="checkReprocessarDespesasNaoParceladas"
-                      (click)="onCheckReprocessarDespesasNaoParceladas($event.target.checked)">
-                    <label class="form-check-label" for="checkReprocessarDespesasNaoParceladas"
-                      title="lista os nomes das despesas parceladas que ainda não foram quitadas."> Carregar somente as
-                      despesas parceladas em aberto.
-                    </label>
-                  </small>
-                </div>
+                <small class="form-text text-muted" style="margin:-1.6% 11% -2% -47%;">
+                  <input class="form-check-input" type="checkbox" formControlName="checkCarregarDespesasPendente"
+                    id="checkCarregarDespesasPendente"
+                    (click)="onCheckReprocessarDespesasNaoParceladas($event.target.checked)">
+                  <label class="form-check-label" for="checkCarregarDespesasPendente"
+                    title="lista os nomes das despesas parceladas que ainda não foram quitadas."> Carregar somente as
+                    despesas parceladas em aberto.
+                  </label>
+                </small>
+
                 <br>
 
                 <div class="card-titulo-despesa">
                   <small class="form-text text-muted" style="font-size: small;">
                     Nome da Despesa
                   </small>
-                  <div class="row row-card-titulo-despesas-parceladas" [formGroup]="pesquisaForm">
+                  <div class="row row-card-titulo-despesas-parceladas">
                     <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa"
-                      onkeyup="toUpper(this)" placeholder="Ex: Fatura cartão crédito">
+                      onkeyup="toUpper(this)">
                   </div>
                 </div>
 
@@ -78,9 +78,10 @@
                       Vigência Inicial
                     </small>
 
-                    <div class="row row-card-vigencia-despesas-parceladas" [formGroup]="pesquisaForm">
+                    <div class="row row-card-vigencia-despesas-parceladas">
                       <div class="col-lg-3 col-md-3 col-sm-12 p-0">
-                        <select class="form-control search-slt comboDataVigencia" style="height: 84%;" formControlName="cbMes">
+                        <select class="form-control search-slt comboDataVigencia" style="height: 84%;"
+                          formControlName="cbMesVigencia">
                           <option value="01">01</option>
                           <option value="02">02</option>
                           <option value="03">03</option>
@@ -97,8 +98,16 @@
                       </div>
                       <div class="col-lg-4 col-md-3 col-sm-12 p-0" style="margin: 0% 3%;">
                         <select class="form-control search-slt comboDataVigencia" style="height: 84%;"
-                          formControlName="cbAno">
+                          formControlName="cbAnoVigencia">
                           <option value="2024">2024</option>
+                          <option value="2023">2023</option>
+                          <option value="2022">2022</option>
+                          <option value="2021">2021</option>
+                          <option value="2020">2020</option>
+                          <option value="2019">2019</option>
+                          <option value="2018">2018</option>
+                          <option value="2017">2017</option>
+                          <option value="2016">2016</option>
                         </select>
                       </div>
                     </div>
@@ -109,9 +118,10 @@
                       Parcela(s)
                     </small>
 
-                    <div class="row row-card-parcelas-despesas-parceladas" [formGroup]="pesquisaForm">
-                      <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa"
-                        style="padding: 2%; width: 43%;" onkeyup="toUpper(this)">
+                    <div class="row row-card-parcelas-despesas-parceladas">
+                      <input class="form-control form-control-sm text-center inputParcelas" type="text" id="parcelas"
+                        currencyMask maxlength="3" autocomplete="off"
+                        [options]="{ prefix: '', thousands: '', decimal: '' }" (click)="onQuantidadeParcelasChange()">
                     </div>
                   </div>
 
@@ -120,21 +130,21 @@
                       Vigência Final
                     </small>
 
-                    <div class="row row-card-parcelas-despesas-parceladas" [formGroup]="pesquisaForm">
-                      <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa"
-                        style="padding: 2%; width: 42%;" onkeyup="toUpper(this)">
+                    <div class="row row-card-parcelas-despesas-parceladas">
+                      <input class="form-control form-control-sm text-center inputVigenciaFinal" type="text"
+                        formControlName="vigenciaFinal" id="vigenciaFinal" disabled>
                     </div>
                   </div>
 
-                  <div class="card-total-despesa">
+                  <div class=" card-total-despesa">
                     <small class="form-text text-muted" style="font-size: small;">
                       Total Despesa R$:
                     </small>
 
                     <div class="input-valor-despesa">
-                      <input type="text" class="text-center form-control input-valor-despesa" id="valorLimiteDespesa"
+                      <input type="text" class="text-center form-control input-valor-despesa" id="valorDespesa"
                         currencyMask maxlength="16" autocomplete="off"
-                        [options]="{ prefix: '', thousands: '.', decimal: ',' }">
+                        [options]="{ prefix: '', thousands: '.', decimal: ',' }" (click)="onValorDespesaChange()">
                     </div>
                   </div>
 
@@ -144,12 +154,18 @@
                     </small>
 
                     <div class="input-valor-despesa">
-                      <input type="text" class="text-center form-control input-valor-despesa" id="valorLimiteDespesa"
+                      <input type="text" class="text-center form-control input-valor-despesa" id="valorParcela"
                         currencyMask maxlength="16" autocomplete="off"
                         [options]="{ prefix: '', thousands: '.', decimal: ',' }" disabled>
                     </div>
                   </div>
                 </div>
+
+                <!--<button class="btn text-white button-gerar-fluxo" data-mdb-ripple-init href="#!" role="button"
+                  title="Importar despesas parceladas" data-toggle="modal"
+                  data-target="#modalImportacaoDespesaParcelada" (click)="carregarListaDespesasParceladasImportacao()">
+                  <i class="fa fa-retweet" aria-hidden="true"></i> Gerar Fluxo de Parcelas
+                </button>-->
               </div>
             </div>
           </form>
@@ -161,10 +177,8 @@
               <div class="col-sm-1">
                 <div class="d-grid gap-2 col-0 mx-auto">
                   <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #3b056e;padding-left: 30%; padding-right: 30%;" href="#!" role="button"
-                    title="Importar despesas parceladas" data-toggle="modal"
-                    data-target="#modalImportacaoDespesaParcelada"
-                    (click)="carregarListaDespesasParceladasImportacao()">
+                    style="background-color: #52a283;padding-left: 30%; padding-right: 30%;" href="#!" role="button"
+                    title="Gerar fluxo de parcelas" (click)="gerarFluxoParcelas()">
                     <i class="fa fa-retweet" aria-hidden="true"></i>
                   </button>
                   <br>

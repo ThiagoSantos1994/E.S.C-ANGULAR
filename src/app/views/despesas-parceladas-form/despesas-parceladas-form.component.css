@@ -363,14 +363,14 @@ element.style {
 }
 
 .scrollme-parcelas {
-  max-height: 328px;
+  max-height: 287px;
   overflow: auto;
   display: inline-block;
 }
 
 .col-sm-8-parcelas {
   flex: 0 0 100%;
-  max-width: 91%;
+  max-width: 90%;
   padding-right: 1%;
   padding-left: 1%;
 }
@@ -395,4 +395,25 @@ element.style {
 .comboDataVigencia {
   margin-block: 1%;
   font-size: smaller;
+}
+
+.inputVigenciaFinal {
+  padding: 2%;
+  width: 42%;
+  font-family: sans-serif;
+  color: brown;
+}
+
+.inputParcelas {
+  padding: 2%;
+  width: 43%;
+  font-family: sans-serif;
+}
+
+.button-gerar-fluxo {
+  background-color: #52a283;
+  padding-left: 30%;
+  padding-right: 30%;
+  margin-block-end: 0%;
+  margin-block-start: 1%;
 }
