@@ -8,9 +8,9 @@ import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
 import { DetalheLancamentosMensais } from '../interfaces/lancamentos-mensais-detalhe.interface';
 import { PagamentoDespesasRequest } from '../interfaces/pagamento-despesas-request.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
-import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
+import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
 
 @Injectable({
   providedIn: 'root'

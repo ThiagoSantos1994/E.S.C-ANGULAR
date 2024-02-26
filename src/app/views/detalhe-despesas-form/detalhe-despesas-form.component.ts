@@ -10,6 +10,7 @@ import { DetalheDespesasMensais } from 'src/app/core/interfaces/detalhe-despesas
 import { DetalheLancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais-detalhe.interface';
 import { PagamentoDespesasRequest } from 'src/app/core/interfaces/pagamento-despesas-request.interface';
 import { TituloDespesaResponse } from 'src/app/core/interfaces/titulo-despesa-response.interface';
+import { DespesasParceladasService } from 'src/app/core/services/despesas-parceladas.service';
 import { DetalheDespesasService } from 'src/app/core/services/detalhe-despesas.service';
 import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
@@ -51,6 +52,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     private sessao: SessaoService,
     private modalService: BsModalService,
     private detalheService: DetalheDespesasService,
+    private despesasParceladasService: DespesasParceladasService,
     private lancamentosService: LancamentosFinanceirosService,
     private detalheDomain: DetalheDespesasMensaisDomain
   ) { }
@@ -619,6 +621,10 @@ export class DetalheDespesasFormComponent implements OnInit {
       err => {
         console.log(err);
       });
+  }
+
+  carregarDespesasParceladas() {
+    this.despesasParceladasService.enviaMensagem();
   }
 
   addNovaLinhaDetalheDespesa() {

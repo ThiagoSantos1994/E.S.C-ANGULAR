@@ -3,9 +3,9 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService, formatDate } from 'ngx-bootstrap';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
 import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
+import { DespesaParceladaResponse } from 'src/app/core/interfaces/despesa-parcelada-response.interface';
 import { TituloDespesaResponse } from 'src/app/core/interfaces/titulo-despesa-response.interface';
-import { DetalheDespesasService } from 'src/app/core/services/detalhe-despesas.service';
-import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
+import { DespesasParceladasService } from 'src/app/core/services/despesas-parceladas.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
 
 @Component({
@@ -14,13 +14,18 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
   styleUrls: ['./despesas-parceladas-form.component.css']
 })
 export class DespesasParceladasFormComponent implements OnInit {
+  private despesaParceladaDetalhe: DespesaParceladaResponse;
   private tituloDespesasParceladas: TituloDespesaResponse;
 
   private modalDespesasParceladasForm: FormGroup;
   private modalRef: BsModalRef;
 
   private eventModalConfirmacao: String = "";
-  private mensagemModalConfirmacao: String = "";
+  private mensagemModalConfirmacao_header: String = "";
+  private mensagemModalConfirmacao_body: String = "";
+  private mensagemModalConfirmacao_footer: String = "";
+
+  private idDespesaReferencia: number = 0;
 
   @ViewChild('modalDespesasParceladas') modalDespesasParceladas;
   @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
@@ -29,16 +34,22 @@ export class DespesasParceladasFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private sessao: SessaoService,
     private modalService: BsModalService,
-    private detalheService: DetalheDespesasService,
-    private lancamentosService: LancamentosFinanceirosService,
+    private service: DespesasParceladasService,
     private detalheDomain: DetalheDespesasMensaisDomain
   ) { }
 
   ngOnInit() {
-    this.carregarFormDespesasParceladas();
+    this.service.recebeMensagem().subscribe(d => {
+      this.loadFormDespesaParcelada();
+    }, () => {
+      alert('Ocorreu um erro ao carregar os dados da despesa parcelada, tente novamente mais tarde.')
+    })
   }
 
-  carregarFormDespesasParceladas() {
+  loadFormDespesaParcelada() {
+    this.idDespesaReferencia = 0;
+    this.despesaParceladaDetalhe = null;
+
     this.tituloDespesasParceladas = {
       despesas: []
     }
@@ -46,7 +57,6 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.carregarListaDespesasParceladas(true);
 
     this.modalDespesasParceladasForm = this.formBuilder.group({
-      parcelaAtual: ['0/0'],
       checkCarregarDespesasPendente: [true],
       nomeDespesa: [''],
       cbMesVigencia: [''],
@@ -54,11 +64,11 @@ export class DespesasParceladasFormComponent implements OnInit {
       vigenciaFinal: ['']
     });
 
+    (<HTMLInputElement>document.getElementById("parcelaAtual")).value = "0/0";
     (<HTMLInputElement>document.getElementById("parcelas")).value = "";
     (<HTMLInputElement>document.getElementById("valorDespesa")).value = "0";
     (<HTMLInputElement>document.getElementById("valorParcela")).value = "0";
   }
-
 
   onQuantidadeParcelasChange() {
     let campo = document.getElementById("parcelas");
@@ -104,7 +114,39 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   gerarFluxoParcelas() {
-    
+
+  }
+
+  carregarDetalheDespesaParcelada() {
+    const despesaSelecionada = this.idDespesaReferencia;
+
+    if (despesaSelecionada <= 0) {
+      alert('Necessário selecionar uma despesa para pesquisar.')
+      return;
+    }
+
+    this.carregarDetalheDespesaParceladaService(despesaSelecionada);
+  }
+
+  carregarDetalheDespesaParceladaService(despesa: number) {
+    this.service.getDetalhesDespesaParcelada(despesa).subscribe((res) => {
+      this.despesaParceladaDetalhe = res;
+
+      this.modalDespesasParceladasForm = this.formBuilder.group({
+        nomeDespesa: res.despesas.dsTituloDespesaParcelada,
+        cbMesVigencia: res.despesas.dsMesVigIni,
+        cbAnoVigencia: res.despesas.dsAnoVigIni,
+        parcelas: res.despesas.nrTotalParcelas,
+        vigenciaFinal: res.despesas.dsVigenciaFin,
+        valorDespesa: res.valorTotalDespesa,
+        valorParcela: res.valorParcelaAtual
+      });
+
+      (<HTMLInputElement>document.getElementById("parcelaAtual")).value = res.parcelaAtual.toString();
+      (<HTMLInputElement>document.getElementById("parcelas")).value = res.despesas.nrTotalParcelas.toString();
+      (<HTMLInputElement>document.getElementById("valorDespesa")).value = res.valorTotalDespesa.toString();
+      (<HTMLInputElement>document.getElementById("valorParcela")).value = res.valorParcelaAtual.toString();
+    });
   }
 
   confirmEventModal() {
@@ -122,96 +164,65 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.eventModalConfirmacao = "";
   }
 
-  carregarDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number, idFuncionario: number) {
-    //this.resetDetalheDespesasChange();
+  excluirDespesaParcelada() {
+    this.eventModalConfirmacao = "ExcluirDespesa";
+    this.mensagemModalConfirmacao_header = "Deseja excluir esta despesa parcelada?";
+    this.mensagemModalConfirmacao_footer = "Este processo exclui todos os lançamentos mensais processados!";
 
-    this.detalheService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
-      //this.detalheLancamentosMensais = res;
-      //this.setDetalheDespesaMensalObservable(res.detalheDespesaMensal);
-      //this.carregarFormDetalheDespesasMensais(res.despesaMensal);
-    });
-  }
-
-  excluirItemDetalheDespesa() {
-    this.eventModalConfirmacao = "ExcluirItemDetalheDespesa";
-    this.mensagemModalConfirmacao = "Deseja excluir a(s) despesa(s) selecionada(s) ?";
-
-    /*if (this.getDetalheDespesasChecked().length == 0) {
-      alert('Necessário selecionar alguma despesa para excluir.')
+    if (null == this.despesaParceladaDetalhe) {
+      alert('Necessário selecionar uma despesa para excluir.')
       return;
-    }*/
+    }
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
   recarregarDetalheDespesa() {
-    const despesa = this.detalheDomain.getDespesaMensal();
-    this.carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao, despesa.idFuncionario);
-    this.lancamentosService.enviaMensagem();
+    const despesa = this.despesaParceladaDetalhe.idDespesaParcelada;
+    this.carregarListaDespesasParceladas(true);
+    this.carregarDetalheDespesaParceladaService(despesa);
   }
 
   carregarListaDespesasParceladas(isTodasDespesas: boolean) {
-    this.detalheService.getTituloDespesasParceladas(isTodasDespesas).subscribe((res) => {
+    this.tituloDespesasParceladas = null;
+
+    this.service.getNomeDespesasParceladas(isTodasDespesas).subscribe((res) => {
       this.tituloDespesasParceladas = res;
     });
   }
 
-  onCheckCarregarTodasDespParceladas(checked) {
-    //this.carregarListaDespesasParceladasImportacao(checked);
+  onCheckCarregarNomeDespParceladas(checked) {
+    this.carregarListaDespesasParceladas(checked);
   }
 
-  gravarDetalheDespesas() {
-    const despesa = null //this.detalheLancamentosMensais.despesaMensal;
-    despesa.dsNomeDespesa = null //this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
+  onChangeTituloDespesa(value) {
+    this.idDespesaReferencia = value;
+  }
 
-    if (despesa.dsNomeDespesa == "") {
-      alert('Digite o nome da despesa.');
-      return;
-    }
-
-    if (despesa.tpReferenciaSaldoMesAnterior == "N") {
-      let valorLimiteDespesa = formatRealNumber((document.getElementById("valorLimiteDespesa") as HTMLInputElement).value);
-
-      if (valorLimiteDespesa == "NaN" || valorLimiteDespesa == "0") {
-        alert('Necessário digitar o valor Limite Despesa.');
-        return;
-      }
-
-      despesa.vlLimite = valorLimiteDespesa;
-    }
-
+  gravarDespesaParcelada() {
     this.eventModalConfirmacao = "GravarDetalheDespesas";
-    this.mensagemModalConfirmacao = "Deseja salvar as alterações ?";
+    this.mensagemModalConfirmacao_body = "Deseja salvar as alterações ?";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
-  gravarDespesa(despesa: DespesaMensal) {
-    this.detalheService.gravarDespesaMensal(despesa).toPromise().then(() => {
-      this.detalheDomain.setDespesaMensal(despesa);
-      this.recarregarDetalheDespesa();
-    },
-      err => {
-        console.log(err);
-      });
-  }
 
   confirmGravarDetalheDespesas() {
-    this.gravarDespesa(null /*this.detalheLancamentosMensais.despesaMensal*/);
+    //this.gravarDespesa(null /*this.detalheLancamentosMensais.despesaMensal*/);
     this.closeModal();
   }
 
   confirmExcluirItemDetalheDespesa() {
     const despesas = null//this.getDetalheDespesasChecked();
 
-    despesas.forEach((d) => {
+    /*despesas.forEach((d) => {
       this.detalheService.excluritemDetalheDespesa(d.idDespesa, d.idDetalheDespesa, d.idOrdem).toPromise().then(() => {
         this.recarregarDetalheDespesa();
       },
         err => {
           console.log(err);
         });
-    })
+    })*/
 
     this.closeModal();
   }

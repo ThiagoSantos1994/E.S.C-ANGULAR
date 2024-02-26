@@ -21,39 +21,46 @@
             </span>
             Cadastro de Despesas Parceladas
           </h6>
+
           <br>
-          <form [formGroup]="modalDespesasParceladasForm">
-            <div class="row-header-cadastro-despesas-parceladas">
-              <div class="col-xl-8 col-md-6 mb-1" style="height: min-content;">
-                <div class="input-group-header">
-                  <select class="form-control form-control-sm combo-titulo-despesas" id="comboTituloDespesaParcelada">
-                    <option value=""></option>
-                    <option *ngFor="let despesa of tituloDespesasParceladas.despesas"
-                      value={{despesa.idDespesaParcelada}}>
-                      {{despesa.tituloDespesa}}
-                    </option>
-                  </select>
 
-                  <button class="btn text-white " data-mdb-ripple-init style="background-color: #3aad3a; width: 5%;"
-                    role="button" data-toggle="modal" data-target="#modalCategoriaDetalheDespesa"
-                    (click)="carregarCategoriaDetalheDespesa()">
-                    <i class="fa fa-plus" aria-hidden="true"></i>
-                  </button>
+          <div class="row-header-cadastro-despesas-parceladas">
+            <div class="col-xl-8 col-md-6 mb-1" style="height: min-content;">
+              <div class="input-group-header">
+                <select class="form-control form-control-sm combo-titulo-despesas"
+                  (change)="onChangeTituloDespesa($event.target.value)">
+                  <option value=""></option>
+                  <option *ngFor="let despesa of tituloDespesasParceladas.despesas"
+                    value={{despesa.idDespesaParcelada}}>
+                    {{despesa.dsTituloDespesaParcelada}}
+                  </option>
+                </select>
 
-                  <button class="btn text-white " data-mdb-ripple-init
-                    style="background-color: #c90d0d; width: 5%; margin-left: 0%;" role="button" data-toggle="modal"
-                    data-target="#modalCategoriaDetalheDespesa" (click)="carregarCategoriaDetalheDespesa()">
-                    <i class="fa fa-trash-o" aria-hidden="true"></i>
-                  </button>
+                <button class="btn text-white " data-mdb-ripple-init style="background-color: #3a2db4; width: 5%;"
+                  role="button" (click)="carregarDetalheDespesaParcelada()">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
 
-                  <input class="form-control form-control-sm text-center" type="text" formControlName="parcelaAtual"
-                    style="padding: 2%; width: 9%; font-size: larger;" disabled>
-                </div>
+                <button class="btn text-white " data-mdb-ripple-init style="background-color: #3aad3a; width: 5%;"
+                  role="button" (click)="carregarDetalheDespesaParcelada()">
+                  <i class="fa fa-plus" aria-hidden="true"></i>
+                </button>
 
-                <small class="form-text text-muted" style="margin:-1.6% 11% -2% -47%;">
+                <button class="btn text-white " data-mdb-ripple-init
+                  style="background-color: #c90d0d; width: 5%; margin-left: 0%;" role="button"
+                  (click)="excluirDespesaParcelada()">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i>
+                </button>
+
+                <input class="form-control form-control-sm text-center" type="text" id="parcelaAtual"
+                  style="padding: 1%; width: 9%; font-size: larger;" disabled>
+              </div>
+
+              <form [formGroup]="modalDespesasParceladasForm">
+                <small class="form-text text-muted checkbox-despesas-em-aberto">
                   <input class="form-check-input" type="checkbox" formControlName="checkCarregarDespesasPendente"
                     id="checkCarregarDespesasPendente"
-                    (click)="onCheckReprocessarDespesasNaoParceladas($event.target.checked)">
+                    (click)="onCheckCarregarNomeDespParceladas($event.target.checked)">
                   <label class="form-check-label" for="checkCarregarDespesasPendente"
                     title="lista os nomes das despesas parceladas que ainda não foram quitadas."> Carregar somente as
                     despesas parceladas em aberto.
@@ -70,6 +77,14 @@
                     <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa"
                       onkeyup="toUpper(this)">
                   </div>
+                  <small class="form-text text-muted label-associacao" style="font-size: small;">
+                    <span *ngIf="despesaParceladaDetalhe == null">
+                      <p></p>
+                    </span>
+                    <span *ngIf="despesaParceladaDetalhe">
+                      {{despesaParceladaDetalhe.despesaVinculada}}
+                    </span>
+                  </small>
                 </div>
 
                 <div class="input-group-header-cards">
@@ -130,9 +145,9 @@
                       Vigência Final
                     </small>
 
-                    <div class="row row-card-parcelas-despesas-parceladas">
+                    <div class="row row-card-parcelas-despesas-parceladas" disabled>
                       <input class="form-control form-control-sm text-center inputVigenciaFinal" type="text"
-                        formControlName="vigenciaFinal" id="vigenciaFinal" disabled>
+                        formControlName="vigenciaFinal" id="vigenciaFinal">
                     </div>
                   </div>
 
@@ -153,10 +168,10 @@
                       Valor Parcela R$:
                     </small>
 
-                    <div class="input-valor-despesa">
+                    <div class="input-valor-despesa" disabled>
                       <input type="text" class="text-center form-control input-valor-despesa" id="valorParcela"
                         currencyMask maxlength="16" autocomplete="off"
-                        [options]="{ prefix: '', thousands: '.', decimal: ',' }" disabled>
+                        [options]="{ prefix: '', thousands: '.', decimal: ',' }">
                     </div>
                   </div>
                 </div>
@@ -166,9 +181,10 @@
                   data-target="#modalImportacaoDespesaParcelada" (click)="carregarListaDespesasParceladasImportacao()">
                   <i class="fa fa-retweet" aria-hidden="true"></i> Gerar Fluxo de Parcelas
                 </button>-->
-              </div>
+              </form>
             </div>
-          </form>
+          </div>
+
 
           <hr style="border-top: 1px solid rgba(0,0,0,.1); margin-block: auto;">
 
@@ -230,8 +246,8 @@
                       <th scope="col">Observações</th>
                     </tr>
                   </thead>
-                  <tbody *ngIf="detalheLancamentosMensais">
-                    <tr *ngFor="let detalheDespesa of detalheLancamentosMensais.detalheDespesaMensal">
+                  <tbody *ngIf="despesaParceladaDetalhe">
+                    <tr *ngFor="let fluxo of despesaParceladaDetalhe.parcelas">
                       <td>
                         <label class="checkbox-wrap checkbox-primary">
                           <input type="checkbox" name="item[]"
@@ -241,23 +257,23 @@
                       </td>
 
                       <td>
-                        <div style="width: 20px">
-                        </div>
+                        {{fluxo.nrParcela}}
                       </td>
 
                       <td>
-                        <div style="width: 20px">
-                        </div>
+                        {{fluxo.dsDataVencimento}}
                       </td>
 
                       <td>
-                        <div style="width: 20px">
-                        </div>
+                        <span *ngIf="fluxo.tpBaixado == 'N'" class="badge badge-warning rounded-pill d-inline">Á Pagar
+                        </span>
+                        <span *ngIf="fluxo.tpBaixado =='S'" class=" badge badge-success rounded-pill d-inline">Pago
+                          <i class="fa fa-check" aria-hidden="true"></i>
+                        </span>
                       </td>
 
                       <td>
-                        <div style="width: 20px">
-                        </div>
+                        {{fluxo.dsObservacoes}}
                       </td>
                     </tr>
                   </tbody>
@@ -268,7 +284,7 @@
 
           <div class="modal-footer">
             <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
-              (click)="gravarDetalheDespesas()">
+              (click)="gravarDespesaParcelada()">
               <i class="fa fa-floppy-o"></i> Salvar Despesa
             </button>
           </div>
@@ -276,3 +292,32 @@
       </div>
     </div>
   </div>
+
+  <!------------------------  Modal Confirmação - Generico ------------------------>
+  <form>
+    <ng-template #modalConfirmacaoEventos>
+      <div class="modal-header">
+        <h6 class="modal-title">
+          <i class="fa fa-question-circle" style="font-size: 130%;" aria-hidden="true"></i> Confirmação
+        </h6>
+      </div>
+      <div class="form-group modal-body">
+        {{mensagemModalConfirmacao_header}}
+
+        <span *ngIf="mensagemModalConfirmacao_body">
+          <br>
+          {{mensagemModalConfirmacao_body}}
+        </span>
+
+        <span *ngIf="mensagemModalConfirmacao_footer">
+          <br>
+          {{mensagemModalConfirmacao_footer}}
+        </span>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmEventModal()">Sim</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Não</button>
+      </div>
+    </ng-template>
+  </form>

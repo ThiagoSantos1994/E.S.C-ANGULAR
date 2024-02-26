@@ -5,4 +5,5 @@ export interface TituloDespesaResponse {
 export interface TituloDespesa {
     idDespesaParcelada: number;
     tituloDespesa: String;
+    dsTituloDespesaParcelada: String;
 }
