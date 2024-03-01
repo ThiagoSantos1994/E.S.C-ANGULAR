@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService, formatDate } from 'ngx-bootstrap';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
-import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
 import { DespesaParceladaResponse } from 'src/app/core/interfaces/despesa-parcelada-response.interface';
 import { TituloDespesaResponse } from 'src/app/core/interfaces/titulo-despesa-response.interface';
 import { DespesasParceladasService } from 'src/app/core/services/despesas-parceladas.service';
@@ -47,7 +46,7 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   loadFormDespesaParcelada() {
-    this.idDespesaReferencia = 0;
+    this.idDespesaReferencia = -1;
     this.despesaParceladaDetalhe = null;
 
     this.tituloDespesasParceladas = {
@@ -59,8 +58,8 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.modalDespesasParceladasForm = this.formBuilder.group({
       checkCarregarDespesasPendente: [true],
       nomeDespesa: [''],
-      cbMesVigencia: [''],
-      cbAnoVigencia: [''],
+      cbMesVigencia: [this.service.getMesAtual()],
+      cbAnoVigencia: [this.service.getAnoAtual()],
       vigenciaFinal: ['']
     });
 
@@ -68,6 +67,9 @@ export class DespesasParceladasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("parcelas")).value = "";
     (<HTMLInputElement>document.getElementById("valorDespesa")).value = "0";
     (<HTMLInputElement>document.getElementById("valorParcela")).value = "0";
+
+    this.onQuantidadeParcelasChange();
+    this.onValorDespesaChange();
   }
 
   onQuantidadeParcelasChange() {
@@ -114,7 +116,29 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   gerarFluxoParcelas() {
+    if (!this.validarCamposObrigatorios()) {
+      alert('Necessário preencher os campos para gerar o fluxo de parcelas.')
+      return;
+    }
 
+    this.eventModalConfirmacao = "GerarFluxoParcelas";
+    this.mensagemModalConfirmacao_header = "Deseja gerar o fluxo de parcelas para esta despesa?";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  validarCamposObrigatorios(): boolean {
+    const mesVig = this.modalDespesasParceladasForm.get('cbMesVigencia').value;
+    const anoVig = this.modalDespesasParceladasForm.get('cbAnoVigencia').value;
+    const parcelas = (<HTMLInputElement>document.getElementById("parcelas")).value;
+    const valorDespesa = (<HTMLInputElement>document.getElementById("valorDespesa")).value;
+    const valorParcela = (<HTMLInputElement>document.getElementById("valorParcela")).value;
+
+    if ("" == mesVig || "" == anoVig || "" == parcelas || "0" == valorDespesa || "0" == valorParcela) {
+      return false;
+    }
+
+    return true;
   }
 
   carregarDetalheDespesaParcelada() {
@@ -157,11 +181,57 @@ export class DespesasParceladasFormComponent implements OnInit {
         this.confirmGravarDetalheDespesas();
         break;
       }
+      case 'GerarFluxoParcelas': {
+        this.confirmGerarFluxoParcelas();
+        break;
+      }
+
       default: {
       }
     }
 
     this.eventModalConfirmacao = "";
+  }
+
+  confirmGerarFluxoParcelas() {
+    this.closeModal();
+
+    const despesa = (this.despesaParceladaDetalhe ? this.despesaParceladaDetalhe.idDespesaParcelada : -1);
+    const parcelas = parserToInt((<HTMLInputElement>document.getElementById("parcelas")).value);
+    const valorParcela = formatRealNumber((<HTMLInputElement>document.getElementById("valorParcela")).value);
+    const dataReferencia = (this.modalDespesasParceladasForm.get('cbMesVigencia').value + "-" + this.modalDespesasParceladasForm.get('cbAnoVigencia').value);
+
+    this.service.gerarFluxoParcelas(despesa, valorParcela, parcelas, dataReferencia).subscribe((res) => {
+      this.despesaParceladaDetalhe = res
+    },
+      err => {
+        console.log(err);
+        alert('Ocorreu um erro ao gerar o fluxo de parcelas, tente novamente mais tarde.')
+      });
+  }
+
+  atualizarDetalheDespesasMensais() {
+    console.log(this.despesaParceladaDetalhe)
+  }
+
+  obterNovaDespesaObjeto(idDespesa: number) {
+    const despesa: DespesaParceladaResponse = {
+      idDespesaParcelada: idDespesa,
+      qtdeParcelas: 0,
+      qtdeParcelasPagas: 0,
+      parcelaAtual: undefined,
+      valorParcelaAtual: undefined,
+      valorTotalDespesa: undefined,
+      valorTotalDespesaPaga: undefined,
+      valorTotalDespesaPendente: undefined,
+      isDespesaComParcelaAmortizada: undefined,
+      isDespesaComParcelaAdiantada: undefined,
+      despesaVinculada: null,
+      despesas: undefined,
+      parcelas: undefined
+    };
+
+    return despesa;
   }
 
   excluirDespesaParcelada() {

@@ -42,7 +42,7 @@
                 </button>
 
                 <button class="btn text-white " data-mdb-ripple-init style="background-color: #3aad3a; width: 5%;"
-                  role="button" (click)="carregarDetalheDespesaParcelada()">
+                  role="button" (click)="loadFormDespesaParcelada()">
                   <i class="fa fa-plus" aria-hidden="true"></i>
                 </button>
 
@@ -145,9 +145,9 @@
                       Vigência Final
                     </small>
 
-                    <div class="row row-card-parcelas-despesas-parceladas" disabled>
+                    <div class="row row-card-parcelas-despesas-parceladas">
                       <input class="form-control form-control-sm text-center inputVigenciaFinal" type="text"
-                        formControlName="vigenciaFinal" id="vigenciaFinal">
+                        formControlName="vigenciaFinal" id="vigenciaFinal" disabled>
                     </div>
                   </div>
 
@@ -171,7 +171,7 @@
                     <div class="input-valor-despesa" disabled>
                       <input type="text" class="text-center form-control input-valor-despesa" id="valorParcela"
                         currencyMask maxlength="16" autocomplete="off"
-                        [options]="{ prefix: '', thousands: '.', decimal: ',' }">
+                        [options]="{ prefix: '', thousands: '.', decimal: ',' }" disabled>
                     </div>
                   </div>
                 </div>
@@ -193,9 +193,9 @@
               <div class="col-sm-1">
                 <div class="d-grid gap-2 col-0 mx-auto">
                   <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #52a283;padding-left: 30%; padding-right: 30%;" href="#!" role="button"
-                    title="Gerar fluxo de parcelas" (click)="gerarFluxoParcelas()">
-                    <i class="fa fa-retweet" aria-hidden="true"></i>
+                    style="background-color: #736e85;padding-left: 31%; padding-right: 31%;" href="#!" role="button"
+                    title="Gerar fluxo de parcelas">
+                    <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
                   </button>
                   <br>
                   <br>
@@ -278,6 +278,14 @@
                     </tr>
                   </tbody>
                 </table>
+
+                <div *ngIf="!despesaParceladaDetalhe">
+                  <button class="btn text-white" data-mdb-ripple-init
+                    style="background-color: #52a283;padding-left: 24%; padding-right: 30%;" href="#!" role="button"
+                    title="Gerar fluxo de parcelas" (click)="gerarFluxoParcelas()">
+                    <i class="fa fa-retweet" aria-hidden="true"></i> Clique AQUI para gerar as parcelas
+                  </button>
+                </div>
               </div>
             </div>
           </div>

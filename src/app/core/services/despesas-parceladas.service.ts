@@ -2,10 +2,11 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { DespesaParceladaResponse } from '../interfaces/despesa-parcelada-response.interface';
+import { DespesaParceladaResponse, Parcelas } from '../interfaces/despesa-parcelada-response.interface';
 import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
+import { formatDate } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -35,13 +36,17 @@ export class DespesasParceladasService {
         catchError(this.handleError));
   }
 
-
   getDetalhesDespesaParcelada(idDespesaParcelada: number): Observable<DespesaParceladaResponse> {
     return this.http.get<DespesaParceladaResponse>(`springboot-esc-backend/api/v2/despesasParceladas/consultar/${idDespesaParcelada}/${this.sessao.getIdLogin()}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
   }
 
+  gerarFluxoParcelas(idDespesaParcelada: number, valorParcela: String, qtdeParcelas: number, dataReferencia: string): Observable<DespesaParceladaResponse> {
+    return this.http.get<DespesaParceladaResponse>(`springboot-esc-backend/api/v2/despesasParceladas/gerarFluxoParcelas/${idDespesaParcelada}/${valorParcela}/${qtdeParcelas}/${dataReferencia}/${this.sessao.getIdLogin()}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
@@ -54,5 +59,13 @@ export class DespesasParceladasService {
 
     alert('Ops, Ocorreu um erro no servidor, tente novamente mais tarde.')
     return throwError(error);
+  }
+
+  getMesAtual() {
+    return formatDate(Date.now(), 'MM', 'en-US');
+  }
+
+  getAnoAtual() {
+    return formatDate(Date.now(), 'yyyy', 'en-US');
   }
 }
