@@ -116,26 +116,52 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   gerarFluxoParcelas() {
-    if (!this.validarCamposObrigatorios()) {
+    if (!this.validarCamposObrigatorios(false)) {
       alert('Necessário preencher os campos para gerar o fluxo de parcelas.')
       return;
     }
 
     this.eventModalConfirmacao = "GerarFluxoParcelas";
-    this.mensagemModalConfirmacao_header = "Deseja gerar o fluxo de parcelas para esta despesa?";
+    this.mensagemModalConfirmacao_header = "Confirma a geração das parcelas para esta despesa?";
+    this.mensagemModalConfirmacao_footer = "";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
-  validarCamposObrigatorios(): boolean {
+  validarCamposObrigatorios(bValidaListaParcelas: boolean): boolean {
+    const nomeDespesa = this.modalDespesasParceladasForm.get('nomeDespesa').value;
     const mesVig = this.modalDespesasParceladasForm.get('cbMesVigencia').value;
     const anoVig = this.modalDespesasParceladasForm.get('cbAnoVigencia').value;
+    const vigenciaFinal = (<HTMLInputElement>document.getElementById("vigenciaFinal")).value;
     const parcelas = (<HTMLInputElement>document.getElementById("parcelas")).value;
-    const valorDespesa = (<HTMLInputElement>document.getElementById("valorDespesa")).value;
-    const valorParcela = (<HTMLInputElement>document.getElementById("valorParcela")).value;
+    const valorDespesa = formatRealNumber((<HTMLInputElement>document.getElementById("valorDespesa")).value);
+    const valorParcela = formatRealNumber((<HTMLInputElement>document.getElementById("valorParcela")).value);
 
     if ("" == mesVig || "" == anoVig || "" == parcelas || "0" == valorDespesa || "0" == valorParcela) {
       return false;
+    }
+
+    if (bValidaListaParcelas) {
+      if (null == this.despesaParceladaDetalhe) {
+        return false;
+      }
+
+      const despesaRequest = this.despesaParceladaDetalhe.despesas;
+
+      /*Realiza o parser do objeto para gravacao*/
+      this.despesaParceladaDetalhe.despesas = {
+        idDespesaParcelada: this.despesaParceladaDetalhe.idDespesaParcelada,
+        dsTituloDespesaParcelada: nomeDespesa,
+        dsMesVigIni: mesVig,
+        dsAnoVigIni: anoVig,
+        dsVigenciaFin: vigenciaFinal,
+        nrTotalParcelas: parserToInt(parcelas),
+        vlFatura: valorDespesa,
+        vlParcela: valorParcela,
+        idFuncionario: parserToInt(this.sessao.getIdLogin()),
+        nrParcelasAdiantadas: (null == despesaRequest ? 0 : despesaRequest.nrParcelasAdiantadas),
+        tpBaixado: (null == despesaRequest ? "N" : despesaRequest.tpBaixado)
+      }
     }
 
     return true;
@@ -177,12 +203,16 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.closeModal();
 
     switch (this.eventModalConfirmacao) {
-      case 'GravarDetalheDespesas': {
-        this.confirmGravarDetalheDespesas();
+      case 'GravarDespesaParcelada': {
+        this.confirmGravarDespesa();
         break;
       }
       case 'GerarFluxoParcelas': {
         this.confirmGerarFluxoParcelas();
+        break;
+      }
+      case 'ExcluirDespesa': {
+        this.confirmExcluirDespesa();
         break;
       }
 
@@ -208,30 +238,6 @@ export class DespesasParceladasFormComponent implements OnInit {
         console.log(err);
         alert('Ocorreu um erro ao gerar o fluxo de parcelas, tente novamente mais tarde.')
       });
-  }
-
-  atualizarDetalheDespesasMensais() {
-    console.log(this.despesaParceladaDetalhe)
-  }
-
-  obterNovaDespesaObjeto(idDespesa: number) {
-    const despesa: DespesaParceladaResponse = {
-      idDespesaParcelada: idDespesa,
-      qtdeParcelas: 0,
-      qtdeParcelasPagas: 0,
-      parcelaAtual: undefined,
-      valorParcelaAtual: undefined,
-      valorTotalDespesa: undefined,
-      valorTotalDespesaPaga: undefined,
-      valorTotalDespesaPendente: undefined,
-      isDespesaComParcelaAmortizada: undefined,
-      isDespesaComParcelaAdiantada: undefined,
-      despesaVinculada: null,
-      despesas: undefined,
-      parcelas: undefined
-    };
-
-    return despesa;
   }
 
   excluirDespesaParcelada() {
@@ -270,29 +276,49 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   gravarDespesaParcelada() {
-    this.eventModalConfirmacao = "GravarDetalheDespesas";
+    if (!this.validarCamposObrigatorios(true)) {
+      alert('Necessário preencher todos os campos e gerar as parcelas para salvar a despesa.')
+      return;
+    }
+
+    this.eventModalConfirmacao = "GravarDespesaParcelada";
+
+    this.mensagemModalConfirmacao_header = "";
     this.mensagemModalConfirmacao_body = "Deseja salvar as alterações ?";
+    this.mensagemModalConfirmacao_footer = "";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
 
-  confirmGravarDetalheDespesas() {
-    //this.gravarDespesa(null /*this.detalheLancamentosMensais.despesaMensal*/);
+  confirmGravarDespesa() {
+    let despesaRequest = this.despesaParceladaDetalhe;
+
+    this.service.gravarDespesa(despesaRequest.despesas).toPromise().then(() => {
+      despesaRequest.parcelas.forEach((p) => {
+        this.service.gravarParcelas(p).toPromise().then(() => { },
+          err => {
+            alert('Ocorreu um erro ao gravar a parcela ' + p.nrParcela);
+            console.log(err);
+          });
+      })
+
+      alert('Gravação realizada com sucesso!');
+      this.recarregarDetalheDespesa();
+    });
+
     this.closeModal();
   }
 
-  confirmExcluirItemDetalheDespesa() {
-    const despesas = null//this.getDetalheDespesasChecked();
-
-    /*despesas.forEach((d) => {
-      this.detalheService.excluritemDetalheDespesa(d.idDespesa, d.idDetalheDespesa, d.idOrdem).toPromise().then(() => {
-        this.recarregarDetalheDespesa();
-      },
-        err => {
-          console.log(err);
-        });
-    })*/
+  confirmExcluirDespesa() {
+    this.service.excluirDespesa(this.idDespesaReferencia).toPromise().then(() => {
+      this.loadFormDespesaParcelada()
+      alert('Despesa excluida com sucesso!');
+    },
+      err => {
+        alert('Ocorreu um erro ao excluir esta despesa, tente novamente mais tarde.');
+        console.log(err);
+      });
 
     this.closeModal();
   }
@@ -314,7 +340,7 @@ function formatRealNumber(str) {
   if (tmp.length > 6)
     tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, "$1.$2");
 
-  return tmp;
+  return tmp.replace('.', ',');
 }
 
 function isValorNegativo(str) {

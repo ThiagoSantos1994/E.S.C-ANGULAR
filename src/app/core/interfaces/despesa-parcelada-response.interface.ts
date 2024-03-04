@@ -11,7 +11,7 @@ export interface DespesaParceladaResponse {
     isDespesaComParcelaAdiantada: String;
     despesaVinculada: String;
     despesas: Despesa;
-    parcelas: Parcelas;
+    parcelas: Parcelas[];
 }
 
 export interface Despesa {

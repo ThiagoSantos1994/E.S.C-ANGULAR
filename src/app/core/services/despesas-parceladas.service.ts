@@ -1,12 +1,12 @@
+import { formatDate } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { DespesaParceladaResponse, Parcelas } from '../interfaces/despesa-parcelada-response.interface';
+import { Despesa, DespesaParceladaResponse, Parcelas } from '../interfaces/despesa-parcelada-response.interface';
 import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { formatDate } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +46,24 @@ export class DespesasParceladasService {
     return this.http.get<DespesaParceladaResponse>(`springboot-esc-backend/api/v2/despesasParceladas/gerarFluxoParcelas/${idDespesaParcelada}/${valorParcela}/${qtdeParcelas}/${dataReferencia}/${this.sessao.getIdLogin()}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
+  }
+
+  gravarDespesa(request: Despesa) {
+    return this.http.post(`springboot-esc-backend/api/despesasParceladas/gravar`, request).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  gravarParcelas(request: Parcelas) {
+    return this.http.post(`springboot-esc-backend/api/despesasParceladas/parcelas/gravar`, request).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  excluirDespesa(idDespesaParcelada: number) {
+    return this.http.post(`springboot-esc-backend/api/despesasParceladas/excluir/${idDespesaParcelada}/${this.sessao.getIdLogin()}`, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
   }
 
   private handleError(error: HttpErrorResponse) {

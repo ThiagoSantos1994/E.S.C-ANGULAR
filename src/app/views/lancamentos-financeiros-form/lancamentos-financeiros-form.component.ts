@@ -18,7 +18,7 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
   styleUrls: ['./lancamentos-financeiros-form.component.css']
 })
 export class LancamentosFinanceirosFormComponent implements OnInit {
-  private lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]> = new Observable<LancamentosFinanceiros[]>();
+  private lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]>;
   private _despesasCheckbox = new BehaviorSubject<LancamentosMensais[]>([]);
 
   private pesquisaForm: FormGroup;
