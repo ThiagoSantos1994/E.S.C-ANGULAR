@@ -614,7 +614,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   confirmAtualizarDetalheDespesas() {
     const despesa = this.detalheLancamentosMensais.despesaMensal;
 
-    this.detalheService.reprocessarImportacaoDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.mesPesquisaForm, despesa.anoPesquisaForm, (despesa.tpReprocessar == "S" ? true : false)).toPromise().then(() => {
+    this.detalheService.reprocessarImportacaoDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, this.mesRef, this.anoRef, (despesa.tpReprocessar == "S" ? true : false)).toPromise().then(() => {
       this.recarregarDetalheDespesa();
       alert('Atualização realizada com sucesso!');
     },

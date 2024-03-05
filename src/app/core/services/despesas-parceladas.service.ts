@@ -66,6 +66,12 @@ export class DespesasParceladasService {
     );
   }
 
+  quitarDespesa(idDespesaParcelada: number, valorQuitacao: string) {
+    return this.http.post(`springboot-esc-backend/api/despesasParceladas/quitar/${idDespesaParcelada}/${this.sessao.getIdLogin()}/${valorQuitacao}`, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('Ocorreu um erro:', error.error.message);

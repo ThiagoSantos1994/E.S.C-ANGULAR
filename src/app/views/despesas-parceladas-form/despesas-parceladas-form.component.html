@@ -27,7 +27,7 @@
           <div class="row-header-cadastro-despesas-parceladas">
             <div class="col-xl-8 col-md-6 mb-1" style="height: min-content;">
               <div class="input-group-header">
-                <select class="form-control form-control-sm combo-titulo-despesas"
+                <select class="form-control form-control-sm combo-titulo-despesas" id="comboTituloDespesa"
                   (change)="onChangeTituloDespesa($event.target.value)">
                   <option value=""></option>
                   <option *ngFor="let despesa of tituloDespesasParceladas.despesas"
@@ -74,8 +74,8 @@
                     Nome da Despesa
                   </small>
                   <div class="row row-card-titulo-despesas-parceladas">
-                    <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa" id="nomeDespesa"
-                      onkeyup="toUpper(this)">
+                    <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa"
+                      id="nomeDespesa" onkeyup="toUpper(this)">
                   </div>
                   <small class="form-text text-muted label-associacao" style="font-size: small;">
                     <span *ngIf="despesaParceladaDetalhe == null">
@@ -193,16 +193,15 @@
                 <div class="d-grid gap-2 col-0 mx-auto">
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #736e85;padding-left: 31%; padding-right: 31%;" href="#!" role="button"
-                    title="Quitar a despesa parcelada" (click)="gerarFluxoParcelas()">
+                    title="Quitar a despesa parcelada" (click)="onGerarFluxoParcelas()">
                     <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
                   </button>
                   <br>
                   <br>
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #3b056e;padding-left: 28%; padding-right: 23%;" href="#!" role="button"
-                    title="Importar despesas parceladas" data-toggle="modal"
-                    data-target="#modalImportacaoDespesaParcelada"
-                    (click)="carregarListaDespesasParceladasImportacao()">
+                    title="Quitar totalmente despesa e parcelas" data-toggle="modal"
+                    data-target="#modalConfirmacaoQuitarDespesaParcelada">
                     <i class="fa fa-handshake-o" aria-hidden="true"></i>
                   </button>
                   <br>
@@ -239,9 +238,10 @@
                       <th scope="col">
                         <i class="fa fa-check-square-o" aria-hidden="true"></i>
                       </th>
-                      <th scope="col">Parcelas</th>
+                      <th scope="col">Nº Parcela</th>
                       <th scope="col">Mês Vencimento</th>
                       <th scope="col">Status</th>
+                      <th scope="col">Valor R$</th>
                       <th scope="col">Observações</th>
                     </tr>
                   </thead>
@@ -269,6 +269,10 @@
                         <span *ngIf="fluxo.tpBaixado =='S'" class=" badge badge-success rounded-pill d-inline">Pago
                           <i class="fa fa-check" aria-hidden="true"></i>
                         </span>
+                      </td>
+
+                      <td>
+                        {{fluxo.vlParcela}}
                       </td>
 
                       <td>
@@ -311,12 +315,12 @@
       <div class="form-group modal-body">
         {{mensagemModalConfirmacao_header}}
 
-        <span *ngIf="mensagemModalConfirmacao_body">
+        <span *ngIf="mensagemModalConfirmacao_body !== null">
           <br>
           {{mensagemModalConfirmacao_body}}
         </span>
 
-        <span *ngIf="mensagemModalConfirmacao_footer">
+        <span *ngIf="mensagemModalConfirmacao_footer !== null">
           <br>
           {{mensagemModalConfirmacao_footer}}
         </span>
@@ -328,3 +332,38 @@
       </div>
     </ng-template>
   </form>
+
+  <!------------------------  Modal Confirmação Quitar Despesa ------------------------>
+  <div class="modal fade" id="modalConfirmacaoQuitarDespesaParcelada" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content" style="margin: 0% 32%;">
+        <div class="modal-header">
+          <h6 class="modal-title">
+            <i class="fa fa-question-circle" style="font-size: 130%;" aria-hidden="true"></i> Confirmação
+          </h6>
+        </div>
+
+        <div class="form-group modal-body" style="padding-top: 2%;padding-block-end: initial;">
+          Deseja quitar esta despesa e as parcelas?
+          <br>
+          <br>
+          <div>
+            <small class="form-text text-muted">
+              <i class="fa fa-info-circle" aria-hidden="true"></i>
+              Se a despesa for quitada <u>COM DESCONTO</u>, digite abaixo o valor total da despesa considerando o valor
+              do desconto.
+              <br>
+              <br>
+              <input class="form-control text-left form-control-sm" id="valorTotalDespesaComDesconto" currencyMask
+                maxlength="16" autocomplete="off" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
+                placeholder="R$ 0,00">
+            </small>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmQuitarDespesa()">Sim</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Não</button>
+        </div>
+      </div>
+    </div>
