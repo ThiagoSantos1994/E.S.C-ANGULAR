@@ -192,9 +192,9 @@
               <div class="col-sm-1">
                 <div class="d-grid gap-2 col-0 mx-auto">
                   <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #736e85;padding-left: 31%; padding-right: 31%;" href="#!" role="button"
-                    title="Quitar a despesa parcelada" (click)="onGerarFluxoParcelas()">
-                    <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                    style="background-color: #159dc7;padding-left: 31%; padding-right: 31%;" href="#!" role="button"
+                    title="Gerar fluxo de parcelas" (click)="onGerarFluxoParcelas()">
+                    <i class="fa fa-retweet" aria-hidden="true"></i>
                   </button>
                   <br>
                   <br>
@@ -216,8 +216,8 @@
                   <br>
                   <br>
                   <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #3b056e;padding-left: 37%; padding-right: 37%;" href="#!" role="button"
-                    title="Atualizar Detalhe Despesas" (click)="atualizarDetalheDespesasMensais()">
+                    style="background-color: #6e053f;padding-left: 37%; padding-right: 37%;" href="#!" role="button"
+                    title="Excluir parcela(s) selecionada(s)" (click)="excluirParcelasSelecionadas()">
                     <i class="fa fa-trash" aria-hidden="true"></i>
                   </button>
                   <br>
@@ -246,48 +246,47 @@
                     </tr>
                   </thead>
                   <tbody *ngIf="despesaParceladaDetalhe">
-                    <tr *ngFor="let fluxo of despesaParceladaDetalhe.parcelas">
+                    <tr *ngFor="let parcela of despesaParceladaDetalhe.parcelas">
                       <td>
                         <label class="checkbox-wrap checkbox-primary">
-                          <input type="checkbox" name="item[]"
-                            (click)="onCheckDetalheDespesaChange($event.target.checked, detalheDespesa)">
+                          <input type="checkbox" (click)="onCheckParcelaChange($event.target.checked, parcela)">
                           <span class="checkmark"></span>
                         </label>
                       </td>
 
                       <td>
-                        {{fluxo.nrParcela}}
+                        {{parcela.nrParcela}}
                       </td>
 
                       <td>
-                        {{fluxo.dsDataVencimento}}
+                        {{parcela.dsDataVencimento}}
                       </td>
 
                       <td>
-                        <span *ngIf="fluxo.tpBaixado == 'N'" class="badge badge-warning rounded-pill d-inline">Á Pagar
+                        <span *ngIf="parcela.tpBaixado == 'N'" class="badge badge-warning rounded-pill d-inline">Á Pagar
                         </span>
-                        <span *ngIf="fluxo.tpBaixado =='S'" class=" badge badge-success rounded-pill d-inline">Pago
+                        <span *ngIf="parcela.tpBaixado =='S'" class=" badge badge-success rounded-pill d-inline">Pago
                           <i class="fa fa-check" aria-hidden="true"></i>
                         </span>
                       </td>
 
                       <td>
-                        {{fluxo.vlParcela}}
+                        {{parcela.vlParcela}}
                       </td>
 
                       <td>
-                        {{fluxo.dsObservacoes}}
+                        {{parcela.dsObservacoes}}
                       </td>
                     </tr>
                   </tbody>
                 </table>
 
                 <div *ngIf="!despesaParceladaDetalhe">
-                  <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #52a283;padding-left: 24%; padding-right: 30%;" href="#!" role="button"
-                    title="Gerar fluxo de parcelas" (click)="gerarFluxoParcelas()">
-                    <i class="fa fa-retweet" aria-hidden="true"></i> Clique AQUI para gerar as parcelas
-                  </button>
+                  <div class="alert alert-primary"
+                    style="padding-left: 24%; padding-right: 30%;padding-block-start: 1%; padding-block-end: 1%;"
+                    role="alert">
+                    Nenhuma parcela existente no momento.
+                  </div>
                 </div>
               </div>
             </div>
@@ -362,7 +361,8 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmQuitarDespesa()">Sim</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal"
+            (click)="confirmQuitarDespesa()">Sim</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Não</button>
         </div>
       </div>

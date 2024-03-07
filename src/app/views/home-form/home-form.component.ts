@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Observable } from 'rxjs';
+import { DespesasParceladasService } from 'src/app/core/services/despesas-parceladas.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
-import { HomeService } from 'src/app/core/services/home.service';
 //import { DadosUsuario } from 'src/app/core/interfaces/dados-usuario.interface';
 
 
@@ -15,11 +14,12 @@ import { HomeService } from 'src/app/core/services/home.service';
 export class HomeFormComponent implements OnInit {
 
   //usuario$: Observable<DadosUsuario>;
-  usuarioLogado : string;
+  usuarioLogado: string;
 
   constructor(
     //private homeService: HomeService,
     private sessaoService: SessaoService,
+    private despesasParceladasService: DespesasParceladasService,
     private router: Router
   ) { }
 
@@ -36,6 +36,10 @@ export class HomeFormComponent implements OnInit {
 
     this.usuarioLogado = this.sessaoService.getUserName();
     //this.getDadosUsuario();
+  }
+
+  carregarDespesasParceladas() {
+    this.despesasParceladasService.enviaMensagem();
   }
 
   /*getDadosUsuario() {

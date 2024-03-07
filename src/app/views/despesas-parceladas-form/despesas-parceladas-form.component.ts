@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService, formatDate } from 'ngx-bootstrap';
+import { BehaviorSubject } from 'rxjs';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
-import { DespesaParceladaResponse } from 'src/app/core/interfaces/despesa-parcelada-response.interface';
+import { DespesaParceladaResponse, Parcelas } from 'src/app/core/interfaces/despesa-parcelada-response.interface';
 import { TituloDespesaResponse } from 'src/app/core/interfaces/titulo-despesa-response.interface';
 import { DespesasParceladasService } from 'src/app/core/services/despesas-parceladas.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
@@ -15,6 +16,7 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
 export class DespesasParceladasFormComponent implements OnInit {
   private despesaParceladaDetalhe: DespesaParceladaResponse;
   private tituloDespesasParceladas: TituloDespesaResponse;
+  private _parcelasCheckbox = new BehaviorSubject<Parcelas[]>([]);
 
   private modalDespesasParceladasForm: FormGroup;
   private modalConfirmacaoQuitarDespesasForm: FormGroup;
@@ -49,6 +51,7 @@ export class DespesasParceladasFormComponent implements OnInit {
   loadFormDespesaParcelada() {
     this.idDespesaReferencia = -1;
     this.despesaParceladaDetalhe = null;
+    this.resetParcelasCheckbox();
 
     this.tituloDespesasParceladas = {
       despesas: []
@@ -66,8 +69,8 @@ export class DespesasParceladasFormComponent implements OnInit {
 
     (<HTMLInputElement>document.getElementById("parcelaAtual")).value = "0/0";
     (<HTMLInputElement>document.getElementById("parcelas")).value = "";
-    (<HTMLInputElement>document.getElementById("valorDespesa")).value = "0";
-    (<HTMLInputElement>document.getElementById("valorParcela")).value = "0";
+    (<HTMLInputElement>document.getElementById("valorDespesa")).value = "0,00";
+    (<HTMLInputElement>document.getElementById("valorParcela")).value = "0,00";
 
     this.onQuantidadeParcelasChange();
     this.onValorDespesaChange();
@@ -125,7 +128,8 @@ export class DespesasParceladasFormComponent implements OnInit {
     }
 
     this.eventModalConfirmacao = "GerarFluxoParcelas";
-    this.mensagemModalConfirmacao_header = "Confirma a geração das parcelas para esta despesa?";
+    this.mensagemModalConfirmacao_header = "";
+    this.mensagemModalConfirmacao_body = "Confirma a geração das parcelas para esta despesa?"
     this.mensagemModalConfirmacao_footer = "";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
@@ -140,7 +144,7 @@ export class DespesasParceladasFormComponent implements OnInit {
     const valorDespesa = formatRealNumber((<HTMLInputElement>document.getElementById("valorDespesa")).value);
     const valorParcela = formatRealNumber((<HTMLInputElement>document.getElementById("valorParcela")).value);
 
-    if ("" == mesVig || "" == anoVig || "" == parcelas || "0" == valorDespesa || "0" == valorParcela) {
+    if ("" == nomeDespesa || "" == mesVig || "" == anoVig || "" == parcelas || "0,00" == valorDespesa || "0,00" == valorParcela) {
       return false;
     }
 
@@ -218,11 +222,30 @@ export class DespesasParceladasFormComponent implements OnInit {
         this.confirmExcluirDespesa();
         break;
       }
+      case 'ExcluirParcelasSelecionadas': {
+        this.confirmExcluirParcela();
+        break;
+      }
       default: {
       }
     }
 
     this.eventModalConfirmacao = "";
+  }
+
+  confirmExcluirParcela() {
+    const parcelas = this.getParcelasChecked();
+
+    parcelas.forEach((parcela) => {
+      this.service.excluirParcela(parcela.idDespesaParcelada, parcela.idParcela).toPromise().then(() => {
+        this.recarregarDetalheDespesa();
+      },
+        err => {
+          console.log(err);
+        });
+    })
+
+    this.closeModal();
   }
 
   confirmQuitarDespesa() {
@@ -265,10 +288,30 @@ export class DespesasParceladasFormComponent implements OnInit {
   excluirDespesaParcelada() {
     this.eventModalConfirmacao = "ExcluirDespesa";
     this.mensagemModalConfirmacao_header = "Deseja excluir esta despesa parcelada?";
+    this.mensagemModalConfirmacao_body = "";
     this.mensagemModalConfirmacao_footer = "Este processo exclui todos os lançamentos mensais processados!";
 
     if (null == this.despesaParceladaDetalhe) {
       alert('Necessário selecionar uma despesa para excluir.')
+      return;
+    }
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  excluirParcelasSelecionadas() {
+    this.eventModalConfirmacao = "ExcluirParcelasSelecionadas";
+    this.mensagemModalConfirmacao_header = "Deseja excluir a(s) parcela(s) selecionada(s)?";
+    this.mensagemModalConfirmacao_body = "";
+    this.mensagemModalConfirmacao_footer = "Atenção: a(s) parcela(s) importadas e processadas na despesa mensal serão excluidas*";
+
+    if (null == this.despesaParceladaDetalhe) {
+      alert('Necessário selecionar uma despesa para excluir.')
+      return;
+    }
+
+    if (this.getParcelasChecked().length == 0) {
+      alert('Necessario selecionar a(s) parcela(s) para serem excluidas.');
       return;
     }
 
@@ -302,7 +345,12 @@ export class DespesasParceladasFormComponent implements OnInit {
 
   gravarDespesaParcelada() {
     if (!this.validarCamposObrigatorios(true)) {
-      alert('Necessário preencher todos os campos e gerar as parcelas para salvar a despesa.')
+      if (null == this.despesaParceladaDetalhe) {
+        alert('Necessário gerar as parcelas para depois salvar a despesa.')
+      } else {
+        alert('Necessário preencher todos os campos para salvar a despesa.')
+      }
+
       return;
     }
 
@@ -346,6 +394,29 @@ export class DespesasParceladasFormComponent implements OnInit {
       });
 
     this.closeModal();
+  }
+
+  onCheckParcelaChange(checked, parcela) {
+    parcela.checked = checked;
+
+    const parcelas = this._parcelasCheckbox.getValue();
+    const index = parcelas.findIndex((d) => d.idParcela === parcela.idParcela);
+
+    if (index >= 0) {
+      parcelas[index].checked = checked;
+    } else {
+      parcelas.push({ ...parcela });
+    }
+
+    this._parcelasCheckbox.next(parcelas);
+  }
+
+  getParcelasChecked() {
+    return this._parcelasCheckbox.getValue().filter((d) => d.checked === true);
+  }
+
+  resetParcelasCheckbox() {
+    this._parcelasCheckbox.next([]);
   }
 
   /* -------------- Metodos Gerais -------------- */

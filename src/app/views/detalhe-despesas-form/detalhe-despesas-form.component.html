@@ -164,18 +164,18 @@
             <div class="center-modal-detalhes">
               <div class="col-sm-1">
                 <div class="d-grid gap-2 col-0 mx-auto">
-                  <br>
-                  <br>
-                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b056e;" href="#!"
-                    role="button" title="Importar despesas parceladas" data-toggle="modal"
+                  <button class="btn text-white" data-mdb-ripple-init
+                    style="background-color: #666572; padding-left: 25%; padding-right: 25%;" href="#!" role="button"
+                    title="Importar despesas parceladas" data-toggle="modal"
                     data-target="#modalImportacaoDespesaParcelada"
                     (click)="carregarListaDespesasParceladasImportacao()">
                     <i class="fas fa-download"></i>
                   </button>
                   <br>
                   <br>
-                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b056e;" href="#!"
-                    role="button" title="Atualizar Detalhe Despesas" (click)="atualizarDetalheDespesasMensais()">
+                  <button class="btn text-white" data-mdb-ripple-init
+                    style="background-color: #08575a; padding-left: 27%; padding-right: 27%;" href="#!" role="button"
+                    title="Atualizar Detalhe Despesas" (click)="atualizarDetalheDespesasMensais()">
                     <i class="fa fa-refresh"></i>
                   </button>
                   <br>
@@ -187,9 +187,17 @@
                   </button>
                   <br>
                   <br>
-                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b056e;" href="#!"
-                    role="button" title="Descer item">
-                    <i class="fas fa-external-link-alt"></i>
+                  <button class="btn text-white" data-mdb-ripple-init
+                    style="background-color: #3b056e; padding-left: 26%;padding-right: 26%;" href="#!" role="button"
+                    title="Adiantar fluxo de parcelas" (click)="adiantarFluxoParcelas()">
+                    <i class="far fa-calendar-plus" aria-hidden="true"></i>
+                  </button>
+                  <br>
+                  <br>
+                  <button class="btn text-white" data-mdb-ripple-init
+                    style="background-color: #3b056e; padding-left: 26%;padding-right: 26%;" href="#!" role="button"
+                    title="Desfazer adiantamento fluxo de parcelas" (click)="desfazerAdiantamentoFluxoParcelas()">
+                    <i class="fas fa-calendar-times" aria-hidden="true"></i>
                   </button>
                   <br>
                   <br>
@@ -246,8 +254,15 @@
                       </td>
 
                       <td>
-                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.tpAnotacao == 'N'">
                           <div contenteditable="false" style="width: 70px" data-toggle="modal"
+                            data-target="#modalEditarValores"
+                            (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)">
+                            {{ detalheDespesa.vlTotal}}
+                          </div>
+                        </span>
+                        <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
+                          <div contenteditable="false" style="width: 70px; color: #bdbdbd;" data-toggle="modal"
                             data-target="#modalEditarValores"
                             (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)">
                             {{ detalheDespesa.vlTotal}}
@@ -294,11 +309,19 @@
                       </td>
 
                       <td>
-                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.tpAnotacao == 'N'">
                           <div contenteditable="false" style="width: 70px" data-toggle="modal"
                             data-target="#modalEditarValores"
                             (click)="setModalEditarValores(detalheDespesa.vlTotalPago, 'detalheDespColValorTotalPago', detalheDespesa)">
-                            {{ detalheDespesa.vlTotalPago}} </div>
+                            {{ detalheDespesa.vlTotalPago}}
+                          </div>
+                        </span>
+                        <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
+                          <div contenteditable="false" style="width: 70px; color: #bdbdbd;" data-toggle="modal"
+                            data-target="#modalEditarValores"
+                            (click)="setModalEditarValores(detalheDespesa.vlTotalPago, 'detalheDespColValorTotalPago', detalheDespesa)">
+                            {{ detalheDespesa.vlTotalPago}}
+                          </div>
                         </span>
                       </td>
 

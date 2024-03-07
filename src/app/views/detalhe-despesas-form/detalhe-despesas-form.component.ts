@@ -627,6 +627,20 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.despesasParceladasService.enviaMensagem();
   }
 
+  adiantarFluxoParcelas() {
+    this.eventModalConfirmacao = "AdiantarFluxoParcelas";
+    this.mensagemModalConfirmacao = "Deseja adiantar o fluxo de parcelas das despesas selecionadas? Obs: Ação válida somente para DESPESAS PARCELADAS.";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  desfazerAdiantamentoFluxoParcelas() {
+    this.eventModalConfirmacao = "DesfazerAdiantamentoFluxoParcelas";
+    this.mensagemModalConfirmacao = "Deseja *DESFAZER* o adiantamento do fluxo de parcelas das despesas selecionadas? Obs: Ação válida somente para DESPESAS PARCELADAS.";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
   addNovaLinhaDetalheDespesa() {
     const detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
 
