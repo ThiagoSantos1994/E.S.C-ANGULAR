@@ -20,6 +20,7 @@
               </button>
             </span>
             Cadastro de Despesas Parceladas
+            <span style="padding-left: 40%">Saldo Devedor R$: {{subTotalDespesasEmAberto}}</span>
           </h6>
 
           <br>
@@ -311,15 +312,18 @@
           <i class="fa fa-question-circle" style="font-size: 130%;" aria-hidden="true"></i> Confirmação
         </h6>
       </div>
-      <div class="form-group modal-body">
-        {{mensagemModalConfirmacao_header}}
+      <div class="form-group modal-body" style="padding-block-start: 0%; padding-block-end: 0%;">
+        <span *ngIf="mensagemModalConfirmacao_header !== 'null'">
+          <br>
+          {{mensagemModalConfirmacao_header}}
+        </span>
 
-        <span *ngIf="mensagemModalConfirmacao_body !== null">
+        <span *ngIf="mensagemModalConfirmacao_body !== 'null'">
           <br>
           {{mensagemModalConfirmacao_body}}
         </span>
 
-        <span *ngIf="mensagemModalConfirmacao_footer !== null">
+        <span *ngIf="mensagemModalConfirmacao_footer !== 'null'">
           <br>
           {{mensagemModalConfirmacao_footer}}
         </span>

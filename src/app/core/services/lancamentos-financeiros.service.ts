@@ -9,6 +9,7 @@ import { LancamentosFinanceiros } from '../interfaces/lancamentos-financeiros.in
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
 import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
+import { StringResponse } from '../interfaces/string-response.interface.';
 
 @Injectable({
   providedIn: 'root'
@@ -108,6 +109,12 @@ export class LancamentosFinanceirosService {
     return this.http.post(url, despesa).pipe(
       catchError(error => this.handleError(error))
     );
+  }
+
+  obterExtratoDespesaQuitacaoMes(idDespesa: number): Observable<StringResponse> {
+    return this.http.get<StringResponse>(`springboot-esc-backend/api/despesasParceladas/obterRelatorioDespesasParceladasQuitacao/${idDespesa}/${this.sessao.getIdLogin()}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {

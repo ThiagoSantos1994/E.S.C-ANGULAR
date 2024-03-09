@@ -30,6 +30,7 @@
     "ngx-bootstrap": "^3.0.1",
     "ngx-mask": "7.4.3",
     "rxjs": "^6.3.3",
+    "string-width": "^6.1.0",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

@@ -36,7 +36,9 @@ export class DetalheDespesasFormComponent implements OnInit {
   private anoRef: string;
 
   private eventModalConfirmacao: String = "";
-  private mensagemModalConfirmacao: String = "";
+  private mensagemModalConfirmacao_header: String = "";
+  private mensagemModalConfirmacao_body: String = "";
+  private mensagemModalConfirmacao_footer: String = "";
 
   private eventModalEditarValores: String = "";
   private objectModalEditarValores: any;
@@ -88,6 +90,11 @@ export class DetalheDespesasFormComponent implements OnInit {
     })
 
     this.detalheService.recebeMensagem().subscribe(d => {
+      this.modalDetalheDespesasMensaisForm.reset();
+      this.modalConfirmacaoQuitarDespesasForm.reset();
+      this.modalCategoriaDetalheDespesaForm.reset();
+      this.modalImportacaoDespesaParceladaForm.reset();
+
       this.despesaRef = d.idDespesa;
       this.mesRef = d.mesPesquisaForm;
       this.anoRef = d.anoPesquisaForm;
@@ -236,6 +243,14 @@ export class DetalheDespesasFormComponent implements OnInit {
         this.confirmAtualizarDetalheDespesas();
         break;
       }
+      case 'AdiantarFluxoParcelas': {
+        this.confirmAdiantarFluxoParcelas();
+        break;
+      }
+      case 'DesfazerAdiantamentoFluxoParcelas': {
+        this.confirmDesfazerAdiantamentoFluxoParcelas();
+        break;
+      }
       default: {
       }
     }
@@ -274,7 +289,9 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   excluirItemDetalheDespesa() {
     this.eventModalConfirmacao = "ExcluirItemDetalheDespesa";
-    this.mensagemModalConfirmacao = "Deseja excluir a(s) despesa(s) selecionada(s) ?";
+    this.mensagemModalConfirmacao_header = "Deseja excluir o(s) iten(s) selecionada(s) ?"
+    this.mensagemModalConfirmacao_body = "null";
+    this.mensagemModalConfirmacao_footer = "null";
 
     if (this.getDetalheDespesasChecked().length == 0) {
       alert('Necessário selecionar alguma despesa para excluir.')
@@ -331,7 +348,9 @@ export class DetalheDespesasFormComponent implements OnInit {
     }
 
     this.eventModalConfirmacao = "ImportacaoDespesaParcelada";
-    this.mensagemModalConfirmacao = "Deseja importar esta despesa parcelada ?";
+    this.mensagemModalConfirmacao_header = "Deseja importar esta despesa parcelada ?"
+    this.mensagemModalConfirmacao_body = "null";
+    this.mensagemModalConfirmacao_footer = "null";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
@@ -436,7 +455,9 @@ export class DetalheDespesasFormComponent implements OnInit {
     }
 
     this.eventModalConfirmacao = "GravarDetalheDespesas";
-    this.mensagemModalConfirmacao = "Deseja salvar as alterações ?";
+    this.mensagemModalConfirmacao_header = "Deseja salvar as alterações ?"
+    this.mensagemModalConfirmacao_body = "null";
+    this.mensagemModalConfirmacao_footer = "null";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
@@ -468,7 +489,9 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   desfazerPagamentoDespesa() {
     this.eventModalConfirmacao = "DesfazerPagamentoDespesa";
-    this.mensagemModalConfirmacao = "Deseja alterar o status do pagamento da(s) despesa(s) selecionada(s) para PENDENTE ?";
+    this.mensagemModalConfirmacao_header = "Deseja alterar o status do pagamento da(s) despesa(s) selecionada(s) para PENDENTE ?"
+    this.mensagemModalConfirmacao_body = "null";
+    this.mensagemModalConfirmacao_footer = "null";
 
     if (this.getDetalheDespesasChecked().length == 0) {
       alert('Necessário marcar alguma despesa para alterar o status do pagamento.')
@@ -554,13 +577,19 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   onOrdenarRegistrosDetalheDespesas() {
     this.eventModalConfirmacao = "OrdenarRegistrosDetalheDespesas";
-    this.mensagemModalConfirmacao = "Deseja organizar os ID's da lista de despesas ?";
+    this.mensagemModalConfirmacao_header = "Deseja organizar os ID's da lista de despesas ?"
+    this.mensagemModalConfirmacao_body = "null";
+    this.mensagemModalConfirmacao_footer = "null";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
   getDetalheDespesasChecked() {
     return this._detalheDespesasChange.getValue().filter((d) => d.checked === true);
+  }
+
+  getDetalheDespesasParceladasChecked() {
+    return this._detalheDespesasChange.getValue().filter((d) => d.checked === true && d.idDespesaParcelada !== 0 && d.tpLinhaSeparacao == 'N');
   }
 
   getDetalheDespesasCheckedPagamento() {
@@ -606,7 +635,9 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   atualizarDetalheDespesasMensais() {
     this.eventModalConfirmacao = "ImportarLancamentosFinanceiros";
-    this.mensagemModalConfirmacao = "Deseja realizar a importação desta despesas novamente? Obs: Os lançamentos poderão ser atualizados! ";
+    this.mensagemModalConfirmacao_header = "Deseja realizar a importação desta despesas novamente?"
+    this.mensagemModalConfirmacao_body = "";
+    this.mensagemModalConfirmacao_footer = "Obs: Os lançamentos poderão ser atualizados!";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
@@ -623,20 +654,74 @@ export class DetalheDespesasFormComponent implements OnInit {
       });
   }
 
+  confirmAdiantarFluxoParcelas() {
+    const despesas = this.getDetalheDespesasParceladasChecked();
+
+    if (despesas.length == 0) {
+      alert('Necessario selecionar *DESPESAS PARCELADAS* para serem adiantadas.');
+      return;
+    } else if (despesas.length > 1) {
+      alert('Selecione uma despesa por vez para adiantar o fluxo de parcela.');
+      return;
+    }
+
+    despesas.forEach((d) => {
+      if (d.tpParcelaAdiada == 'N') {
+        this.detalheService.adiantarFluxoParcelas(d.idDespesa, d.idDetalheDespesa, d.idDespesaParcelada, d.idParcela).toPromise().then(() => {
+          this.closeModal();
+          this.recarregarDetalheDespesa();
+          alert('Parcela adiantada com sucesso! \n \n *ATENÇÃO* Não esquecer de reprocessar as despesas no mês seguinte!');
+        },
+          err => {
+            console.log(err);
+          });
+      } else {
+        alert('Não é permitido adiantar a parcela de uma mesma despesa 2x no mesmo mês.');
+      }
+    });
+  }
+
+  confirmDesfazerAdiantamentoFluxoParcelas() {
+    const despesas = this.getDetalheDespesasParceladasChecked();
+
+    if (despesas.length == 0) {
+      alert('Necessario selecionar somente *DESPESAS PARCELADAS* para desfazer o adiantamento de parcela.');
+      return;
+    } else if (despesas.length > 1) {
+      alert('Selecione uma despesa por vez para desfazer o adiantamento de parcela.');
+      return;
+    }
+
+    despesas.forEach((d) => {
+      this.detalheService.desfazerAdiantamentoFluxoParcelas(d.idDespesa, d.idDetalheDespesa, d.idDespesaParcelada, d.idParcela).toPromise().then(() => {
+        this.closeModal();
+        this.recarregarDetalheDespesa();
+        alert('Processamento concluido com sucesso!');
+      },
+        err => {
+          console.log(err);
+        });
+    });
+  }
+
   carregarDespesasParceladas() {
     this.despesasParceladasService.enviaMensagem();
   }
 
   adiantarFluxoParcelas() {
     this.eventModalConfirmacao = "AdiantarFluxoParcelas";
-    this.mensagemModalConfirmacao = "Deseja adiantar o fluxo de parcelas das despesas selecionadas? Obs: Ação válida somente para DESPESAS PARCELADAS.";
+    this.mensagemModalConfirmacao_header = "Deseja adiantar o fluxo de parcelas das despesas selecionadas?"
+    this.mensagemModalConfirmacao_body = "";
+    this.mensagemModalConfirmacao_footer = "Obs: Ação válida somente para DESPESAS PARCELADAS.";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
   desfazerAdiantamentoFluxoParcelas() {
     this.eventModalConfirmacao = "DesfazerAdiantamentoFluxoParcelas";
-    this.mensagemModalConfirmacao = "Deseja *DESFAZER* o adiantamento do fluxo de parcelas das despesas selecionadas? Obs: Ação válida somente para DESPESAS PARCELADAS.";
+    this.mensagemModalConfirmacao_header = "Deseja *DESFAZER* o adiantamento do fluxo de parcelas das despesas selecionadas?"
+    this.mensagemModalConfirmacao_body = "";
+    this.mensagemModalConfirmacao_footer = "Obs: Ação válida somente para DESPESAS PARCELADAS.";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }

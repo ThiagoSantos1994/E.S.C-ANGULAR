@@ -132,6 +132,18 @@ export class DetalheDespesasService {
         catchError(this.handleError));
   }
 
+  adiantarFluxoParcelas(idDespesa: number, idDetalheDespesa: number, idDespesaParcelada: number, idParcela: number) {
+    return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/parcelas/adiantarFluxoParcelas/${idDespesa}/${idDetalheDespesa}/${idDespesaParcelada}/${idParcela}/${this.sessao.getIdLogin()}`, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  desfazerAdiantamentoFluxoParcelas(idDespesa: number, idDetalheDespesa: number, idDespesaParcelada: number, idParcela: number) {
+    return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/parcelas/desfazerAdiantamentoFluxoParcelas/${idDespesa}/${idDetalheDespesa}/${idDespesaParcelada}/${idParcela}/${this.sessao.getIdLogin()}`, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('Ocorreu um erro:', error.error.message);

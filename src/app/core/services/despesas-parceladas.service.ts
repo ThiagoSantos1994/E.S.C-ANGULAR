@@ -7,6 +7,7 @@ import { Despesa, DespesaParceladaResponse, Parcelas } from '../interfaces/despe
 import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
+import { StringResponse } from '../interfaces/string-response.interface.';
 
 @Injectable({
   providedIn: 'root'
@@ -76,6 +77,12 @@ export class DespesasParceladasService {
     return this.http.post(`springboot-esc-backend/api/despesasParceladas/parcelas/excluir/${idDespesaParcelada}/${idParcela}/${this.sessao.getIdLogin()}`, {}).pipe(
       catchError(error => this.handleError(error))
     );
+  }
+
+  obterSubTotalDespesasEmAberto(): Observable<StringResponse> {
+    return this.http.get<StringResponse>(`springboot-esc-backend/api/despesasParceladas/obterCalculoValorTotalPendente/${this.sessao.getIdLogin()}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {

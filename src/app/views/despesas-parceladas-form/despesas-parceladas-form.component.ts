@@ -23,9 +23,11 @@ export class DespesasParceladasFormComponent implements OnInit {
   private modalRef: BsModalRef;
 
   private eventModalConfirmacao: String = "";
-  private mensagemModalConfirmacao_header: String = "";
-  private mensagemModalConfirmacao_body: String = "";
-  private mensagemModalConfirmacao_footer: String = "";
+  private mensagemModalConfirmacao_header: String = "null";
+  private mensagemModalConfirmacao_body: String = "null";
+  private mensagemModalConfirmacao_footer: String = "null";
+
+  private subTotalDespesasEmAberto: String = "0,00";
 
   private idDespesaReferencia: number = 0;
 
@@ -41,8 +43,11 @@ export class DespesasParceladasFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.loadFormDespesaParcelada();
+
     this.service.recebeMensagem().subscribe(d => {
       this.loadFormDespesaParcelada();
+      this.carregarListaDespesasParceladas(true);
     }, () => {
       alert('Ocorreu um erro ao carregar os dados da despesa parcelada, tente novamente mais tarde.')
     })
@@ -56,8 +61,6 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.tituloDespesasParceladas = {
       despesas: []
     }
-
-    this.carregarListaDespesasParceladas(true);
 
     this.modalDespesasParceladasForm = this.formBuilder.group({
       checkCarregarDespesasPendente: [true],
@@ -76,6 +79,10 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.onValorDespesaChange();
 
     (<HTMLInputElement>document.getElementById("valorTotalDespesaComDesconto")).value = "";
+
+    this.service.obterSubTotalDespesasEmAberto().subscribe((res) => {
+      this.subTotalDespesasEmAberto = formatRealNumber(res.vlCalculo);
+    });
   }
 
   onQuantidadeParcelasChange() {
@@ -128,9 +135,9 @@ export class DespesasParceladasFormComponent implements OnInit {
     }
 
     this.eventModalConfirmacao = "GerarFluxoParcelas";
-    this.mensagemModalConfirmacao_header = "";
+    this.mensagemModalConfirmacao_header = "null";
     this.mensagemModalConfirmacao_body = "Confirma a geração das parcelas para esta despesa?"
-    this.mensagemModalConfirmacao_footer = "";
+    this.mensagemModalConfirmacao_footer = "null";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
@@ -356,9 +363,9 @@ export class DespesasParceladasFormComponent implements OnInit {
 
     this.eventModalConfirmacao = "GravarDespesaParcelada";
 
-    this.mensagemModalConfirmacao_header = "";
+    this.mensagemModalConfirmacao_header = "null";
     this.mensagemModalConfirmacao_body = "Deseja salvar as alterações ?";
-    this.mensagemModalConfirmacao_footer = "";
+    this.mensagemModalConfirmacao_footer = "null";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }

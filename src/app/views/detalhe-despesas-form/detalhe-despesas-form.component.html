@@ -19,7 +19,7 @@
                 <span aria-hidden="true">&times;</span>
               </button>
             </span>
-            Descrição da Despesa:
+            Nome da Despesa:
           </h6>
 
           <form [formGroup]="modalDetalheDespesasMensaisForm">
@@ -165,41 +165,40 @@
               <div class="col-sm-1">
                 <div class="d-grid gap-2 col-0 mx-auto">
                   <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #666572; padding-left: 25%; padding-right: 25%;" href="#!" role="button"
-                    title="Importar despesas parceladas" data-toggle="modal"
+                    style="background-color: #666572; padding-left: 24%; padding-right: 24%; margin-block-end: 20%;"
+                    href="#!" role="button" title="Importar despesas parceladas" data-toggle="modal"
                     data-target="#modalImportacaoDespesaParcelada"
                     (click)="carregarListaDespesasParceladasImportacao()">
                     <i class="fas fa-download"></i>
                   </button>
-                  <br>
-                  <br>
                   <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #08575a; padding-left: 27%; padding-right: 27%;" href="#!" role="button"
-                    title="Atualizar Detalhe Despesas" (click)="atualizarDetalheDespesasMensais()">
+                    style="background-color: #08575a; padding-left: 27%; padding-right: 27%; margin-block-end: 20%;"
+                    href="#!" role="button" title="Atualizar Detalhe Despesas"
+                    (click)="atualizarDetalheDespesasMensais()">
                     <i class="fa fa-refresh"></i>
                   </button>
-                  <br>
-                  <br>
-                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b056e;" href="#!"
-                    role="button" title="Cadastro Despesas Parceladas" data-toggle="modal"
-                    data-target="#modalDespesasParceladas" (click)="carregarDespesasParceladas()">
+                  <button class="btn text-white" data-mdb-ripple-init
+                    style="background-color: #3b056e; margin-block-end: 20%;" href="#!" role="button"
+                    title="Cadastro Despesas Parceladas" data-toggle="modal" data-target="#modalDespesasParceladas"
+                    (click)="carregarDespesasParceladas()">
                     <i class="fa fa-credit-card"></i>
                   </button>
-                  <br>
-                  <br>
                   <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #3b056e; padding-left: 26%;padding-right: 26%;" href="#!" role="button"
-                    title="Adiantar fluxo de parcelas" (click)="adiantarFluxoParcelas()">
+                    style="background-color: #6e0505; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
+                    href="#!" role="button" title="Amortizar Parcelas" (click)="amortizarParcelas()">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                  </button>
+                  <button class="btn text-white" data-mdb-ripple-init
+                    style="background-color: #3b056e; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
+                    href="#!" role="button" title="Adiantar fluxo de parcelas" (click)="adiantarFluxoParcelas()">
                     <i class="far fa-calendar-plus" aria-hidden="true"></i>
                   </button>
-                  <br>
-                  <br>
                   <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #3b056e; padding-left: 26%;padding-right: 26%;" href="#!" role="button"
-                    title="Desfazer adiantamento fluxo de parcelas" (click)="desfazerAdiantamentoFluxoParcelas()">
+                    style="background-color: #3b056e; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
+                    href="#!" role="button" title="Desfazer adiantamento fluxo de parcelas"
+                    (click)="desfazerAdiantamentoFluxoParcelas()">
                     <i class="fas fa-calendar-times" aria-hidden="true"></i>
                   </button>
-                  <br>
                   <br>
                 </div>
               </div>
@@ -679,8 +678,7 @@
     </div>
 
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" data-dismiss="modal"
-        (click)="confirmQuitarDespesas('despesas')">Sim</button>
+      <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmQuitarDespesas()">Sim</button>
       <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Não</button>
     </div>
   </ng-template>
@@ -694,8 +692,21 @@
         <i class="fa fa-question-circle" style="font-size: 130%;" aria-hidden="true"></i> Confirmação
       </h6>
     </div>
-    <div class="form-group modal-body">
-      {{mensagemModalConfirmacao}}
+    <div class="form-group modal-body" style="padding-block-start: 0%; padding-block-end: 0%;">
+      <span *ngIf="mensagemModalConfirmacao_header !== 'null'">
+        <br>
+        {{mensagemModalConfirmacao_header}}
+      </span>
+
+      <span *ngIf="mensagemModalConfirmacao_body !== 'null'">
+        <br>
+        {{mensagemModalConfirmacao_body}}
+      </span>
+
+      <span *ngIf="mensagemModalConfirmacao_footer !== 'null'">
+        <br>
+        {{mensagemModalConfirmacao_footer}}
+      </span>
     </div>
 
     <div class="modal-footer">

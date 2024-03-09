@@ -133,15 +133,17 @@
               <div class="col mr-1">
                 <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Saldo Disponível
                 </div>
-                <div *ngIf="lancamentosFinanceiros$.statusSaldoMes == 'Negativo'"
-                  class="h5 mb-0 font-weight-bold text-danger">
-                  R$ {{lancamentosFinanceiros$.vlSaldoDisponivelMes}}
-                </div>
+                <span *ngIf="lancamentosFinanceiros$">
+                  <div *ngIf="lancamentosFinanceiros$.statusSaldoMes == 'Negativo'"
+                    class="h5 mb-0 font-weight-bold text-danger">
+                    R$ {{lancamentosFinanceiros$.vlSaldoDisponivelMes}}
+                  </div>
 
-                <div *ngIf="lancamentosFinanceiros$.statusSaldoMes == 'Positivo'"
-                  class="h5 mb-0 font-weight-bold text-gray-800">R$
-                  {{lancamentosFinanceiros$.vlSaldoDisponivelMes}}
-                </div>
+                  <div *ngIf="lancamentosFinanceiros$.statusSaldoMes == 'Positivo'"
+                    class="h5 mb-0 font-weight-bold text-gray-800">R$
+                    {{lancamentosFinanceiros$.vlSaldoDisponivelMes}}
+                  </div>
+                </span>
               </div>
               <div class="col-auto">
                 <i class="fa fa-pie-chart fa-2x text-gray-300"></i>
@@ -156,7 +158,7 @@
       <span class="badge badge-info d-inline">
         <i class="fas fa-bullhorn"></i>
       </span>
-      <span> {{lancamentosFinanceiros$.labelQuitacaoParcelasMes}}</span>
+      <span (click)="obterDetalhesLabelQuitacaoMes()"> {{lancamentosFinanceiros$.labelQuitacaoParcelasMes}}</span>
     </div>
   </header>
 

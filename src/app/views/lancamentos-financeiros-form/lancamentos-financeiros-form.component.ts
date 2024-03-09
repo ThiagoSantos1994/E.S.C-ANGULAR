@@ -367,6 +367,15 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
+  obterDetalhesLabelQuitacaoMes() {
+    this.lancamentosService.obterExtratoDespesaQuitacaoMes(this.despesaRef).toPromise().then((res) => {
+      alert('CONSULTA DE DESPESAS Á QUITAR: \r\n \r\nValor R$   -   DESCRIÇÃO \r\n \r\n' + res.relatorioDespesas);
+    },
+      err => {
+        alert('Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.');
+      });
+  }
+
   confirmEventModal() {
     this.closeModal();
 
