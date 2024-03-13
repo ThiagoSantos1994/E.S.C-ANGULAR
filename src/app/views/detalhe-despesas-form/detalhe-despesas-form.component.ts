@@ -32,8 +32,10 @@ export class DetalheDespesasFormComponent implements OnInit {
   private modalRef: BsModalRef;
 
   private despesaRef: number;
+  private detalheRef: number;
   private mesRef: string;
   private anoRef: string;
+  private mesAnoVisualizacaoTemp: string;
 
   private eventModalConfirmacao: String = "";
   private mensagemModalConfirmacao_header: String = "";
@@ -94,15 +96,15 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.modalConfirmacaoQuitarDespesasForm.reset();
       this.modalCategoriaDetalheDespesaForm.reset();
       this.modalImportacaoDespesaParceladaForm.reset();
-
       this.despesaRef = d.idDespesa;
+      this.detalheRef = d.idDetalheDespesa;
       this.mesRef = d.mesPesquisaForm;
       this.anoRef = d.anoPesquisaForm;
 
       if (null == d.idDetalheDespesa) {
         this.adicionarNovaDespesa();
       } else {
-        this.carregarDetalheDespesa(d.idDespesa, d.idDetalheDespesa, d.idOrdemExibicao, d.idFuncionario);
+        this.carregarDetalheDespesa(d.idDespesa, d.idDetalheDespesa, d.idOrdemExibicao);
       }
     }, () => {
       alert('Ocorreu um erro ao carregar os detalhes da despesa, tente novamente mais tarde.')
@@ -215,6 +217,38 @@ export class DetalheDespesasFormComponent implements OnInit {
     return novaDespesa;
   }
 
+  visualizarDespesaMesAnterior() {
+    this.validarAcaoVisualizacao((this.despesaRef - 1), this.detalheRef);
+  }
+
+  visualizarDespesaMesPosterior() {
+    this.validarAcaoVisualizacao((this.despesaRef + 1), this.detalheRef);
+  }
+
+  validarAcaoVisualizacao(idDespesa: number, idDetalheDespesa: number) {
+    this.detalheService.obterMesAnoPorID(idDespesa).subscribe((res) => {
+      if ("ERRO" == res.mesAno) {
+        this.detalheService.obterMesAnoPorID(idDespesa - 1).subscribe((res) => {
+          //Só permite visualizacao antecipada das despesas dentro do mesmo ano referencia.
+          var mesReferencia = res.mesAno.substring(2, 0).replace('/', '');
+          mesReferencia = parserToInt(mesReferencia) + 1 > 12 ? '12' : mesReferencia;
+
+          this.detalheService.gerarDespesaFuturaVisualizacao(mesReferencia, this.getAnoAtual()).toPromise().then(() => {
+            this.carregarDetalheDespesa(idDespesa, idDetalheDespesa, null);
+          });
+
+          this.detalheService.obterMesAnoPorID(idDespesa).subscribe((res) => {
+            this.mesAnoVisualizacaoTemp = res.mesAno;
+          });
+          return;
+        });
+      }
+
+      this.mesAnoVisualizacaoTemp = res.mesAno;
+      this.carregarDetalheDespesa(idDespesa, idDetalheDespesa, null);
+    });
+  }
+
   confirmEventModal() {
     this.closeModal();
 
@@ -258,11 +292,22 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.eventModalConfirmacao = "";
   }
 
-  carregarDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number, idFuncionario: number) {
+  carregarDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
     this.resetDetalheDespesasChange();
 
     this.detalheService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
       this.detalheLancamentosMensais = res;
+      this.despesaRef = res.despesaMensal.idDespesa;
+      this.detalheRef = res.despesaMensal.idDetalheDespesa;
+
+      if (ordemExibicao == null) {
+        this.detalheService.getExtratoDetalheDespesa(idDespesa, idDetalheDespesa).subscribe((res) => {
+          if (res.qtDespesas == null) {
+            this.detalheLancamentosMensais.despesaMensal.dsExtratoDespesa = "Visualização temporaria de lançamentos - Mês Referência: ".concat(this.mesAnoVisualizacaoTemp);
+          }
+        });
+      }
+
       this.setDetalheDespesaMensalObservable(res.detalheDespesaMensal);
       this.carregarFormDetalheDespesasMensais(res.despesaMensal);
     });
@@ -303,7 +348,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   recarregarDetalheDespesa() {
     const despesa = this.detalheDomain.getDespesaMensal();
-    this.carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao, despesa.idFuncionario);
+    this.carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao);
     this.lancamentosService.enviaMensagem();
   }
 

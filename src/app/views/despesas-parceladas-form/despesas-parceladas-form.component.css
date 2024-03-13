@@ -428,3 +428,8 @@ element.style {
 .checkbox-despesas-em-aberto {
   margin: -1.2% 11% -2% -47%;
 }
+
+.badge-adiantada {
+  color: #fff;
+  background-color: #256d9d;
+}

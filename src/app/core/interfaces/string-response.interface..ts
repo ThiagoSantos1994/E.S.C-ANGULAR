@@ -8,4 +8,5 @@ export interface StringResponse{
     relatorioDespesas: string;
     isTituloJaExistente: string;
     isDespesaExistente: string;
+    qtDespesas: string;
 }

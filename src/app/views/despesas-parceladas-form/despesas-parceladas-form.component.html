@@ -266,8 +266,12 @@
                       <td>
                         <span *ngIf="parcela.tpBaixado == 'N'" class="badge badge-warning rounded-pill d-inline">Á Pagar
                         </span>
-                        <span *ngIf="parcela.tpBaixado =='S'" class=" badge badge-success rounded-pill d-inline">Pago
+                        <span *ngIf="parcela.tpBaixado =='S' && parcela.tpParcelaAdiada == 'N'"
+                          class=" badge badge-success rounded-pill d-inline">Pago
                           <i class="fa fa-check" aria-hidden="true"></i>
+                        </span>
+                        <span *ngIf="parcela.tpBaixado =='S' && parcela.tpParcelaAdiada == 'S'"
+                          class="badge badge-adiantada rounded-pill d-inline">Adiant*
                         </span>
                       </td>
 

@@ -144,6 +144,18 @@ export class DetalheDespesasService {
     );
   }
 
+  obterMesAnoPorID(idDespesa: number): Observable<StringResponse> {
+    return this.http.get<StringResponse>(`springboot-esc-backend/api/lancamentosFinanceiros/obterMesAnoPorID/${idDespesa}/${this.sessao.getIdLogin()}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
+
+  gerarDespesaFuturaVisualizacao(mesRef: string, anoRef: string) {
+    return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/gerarDespesasFuturas/${mesRef}/${anoRef}/${this.sessao.getIdLogin()}`, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('Ocorreu um erro:', error.error.message);
