@@ -44,4 +44,5 @@ export interface Parcelas {
     tpParcelaAdiada: String;
     tpParcelaAmortizada: String;
     checked?: Boolean;
+    change?: Boolean;
 }

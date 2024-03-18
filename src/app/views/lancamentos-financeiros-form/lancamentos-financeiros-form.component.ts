@@ -376,6 +376,35 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       });
   }
 
+  visualizarDespesasMesAnterior() {
+    this.validarMesPesquisa("-");
+    this.carregarDespesas();
+  }
+
+  visualizarDespesasMesPosterior() {
+    this.validarMesPesquisa("+");
+    this.carregarDespesas();
+  }
+
+  validarMesPesquisa(ref: String) {
+    let mes = this.pesquisaForm.get('cbMes').value;
+    let ano = this.pesquisaForm.get('cbAno').value;
+
+    mes = (ref == "+" ? (parseInt(mes) + 1) : (parseInt(mes) - 1));
+    mes = (mes <= 9 ? "0".concat(mes) : mes);
+
+    if (mes <= 0) {
+      mes = "01";
+    } else if (mes == 13) {
+      mes = "12";
+    }
+
+    this.pesquisaForm = this.formBuilder.group({
+      cbMes: [mes, Validators.required],
+      cbAno: [ano, Validators.required]
+    });
+  }
+
   confirmEventModal() {
     this.closeModal();
 

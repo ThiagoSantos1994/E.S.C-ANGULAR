@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
 import { CategoriaDespesaEnum, StatusPagamentoEnum } from 'src/app/core/enums/detalhe-despesas-enums';
 import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
+import { Parcelas } from 'src/app/core/interfaces/despesa-parcelada-response.interface';
 import { DetalheDespesasMensais } from 'src/app/core/interfaces/detalhe-despesas-mensais.interface';
 import { DetalheLancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais-detalhe.interface';
 import { PagamentoDespesasRequest } from 'src/app/core/interfaces/pagamento-despesas-request.interface';
@@ -22,8 +23,10 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
 })
 export class DetalheDespesasFormComponent implements OnInit {
   private _detalheDespesasChange = new BehaviorSubject<DetalheDespesasMensais[]>([]);
+  private _parcelasAmortizacaoChange = new BehaviorSubject<Parcelas[]>([]);
   private tituloDespesasParceladas: TituloDespesaResponse;
   private detalheLancamentosMensais: DetalheLancamentosMensais;
+  private parcelasAmortizacao: Parcelas[];
 
   private modalConfirmacaoQuitarDespesasForm: FormGroup;
   private modalCategoriaDetalheDespesaForm: FormGroup;
@@ -36,6 +39,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   private mesRef: string;
   private anoRef: string;
   private mesAnoVisualizacaoTemp: string;
+  private tituloDespesaAmortizacao: String;
 
   private eventModalConfirmacao: String = "";
   private mensagemModalConfirmacao_header: String = "";
@@ -109,6 +113,9 @@ export class DetalheDespesasFormComponent implements OnInit {
     }, () => {
       alert('Ocorreu um erro ao carregar os detalhes da despesa, tente novamente mais tarde.')
     })
+
+    this.onEditarValores();
+    this.lancamentosService.limparDadosTemporarios().toPromise().then(() => { });
   }
 
   onQuitarDespesa() {
@@ -127,7 +134,6 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   confirmQuitarDespesas() {
     const observacaoPagamento: string = this.modalConfirmacaoQuitarDespesasForm.get('observacaoPagamento').value;
-
     const detalheDespesas = this.getDetalheDespesasCheckedPagamento();
 
     detalheDespesas.forEach((d) => {
@@ -141,7 +147,7 @@ export class DetalheDespesasFormComponent implements OnInit {
         vlTotal: d.vlTotal,
         vlTotalPago: d.vlTotal,
         tpStatus: d.tpStatus,
-        dsObservacoes: (d.dsObservacao.trim() == "" ? observacaoPagamento : d.dsObservacao),
+        dsObservacoes: (d.dsObservacao == "" ? observacaoPagamento : d.dsObservacao),
         dsObservacoesComplementar: d.dsObservacao2,
         isProcessamentoAdiantamentoParcelas: false
       };
@@ -332,6 +338,15 @@ export class DetalheDespesasFormComponent implements OnInit {
     });
   }
 
+  setParcelasAmortizacaoObservable(parcela: Parcelas[]) {
+    const parcelaAmortizacao = this._parcelasAmortizacaoChange.getValue();
+
+    parcela.forEach(d => {
+      parcelaAmortizacao.push({ ...d });
+      this._parcelasAmortizacaoChange.next(parcelaAmortizacao);
+    });
+  }
+
   excluirItemDetalheDespesa() {
     this.eventModalConfirmacao = "ExcluirItemDetalheDespesa";
     this.mensagemModalConfirmacao_header = "Deseja excluir o(s) iten(s) selecionada(s) ?"
@@ -350,6 +365,20 @@ export class DetalheDespesasFormComponent implements OnInit {
     const despesa = this.detalheDomain.getDespesaMensal();
     this.carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao);
     this.lancamentosService.enviaMensagem();
+  }
+
+  confirmGravarDespesaParceladaAmortizacao() {
+    const parcelasAmortz = this.getParcelasAmortizacaoChecked();
+
+    parcelasAmortz.forEach(p => {
+      this.detalheService.incluirDespesaParceladaAmortizacao(this.despesaRef, this.detalheRef, p.idDespesaParcelada, p.idParcela).toPromise().then(() => {
+        this.carregarParcelasAmortizacao();
+        this.recarregarDetalheDespesa();
+      },
+        err => {
+          console.log(err);
+        });
+    });
   }
 
   aplicarCategoriaDespesa() {
@@ -409,6 +438,11 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.changeDetalheDespesasMensais(detalhe);
   }
 
+  onCheckParcelaAmortizacaoChange(checked, detalhe) {
+    detalhe.checked = checked;
+    this.changeParcelasAmortizacao(detalhe);
+  }
+
   onCheckDespesaReprocessarChange(checked, detalhe) {
     detalhe.tpReprocessar = (checked ? 'S' : 'N');
     this.changeDetalheDespesasMensais(detalhe);
@@ -460,6 +494,19 @@ export class DetalheDespesasFormComponent implements OnInit {
     }
 
     this._detalheDespesasChange.next(detalheDespesa);
+  }
+
+  changeParcelasAmortizacao(parcela: Parcelas) {
+    const parcelaAmortizacao = this._parcelasAmortizacaoChange.getValue();
+    const index = parcelaAmortizacao.findIndex((p) => p.idDespesaParcelada === parcela.idDespesaParcelada && p.idParcela === parcela.idParcela);
+
+    if (index >= 0) {
+      parcelaAmortizacao[index] = parcela;
+    } else {
+      parcelaAmortizacao.push({ ...parcela });
+    }
+
+    this._parcelasAmortizacaoChange.next(parcelaAmortizacao);
   }
 
   onChangeDescricaoDespesa(inputText, objeto) {
@@ -646,8 +693,16 @@ export class DetalheDespesasFormComponent implements OnInit {
     return resultado;
   }
 
+  getParcelasAmortizacaoChecked() {
+    return this._parcelasAmortizacaoChange.getValue().filter((d) => d.checked === true && d.idDespesaParcelada !== 0);
+  }
+
   resetDetalheDespesasChange() {
     this._detalheDespesasChange.next([]);
+  }
+
+  resetParcelasAmortizacaoChange() {
+    this._parcelasAmortizacaoChange.next([]);
   }
 
   novaLinhaDetalheDespesa(detalheDespesa: DetalheDespesasMensais): DetalheDespesasMensais {
@@ -793,18 +848,20 @@ export class DetalheDespesasFormComponent implements OnInit {
   /* -------------- Modal Editor Valores -------------- */
   onEditarValores() {
     var input = document.getElementById("inputNovoValor");
+
     input.addEventListener('keyup', function (e) {
       var key = e.which || e.keyCode;
       if (key == 13) {
         const valorAtual = parseFloat(formatRealNumber((document.getElementById("subTotalValores") as HTMLInputElement).value));
-
         const inputValue = (document.getElementById("inputNovoValor") as HTMLInputElement).value;
-        const novoValor = parseFloat(formatRealNumber(inputValue));
 
-        const calculo = (isValorNegativo(inputValue) ? (valorAtual - novoValor) : (valorAtual + novoValor))
-          .toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+        if (parseFloat(formatRealNumber(inputValue)) !== 0) {
+          const novoValor = isValorNegativo(inputValue) ? parseFloat("-" + formatRealNumber(inputValue)) : parseFloat(formatRealNumber(inputValue));
 
-        (<HTMLInputElement>document.getElementById("subTotalValores")).value = calculo;
+          const calculo = (novoValor + valorAtual).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+
+          (<HTMLInputElement>document.getElementById("subTotalValores")).value = calculo;
+        }
 
         //limpa o campo de input
         (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
@@ -842,7 +899,11 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.eventModalEditarValores = (evento == "reset" ? this.eventModalEditarValores : evento);
     this.objectModalEditarValores = (evento == "reset" ? this.objectModalEditarValores : objeto);
 
-    const valorAtual = parseFloat(formatRealNumber(valor));
+    let valorAtual = parseFloat(formatRealNumber(valor));
+
+    if (isValorNegativo(valor)) {
+      valorAtual = (valorAtual * -1);
+    }
 
     (<HTMLInputElement>document.getElementById("subTotalValores")).value =
       valorAtual.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
@@ -852,6 +913,30 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.objectModalEditarValores = null;
     (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
     (<HTMLInputElement>document.getElementById("subTotalValores")).value = "R$ 0,00";
+  }
+
+  carregarParcelasAmortizacao() {
+    this.resetParcelasAmortizacaoChange();
+
+    const despesas = this.getDetalheDespesasParceladasChecked();
+    if (despesas.length == 0) {
+      alert('Selecione uma despesa por vez para realizar a amortização.');
+      return;
+    } else if (despesas.length > 1) {
+      alert('Necessário selecionar alguma despesa PARCELADA para realizar a amortização.');
+      return;
+    }
+
+    despesas.forEach((d) => {
+      this.tituloDespesaAmortizacao = d.dsTituloDespesa;
+      this.despesasParceladasService.getParcelasParaAmortizacao(d.idDespesaParcelada).subscribe(res => {
+        this.parcelasAmortizacao = res;
+        this.setParcelasAmortizacaoObservable(res)
+      },
+        err => {
+          console.log(err);
+        });
+    });
   }
 
   /* -------------- Metodos Gerais -------------- */

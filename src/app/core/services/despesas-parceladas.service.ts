@@ -85,6 +85,12 @@ export class DespesasParceladasService {
         catchError(this.handleError));
   }
 
+  getParcelasParaAmortizacao(idDespesaParcelada: number): Observable<Parcelas[]> {
+    return this.http.get<Parcelas[]>(`springboot-esc-backend/api/despesasParceladas/obterParcelasParaAmortizacao/${idDespesaParcelada}/${this.sessao.getIdLogin()}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('Ocorreu um erro:', error.error.message);

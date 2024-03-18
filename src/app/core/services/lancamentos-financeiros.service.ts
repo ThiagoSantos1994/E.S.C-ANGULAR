@@ -4,12 +4,12 @@ import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { LancamentosFinanceirosDomain } from '../domain/lancamentos-financeiros.domain';
 import { ConfiguracaoLancamentos } from '../interfaces/configuracao-lancamentos.interface';
+import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
 import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.interface';
 import { LancamentosFinanceiros } from '../interfaces/lancamentos-financeiros.interface';
+import { StringResponse } from '../interfaces/string-response.interface.';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
-import { StringResponse } from '../interfaces/string-response.interface.';
 
 @Injectable({
   providedIn: 'root'
@@ -115,6 +115,13 @@ export class LancamentosFinanceirosService {
     return this.http.get<StringResponse>(`springboot-esc-backend/api/despesasParceladas/obterRelatorioDespesasParceladasQuitacao/${idDespesa}/${this.sessao.getIdLogin()}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
+  }
+
+  limparDadosTemporarios() {
+    const url = `springboot-esc-backend/api/login/limparDadosTemporarios/${this.sessao.getIdLogin()}`;
+    return this.http.post(url, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
   }
 
   private handleError(error: HttpErrorResponse) {

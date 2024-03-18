@@ -135,8 +135,8 @@
                           <input class="form-check-input" type="checkbox" formControlName="checkLimiteMesAnterior"
                             id="checkLimiteMesAnterior" (click)="onCheckLimiteMesAnteriorChange($event.target.checked)">
                           <label class="form-check-label" for="checkLimiteMesAnterior"
-                            title="Utiliza como referencia de limite o valor total da despesa do mês anterior.">Saldo M.
-                            Ant.
+                            title="Utiliza como referencia de limite o valor total da despesa do mês anterior.">Ref.
+                            Saldo Anterior
                           </label>
                         </small>
                       </div>
@@ -185,7 +185,8 @@
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #6e0505; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
-                    href="#!" role="button" title="Amortizar Parcelas" (click)="amortizarParcelas()">
+                    href="#!" role="button" title="Amortizar Parcelas" data-toggle="modal"
+                    data-target="#modalAmortizacaoParcelas" (click)="carregarParcelasAmortizacao()">
                     <i class="fa fa-calendar" aria-hidden="true"></i>
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
@@ -617,48 +618,111 @@
       </div>
     </div>
   </div>
-</body>
 
-<!------------------------  Modal Editar Valores ------------------------>
-<div class="modal fade" id="modalEditarValores" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content modalEditorValores">
-      <div class="form-group modal-header">
-        <label>
-          <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-          Editor de Valores
-        </label>
-      </div>
-
-      <div class="modalEditorValores-body">
-        <div class="input-group mb-3">
-          <span class="input-group-text">Novo Valor:</span>
-          <input type="text" class="inputNovoValorEditorValores form-control" (click)="onEditarValores()"
-            id="inputNovoValor" currencyMask maxlength="16" autocomplete="off"
-            [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }">
-          <div>
-            <small class="form-text text-muted">
-              <i class="fa fa-info-circle" aria-hidden="true"></i>
-              Após digitar o <u>Novo Valor</u>, pressione a tecla ENTER.
-            </small>
-          </div>
+  <!------------------------  Modal Editar Valores ------------------------>
+  <div class="modal fade" id="modalEditarValores" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content modalEditorValores">
+        <div class="form-group modal-header">
+          <label>
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+            Editor de Valores
+          </label>
         </div>
-        <input type="text" readonly class="inputSubTotalEditorValores form-control" id="subTotalValores" currencyMask
-          maxlength="16" autocomplete="off" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }">
-      </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmGravarEditarValores()"
-          style="background-color: #3b6bd3;">
-          <i class="fa fa-check"></i> Aplicar
-        </button>
-        <button type="button" class="btn btn-primary" (click)="setModalEditarValores(0, 'reset')"
-          style="background-color: #137759;">Limpar</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        <div class="modalEditorValores-body">
+          <div class="input-group mb-3">
+            <span class="input-group-text">Novo Valor:</span>
+            <input type="text" class="inputNovoValorEditorValores form-control" (click)="onEditarValores()"
+              id="inputNovoValor" currencyMask maxlength="16" autocomplete="off"
+              [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', allowNegative: true }">
+            <div>
+              <small class="form-text text-muted">
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                Após digitar o <u>Novo Valor</u>, pressione a tecla ENTER.
+              </small>
+            </div>
+          </div>
+          <input type="text" readonly class="inputSubTotalEditorValores form-control" id="subTotalValores" currencyMask
+            maxlength="16" autocomplete="off"
+            [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', allowNegative: true }">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmGravarEditarValores()"
+            style="background-color: #3b6bd3;">
+            <i class="fa fa-check"></i> Aplicar
+          </button>
+          <button type="button" class="btn btn-primary" (click)="setModalEditarValores(0, 'reset')"
+            style="background-color: #137759;">Limpar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!------------------------  Modal Amortizacao Parcelas - Detalhe Despesas ------------------------>
+  <div class="modal fade" id="modalAmortizacaoParcelas" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content modalAmortizacaoParcelas">
+        <div class="form-group modal-header" style="padding-block-end: inherit;">
+          <div>
+            <i class="fa fa-credit-card-alt" aria-hidden="true"></i> Amortização de Parcelas
+            <p style="padding-block-start: 4%; color: brown;"> {{tituloDespesaAmortizacao}}</p>
+          </div>
+        </div>
+
+        <div class="col-sm-8-amortizacao-parcelas scrollme-amortizacao-parcelas">
+          <table class="table table-amortizacao-parcelas table-bordered" style="text-align: center;">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">X</th>
+                <th scope="col">Parcela</th>
+                <th scope="col">Data Vencimento</th>
+                <th scope="col">Valor R$</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="parcelasAmortizacao">
+              <tr *ngFor="let parcela of parcelasAmortizacao">
+                <td>
+                  <label class="checkbox-wrap checkbox-primary">
+                    <input type="checkbox" name="item[]"
+                      (click)="onCheckParcelaAmortizacaoChange($event.target.checked, parcela)">
+                    <span class="checkmark"></span>
+                  </label>
+                </td>
+                <td>
+                  {{parcela.nrParcela}}
+                </td>
+
+                <td>
+                  {{parcela.dsDataVencimento}}
+                </td>
+
+                <td>
+                  {{parcela.vlParcela}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="modal-footer">
+          <small class="form-text text-muted" style="padding-block-end: 3%;">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            O valor da parcela pode ser alterado, clique no valor desejado para alterar.
+          </small>
+          <br>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
+            (click)="confirmGravarDespesaParceladaAmortizacao()">
+            <i class="fa fa-floppy-o"></i> Aplicar
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
 
 <!------------------------  Modal Confirmação - Quitar Despesa ------------------------>
 <form [formGroup]="modalConfirmacaoQuitarDespesasForm">

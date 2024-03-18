@@ -113,6 +113,25 @@
     padding-left: 0%;
   }
 
+  .table-amortizacao-parcelas {
+    width: 100%;
+    max-width: 100%;
+    background-color: #f8f9fa;
+  }
+
+  .col-sm-8-amortizacao-parcelas {
+    flex: 0 0 100%;
+    max-width: 98%;
+    padding-right: 0%;
+    padding-left: 3%;
+  }
+
+  .scrollme-amortizacao-parcelas {
+    max-height: 255px;
+    overflow: auto;
+    display: inline-block;
+  }
+
   .center-modal-detalhes {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -382,6 +401,12 @@
     margin: 1.75rem auto;
   }
 
+  .modalAmortizacaoParcelas {
+    text-align: left;
+    width: 32%;
+    margin: 1.75rem auto;
+  }
+
   .modalImportacaoDespesaParcelada {
     text-align: left;
     width: 34%;
@@ -401,6 +426,10 @@
   }
 
   .modalCategoriaDetalheDespesa-body {
+    padding-left: 11%;
+  }
+
+  .modalAmortizacaoParcelas-body {
     padding-left: 11%;
   }
 

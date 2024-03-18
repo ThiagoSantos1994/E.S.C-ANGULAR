@@ -98,10 +98,10 @@ export class DespesasParceladasFormComponent implements OnInit {
       var vigenciaIni = parseDate("01/" + this.modalDespesasParceladasForm.get('cbMesVigencia').value + "/" + this.modalDespesasParceladasForm.get('cbAnoVigencia').value);
 
       //Capturar Quantidade de meses
-      var meses = (<HTMLInputElement>document.getElementById("parcelas")).value;
+      var meses = parseInt((<HTMLInputElement>document.getElementById("parcelas")).value);
 
       //Adicionar meses 
-      vigenciaIni.setMonth(vigenciaIni.getMonth() + parseInt(meses));
+      vigenciaIni.setMonth(vigenciaIni.getMonth() + (meses - 1));
 
       //Exibir nova data
       (<HTMLInputElement>document.getElementById("vigenciaFinal")).value = formatDate(vigenciaIni, 'MM/YYYY');

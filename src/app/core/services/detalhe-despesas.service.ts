@@ -126,6 +126,13 @@ export class DetalheDespesasService {
     );
   }
 
+  incluirDespesaParceladaAmortizacao(idDespesa: number, idDetalheDespesa: number, idDespesaParcelada: number, idParcela: number) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/importacao/despesaParceladaAmortizada/${idDespesa}/${idDetalheDespesa}/${idDespesaParcelada}/${idParcela}/${this.sessao.getIdLogin()}`;
+    return this.http.post(url, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   getExtratoDetalheDespesa(idDespesa: number, idDetalheDespesa: number): Observable<StringResponse> {
     return this.http.get<StringResponse>(`springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/obterExtratoDespesasMes/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/detalheDespesas`)
       .pipe(map((response) => { return response }),
