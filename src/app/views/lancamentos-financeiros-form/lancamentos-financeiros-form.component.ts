@@ -213,6 +213,31 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       });
   }
 
+  onDesfazerQuitacaoDespesa() {
+    const despesas = this.getDespesasChecked();
+
+    if (despesas.length === 0) {
+      alert("Necessário marcar alguma despesa para desfazer o pagamento.");
+    } else {
+      this.eventModalConfirmacao = "DesfazerQuitacaoLancamentos";
+      this.mensagemModalConfirmacao = "Deseja *DESFAZER* o pagamento  da(s) despesa(s) selecionadas(s) ?";
+
+      this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+    }
+  }
+
+  confirmDesfazerQuitacaoDespesas() {
+    const despesas = this.getDespesasCheckedSemLinhaSeparacao();
+
+    this.lancamentosService.desfazerPagamentoDespesa(despesas).toPromise().then(() => {
+      this.closeModal();
+      this.carregarDespesas();
+    },
+      err => {
+        console.log(err);
+      });
+  }
+
   onQuitarDespesa() {
     const despesas = this.getDespesasChecked();
 
@@ -227,17 +252,15 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   confirmQuitarDespesas() {
-    const despesas = this.getDespesasChecked();
+    const despesas = this.getDespesasCheckedSemLinhaSeparacao();
 
-    despesas.forEach((d) => {
-      this.lancamentosService.processarPagamentoDespesa(d.idDespesa, d.idDetalheDespesa, null).toPromise().then(() => { },
-        err => {
-          console.log(err);
-        });
-    });
-
-    this.closeModal();
-    this.carregarDespesas();
+    this.lancamentosService.processarPagamentoDespesa(despesas).toPromise().then(() => {
+      this.closeModal();
+      this.carregarDespesas();
+    },
+      err => {
+        console.log(err);
+      });
   }
 
   subirLinhaDespesa(despesa: DespesaMensal) {
@@ -425,6 +448,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
         this.confirmQuitarDespesas();
         break;
       }
+      case 'DesfazerQuitacaoLancamentos': {
+        this.confirmDesfazerQuitacaoDespesas();
+        break;
+      }
       default: {
       }
     }
@@ -449,6 +476,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   getDespesasChecked() {
     return this._despesasCheckbox.getValue().filter((d) => d.checked === true);
+  }
+
+  getDespesasCheckedSemLinhaSeparacao() {
+    return this._despesasCheckbox.getValue().filter((d) => d.checked === true && d.tpLinhaSeparacao == 'N');
   }
 
   resetDespesasCheckbox() {

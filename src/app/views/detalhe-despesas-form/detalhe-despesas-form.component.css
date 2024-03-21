@@ -127,7 +127,7 @@
   }
 
   .scrollme-amortizacao-parcelas {
-    max-height: 255px;
+    max-height: 280px;
     overflow: auto;
     display: inline-block;
   }
@@ -539,3 +539,4 @@
     padding-left: 3%;
     padding-right: 10%;
   }
+  

@@ -5,12 +5,14 @@ import { catchError, map } from 'rxjs/operators';
 import { DetalheDespesasMensaisDomain } from '../domain/detalhe-despesas-mensais.domain';
 import { ChaveKey } from '../interfaces/chave-key.interface';
 import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
+import { Parcelas } from '../interfaces/despesa-parcelada-response.interface';
+import { DetalheDespesasMensais } from '../interfaces/detalhe-despesas-mensais.interface';
 import { DetalheLancamentosMensais } from '../interfaces/lancamentos-mensais-detalhe.interface';
 import { PagamentoDespesasRequest } from '../interfaces/pagamento-despesas-request.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
+import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -91,9 +93,9 @@ export class DetalheDespesasService {
     );
   }
 
-  excluritemDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemDespesa: number) {
-    const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/excluir/${idDespesa}/${idDetalheDespesa}/${ordemDespesa}/${this.sessao.getIdLogin()}`;
-    return this.http.post(url, {}).pipe(
+  excluritemDetalheDespesa(request: DetalheDespesasMensais[]) {
+    const url = `springboot-esc-backend/api/v2/lancamentosFinanceiros/detalheDespesasMensais/excluir`;
+    return this.http.post(url, request).pipe(
       catchError(error => this.handleError(error))
     );
   }
@@ -126,9 +128,9 @@ export class DetalheDespesasService {
     );
   }
 
-  incluirDespesaParceladaAmortizacao(idDespesa: number, idDetalheDespesa: number, idDespesaParcelada: number, idParcela: number) {
-    const url = `springboot-esc-backend/api/lancamentosFinanceiros/importacao/despesaParceladaAmortizada/${idDespesa}/${idDetalheDespesa}/${idDespesaParcelada}/${idParcela}/${this.sessao.getIdLogin()}`;
-    return this.http.post(url, {}).pipe(
+  incluirDespesaParceladaAmortizacao(idDespesa: number, idDetalheDespesa: number, parcelasAmortizada: Parcelas[]) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/importacao/despesaParceladaAmortizada/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}`;
+    return this.http.post(url, parcelasAmortizada).pipe(
       catchError(error => this.handleError(error))
     );
   }

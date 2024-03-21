@@ -297,7 +297,7 @@
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada !== 0">
                           <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
                             <div style="width: 590px; color: #040c6bab">
-                              {{detalheDespesa.dsTituloDespesa}}
+                              <b title="Despesa Parcelada">{{detalheDespesa.dsTituloDespesa}}</b>
                             </div>
                           </span>
                           <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
@@ -440,23 +440,30 @@
           </div>
 
           <div class="modal-footer-botoes-detalhe-despesas">
-            <div>
-              <button class="btn text-white" data-mdb-ripple-init style="background-color: #0c1a36;" role="button"
-                (click)="visualizarDespesaMesAnterior()" title="Visualizar despesa mês anterior">
-                <i class="fa fa-angle-double-left" aria-hidden="true"></i>
-              </button>
-              <button class="btn text-white" data-mdb-ripple-init style="background-color: #0c1a36;" role="button"
-                (click)="visualizarDespesaMesPosterior()" title="Visualizar despesa mês seguinte">
-                <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-              </button>
-            </div>
+            <span *ngIf="detalheLancamentosMensais">
+              <span *ngIf="!detalheLancamentosMensais.despesaMensal.isNovaDespesa">
+                <div>
+                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #0c1a36;" role="button"
+                    (click)="visualizarDespesaMesAnterior()" title="Visualizar despesa mês anterior">
+                    <i class="fa fa-angle-double-left" aria-hidden="true"></i>
+                  </button>
+                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #0c1a36;" role="button"
+                    (click)="visualizarDespesaMesPosterior()" title="Visualizar despesa mês seguinte">
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </span>
+            </span>
             <div class="modal-footer-detalhe-right" style="margin: 0% 11%;">
               <span *ngIf="detalheLancamentosMensais">
                 <span *ngIf="detalheLancamentosMensais.despesaMensal.isNovaDespesa">
-                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
-                    (click)="gravarDetalheDespesas()">
-                    <i class="fa fa-floppy-o"></i> Salvar Despesa
-                  </button>
+                  <div class="modal-footer-detalhe-right" style="margin: 0% 250px;">
+                    <button class="btn text-white" data-mdb-ripple-init
+                      style="margin: 0% 42%; background-color: #3b6bd3;" role="button"
+                      (click)="gravarDetalheDespesas()">
+                      <i class="fa fa-floppy-o"></i> Salvar Despesa
+                    </button>
+                  </div>
                 </span>
 
                 <span *ngIf="!detalheLancamentosMensais.despesaMensal.isNovaDespesa">
@@ -668,7 +675,7 @@
         <div class="form-group modal-header" style="padding-block-end: inherit;">
           <div>
             <i class="fa fa-credit-card-alt" aria-hidden="true"></i> Amortização de Parcelas
-            <p style="padding-block-start: 4%; color: brown;"> {{tituloDespesaAmortizacao}}</p>
+            <p style="padding-block-start: 4%; color: brown;"> {{tituloDespesaParceladaAmortizacao}}</p>
           </div>
         </div>
 
@@ -679,7 +686,7 @@
                 <th scope="col">X</th>
                 <th scope="col">Parcela</th>
                 <th scope="col">Data Vencimento</th>
-                <th scope="col">Valor R$</th>
+                <th scope="col">Valor Parcela R$</th>
               </tr>
             </thead>
             <tbody *ngIf="parcelasAmortizacao">
@@ -710,7 +717,7 @@
         <div class="modal-footer">
           <small class="form-text text-muted" style="padding-block-end: 3%;">
             <i class="fa fa-info-circle" aria-hidden="true"></i>
-            O valor da parcela pode ser alterado, clique no valor desejado para alterar.
+            As parcelas selecionadas serão adicionadas na despesa <b style="color: #0bb121;">{{nomeDespesa}}</b>
           </small>
           <br>
           <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"

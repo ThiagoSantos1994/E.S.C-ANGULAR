@@ -411,7 +411,7 @@
                 <th></th>
                 <td colspan="7">
                   <br>
-                  <div class="d-grid gap-2 d-md-block btn-group-sm">
+                  <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -2% -12% -2% -16%">
                     <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;"
                         role="button" data-toggle="modal" data-target="#ModalDetalheDespesasMensais"
@@ -424,15 +424,19 @@
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;"
                         role="button" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
                         (click)="onNovaDespesa()">
-                        <i class="fas fa-plus"></i> Nova Despesa
+                        <i class="fas fa-plus"></i> Adicionar
                       </button>
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
                         role="button" (click)="onExcluirDespesa()">
-                        <i class="fas fa-trash-alt"></i> Excluir Despesa
+                        <i class="fas fa-trash-alt"></i> Excluir
                       </button>
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
                         role="button" (click)="onQuitarDespesa()">
-                        <i class="far fa-calendar-check"></i> Pagar Despesa
+                        <i class="far fa-calendar-check"></i> Pagar
+                      </button>
+                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #709977;" href="#!"
+                        role="button" (click)="onDesfazerQuitacaoDespesa()">
+                        <i class="far fa-calendar-times"></i> Desfazer Pagamento
                       </button>
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
                         role="button" (click)="onNovaLinhaSeparacao()">

@@ -39,14 +39,15 @@ export class DetalheDespesasFormComponent implements OnInit {
   private mesRef: string;
   private anoRef: string;
   private mesAnoVisualizacaoTemp: string;
-  private tituloDespesaAmortizacao: String;
+  private nomeDespesa: string
+  private tituloDespesaParceladaAmortizacao: string;
 
-  private eventModalConfirmacao: String = "";
-  private mensagemModalConfirmacao_header: String = "";
-  private mensagemModalConfirmacao_body: String = "";
-  private mensagemModalConfirmacao_footer: String = "";
+  private eventModalConfirmacao: string = "";
+  private mensagemModalConfirmacao_header: string = "";
+  private mensagemModalConfirmacao_body: string = "";
+  private mensagemModalConfirmacao_footer: string = "";
 
-  private eventModalEditarValores: String = "";
+  private eventModalEditarValores: string = "";
   private objectModalEditarValores: any;
 
   @ViewChild('modalDetalheDespesasMensais') modalDetalheDespesasMensais;
@@ -305,6 +306,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.detalheLancamentosMensais = res;
       this.despesaRef = res.despesaMensal.idDespesa;
       this.detalheRef = res.despesaMensal.idDetalheDespesa;
+      this.nomeDespesa = res.despesaMensal.dsTituloDespesa;
 
       if (ordemExibicao == null) {
         this.detalheService.getExtratoDetalheDespesa(idDespesa, idDetalheDespesa).subscribe((res) => {
@@ -370,15 +372,13 @@ export class DetalheDespesasFormComponent implements OnInit {
   confirmGravarDespesaParceladaAmortizacao() {
     const parcelasAmortz = this.getParcelasAmortizacaoChecked();
 
-    parcelasAmortz.forEach(p => {
-      this.detalheService.incluirDespesaParceladaAmortizacao(this.despesaRef, this.detalheRef, p.idDespesaParcelada, p.idParcela).toPromise().then(() => {
-        this.carregarParcelasAmortizacao();
-        this.recarregarDetalheDespesa();
-      },
-        err => {
-          console.log(err);
-        });
-    });
+    this.detalheService.incluirDespesaParceladaAmortizacao(this.despesaRef, this.detalheRef, parcelasAmortz).toPromise().then(() => {
+      this.resetParcelasAmortizacaoChange();
+      this.recarregarDetalheDespesa();
+    },
+      err => {
+        console.log(err);
+      });
   }
 
   aplicarCategoriaDespesa() {
@@ -596,14 +596,12 @@ export class DetalheDespesasFormComponent implements OnInit {
   confirmExcluirItemDetalheDespesa() {
     const despesas = this.getDetalheDespesasChecked();
 
-    despesas.forEach((d) => {
-      this.detalheService.excluritemDetalheDespesa(d.idDespesa, d.idDetalheDespesa, d.idOrdem).toPromise().then(() => {
-        this.recarregarDetalheDespesa();
-      },
-        err => {
-          console.log(err);
-        });
-    })
+    this.detalheService.excluritemDetalheDespesa(despesas).toPromise().then(() => {
+      this.recarregarDetalheDespesa();
+    },
+      err => {
+        console.log(err);
+      });
 
     this.closeModal();
   }
@@ -703,6 +701,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   resetParcelasAmortizacaoChange() {
     this._parcelasAmortizacaoChange.next([]);
+    this.parcelasAmortizacao = [];
   }
 
   novaLinhaDetalheDespesa(detalheDespesa: DetalheDespesasMensais): DetalheDespesasMensais {
@@ -884,6 +883,11 @@ export class DetalheDespesasFormComponent implements OnInit {
         this.changeDetalheDespesasMensais(objeto);
         break;
       }
+      case 'valorParcelaAmortizacao': {
+        objeto.vlParcela = novoValor.trim();
+        this.changeParcelasAmortizacao(objeto);
+        break;
+      }
       default: {
       }
     }
@@ -893,7 +897,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   setModalEditarValores(valor, evento, objeto) {
-    (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
+    (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "";
     (<HTMLInputElement>document.getElementById("subTotalValores")).value = "R$ 0,00";
 
     this.eventModalEditarValores = (evento == "reset" ? this.eventModalEditarValores : evento);
@@ -928,7 +932,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     }
 
     despesas.forEach((d) => {
-      this.tituloDespesaAmortizacao = d.dsTituloDespesa;
+      this.tituloDespesaParceladaAmortizacao = d.dsTituloDespesa;
       this.despesasParceladasService.getParcelasParaAmortizacao(d.idDespesaParcelada).subscribe(res => {
         this.parcelasAmortizacao = res;
         this.setParcelasAmortizacaoObservable(res)
