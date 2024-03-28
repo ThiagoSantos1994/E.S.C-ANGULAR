@@ -467,6 +467,16 @@
     max-width: 110%;
   }
 
+  .input-group-header-titulo {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    align-items: stretch;
+    width: 101.4%;
+    max-width: 110%;
+  }
+
   .checkDespesaObrigatoria {
     display: inline-flex;
     align-items: center;

@@ -19,9 +19,11 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
 })
 export class LancamentosFinanceirosFormComponent implements OnInit {
   private lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]>;
+  private lancamentosMensais: LancamentosMensais[];
   private _despesasCheckbox = new BehaviorSubject<LancamentosMensais[]>([]);
 
   private pesquisaForm: FormGroup;
+  private checkDespesasForm: FormGroup;
   private modalCriarEditarReceitaForm: FormGroup;
   private modalRef: BsModalRef;
 
@@ -31,6 +33,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private valorReceitaControl = new FormControl();
   private eventModalConfirmacao: String = "";
   private mensagemModalConfirmacao: String = "";
+  private checkboxesMarcadas: Boolean = false;
 
   @ViewChild('modalConfirmacaoExcluirDespesa') modalConfirmacaoExcluirDespesa;
   @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
@@ -77,6 +80,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     this.lancamentosService.getLancamentosFinanceiros(mes, ano).subscribe((res: any) => {
       this.lancamentosFinanceiros$ = res;
+      this.lancamentosMensais = res.lancamentosMensais;
       this.despesaRef = res.idDespesa;
     });
   }
@@ -88,6 +92,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.pesquisaForm = this.formBuilder.group({
         cbMes: [mesReferencia, Validators.required],
         cbAno: [this.getAnoAtual(), Validators.required]
+      });
+
+      this.checkDespesasForm = this.formBuilder.group({
+        checkMarcarTodasDespesas: [false]
       });
 
       this.carregarLancamentosFinanceiros();
@@ -214,7 +222,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   onDesfazerQuitacaoDespesa() {
-    const despesas = this.getDespesasChecked();
+    const despesas = this.getDespesasCheckedSemLinhaSeparacao();
 
     if (despesas.length === 0) {
       alert("Necessário marcar alguma despesa para desfazer o pagamento.");
@@ -470,6 +478,24 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     } else {
       despesas.push({ ...despesa });
     }
+
+    this._despesasCheckbox.next(despesas);
+  }
+
+  onMarcarDesmarcarCheckBoxes() {
+    const checksMarcadas = (this.checkboxesMarcadas == true ? false : true);
+    this.changeCheckBoxesDespesas(checksMarcadas);
+    this.checkboxesMarcadas = checksMarcadas;
+  }
+
+  changeCheckBoxesDespesas(checked: boolean) {
+    this.resetDespesasCheckbox();
+    const despesas = this._despesasCheckbox.getValue();
+
+    this.lancamentosMensais.forEach(despesa => {
+      despesa.checked = checked;
+      despesas.push({ ...despesa });
+    });
 
     this._despesasCheckbox.next(despesas);
   }

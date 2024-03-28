@@ -32,6 +32,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   private modalCategoriaDetalheDespesaForm: FormGroup;
   private modalDetalheDespesasMensaisForm: FormGroup;
   private modalImportacaoDespesaParceladaForm: FormGroup;
+  private checkDespesasForm: FormGroup;
   private modalRef: BsModalRef;
 
   private despesaRef: number;
@@ -41,6 +42,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   private mesAnoVisualizacaoTemp: string;
   private nomeDespesa: string
   private tituloDespesaParceladaAmortizacao: string;
+  private checkboxesMarcadas: Boolean = false;
 
   private eventModalConfirmacao: string = "";
   private mensagemModalConfirmacao_header: string = "";
@@ -95,6 +97,10 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.modalImportacaoDespesaParceladaForm = this.formBuilder.group({
       checkCarregarTodasDespesasParceladas: ['']
     })
+
+    this.checkDespesasForm = this.formBuilder.group({
+      checkMarcarTodasDespesas: [false]
+    });
 
     this.detalheService.recebeMensagem().subscribe(d => {
       this.modalDetalheDespesasMensaisForm.reset();
@@ -174,6 +180,8 @@ export class DetalheDespesasFormComponent implements OnInit {
 
     this.detalheService.getChaveKey("DETALHEDESPESA").subscribe((res) => {
       const novaDespesa = this.obterNovaDespesaObjeto(res.novaChave);
+      // adiciona a nova chave na variavel global para validacao do titulo da despesa
+      this.detalheRef = res.novaChave;
 
       this.carregarFormDetalheDespesasMensais(novaDespesa);
 
@@ -290,6 +298,10 @@ export class DetalheDespesasFormComponent implements OnInit {
       }
       case 'DesfazerAdiantamentoFluxoParcelas': {
         this.confirmDesfazerAdiantamentoFluxoParcelas();
+        break;
+      }
+      case 'AlterarTituloDespesa': {
+        this.confirmAlterarTituloDespesa();
         break;
       }
       default: {
@@ -531,7 +543,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     despesa.dsNomeDespesa = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
 
     if (despesa.dsNomeDespesa == "") {
-      alert('Digite o nome da despesa.');
+      alert('Digite o titulo da despesa.');
       return;
     }
 
@@ -546,12 +558,24 @@ export class DetalheDespesasFormComponent implements OnInit {
       despesa.vlLimite = valorLimiteDespesa;
     }
 
-    this.eventModalConfirmacao = "GravarDetalheDespesas";
-    this.mensagemModalConfirmacao_header = "Deseja salvar as alterações ?"
-    this.mensagemModalConfirmacao_body = "null";
-    this.mensagemModalConfirmacao_footer = "null";
+    this.detalheService.validarDuplicidadeTituloDespesa(this.despesaRef, this.detalheRef, despesa.dsNomeDespesa).subscribe(res => {
+      if (res.mensagem !== 'OK') {
+        alert(res.mensagem);
+        return;
+      } else {
+        this.eventModalConfirmacao = "GravarDetalheDespesas";
+        this.mensagemModalConfirmacao_header = "Deseja salvar as alterações ?"
+        this.mensagemModalConfirmacao_body = "null";
+        this.mensagemModalConfirmacao_footer = "null";
 
-    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+        this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+      }
+    },
+      err => {
+        alert('Ocorreu um erro ao validar o titulo da despesa, tente novamente mais tarde.');
+        console.log(err);
+      }
+    );
   }
 
   gravarDespesa(despesa: DespesaMensal) {
@@ -564,6 +588,24 @@ export class DetalheDespesasFormComponent implements OnInit {
       });
   }
 
+  onMarcarDesmarcarCheckBoxes() {
+    const checksMarcadas = (this.checkboxesMarcadas == true ? false : true);
+    this.changeCheckBoxesDetalhe(checksMarcadas);
+    this.checkboxesMarcadas = checksMarcadas;
+  }
+
+  changeCheckBoxesDetalhe(checked: boolean) {
+    this.resetDetalheDespesasChange();
+    const despesas = this._detalheDespesasChange.getValue();
+
+    this.detalheLancamentosMensais.detalheDespesaMensal.forEach(despesa => {
+      despesa.checked = checked;
+      despesas.push({ ...despesa });
+    });
+
+    this._detalheDespesasChange.next(despesas);
+  }
+
   confirmGravarDetalheDespesas() {
     this.getDetalheDespesasChange().forEach((d) => {
       d.dsDescricao = d.dsTituloDespesa;
@@ -571,12 +613,29 @@ export class DetalheDespesasFormComponent implements OnInit {
       d.vlTotalPago = d.vlTotalPago.replace('.', '');
 
       this.detalheService.gravarDetalheDespesa(d).toPromise().then(() => { },
-        err => { }
+        err => {
+          console.log(err);
+        }
       );
     })
 
     this.gravarDespesa(this.detalheLancamentosMensais.despesaMensal);
     this.closeModal();
+  }
+
+  validarDuplicidadeTituloDespesa(nomeDespesa: string): Boolean {
+    this.detalheService.validarDuplicidadeTituloDespesa(this.despesaRef, this.detalheRef, nomeDespesa).subscribe(res => {
+      if (res.mensagem !== 'OK') {
+        alert(res.mensagem);
+        return false;
+      }
+    },
+      err => {
+        console.log(err);
+      }
+    );
+
+    return true;
   }
 
   desfazerPagamentoDespesa() {
@@ -911,6 +970,27 @@ export class DetalheDespesasFormComponent implements OnInit {
 
     (<HTMLInputElement>document.getElementById("subTotalValores")).value =
       valorAtual.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+  }
+
+  onEditarTituloDespesa() {
+    this.eventModalConfirmacao = "AlterarTituloDespesa";
+    this.mensagemModalConfirmacao_header = "Confirma a alteração do titulo desta despesa?"
+    this.mensagemModalConfirmacao_body = "";
+    this.mensagemModalConfirmacao_footer = "Obs: Será alterado o titulo das demais despesas relacionadas.";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  confirmAlterarTituloDespesa() {
+    const nomeDespesa = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
+
+    this.lancamentosService.editarTituloDespesa(this.detalheRef, nomeDespesa).subscribe(res => {
+      alert('Titulo alterado com sucesso!');
+      this.recarregarDetalheDespesa();
+    },
+      err => {
+        console.log(err);
+      });
   }
 
   resetModalEditarValores() {

@@ -310,10 +310,12 @@
             <table class="table table-despesas" id="tableDespesasMensais">
               <thead class="thead-light">
                 <tr>
-                  <!--<th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label="" style="width: 19.8889px;">
-                    <input type="checkbox" name="item[]" value="s" onclick="marcarTodos(this)">
-                  </th>-->
-                  <th></th>
+                  <th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label="" style="width: 19.8889px;">
+                    <form [formGroup]="checkDespesasForm">
+                      <input type="checkbox" formControlName="checkMarcarTodasDespesas" name="despesa[]"
+                        onclick="marcarTodasDespesas(this)" (click)="onMarcarDesmarcarCheckBoxes()">
+                    </form>
+                  </th>
                   <th scope="col">Total R$</th>
                   <th scope="col">%</th>
                   <th scope="col">Descrição Despesa</th>
@@ -326,7 +328,7 @@
                 <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais">
                   <th>
                     <label class="checkbox-wrap checkbox-primary">
-                      <input type="checkbox" name="item[]"
+                      <input type="checkbox" name="despesa[]"
                         (click)="onCheckDespesaChange($event.target.checked, despesa)">
                       <span class="checkmark"></span>
                     </label>

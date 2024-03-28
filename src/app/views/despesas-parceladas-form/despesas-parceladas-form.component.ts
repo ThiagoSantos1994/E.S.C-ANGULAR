@@ -17,6 +17,7 @@ export class DespesasParceladasFormComponent implements OnInit {
   private despesaParceladaDetalhe: DespesaParceladaResponse;
   private tituloDespesasParceladas: TituloDespesaResponse;
   private _parcelasCheckbox = new BehaviorSubject<Parcelas[]>([]);
+  private idDespesaReferencia: number = 0;
 
   private modalDespesasParceladasForm: FormGroup;
   private modalConfirmacaoQuitarDespesasForm: FormGroup;
@@ -28,8 +29,7 @@ export class DespesasParceladasFormComponent implements OnInit {
   private mensagemModalConfirmacao_footer: String = "null";
 
   private subTotalDespesasEmAberto: String = "0,00";
-
-  private idDespesaReferencia: number = 0;
+  private checkboxesMarcadas: Boolean = false;
 
   @ViewChild('modalDespesasParceladas') modalDespesasParceladas;
   @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
@@ -56,6 +56,7 @@ export class DespesasParceladasFormComponent implements OnInit {
   loadFormDespesaParcelada() {
     this.idDespesaReferencia = -1;
     this.despesaParceladaDetalhe = null;
+    this.checkboxesMarcadas = false;
     this.resetParcelasCheckbox();
 
     this.tituloDespesasParceladas = {
@@ -64,6 +65,7 @@ export class DespesasParceladasFormComponent implements OnInit {
 
     this.modalDespesasParceladasForm = this.formBuilder.group({
       checkCarregarDespesasPendente: [true],
+      checkMarcarTodasParcelas: [false],
       nomeDespesa: [''],
       cbMesVigencia: [this.service.getMesAtual()],
       cbAnoVigencia: [this.service.getAnoAtual()],
@@ -350,6 +352,12 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.idDespesaReferencia = value;
   }
 
+  onMarcarDesmarcarCheckBoxes() {
+    const checksMarcadas = (this.checkboxesMarcadas == true ? false : true);
+    this.onChangeCheckBoxesParcelas(checksMarcadas);
+    this.checkboxesMarcadas = checksMarcadas;
+  }
+
   gravarDespesaParcelada() {
     if (!this.validarCamposObrigatorios(true)) {
       if (null == this.despesaParceladaDetalhe) {
@@ -416,6 +424,18 @@ export class DespesasParceladasFormComponent implements OnInit {
     }
 
     this._parcelasCheckbox.next(parcelas);
+  }
+
+  onChangeCheckBoxesParcelas(checked: boolean) {
+    this.resetParcelasCheckbox();
+    const parcelasChecked = this._parcelasCheckbox.getValue();
+
+    this.despesaParceladaDetalhe.parcelas.forEach(parcela => {
+      parcela.checked = checked;
+      parcelasChecked.push({ ...parcela });
+    });
+
+    this._parcelasCheckbox.next(parcelasChecked);
   }
 
   getParcelasChecked() {

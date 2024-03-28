@@ -119,6 +119,13 @@ export class LancamentosFinanceirosService {
     );
   }
 
+  editarTituloDespesa(idDetalheDespesa: number, tituloDespesa: string) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/alterarTituloDespesa/${idDetalheDespesa}/${this.sessao.getIdLogin()}/${tituloDespesa}`;
+    return this.http.post(url, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   obterExtratoDespesaQuitacaoMes(idDespesa: number): Observable<StringResponse> {
     return this.http.get<StringResponse>(`springboot-esc-backend/api/despesasParceladas/obterRelatorioDespesasParceladasQuitacao/${idDespesa}/${this.sessao.getIdLogin()}`)
       .pipe(map((response) => { return response }),

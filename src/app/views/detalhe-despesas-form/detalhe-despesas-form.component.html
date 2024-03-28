@@ -19,14 +19,21 @@
                 <span aria-hidden="true">&times;</span>
               </button>
             </span>
-            Nome da Despesa:
+            Titulo da Despesa:
           </h6>
 
           <form [formGroup]="modalDetalheDespesasMensaisForm">
             <div class="row-header-detalhe-despesas-mensais">
               <div class="col-xl-10 col-md-6 mb-1" style="height: min-content;">
-                <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa"
-                  onkeyup="toUpper(this)" placeholder="Ex: Fatura cartão crédito">
+                <div class="input-group-header-titulo">
+                  <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa"
+                    onkeyup="toUpper(this)" placeholder="Ex: Fatura cartão crédito">
+                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #666572;" href="#!"
+                    role="button" title="Edita o titulo de todas as despesas associadas."
+                    (click)="onEditarTituloDespesa()">
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                  </button>
+                </div>
                 <br>
                 <div class="input-group-categorias">
                   <div class="card-categorias">
@@ -200,7 +207,11 @@
                     (click)="desfazerAdiantamentoFluxoParcelas()">
                     <i class="fas fa-calendar-times" aria-hidden="true"></i>
                   </button>
-                  <br>
+                  <button class="btn text-white" data-mdb-ripple-init
+                    style="background-color: #0f030a; padding-left: 24%; padding-right: 24%; margin-block-end: 20%;"
+                    href="#!" role="button" title="Ordenar registros" (click)="onOrdenarRegistrosDetalheDespesas()">
+                    <i class=" fa fa-sort-amount-desc" aria-hidden="true"></i>
+                  </button>
                 </div>
               </div>
 
@@ -208,13 +219,12 @@
                 <table class="table table-detalhe-despesas table-bordered">
                   <thead class="thead-light">
                     <tr>
-                      <!--<th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label=""
-                          style="width: 19.8889px;">
-                          <input type="checkbox" name="item[]" value="s" onclick="marcarTodos(this)">
-                        </th>-->
-                      <th scope="col">
-                        <i class="fa fa-sort-amount-desc" aria-hidden="true"
-                          (click)="onOrdenarRegistrosDetalheDespesas()"></i>
+                      <th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label=""
+                        style="width: 19.8889px;">
+                        <form [formGroup]="checkDespesasForm">
+                          <input type="checkbox" formControlName="checkMarcarTodasDespesas" name="item[]"
+                            onclick="marcarTodos(this)" (click)="onMarcarDesmarcarCheckBoxes()">
+                        </form>
                       </th>
                       <th scope="col">Ações</th>
                       <th scope="col">Total R$</th>
@@ -226,8 +236,9 @@
                       <th scope="col">Categorias</th>
                       <th scope="col">Rep.</th>
                       <th scope="col">Anot.</th>
-                      <th scope="col">Rel*</th>
                       <th scope="col">Sep\Lin</th>
+                      <th scope="col">Rel*</th>
+                      <th scope="col">Despesa Relatorio Associada*</th>
                     </tr>
                   </thead>
                   <tbody *ngIf="detalheLancamentosMensais">
@@ -406,6 +417,21 @@
 
                       <td>
                         <label class="checkbox-wrap checkbox-primary">
+                          <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'S'">
+                            <input type="checkbox"
+                              (click)="onCheckDespesaLinhaSeparacaoChange($event.target.checked, detalheDespesa)"
+                              checked>
+                          </span>
+                          <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                            <input type="checkbox"
+                              (click)="onCheckDespesaLinhaSeparacaoChange($event.target.checked, detalheDespesa)">
+                          </span>
+                          <span class="checkmark"></span>
+                        </label>
+                      </td>
+
+                      <td>
+                        <label class="checkbox-wrap checkbox-primary">
                           <span *ngIf="detalheDespesa.tpRelatorio == 'S'">
                             <input type="checkbox"
                               (click)="onCheckDespesaRelatorioChange($event.target.checked, detalheDespesa)" checked>
@@ -419,18 +445,14 @@
                       </td>
 
                       <td>
-                        <label class="checkbox-wrap checkbox-primary">
-                          <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'S'">
-                            <input type="checkbox"
-                              (click)="onCheckDespesaLinhaSeparacaoChange($event.target.checked, detalheDespesa)"
-                              checked>
-                          </span>
-                          <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
-                            <input type="checkbox"
-                              (click)="onCheckDespesaLinhaSeparacaoChange($event.target.checked, detalheDespesa)">
-                          </span>
-                          <span class="checkmark"></span>
-                        </label>
+                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                          <div style="width: 200px">
+                            <select class="form-control form-control-sm"
+                              (change)="onChangeCategoriaDetalhe($event.target.value, detalheDespesa)">
+                              <option value="0"></option>
+                            </select>
+                          </div>
+                        </span>
                       </td>
                     </tr>
                   </tbody>

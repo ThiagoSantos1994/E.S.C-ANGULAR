@@ -236,8 +236,12 @@
                 <table class="table table-lista-parcelas table-bordered">
                   <thead class="thead-light">
                     <tr>
-                      <th scope="col">
-                        <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                      <th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label=""
+                        style="width: 19.8889px;">
+                        <form [formGroup]="modalDespesasParceladasForm">
+                          <input type="checkbox" name="parcela[]" formControlName="checkMarcarTodasParcelas"
+                            onclick="marcarTodasParcelas(this)" (click)="onMarcarDesmarcarCheckBoxes()">
+                        </form>
                       </th>
                       <th scope="col">Nº Parcela</th>
                       <th scope="col">Mês Vencimento</th>
@@ -250,7 +254,8 @@
                     <tr *ngFor="let parcela of despesaParceladaDetalhe.parcelas">
                       <td>
                         <label class="checkbox-wrap checkbox-primary">
-                          <input type="checkbox" (click)="onCheckParcelaChange($event.target.checked, parcela)">
+                          <input type="checkbox" name="parcela[]"
+                            (click)="onCheckParcelaChange($event.target.checked, parcela)">
                           <span class="checkmark"></span>
                         </label>
                       </td>

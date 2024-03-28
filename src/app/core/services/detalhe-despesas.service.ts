@@ -100,6 +100,12 @@ export class DetalheDespesasService {
     );
   }
 
+  validarDuplicidadeTituloDespesa(idDespesa: number, idDetalheDespesa: number, tituloDespesa: string): Observable<StringResponse> {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/validaTituloDespesaDuplicado/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/${tituloDespesa}`;
+    return this.http.post<StringResponse>(url, {}).pipe(map((response) => { return response }),
+      catchError(this.handleError));
+  }
+
   organizarListaItensDetalheDespesa(idDespesa: number, idDetalheDespesa: number) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/ordenarListaDespesas/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/'prazo'`;
     return this.http.post(url, {}).pipe(
