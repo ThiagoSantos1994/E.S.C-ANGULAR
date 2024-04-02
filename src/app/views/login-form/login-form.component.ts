@@ -36,8 +36,8 @@ export class LoginFormComponent implements OnInit {
   }
 
   login() {
-    const userName = this.loginForm.get('userName').value;
-    const password = this.loginForm.get('password').value;
+    let userName = this.loginForm.get('userName').value;
+    let password = this.loginForm.get('password').value;
 
     this.loginService.autenticar(userName, password).toPromise().then(res => {
       this.sessaoService.setTokenAutenticador(res.autenticacao, res.idLogin, res.nomeUsuario);

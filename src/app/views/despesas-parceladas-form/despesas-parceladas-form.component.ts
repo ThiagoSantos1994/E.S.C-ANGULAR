@@ -117,16 +117,16 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   confirmEditarParcelas() {
-    const parcelas = this.getParcelasChecked();
+    let parcelas = this.getParcelasChecked();
 
     if (parcelas.length == 0) {
       alert('Necessário selecionar a(s) parcela(s) para editar.');
       return;
     }
 
-    const valorParcela = (<HTMLInputElement>document.getElementById("novoValorParcela")).value;
-    const statusParcela = (<HTMLInputElement>document.getElementById("comboStatus")).value;
-    const observacoes = (<HTMLInputElement>document.getElementById("observacoes")).value;
+    let valorParcela = (<HTMLInputElement>document.getElementById("novoValorParcela")).value;
+    let statusParcela = (<HTMLInputElement>document.getElementById("comboStatus")).value;
+    let observacoes = (<HTMLInputElement>document.getElementById("observacoes")).value;
 
     parcelas.forEach((parcela) => {
       if (valorParcela !== "") {
@@ -146,8 +146,8 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   changeParcelas(parcela: Parcelas) {
-    const parcelas = this._parcelas.getValue();
-    const index = parcelas.findIndex((p) => p.idDespesa === parcela.idDespesa && p.idParcela === parcela.idParcela);
+    let parcelas = this._parcelas.getValue();
+    let index = parcelas.findIndex((p) => p.idDespesa === parcela.idDespesa && p.idParcela === parcela.idParcela);
 
     parcela.changeValues = true;
 
@@ -165,7 +165,7 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   setParcelasObservable(parcela: Parcelas[], changeDefaultValues: boolean) {
-    const parcelas = this._parcelas.getValue();
+    let parcelas = this._parcelas.getValue();
 
     parcela.forEach(p => {
       p.changeValues = changeDefaultValues;
@@ -209,13 +209,13 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   validarCamposObrigatorios(bValidaListaParcelas: boolean): boolean {
-    const nomeDespesa = this.modalDespesasParceladasForm.get('nomeDespesa').value;
-    const mesVig = this.modalDespesasParceladasForm.get('cbMesVigencia').value;
-    const anoVig = this.modalDespesasParceladasForm.get('cbAnoVigencia').value;
-    const vigenciaFinal = (<HTMLInputElement>document.getElementById("vigenciaFinal")).value;
-    const parcelas = (<HTMLInputElement>document.getElementById("parcelas")).value;
-    const valorDespesa = formatRealNumber((<HTMLInputElement>document.getElementById("valorDespesa")).value);
-    const valorParcela = formatRealNumber((<HTMLInputElement>document.getElementById("valorParcela")).value);
+    let nomeDespesa = this.modalDespesasParceladasForm.get('nomeDespesa').value;
+    let mesVig = this.modalDespesasParceladasForm.get('cbMesVigencia').value;
+    let anoVig = this.modalDespesasParceladasForm.get('cbAnoVigencia').value;
+    let vigenciaFinal = (<HTMLInputElement>document.getElementById("vigenciaFinal")).value;
+    let parcelas = (<HTMLInputElement>document.getElementById("parcelas")).value;
+    let valorDespesa = formatRealNumber((<HTMLInputElement>document.getElementById("valorDespesa")).value);
+    let valorParcela = formatRealNumber((<HTMLInputElement>document.getElementById("valorParcela")).value);
 
     if ("" == nomeDespesa || "" == mesVig || "" == anoVig || "" == parcelas || "0,00" == valorDespesa || "0,00" == valorParcela) {
       return false;
@@ -226,7 +226,7 @@ export class DespesasParceladasFormComponent implements OnInit {
         return false;
       }
 
-      const despesaRequest = this.despesaParceladaDetalhe.despesas;
+      let despesaRequest = this.despesaParceladaDetalhe.despesas;
 
       /*Realiza o parser do objeto para gravacao*/
       this.despesaParceladaDetalhe.despesas = {
@@ -248,7 +248,7 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   carregarDetalheDespesaParcelada() {
-    const despesaSelecionada = this.idDespesaReferencia;
+    let despesaSelecionada = this.idDespesaReferencia;
 
     if (despesaSelecionada <= 0) {
       alert('Necessário selecionar uma despesa para pesquisar.');
@@ -310,7 +310,7 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   confirmExcluirParcela() {
-    const parcelas = this.getParcelasChecked();
+    let parcelas = this.getParcelasChecked();
 
     parcelas.forEach((parcela) => {
       this.service.excluirParcela(parcela.idDespesaParcelada, parcela.idParcela).toPromise().then(() => {
@@ -347,10 +347,10 @@ export class DespesasParceladasFormComponent implements OnInit {
   confirmGerarFluxoParcelas() {
     this.closeModal();
 
-    const despesa = (this.despesaParceladaDetalhe ? this.despesaParceladaDetalhe.idDespesaParcelada : -1);
-    const parcelas = parserToInt((<HTMLInputElement>document.getElementById("parcelas")).value);
-    const valorParcela = formatRealNumber((<HTMLInputElement>document.getElementById("valorParcela")).value);
-    const dataReferencia = (this.modalDespesasParceladasForm.get('cbMesVigencia').value + "-" + this.modalDespesasParceladasForm.get('cbAnoVigencia').value);
+    let despesa = (this.despesaParceladaDetalhe ? this.despesaParceladaDetalhe.idDespesaParcelada : -1);
+    let parcelas = parserToInt((<HTMLInputElement>document.getElementById("parcelas")).value);
+    let valorParcela = formatRealNumber((<HTMLInputElement>document.getElementById("valorParcela")).value);
+    let dataReferencia = (this.modalDespesasParceladasForm.get('cbMesVigencia').value + "-" + this.modalDespesasParceladasForm.get('cbAnoVigencia').value);
 
     this.service.gerarFluxoParcelas(despesa, valorParcela, parcelas, dataReferencia).subscribe((res) => {
       this.despesaParceladaDetalhe = res;
@@ -396,8 +396,8 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   recarregarDetalheDespesa() {
-    const despesa = this.despesaParceladaDetalhe.idDespesaParcelada;
-    //const nomeDespesa = this.despesaParceladaDetalhe.despesas.dsTituloDespesaParcelada.toString();
+    let despesa = this.despesaParceladaDetalhe.idDespesaParcelada;
+    //let nomeDespesa = this.despesaParceladaDetalhe.despesas.dsTituloDespesaParcelada.toString();
     //(<HTMLInputElement>document.getElementById("comboTituloDespesa")).value = nomeDespesa;
 
     this.carregarListaDespesasParceladas(true);
@@ -422,7 +422,7 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   onMarcarDesmarcarCheckBoxes() {
-    const checksMarcadas = (this.checkboxesMarcadas == true ? false : true);
+    let checksMarcadas = (this.checkboxesMarcadas == true ? false : true);
     this.onChangeAllCheckBoxesParcelas(checksMarcadas);
     this.checkboxesMarcadas = checksMarcadas;
   }
@@ -449,16 +449,15 @@ export class DespesasParceladasFormComponent implements OnInit {
 
 
   confirmGravarDespesa() {
-    let despesaRequest = this.despesaParceladaDetalhe;
+    let despesa = this.despesaParceladaDetalhe.despesas;
+    let parcelas = this.getParcelasChange();
 
-    this.service.gravarDespesa(despesaRequest.despesas).toPromise().then(() => {
-      this.getParcelasChange().forEach((p) => {
-        this.service.gravarParcelas(p).toPromise().then(() => { },
-          err => {
-            alert('Ocorreu um erro ao gravar a parcela ' + p.nrParcela);
-            console.log(err);
-          });
-      })
+    this.service.gravarDespesa(despesa).toPromise().then(() => {
+      this.service.gravarParcelas(parcelas).toPromise().then(() => { },
+        err => {
+          alert('Ocorreu um erro ao gravar as parcelas, tente novamente mais tarde.');
+          console.log(err);
+        });
 
       alert('Gravação realizada com sucesso!');
       this.recarregarDetalheDespesa();
@@ -483,8 +482,8 @@ export class DespesasParceladasFormComponent implements OnInit {
   onCheckParcelaChange(checked, parcela) {
     parcela.checked = checked;
 
-    const parcelas = this._parcelas.getValue();
-    const index = parcelas.findIndex((d) => d.idParcela === parcela.idParcela);
+    let parcelas = this._parcelas.getValue();
+    let index = parcelas.findIndex((d) => d.idParcela === parcela.idParcela);
 
     if (index >= 0) {
       parcelas[index].checked = checked;
@@ -496,14 +495,9 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   onChangeAllCheckBoxesParcelas(checked: boolean) {
-    const parcelasChecked = this._parcelas.getValue();
-
     this.despesaParceladaDetalhe.parcelas.forEach(parcela => {
-      parcela.checked = checked;
-      parcelasChecked.push({ ...parcela });
+      this.onCheckParcelaChange(checked, parcela);
     });
-
-    this._parcelas.next(parcelasChecked);
   }
 
   getParcelasChecked() {

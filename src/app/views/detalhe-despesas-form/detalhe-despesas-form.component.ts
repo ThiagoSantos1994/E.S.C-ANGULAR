@@ -126,7 +126,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   onQuitarDespesa() {
-    const despesas = this.getDetalheDespesasCheckedPagamento();
+    let despesas = this.getDetalheDespesasCheckedPagamento();
 
     if (despesas.length === 0) {
       alert("Necessário marcar alguma despesa para pagar.");
@@ -140,8 +140,8 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmQuitarDespesas() {
-    const observacaoPagamento: string = this.modalConfirmacaoQuitarDespesasForm.get('observacaoPagamento').value;
-    const detalheDespesas = this.getDetalheDespesasCheckedPagamento();
+    let observacaoPagamento: string = this.modalConfirmacaoQuitarDespesasForm.get('observacaoPagamento').value;
+    let detalheDespesas = this.getDetalheDespesasCheckedPagamento();
 
     detalheDespesas.forEach((d) => {
       let request: PagamentoDespesasRequest = {
@@ -179,7 +179,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.detalheLancamentosMensais = null;
 
     this.detalheService.getChaveKey("DETALHEDESPESA").subscribe((res) => {
-      const novaDespesa = this.obterNovaDespesaObjeto(res.novaChave);
+      let novaDespesa = this.obterNovaDespesaObjeto(res.novaChave);
       // adiciona a nova chave na variavel global para validacao do titulo da despesa
       this.detalheRef = res.novaChave;
 
@@ -199,7 +199,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   obterNovaDespesaObjeto(idDetalheDespesa: number) {
-    const novaDespesa: DespesaMensal = {
+    let novaDespesa: DespesaMensal = {
       idDespesa: this.despesaRef,
       idDetalheDespesa: idDetalheDespesa,
       dsTituloDespesa: "",
@@ -344,7 +344,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   setDetalheDespesaMensalObservable(despesa: DetalheDespesasMensais[]) {
-    const detalheDespesa = this._detalheDespesasChange.getValue();
+    let detalheDespesa = this._detalheDespesasChange.getValue();
 
     despesa.forEach(d => {
       detalheDespesa.push({ ...d });
@@ -353,7 +353,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   setParcelasAmortizacaoObservable(parcela: Parcelas[]) {
-    const parcelaAmortizacao = this._parcelasAmortizacaoChange.getValue();
+    let parcelaAmortizacao = this._parcelasAmortizacaoChange.getValue();
 
     parcela.forEach(d => {
       parcelaAmortizacao.push({ ...d });
@@ -376,13 +376,13 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   recarregarDetalheDespesa() {
-    const despesa = this.detalheDomain.getDespesaMensal();
+    let despesa = this.detalheDomain.getDespesaMensal();
     this.carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao);
     this.lancamentosService.enviaMensagem();
   }
 
   confirmGravarDespesaParceladaAmortizacao() {
-    const parcelasAmortz = this.getParcelasAmortizacaoChecked();
+    let parcelasAmortz = this.getParcelasAmortizacaoChecked();
 
     this.detalheService.incluirDespesaParceladaAmortizacao(this.despesaRef, this.detalheRef, parcelasAmortz).toPromise().then(() => {
       this.resetParcelasAmortizacaoChange();
@@ -407,7 +407,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   carregarCategoriaDetalheDespesa() {
-    const detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
+    let detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
 
     this.modalCategoriaDetalheDespesaForm.setValue({
       checkDespesaRascunho: (detalheDespesa.tpAnotacao == "S" ? true : false),
@@ -494,8 +494,8 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   changeDetalheDespesasMensais(detalhe: DetalheDespesasMensais) {
-    const detalheDespesa = this._detalheDespesasChange.getValue();
-    const index = detalheDespesa.findIndex((d) => d.idDetalheDespesa === detalhe.idDetalheDespesa && d.idOrdem === detalhe.idOrdem);
+    let detalheDespesa = this._detalheDespesasChange.getValue();
+    let index = detalheDespesa.findIndex((d) => d.idDetalheDespesa === detalhe.idDetalheDespesa && d.idOrdem === detalhe.idOrdem);
 
     detalhe.changeValues = true;
 
@@ -509,8 +509,8 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   changeParcelasAmortizacao(parcela: Parcelas) {
-    const parcelaAmortizacao = this._parcelasAmortizacaoChange.getValue();
-    const index = parcelaAmortizacao.findIndex((p) => p.idDespesaParcelada === parcela.idDespesaParcelada && p.idParcela === parcela.idParcela);
+    let parcelaAmortizacao = this._parcelasAmortizacaoChange.getValue();
+    let index = parcelaAmortizacao.findIndex((p) => p.idDespesaParcelada === parcela.idDespesaParcelada && p.idParcela === parcela.idParcela);
 
     if (index >= 0) {
       parcelaAmortizacao[index] = parcela;
@@ -539,7 +539,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   gravarDetalheDespesas() {
-    const despesa = this.detalheLancamentosMensais.despesaMensal;
+    let despesa = this.detalheLancamentosMensais.despesaMensal;
     despesa.dsNomeDespesa = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
 
     if (despesa.dsNomeDespesa == "") {
@@ -589,14 +589,14 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   onMarcarDesmarcarCheckBoxes() {
-    const checksMarcadas = (this.checkboxesMarcadas == true ? false : true);
+    let checksMarcadas = (this.checkboxesMarcadas == true ? false : true);
     this.changeCheckBoxesDetalhe(checksMarcadas);
     this.checkboxesMarcadas = checksMarcadas;
   }
 
   changeCheckBoxesDetalhe(checked: boolean) {
     this.resetDetalheDespesasChange();
-    const despesas = this._detalheDespesasChange.getValue();
+    let despesas = this._detalheDespesasChange.getValue();
 
     this.detalheLancamentosMensais.detalheDespesaMensal.forEach(despesa => {
       despesa.checked = checked;
@@ -653,7 +653,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmExcluirItemDetalheDespesa() {
-    const despesas = this.getDetalheDespesasChecked();
+    let despesas = this.getDetalheDespesasChecked();
 
     this.detalheService.excluritemDetalheDespesa(despesas).toPromise().then(() => {
       this.recarregarDetalheDespesa();
@@ -666,7 +666,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmOrganizarRegistrosDetalheDespesa() {
-    const detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
+    let detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
 
     this.detalheService.organizarListaItensDetalheDespesa(detalheDespesa.idDespesa, detalheDespesa.idDetalheDespesa).toPromise().then(() => {
       this.recarregarDetalheDespesa();
@@ -677,8 +677,8 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmImportarDespesaParcelada() {
-    const idDespesaParcelada = +(document.getElementById("comboTituloDespesaParcelada") as HTMLInputElement).value;
-    const detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
+    let idDespesaParcelada = +(document.getElementById("comboTituloDespesaParcelada") as HTMLInputElement).value;
+    let detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
 
     this.detalheService.processarImportacaoDespesasParceladas(detalheDespesa.idDespesa, detalheDespesa.idDetalheDespesa, idDespesaParcelada).toPromise().then(() => {
       this.carregarListaDespesasParceladasImportacao(false);
@@ -690,7 +690,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmDesfazerPagamentoDespesa() {
-    const despesas = this.getDetalheDespesasChecked();
+    let despesas = this.getDetalheDespesasChecked();
 
     despesas.forEach((d) => {
       d.tpStatus = 'Pendente';
@@ -709,7 +709,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   atualizarOrdemLinhaDetalheDespesa(acao, objeto) {
-    const ordemAtual = objeto.idOrdem;
+    let ordemAtual = objeto.idOrdem;
 
     let novaOrdem = (acao == "UP" ? (objeto.idOrdem - 1) : (objeto.idOrdem + 1));
     if (novaOrdem <= 0) {
@@ -746,7 +746,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   getDetalheDespesasChange() {
-    const resultado = this._detalheDespesasChange.getValue().filter((d) => d.changeValues === true);
+    let resultado = this._detalheDespesasChange.getValue().filter((d) => d.changeValues === true);
     return resultado;
   }
 
@@ -801,7 +801,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmAtualizarDetalheDespesas() {
-    const despesa = this.detalheLancamentosMensais.despesaMensal;
+    let despesa = this.detalheLancamentosMensais.despesaMensal;
 
     this.detalheService.reprocessarImportacaoDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, this.mesRef, this.anoRef, (despesa.tpReprocessar == "S" ? true : false)).toPromise().then(() => {
       this.recarregarDetalheDespesa();
@@ -813,7 +813,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmAdiantarFluxoParcelas() {
-    const despesas = this.getDetalheDespesasParceladasChecked();
+    let despesas = this.getDetalheDespesasParceladasChecked();
 
     if (despesas.length == 0) {
       alert('Necessario selecionar *DESPESAS PARCELADAS* para serem adiantadas.');
@@ -840,7 +840,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmDesfazerAdiantamentoFluxoParcelas() {
-    const despesas = this.getDetalheDespesasParceladasChecked();
+    let despesas = this.getDetalheDespesasParceladasChecked();
 
     if (despesas.length == 0) {
       alert('Necessario selecionar somente *DESPESAS PARCELADAS* para desfazer o adiantamento de parcela.');
@@ -885,14 +885,14 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   addNovaLinhaDetalheDespesa() {
-    const detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
+    let detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
 
     if (detalheDespesa.isNovaDespesa) {
       alert('Necessário salvar a despesa para depois adicionar novas linhas.');
       return;
     }
 
-    const novoItem = this.novaLinhaDetalheDespesa(detalheDespesa);
+    let novoItem = this.novaLinhaDetalheDespesa(detalheDespesa);
 
     this.detalheService.gravarDetalheDespesa(novoItem).toPromise().then(() => {
       this.recarregarDetalheDespesa();
@@ -910,13 +910,13 @@ export class DetalheDespesasFormComponent implements OnInit {
     input.addEventListener('keyup', function (e) {
       var key = e.which || e.keyCode;
       if (key == 13) {
-        const valorAtual = parseFloat(formatRealNumber((document.getElementById("subTotalValores") as HTMLInputElement).value));
-        const inputValue = (document.getElementById("inputNovoValor") as HTMLInputElement).value;
+        let valorAtual = parseFloat(formatRealNumber((document.getElementById("subTotalValores") as HTMLInputElement).value));
+        let inputValue = (document.getElementById("inputNovoValor") as HTMLInputElement).value;
 
         if (parseFloat(formatRealNumber(inputValue)) !== 0) {
-          const novoValor = isValorNegativo(inputValue) ? parseFloat("-" + formatRealNumber(inputValue)) : parseFloat(formatRealNumber(inputValue));
+          let novoValor = isValorNegativo(inputValue) ? parseFloat("-" + formatRealNumber(inputValue)) : parseFloat(formatRealNumber(inputValue));
 
-          const calculo = (novoValor + valorAtual).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+          let calculo = (novoValor + valorAtual).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
 
           (<HTMLInputElement>document.getElementById("subTotalValores")).value = calculo;
         }
@@ -928,8 +928,8 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmGravarEditarValores() {
-    const novoValor = (document.getElementById("subTotalValores") as HTMLInputElement).value.replace('R$', '');
-    const objeto = this.objectModalEditarValores;
+    let novoValor = (document.getElementById("subTotalValores") as HTMLInputElement).value.replace('R$', '');
+    let objeto = this.objectModalEditarValores;
 
     switch (this.eventModalEditarValores) {
       case 'detalheDespColValorTotal': {
@@ -982,7 +982,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmAlterarTituloDespesa() {
-    const nomeDespesa = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
+    let nomeDespesa = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
 
     this.lancamentosService.editarTituloDespesa(this.detalheRef, nomeDespesa).subscribe(res => {
       alert('Titulo alterado com sucesso!');
@@ -1002,7 +1002,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   carregarParcelasAmortizacao() {
     this.resetParcelasAmortizacaoChange();
 
-    const despesas = this.getDetalheDespesasParceladasChecked();
+    let despesas = this.getDetalheDespesasParceladasChecked();
     if (despesas.length == 0) {
       alert('Selecione uma despesa por vez para realizar a amortização.');
       return;

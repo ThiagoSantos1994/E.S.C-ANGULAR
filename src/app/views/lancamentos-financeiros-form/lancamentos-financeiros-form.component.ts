@@ -182,7 +182,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   confirmExcluirReceita() {
-    const receita = this.receitaSelecionada;
+    let receita = this.receitaSelecionada;
 
     this.lancamentosService.excluirReceita(receita.idDespesa, receita.idOrdem).toPromise().then(() => {
       this.carregarDespesas();
@@ -222,7 +222,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   onDesfazerQuitacaoDespesa() {
-    const despesas = this.getDespesasCheckedSemLinhaSeparacao();
+    let despesas = this.getDespesasCheckedSemLinhaSeparacao();
 
     if (despesas.length === 0) {
       alert("Necessário marcar alguma despesa para desfazer o pagamento.");
@@ -235,7 +235,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   confirmDesfazerQuitacaoDespesas() {
-    const despesas = this.getDespesasCheckedSemLinhaSeparacao();
+    let despesas = this.getDespesasCheckedSemLinhaSeparacao();
 
     this.lancamentosService.desfazerPagamentoDespesa(despesas).toPromise().then(() => {
       this.closeModal();
@@ -247,7 +247,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   onQuitarDespesa() {
-    const despesas = this.getDespesasChecked();
+    let despesas = this.getDespesasChecked();
 
     if (despesas.length === 0) {
       alert("Necessário marcar alguma despesa para pagar.");
@@ -260,7 +260,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   confirmQuitarDespesas() {
-    const despesas = this.getDespesasCheckedSemLinhaSeparacao();
+    let despesas = this.getDespesasCheckedSemLinhaSeparacao();
 
     this.lancamentosService.processarPagamentoDespesa(despesas).toPromise().then(() => {
       this.closeModal();
@@ -297,7 +297,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   obterNovaDespesaObjeto(idDetalheDespesa: number) {
-    const novaDespesa: DespesaMensal = {
+    let novaDespesa: DespesaMensal = {
       idDespesa: this.despesaRef,
       idDetalheDespesa: idDetalheDespesa,
       dsTituloDespesa: "",
@@ -340,7 +340,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   onExcluirDespesa() {
-    const despesas = this.getDespesasChecked();
+    let despesas = this.getDespesasChecked();
 
     if (despesas.length === 0) {
       alert("Necessário marcar alguma despesa para excluir.");
@@ -350,7 +350,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   confirmExcluirDespesas() {
-    const despesas = this.getDespesasChecked();
+    let despesas = this.getDespesasChecked();
 
     despesas.forEach((despesa) => {
       this.lancamentosService.excluirDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao).toPromise().then(() => { },
@@ -470,8 +470,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   onCheckDespesaChange(checked, despesa) {
     despesa.checked = checked;
 
-    const despesas = this._despesasCheckbox.getValue();
-    const index = despesas.findIndex((d) => d.idDetalheDespesa === despesa.idDetalheDespesa);
+    let despesas = this._despesasCheckbox.getValue();
+    let index = despesas.findIndex((d) => d.idDetalheDespesa === despesa.idDetalheDespesa);
 
     if (index >= 0) {
       despesas[index].checked = checked;
@@ -483,14 +483,14 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   onMarcarDesmarcarCheckBoxes() {
-    const checksMarcadas = (this.checkboxesMarcadas == true ? false : true);
+    let checksMarcadas = (this.checkboxesMarcadas == true ? false : true);
     this.changeCheckBoxesDespesas(checksMarcadas);
     this.checkboxesMarcadas = checksMarcadas;
   }
 
   changeCheckBoxesDespesas(checked: boolean) {
     this.resetDespesasCheckbox();
-    const despesas = this._despesasCheckbox.getValue();
+    let despesas = this._despesasCheckbox.getValue();
 
     this.lancamentosMensais.forEach(despesa => {
       despesa.checked = checked;

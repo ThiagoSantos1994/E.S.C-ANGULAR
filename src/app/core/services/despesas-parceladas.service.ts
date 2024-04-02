@@ -31,7 +31,7 @@ export class DespesasParceladasService {
   }
 
   getNomeDespesasParceladas(isDespesasEmAberto: boolean): Observable<TituloDespesaResponse> {
-    const carregar = (isDespesasEmAberto ? "default" : "fechado");
+    let carregar = (isDespesasEmAberto ? "default" : "fechado");
     return this.http.get<TituloDespesaResponse>(`springboot-esc-backend/api/despesasParceladas/obterListaDespesas/${this.sessao.getIdLogin()}/${carregar}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
@@ -55,7 +55,7 @@ export class DespesasParceladasService {
     );
   }
 
-  gravarParcelas(request: Parcelas) {
+  gravarParcelas(request: Parcelas[]) {
     return this.http.post(`springboot-esc-backend/api/despesasParceladas/parcelas/gravar`, request).pipe(
       catchError(error => this.handleError(error))
     );
