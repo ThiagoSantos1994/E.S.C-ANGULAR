@@ -14,9 +14,9 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
   styleUrls: ['./despesas-parceladas-form.component.css']
 })
 export class DespesasParceladasFormComponent implements OnInit {
+  private _parcelas = new BehaviorSubject<Parcelas[]>([]);
   private despesaParceladaDetalhe: DespesaParceladaResponse;
   private tituloDespesasParceladas: TituloDespesaResponse;
-  private _parcelasCheckbox = new BehaviorSubject<Parcelas[]>([]);
   private idDespesaReferencia: number = 0;
 
   private modalDespesasParceladasForm: FormGroup;
@@ -57,7 +57,7 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.idDespesaReferencia = -1;
     this.despesaParceladaDetalhe = null;
     this.checkboxesMarcadas = false;
-    this.resetParcelasCheckbox();
+    this.resetParcelasObservable();
 
     this.tituloDespesasParceladas = {
       despesas: []
@@ -108,6 +108,70 @@ export class DespesasParceladasFormComponent implements OnInit {
       //Exibir nova data
       (<HTMLInputElement>document.getElementById("vigenciaFinal")).value = formatDate(vigenciaIni, 'MM/YYYY');
     }
+  }
+
+  carregarEditorParcelas() {
+    (<HTMLInputElement>document.getElementById("novoValorParcela")).value = "";
+    (<HTMLInputElement>document.getElementById("comboStatus")).value = "";
+    (<HTMLInputElement>document.getElementById("observacoes")).value = "";
+  }
+
+  confirmEditarParcelas() {
+    const parcelas = this.getParcelasChecked();
+
+    if (parcelas.length == 0) {
+      alert('Necessário selecionar a(s) parcela(s) para editar.');
+      return;
+    }
+
+    const valorParcela = (<HTMLInputElement>document.getElementById("novoValorParcela")).value;
+    const statusParcela = (<HTMLInputElement>document.getElementById("comboStatus")).value;
+    const observacoes = (<HTMLInputElement>document.getElementById("observacoes")).value;
+
+    parcelas.forEach((parcela) => {
+      if (valorParcela !== "") {
+        parcela.vlParcela = valorParcela;
+      }
+
+      if (statusParcela !== "") {
+        parcela.tpBaixado = statusParcela;
+      }
+
+      if (observacoes !== "") {
+        parcela.dsObservacoes = observacoes;
+      }
+
+      this.changeParcelas(parcela);
+    });
+  }
+
+  changeParcelas(parcela: Parcelas) {
+    const parcelas = this._parcelas.getValue();
+    const index = parcelas.findIndex((p) => p.idDespesa === parcela.idDespesa && p.idParcela === parcela.idParcela);
+
+    parcela.changeValues = true;
+
+    if (index >= 0) {
+      parcelas[index] = parcela;
+    } else {
+      parcelas.push({ ...parcela });
+    }
+
+    this._parcelas.next(parcelas);
+  }
+
+  resetParcelasObservable() {
+    this._parcelas.next([]);
+  }
+
+  setParcelasObservable(parcela: Parcelas[], changeDefaultValues: boolean) {
+    const parcelas = this._parcelas.getValue();
+
+    parcela.forEach(p => {
+      p.changeValues = changeDefaultValues;
+      parcelas.push({ ...p });
+      this._parcelas.next(parcela);
+    });
   }
 
   onValorDespesaChange() {
@@ -187,7 +251,7 @@ export class DespesasParceladasFormComponent implements OnInit {
     const despesaSelecionada = this.idDespesaReferencia;
 
     if (despesaSelecionada <= 0) {
-      alert('Necessário selecionar uma despesa para pesquisar.')
+      alert('Necessário selecionar uma despesa para pesquisar.');
       return;
     }
 
@@ -212,6 +276,9 @@ export class DespesasParceladasFormComponent implements OnInit {
       (<HTMLInputElement>document.getElementById("parcelas")).value = res.despesas.nrTotalParcelas.toString();
       (<HTMLInputElement>document.getElementById("valorDespesa")).value = res.valorTotalDespesa.toString();
       (<HTMLInputElement>document.getElementById("valorParcela")).value = res.valorParcelaAtual.toString();
+
+      this.resetParcelasObservable();
+      this.setParcelasObservable(res.parcelas, false);
     });
   }
 
@@ -286,7 +353,8 @@ export class DespesasParceladasFormComponent implements OnInit {
     const dataReferencia = (this.modalDespesasParceladasForm.get('cbMesVigencia').value + "-" + this.modalDespesasParceladasForm.get('cbAnoVigencia').value);
 
     this.service.gerarFluxoParcelas(despesa, valorParcela, parcelas, dataReferencia).subscribe((res) => {
-      this.despesaParceladaDetalhe = res
+      this.despesaParceladaDetalhe = res;
+      this.setParcelasObservable(res.parcelas, true);
     },
       err => {
         console.log(err);
@@ -350,11 +418,12 @@ export class DespesasParceladasFormComponent implements OnInit {
 
   onChangeTituloDespesa(value) {
     this.idDespesaReferencia = value;
+    this.carregarDetalheDespesaParcelada();
   }
 
   onMarcarDesmarcarCheckBoxes() {
     const checksMarcadas = (this.checkboxesMarcadas == true ? false : true);
-    this.onChangeCheckBoxesParcelas(checksMarcadas);
+    this.onChangeAllCheckBoxesParcelas(checksMarcadas);
     this.checkboxesMarcadas = checksMarcadas;
   }
 
@@ -383,7 +452,7 @@ export class DespesasParceladasFormComponent implements OnInit {
     let despesaRequest = this.despesaParceladaDetalhe;
 
     this.service.gravarDespesa(despesaRequest.despesas).toPromise().then(() => {
-      despesaRequest.parcelas.forEach((p) => {
+      this.getParcelasChange().forEach((p) => {
         this.service.gravarParcelas(p).toPromise().then(() => { },
           err => {
             alert('Ocorreu um erro ao gravar a parcela ' + p.nrParcela);
@@ -414,7 +483,7 @@ export class DespesasParceladasFormComponent implements OnInit {
   onCheckParcelaChange(checked, parcela) {
     parcela.checked = checked;
 
-    const parcelas = this._parcelasCheckbox.getValue();
+    const parcelas = this._parcelas.getValue();
     const index = parcelas.findIndex((d) => d.idParcela === parcela.idParcela);
 
     if (index >= 0) {
@@ -423,27 +492,26 @@ export class DespesasParceladasFormComponent implements OnInit {
       parcelas.push({ ...parcela });
     }
 
-    this._parcelasCheckbox.next(parcelas);
+    this._parcelas.next(parcelas);
   }
 
-  onChangeCheckBoxesParcelas(checked: boolean) {
-    this.resetParcelasCheckbox();
-    const parcelasChecked = this._parcelasCheckbox.getValue();
+  onChangeAllCheckBoxesParcelas(checked: boolean) {
+    const parcelasChecked = this._parcelas.getValue();
 
     this.despesaParceladaDetalhe.parcelas.forEach(parcela => {
       parcela.checked = checked;
       parcelasChecked.push({ ...parcela });
     });
 
-    this._parcelasCheckbox.next(parcelasChecked);
+    this._parcelas.next(parcelasChecked);
   }
 
   getParcelasChecked() {
-    return this._parcelasCheckbox.getValue().filter((d) => d.checked === true);
+    return this._parcelas.getValue().filter((d) => d.checked === true);
   }
 
-  resetParcelasCheckbox() {
-    this._parcelasCheckbox.next([]);
+  getParcelasChange() {
+    return this._parcelas.getValue().filter((d) => d.changeValues === true);
   }
 
   /* -------------- Metodos Gerais -------------- */

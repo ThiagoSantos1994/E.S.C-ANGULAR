@@ -209,9 +209,8 @@
                   <br>
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #3b056e;padding-left: 33%; padding-right: 30%;" href="#!" role="button"
-                    title="Importar despesas parceladas" data-toggle="modal"
-                    data-target="#modalImportacaoDespesaParcelada"
-                    (click)="carregarListaDespesasParceladasImportacao()">
+                    title="Editar Parcelas" data-toggle="modal" data-target="#modalEditarParcelas"
+                    (click)="carregarEditorParcelas()">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                   </button>
                   <br>
@@ -344,39 +343,86 @@
       </div>
     </ng-template>
   </form>
+</body>
 
-  <!------------------------  Modal Confirmação Quitar Despesa ------------------------>
-  <div class="modal fade" id="modalConfirmacaoQuitarDespesaParcelada" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content" style="margin: 0% 32%;">
-        <div class="modal-header">
-          <h6 class="modal-title">
-            <i class="fa fa-question-circle" style="font-size: 130%;" aria-hidden="true"></i> Confirmação
-          </h6>
-        </div>
+<!------------------------  Modal Confirmação Quitar Despesa ------------------------>
+<div class="modal fade" id="modalConfirmacaoQuitarDespesaParcelada" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="margin: 0% 32%;">
+      <div class="modal-header">
+        <h6 class="modal-title">
+          <i class="fa fa-question-circle" style="font-size: 130%;" aria-hidden="true"></i> Confirmação
+        </h6>
+      </div>
 
-        <div class="form-group modal-body" style="padding-top: 2%;padding-block-end: initial;">
-          Deseja quitar esta despesa e as parcelas?
-          <br>
-          <br>
-          <div>
-            <small class="form-text text-muted">
-              <i class="fa fa-info-circle" aria-hidden="true"></i>
-              Se a despesa for quitada <u>COM DESCONTO</u>, digite abaixo o valor total da despesa considerando o valor
-              do desconto.
-              <br>
-              <br>
-              <input class="form-control text-left form-control-sm" id="valorTotalDespesaComDesconto" currencyMask
-                maxlength="16" autocomplete="off" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
-                placeholder="R$ 0,00">
-            </small>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal"
-            (click)="confirmQuitarDespesa()">Sim</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Não</button>
+      <div class="form-group modal-body" style="padding-top: 2%;padding-block-end: initial;">
+        Deseja quitar esta despesa e as parcelas?
+        <br>
+        <br>
+        <div>
+          <small class="form-text text-muted">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            Se a despesa for quitada <u>COM DESCONTO</u>, digite abaixo o valor total da despesa considerando o valor
+            do desconto.
+            <br>
+            <br>
+            <input class="form-control text-left form-control-sm" id="valorTotalDespesaComDesconto" currencyMask
+              maxlength="16" autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',' }"
+              placeholder="R$ 0,00">
+          </small>
         </div>
       </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmQuitarDespesa()">Sim</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Não</button>
+      </div>
     </div>
+  </div>
+</div>
+
+<!------------------------  Modal Editar Parcelas ------------------------>
+<div class="modal fade" id="modalEditarParcelas" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="margin: 0% 37%;">
+
+      <div class="form-group modal-header">
+        <div>
+          <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+          Editor de parcelas
+          <br>
+          <br>
+          <small class="form-text text-muted">
+            Somente a(s) parcela(s) selecionada(s) serão editadas.
+          </small>
+        </div>
+      </div>
+
+      <div class="form-group modal-body" style="padding-block-start: 0%; padding-block-end: 0%; margin: -1%;">
+        <form>
+          <div class="form-group">
+            <label>Valor Parcela:</label>
+            <input class="form-control text-left form-control-sm" id="novoValorParcela" currencyMask maxlength="16"
+              autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',' }" placeholder="">
+            <br>
+            <label>Status Pagamento:</label>
+            <select class="form-control form-control-sm" id="comboStatus">
+              <option value=""></option>
+              <option value="N">Pendente</option>
+              <option value="S">Pago</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="col-form-label">Observações:</label>
+            <textarea class="form-control" id="observacoes"></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmEditarParcelas()">Aplicar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
