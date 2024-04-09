@@ -111,7 +111,7 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   carregarEditorParcelas() {
-    (<HTMLInputElement>document.getElementById("novoValorParcela")).value = "";
+    (<HTMLInputElement>document.getElementById("novoValorParcela")).value = (<HTMLInputElement>document.getElementById("valorParcela")).value;
     (<HTMLInputElement>document.getElementById("comboStatus")).value = "";
     (<HTMLInputElement>document.getElementById("observacoes")).value = "";
   }
@@ -182,7 +182,8 @@ export class DespesasParceladasFormComponent implements OnInit {
       var qtdeParcelas = parseInt((document.getElementById("parcelas") as HTMLInputElement).value);
 
       var calculo = (valorDespesa / qtdeParcelas);
-      (<HTMLInputElement>document.getElementById("valorParcela")).value = calculo.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+      (<HTMLInputElement>document.getElementById("valorParcela")).value =
+        calculo.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' }).replace('R$', '');
     }
   }
 

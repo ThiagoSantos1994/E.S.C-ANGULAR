@@ -1,6 +1,6 @@
 {
-  "name": "esc-excelencia-em-sistemas-comerciais",
-  "version": "0.0.0",
+  "name": "ang-esc-excelencia-em-sistemas-comerciais",
+  "version": "7.4.24",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy-config-localhost.json",

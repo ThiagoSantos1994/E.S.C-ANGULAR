@@ -97,12 +97,13 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.modalImportacaoDespesaParceladaForm = this.formBuilder.group({
       checkCarregarTodasDespesasParceladas: ['']
     })
-
+    
     this.checkDespesasForm = this.formBuilder.group({
       checkMarcarTodasDespesas: [false]
     });
 
     this.detalheService.recebeMensagem().subscribe(d => {
+      this.resetCheckBoxMarcarTodos();
       this.modalDetalheDespesasMensaisForm.reset();
       this.modalConfirmacaoQuitarDespesasForm.reset();
       this.modalCategoriaDetalheDespesaForm.reset();
@@ -376,9 +377,17 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   recarregarDetalheDespesa() {
+    this.resetCheckBoxMarcarTodos();
+
     let despesa = this.detalheDomain.getDespesaMensal();
     this.carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao);
     this.lancamentosService.enviaMensagem();
+  }
+
+  resetCheckBoxMarcarTodos() {
+    this.checkDespesasForm = this.formBuilder.group({
+      checkMarcarTodasDespesas: [false]
+    });
   }
 
   confirmGravarDespesaParceladaAmortizacao() {
@@ -582,6 +591,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.detalheService.gravarDespesaMensal(despesa).toPromise().then(() => {
       this.detalheDomain.setDespesaMensal(despesa);
       this.recarregarDetalheDespesa();
+      alert('Dados gravados com sucesso!');
     },
       err => {
         console.log(err);
@@ -670,6 +680,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
     this.detalheService.organizarListaItensDetalheDespesa(detalheDespesa.idDespesa, detalheDespesa.idDetalheDespesa).toPromise().then(() => {
       this.recarregarDetalheDespesa();
+      alert('Lista de despesas ordenada com sucesso.');
     },
       err => {
         console.log(err);
