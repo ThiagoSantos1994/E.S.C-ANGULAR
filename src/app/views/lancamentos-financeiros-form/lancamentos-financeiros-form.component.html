@@ -455,58 +455,106 @@
         </div>
       </div>
     </div>
-  </body>
 
-  <!------------------------  Modal Editar Receita ------------------------>
-  <div class="modal fade" id="modalCriarEditarReceita" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content modalCriarEditarReceita">
-        <form [formGroup]="modalCriarEditarReceitaForm">
-          <div class="form-group modal-body">
-            <label>Titulo da Receita:</label>
-            <input class="form-control form-control-sm" type="text" formControlName="nomeReceita"
-              placeholder="Ex: Convênio médico" onkeyup="toUpper(this)">
+    <!------------------------  Modal Editar Receita ------------------------>
+    <div class="modal fade" id="modalCriarEditarReceita" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content modalCriarEditarReceita">
+          <form [formGroup]="modalCriarEditarReceitaForm">
+            <div class="form-group modal-body">
+              <label>Titulo da Receita:</label>
+              <input class="form-control form-control-sm" type="text" formControlName="nomeReceita"
+                placeholder="Ex: Convênio médico" onkeyup="toUpper(this)">
 
-            <label>Valor R$:</label>
-            <input class="form-control text-left form-control-sm" [formControl]="valorReceitaControl" currencyMask
-              maxlength="16" autocomplete="off" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
-              placeholder="Ex: 500,00">
+              <label>Valor R$:</label>
+              <input class="form-control text-left form-control-sm" [formControl]="valorReceitaControl" currencyMask
+                maxlength="16" autocomplete="off" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
+                placeholder="Ex: 500,00">
 
-            <label>Categoria</label>
-            <select class="form-control form-control-sm" formControlName="tipoReceita">
-              <option value="+">Receita ( + )</option>
-              <option value="-">Despesa ( - )</option>
-              <option value="< X >">Linha Separacao</option>
-              <option value="< i >">Anotação ( i )</option>
-              <option value="P(+)">Poupança Positiva ( P+ )</option>
-              <option value="P(-)">Poupança Negativa ( P- )</option>
-              <option value="->">Reserva Mês Seguinte ( -> )</option>
-            </select>
+              <label>Categoria</label>
+              <select class="form-control form-control-sm" formControlName="tipoReceita">
+                <option value="+">Receita ( + )</option>
+                <option value="-">Despesa ( - )</option>
+                <option value="< X >">Linha Separacao</option>
+                <option value="< i >">Anotação ( i )</option>
+                <option value="P(+)">Poupança Positiva ( P+ )</option>
+                <option value="P(-)">Poupança Negativa ( P- )</option>
+                <option value="->">Reserva Mês Seguinte ( -> )</option>
+              </select>
 
-            <div class="row">
-              <br>
-              <div class="form-check-inline checkDespesaObrigatoria">
-                <input class="form-check-input" type="checkbox" formControlName="checkDespesaObrigatoria"
-                  id="chkDespesaObrigatoria">
-                <label class="form-check-label" for="chkDespesaObrigatoria"
-                  style="font-size: smaller; color: #a7444e!important"
-                  title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">*Despesa\Receita
-                  obrigatória.</label>
+              <div class="row">
+                <br>
+                <div class="form-check-inline checkDespesaObrigatoria">
+                  <input class="form-check-input" type="checkbox" formControlName="checkDespesaObrigatoria"
+                    id="chkDespesaObrigatoria">
+                  <label class="form-check-label" for="chkDespesaObrigatoria"
+                    style="font-size: smaller; color: #a7444e!important"
+                    title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">*Despesa\Receita
+                    obrigatória.</label>
+                </div>
               </div>
             </div>
-
+          </form>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
+              (click)="gravarReceita()">
+              <i class="fa fa-floppy-o"></i> Salvar
+            </button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
           </div>
-        </form>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
-            (click)="gravarReceita()">
-            <i class="fa fa-floppy-o"></i> Salvar
-          </button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
         </div>
       </div>
     </div>
-  </div>
+
+    <!------------------------  Modal Parametrizações ------------------------>
+    <div class="modal fade" id="modalParametrizacao" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content modalParametrizacao">
+          <div class="form-group modal-header" style="padding-block-end: inherit;">
+            <div>
+              <i class="fa fa-cogs" aria-hidden="true"></i>
+              Parametrizações
+              <p style="padding-block-start: 4%; color: brown;"></p>
+            </div>
+          </div>
+
+          <div class="form-group modal-body" style=" padding-block-end: 0%; padding-block-start: 0%;">
+            <form [formGroup]="modalParametrizacaoForm">
+              <label>Virada do mês deve ocorrer no dia:</label>
+              <select class="form-control form-control-sm" formControlName="dataVirada">
+                <option value="1">01</option>
+                <option value="5">05</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
+              </select>
+              <br>
+              <div style="margin-block-start: -8%;">
+                <input class="form-check-input" type="checkbox" formControlName="checkViradaAutomatica"
+                  id="chkViradaAutomatica">
+                <label class="form-check-label" for="chkViradaAutomatica"
+                  style="font-size: smaller; color: #a7444e!important"
+                  title="Habilita\Desabilita a virada do mês automaticamente na data selecionada de cada mês.">*Habilitar
+                  virada
+                  automatica.</label>
+              </div>
+            </form>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
+              (click)="gravarParametrizacao()">
+              <i class="fa fa-floppy-o"></i> Aplicar
+            </button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
 
   <!------------------------  Modal Confirmação - Excluir Despesa ------------------------>
   <ng-template #modalConfirmacaoExcluirDespesa>

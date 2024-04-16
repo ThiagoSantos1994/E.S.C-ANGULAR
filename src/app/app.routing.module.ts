@@ -7,7 +7,7 @@ import { NotFoundComponent } from "./views/not-found/not-found.component";
 
 const routes: Routes = [
     { path: 'login', component: LoginFormComponent },
-    { path: 'home', component: HomeFormComponent },
+    { path: 'dashboard', component: HomeFormComponent },
     //Rota Default quando colocar uma URL qualquer
     { path: '**', component: NotFoundComponent }
 ];

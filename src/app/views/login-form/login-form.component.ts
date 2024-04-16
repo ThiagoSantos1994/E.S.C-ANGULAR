@@ -41,7 +41,7 @@ export class LoginFormComponent implements OnInit {
 
     this.loginService.autenticar(userName, password).toPromise().then(res => {
       this.sessaoService.setTokenAutenticador(res.autenticacao, res.idLogin, res.nomeUsuario);
-      this.router.navigate(['home']);
+      this.router.navigate(['dashboard']);
     },
       err => {
         if (err.status == 401) {

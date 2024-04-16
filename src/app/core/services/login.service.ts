@@ -12,15 +12,14 @@ const httpHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 export class LoginService {
 
   constructor(
-      private http: HttpClient
+    private http: HttpClient
   ) { }
-  
+
   /*API AUTENTICAÇÃO LOGIN*/
   autenticar(usuario: string, senha: string) {
-    return this.http.post('/springboot-esc-backend/api/login/autenticar/', {usuario, senha})
-    .pipe(
+    return this.http.post('/springboot-esc-backend/api/login/autenticar/', { usuario, senha })
+      .pipe(
         map(response => response as Autenticacao)
-    );
+      );
   }
-  
 }

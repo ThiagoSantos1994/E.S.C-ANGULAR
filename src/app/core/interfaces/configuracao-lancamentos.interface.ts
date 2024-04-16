@@ -1,6 +1,6 @@
 export interface ConfiguracaoLancamentos{
-    dtViradaMes: number;
-    mesReferencia: number;
+    dataViradaMes: number;
+    mesReferencia?: number;
     idFuncionario: number;
-    bviradaAutomatica: number;
+    bviradaAutomatica: boolean;
 }

@@ -25,6 +25,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private pesquisaForm: FormGroup;
   private checkDespesasForm: FormGroup;
   private modalCriarEditarReceitaForm: FormGroup;
+  private modalParametrizacaoForm: FormGroup;
   private modalRef: BsModalRef;
 
   private despesaRef: number;
@@ -96,6 +97,11 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
       this.checkDespesasForm = this.formBuilder.group({
         checkMarcarTodasDespesas: [false]
+      });
+
+      this.modalParametrizacaoForm = this.formBuilder.group({
+        dataVirada: [res.dataViradaMes, Validators.required],
+        checkViradaAutomatica: [res.bviradaAutomatica, Validators.required]
       });
 
       this.carregarLancamentosFinanceiros();
@@ -388,6 +394,21 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     },
       err => {
         console.log(err);
+      });
+  }
+
+  gravarParametrizacao() {
+    let request: ConfiguracaoLancamentos = {
+      dataViradaMes: this.modalParametrizacaoForm.get('dataVirada').value,
+      bviradaAutomatica: this.modalParametrizacaoForm.get('checkViradaAutomatica').value,
+      idFuncionario: Number(this.sessao.getIdLogin())
+    };
+
+    this.lancamentosService.gravarParametrizacao(request).toPromise().then(() => {
+      alert('Parametros gravados com sucesso!');
+    },
+      err => {
+        alert('Ocorreu um erro ao gravar as parametrizações, tente novamente mais tarde.');
       });
   }
 

@@ -97,7 +97,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.modalImportacaoDespesaParceladaForm = this.formBuilder.group({
       checkCarregarTodasDespesasParceladas: ['']
     })
-    
+
     this.checkDespesasForm = this.formBuilder.group({
       checkMarcarTodasDespesas: [false]
     });
@@ -598,6 +598,15 @@ export class DetalheDespesasFormComponent implements OnInit {
       });
   }
 
+  obterDetalhesLabelQuitacaoMes() {
+    this.detalheService.obterExtratoDetalheDespesaQuitacaoMes(this.despesaRef, this.detalheRef).toPromise().then((res) => {
+      alert('CONSULTA DE DESPESAS Á QUITAR: \r\n \r\nValor R$   -   DESCRIÇÃO \r\n \r\n' + res.relatorioDespesas);
+    },
+      err => {
+        alert('Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.');
+      });
+  }
+
   onMarcarDesmarcarCheckBoxes() {
     let checksMarcadas = (this.checkboxesMarcadas == true ? false : true);
     this.changeCheckBoxesDetalhe(checksMarcadas);
@@ -827,10 +836,10 @@ export class DetalheDespesasFormComponent implements OnInit {
     let despesas = this.getDetalheDespesasParceladasChecked();
 
     if (despesas.length == 0) {
-      alert('Necessario selecionar *DESPESAS PARCELADAS* para serem adiantadas.');
+      alert('Necessario selecionar alguma *DESPESA PARCELADA* para ser adiada.');
       return;
     } else if (despesas.length > 1) {
-      alert('Selecione uma despesa por vez para adiantar o fluxo de parcela.');
+      alert('Selecione uma despesa por vez para adiar a parcela.');
       return;
     }
 
@@ -879,7 +888,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   adiantarFluxoParcelas() {
     this.eventModalConfirmacao = "AdiantarFluxoParcelas";
-    this.mensagemModalConfirmacao_header = "Deseja adiantar o fluxo de parcelas das despesas selecionadas?"
+    this.mensagemModalConfirmacao_header = "Deseja adiar a parcela da despesa selecionada?"
     this.mensagemModalConfirmacao_body = "";
     this.mensagemModalConfirmacao_footer = "Obs: Ação válida somente para DESPESAS PARCELADAS.";
 
@@ -888,7 +897,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   desfazerAdiantamentoFluxoParcelas() {
     this.eventModalConfirmacao = "DesfazerAdiantamentoFluxoParcelas";
-    this.mensagemModalConfirmacao_header = "Deseja *DESFAZER* o adiantamento do fluxo de parcelas das despesas selecionadas?"
+    this.mensagemModalConfirmacao_header = "Deseja *DESFAZER* o adiamento da parcela da despesa selecionada?"
     this.mensagemModalConfirmacao_body = "";
     this.mensagemModalConfirmacao_footer = "Obs: Ação válida somente para DESPESAS PARCELADAS.";
 
@@ -1050,7 +1059,6 @@ export class DetalheDespesasFormComponent implements OnInit {
   getAnoAtual() {
     return formatDate(Date.now(), 'yyyy', 'en-US');
   }
-
 }
 
 function parserToInt(str) {

@@ -29,7 +29,7 @@
             <span class="user-name">
               {{ usuarioLogado }}
             </span>
-            <span class="user-role">Administrator</span>
+            <span class="user-role">Administrador</span>
             <span class="user-status">
               <i class="fa fa-circle"></i>
               <span>Disponivel</span>
@@ -55,32 +55,48 @@
             <li class="header-menu">
               <!--<span>General</span>-->
             </li>
-            <li class="sidebar">
-              <a href="home">
+            <!--<li class="sidebar">
+              <a href="#!">
                 <i class="fas fa-chart-pie"></i>
-                <span>Dashboard</span>
+                <span>Relatórios</span>
               </a>
-            </li>
+            </li>-->
 
             <li class="sidebar">
-              <a href="#!" role="button" title="Cadastro Despesas Parceladas" data-toggle="modal"
-                data-target="#modalDespesasParceladas" (click)="carregarDespesasParceladas()">
-                <i class="fa fa-credit-card"></i>
-                <span>Desp. Parceladas</span>
-              </a>
-            </li>
-
-            <li class="sidebar">
-              <a href="#!" role="button" title="Cadastro Despesas Parceladas" data-toggle="modal"
+              <a href="#!" role="button" title="Meus Lembretes" data-toggle="modal"
                 data-target="#modalDespesasParceladas" (click)="carregarDespesasParceladas()">
                 <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                <span>Lembretes</span>
+                <span>Meus Lembretes</span>
+              </a>
+            </li>
+
+            <li class="sidebar">
+              <a href="#!" role="button" title="Cadastro de Despesas Parceladas" data-toggle="modal"
+                data-target="#modalDespesasParceladas" (click)="carregarDespesasParceladas()">
+                <i class="fa fa-credit-card"></i>
+                <span>Despesas Cartão</span>
+              </a>
+            </li>
+
+            <li class="sidebar">
+              <a href="#!" role="button" title="Cadastro de Empréstimos" data-toggle="modal"
+                data-target="#modalDespesasParceladas" (click)="carregarDespesasParceladas()">
+                <i class="fa fa-credit-card"></i>
+                <span>Empréstimos</span>
+              </a>
+            </li>
+
+            <li class="sidebar">
+              <a href="#!" role="button" title="Configurações do sistema" data-toggle="modal"
+                data-target="#modalParametrizacao">
+                <i class="fa fa-cogs" aria-hidden="true"></i>
+                <span>Parametrizações</span>
               </a>
             </li>
 
             <li class="sidebar-dropdown">
 
-            <!--<li class="sidebar-dropdown">
+              <!--<li class="sidebar-dropdown">
               <a href="#">
                 <i class="fa fa-chart-line"></i>
                 <span>Relatórios</span>

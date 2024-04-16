@@ -351,3 +351,10 @@ element.style {
 .caixaAlta {
   font-variant: small-caps;
 }
+
+.modalParametrizacao {
+  text-align: center;
+  width: 21%;
+  margin: 1.75rem auto;
+  
+}

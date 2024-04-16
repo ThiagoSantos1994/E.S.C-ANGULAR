@@ -63,6 +63,13 @@ export class LancamentosFinanceirosService {
     );
   }
 
+  gravarParametrizacao(parametros: ConfiguracaoLancamentos) {
+    const url = `springboot-esc-backend/api/parametros/gravar`;
+    return this.http.post(url, parametros).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   gravarReceita(receita: DespesasFixasMensais) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/despesasFixasMensais/gravar`;
     return this.http.post(url, receita).pipe(
