@@ -746,7 +746,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   onOrdenarRegistrosDetalheDespesas() {
     this.eventModalConfirmacao = "OrdenarRegistrosDetalheDespesas";
-    this.mensagemModalConfirmacao_header = "Deseja organizar os ID's da lista de despesas ?"
+    this.mensagemModalConfirmacao_header = "Deseja organizar a lista de despesas por prazo?"
     this.mensagemModalConfirmacao_body = "null";
     this.mensagemModalConfirmacao_footer = "null";
 

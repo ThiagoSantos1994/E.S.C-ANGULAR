@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Font Awesome Icons</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body class="body">
+  <div class="container d-flex justify-content-center">
+    <div id="modalLembretes" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-content modalLembretes modal-dialog-centered justify-content-center"
+        role="document">
+        <div class="form-group modalLembretes-body">
+          <h6 class="text-left mt-0 font-weight-bold mb-0">
+            <span>
+              <button type="button" class="close text-left my-auto" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </span>
+            Cadastro de Lembretes
+          </h6>
+
+          <br>
+
+          <div class="row-header-cadastro-lembretes">
+            <div class="col-xl-8 col-md-6 mb-1" style="height: min-content;">
+              <div class="input-group-header">
+                <select class="form-control form-control-sm combo-titulo-lembretes" id="comboTituloDespesa"
+                  (change)="onChangeTituloDespesa($event.target.value)">
+                  <option value=""></option>
+                  <option *ngFor="let lembrete of tituloLembretes.despesas" value={{lembrete.idDespesaParcelada}}>
+                    {{lembrete.dsTituloDespesaParcelada}}
+                  </option>
+                </select>
+
+                <button class="btn text-white " data-mdb-ripple-init style="background-color: #3a2db4; width: 5%;"
+                  role="button" (click)="carregarDetalheDespesaParcelada()">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+
+                <button class="btn text-white " data-mdb-ripple-init style="background-color: #3aad3a; width: 5%;"
+                  role="button" (click)="loadFormDespesaParcelada()">
+                  <i class="fa fa-plus" aria-hidden="true"></i>
+                </button>
+
+                <button class="btn text-white " data-mdb-ripple-init
+                  style="background-color: #c90d0d; width: 5%; margin-left: 0%;" role="button"
+                  (click)="excluirDespesaParcelada()">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <form [formGroup]="modalLembretesForm">
+                <small class="form-text text-muted checkbox-lembretes-em-aberto">
+                  <input class="form-check-input" type="checkbox" formControlName="checkCarregarLembretesEmAberto"
+                    id="checkCarregarLembretesEmAberto"
+                    (click)="onCheckCarregarNomeDespParceladas($event.target.checked)">
+                  <label class="form-check-label" for="checkCarregarLembretesEmAberto"
+                    title="lista o nome dos lembretes que estão em aberto."> Carregar somente
+                    lembretes em aberto.
+                  </label>
+                </small>
+                <br>
+                <div class="card-titulo-lembrete">
+                  <small class="form-text text-muted" style="font-size: small;">
+                    Nome do Lembrete
+                  </small>
+                  <div class="row row-card-titulo-lembrete">
+                    <input class="form-control form-control-sm" type="text" formControlName="nomeLembrete"
+                      id="nomeLembrete" onkeyup="toUpper(this)">
+                  </div>
+                </div>
+
+                <div class="input-group-header-cards">
+                  <div class="card-notificacao">
+                    <small class="form-text text-muted" style="font-size: small;">
+                      Painel de agendamento de notificações
+                    </small>
+
+                    <div class="card-configuracao">
+                      <div>
+                        <div class="form-check form-check-inline">
+                          <!--<div *ngIf="detalheLancamentosMensais.despesaMensal.tpRelatorio == 'N'"
+                            class="form-check form-check-inline checkDetalheDespesas">
+                            <span class="badge checkDetalheDespesasComum d-inline">
+                              <i class="fa fa-check-circle"> Despesa Comum</i>
+                            </span>
+                          </div>-->
+
+                          <div class="form-check form-check-inline">
+                            <span class="badge d-inline">
+                              <small class="form-text text-muted" style="font-size: small;">
+                                <i class="fa fa-bell-o" aria-hidden="true"></i>
+                                Novo Lembrete
+                              </small>
+                            </span>
+                          </div>
+
+                          <div class="form-check form-check-inline">
+                            <span class="badge d-inline">
+                              <small class="form-text text-muted" style="font-size: small;">
+                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                                Todos Dias
+                              </small>
+                            </span>
+                          </div>
+
+                          <div class="form-check form-check-inline">
+                            <span class="badge d-inline">
+                              <small class="form-text text-muted" style="font-size: small;">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                                Seg,Ter,Qua,Qui,Sex,Sab,Dom
+                              </small>
+                            </span>
+                          </div>
+
+                          <div class="form-check form-check-inline">
+                            <span class="badge d-inline">
+                              <small class="form-text text-muted" style="font-size: small;">
+                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                                01/01/24
+                              </small>
+                            </span>
+                          </div>
+
+                          <div class="form-check form-check-inline">
+                            <span class="badge d-inline">
+                              <small class="form-text text-muted" style="font-size: small;">
+                                <i class="fa fa-flag-checkered" aria-hidden="true"></i>
+                                10 Dia(s)
+                              </small>
+                            </span>
+                          </div>
+
+                          <div class="form-check form-check-inline">
+                            <span class="badge d-inline">
+                              <small class="form-text text-muted" style="font-size: small;">
+                                <i class="fa fa-refresh" aria-hidden="true"></i>
+                                AUTO
+                              </small>
+                            </span>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button class="btn text-white" data-mdb-ripple-init
+                    style="background-color: #74335f; height: 0%; margin: 1%;" href="#!" role="button"
+                    title="Programa o agendamento da notificação" data-toggle="modal"
+                    data-target="#modalAgendarLembrete" (click)="onEditarTituloDespesa()">
+                    <i class="fa fa-clock-o" aria-hidden="true"></i> Agendar
+                  </button>
+
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <hr style="border-top: 1px solid rgba(0,0,0,.1); margin-block: auto;">
+
+          <div class="p-2 text-center bg-light">
+            <div class="center-modal-lembretes">
+              <div class="col-sm-8-lembretes scrollme-lembretes">
+                <div>
+                  <small class="form-text text-muted" style="font-size: small;">
+                    Observações do lembrete
+                  </small>
+                  <form [formGroup]="modalLembretesForm">
+                    <textarea class="form-control" id="observacoesLembrete" rows="7" onkeyup="toUpper(this)"
+                      formControlName="observacoesLembrete"></textarea>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
+              (click)="gravarDespesaParcelada()">
+              <i class="fa fa-floppy-o"></i> Gravar Lembrete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!------------------------  Modal Confirmação - Generico ------------------------>
+  <form>
+    <ng-template #modalConfirmacaoEventos>
+      <div class="modal-header">
+        <h6 class="modal-title">
+          <i class="fa fa-question-circle" style="font-size: 130%;" aria-hidden="true"></i> Confirmação
+        </h6>
+      </div>
+      <div class="form-group modal-body" style="padding-block-start: 0%; padding-block-end: 0%;">
+        <span *ngIf="mensagemModalConfirmacao_header !== 'null'">
+          <br>
+          {{mensagemModalConfirmacao_header}}
+        </span>
+
+        <span *ngIf="mensagemModalConfirmacao_body !== 'null'">
+          <br>
+          {{mensagemModalConfirmacao_body}}
+        </span>
+
+        <span *ngIf="mensagemModalConfirmacao_footer !== 'null'">
+          <br>
+          {{mensagemModalConfirmacao_footer}}
+        </span>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmEventModal()">Sim</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Não</button>
+      </div>
+    </ng-template>
+  </form>
+</body>
+
+<!------------------------  Modal Editar Parcelas ------------------------>
+<div class="modal fade" id="modalAgendarLembrete" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="margin: 0% 37%;">
+    <div class="modal-content">
+      <div class="form-group modal-header">
+        <div>
+          <i class="fa fa-clock-o" aria-hidden="true"></i>
+          Painel de Agendamento
+          <br>
+          <br>
+          <small class="form-text text-muted">
+            Selecione as opções de agendamento para o lembrete
+          </small>
+        </div>
+      </div>
+
+      <div class="form-group modal-body" style="padding-block-start: 0%; padding-block-end: 0%; margin: -1%;">
+        <form>
+          <div class="form-group">
+            <label>Valor Parcela:</label>
+            <input class="form-control text-left form-control-sm" id="novoValorParcela" currencyMask maxlength="16"
+              autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',' }" placeholder="">
+            <br>
+            <label>Status Pagamento:</label>
+            <select class="form-control form-control-sm" id="comboStatus">
+              <option value=""></option>
+              <option value="N">Pendente</option>
+              <option value="S">Pago</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="col-form-label">Observações:</label>
+            <textarea class="form-control" id="observacoes"></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal"
+          (click)="confirmEditarParcelas()">Aplicar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>

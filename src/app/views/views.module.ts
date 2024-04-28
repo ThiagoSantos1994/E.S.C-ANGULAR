@@ -13,6 +13,7 @@ import { HomeFormComponent } from './home-form/home-form.component';
 import { LancamentosFinanceirosFormComponent } from './lancamentos-financeiros-form/lancamentos-financeiros-form.component';
 import { LoginFormComponent } from "./login-form/login-form.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
+import { LembretesFormComponent } from "./lembretes-form/lembretes-form.component";
 
 @NgModule({
     declarations: [
@@ -21,7 +22,8 @@ import { NotFoundComponent } from "./not-found/not-found.component";
         HomeFormComponent,
         LancamentosFinanceirosFormComponent,
         DetalheDespesasFormComponent,
-        DespesasParceladasFormComponent
+        DespesasParceladasFormComponent,
+        LembretesFormComponent
     ],
     imports: [
         CommonModule, /*Todo modulo que for criado, é importante importar esse cara*/

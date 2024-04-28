@@ -113,7 +113,7 @@ export class DetalheDespesasService {
   }
 
   organizarListaItensDetalheDespesa(idDespesa: number, idDetalheDespesa: number) {
-    const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/ordenarListaDespesas/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/'prazo'`;
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/ordenarListaDespesas/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/prazo`;
     return this.http.post(url, {}).pipe(
       catchError(error => this.handleError(error))
     );

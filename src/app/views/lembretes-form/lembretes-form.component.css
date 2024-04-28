@@ -1,0 +1,373 @@
+header {
+  padding: 5px 0 0;
+}
+
+button {
+  margin: 0 10px;
+}
+
+label {
+  margin: 2px -1px;
+}
+
+body {
+  font-family: 'Calibri', sans-serif !important;
+  margin-right: 5px;
+}
+
+.container {
+  margin-top: 100px;
+}
+
+.modal-footer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  /* -webkit-box-pack: end; */
+  -ms-flex-pack: end;
+  justify-content: center;
+  padding: 0.5rem;
+  border-top: 0px solid #e9ecef;
+}
+
+.form-check-inline {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-left: 0px;
+  margin-right: 0.75rem;
+}
+
+* {
+  outline: none;
+}
+
+.table th,
+.table thead th {
+  font-weight: 500;
+}
+
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+}
+
+
+.table th {
+  padding: 0.2rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+  font-family: system-ui;
+  font-size: smaller;
+}
+
+
+.table th,
+.table thead th {
+  font-weight: 500;
+}
+
+
+th {
+  text-align: inherit;
+}
+
+
+.m-b-20 {
+  margin-bottom: 20px;
+}
+
+.table td {
+  padding: 0.0rem;
+}
+
+.customcheckbox {
+  display: block;
+  position: relative;
+  padding-left: 24px;
+  font-weight: 100;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+  padding-left: 0%;
+}
+
+.customcheckbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark[_ngcontent-c2][_ngcontent-c2] {
+  position: absolute;
+  top: 0px;
+  left: 0;
+  height: 12px;
+  width: 12px;
+  background-color: #CDCDCD;
+  border-radius: 3px;
+}
+
+.customcheckbox input:checked~.checkmark {
+  background-color: #2196BB;
+}
+
+.customcheckbox .checkmark:after {
+  left: 8px;
+  top: 4px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.btn-group-sm>.btn,
+.btn-sm {
+  padding: 0.25rem 0.3rem;
+  font-size: .875rem;
+  line-height: 1.5;
+  border-radius: 0.2rem;
+}
+
+.btn-sm {
+  padding: 0rem 0rem;
+  font-size: .875rem;
+  line-height: 1.5;
+  border-radius: 0.2rem;
+  margin: 1%;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.row {
+  margin-right: -8px;
+}
+
+.checkmark[_ngcontent-c2] {
+  position: absolute;
+  top: -3px;
+  left: 0;
+  height: 12px;
+  width: 12px;
+  background-color: #CDCDCD;
+  border-radius: 3px;
+}
+
+/*MODAL*/
+
+.modal-dialog-centered {
+  min-height: calc(100% - (1.75rem * 2));
+}
+
+.modal-dialog {
+  max-width: 100%;
+  margin: 1.75rem auto;
+}
+
+element.style {
+  display: block;
+  padding-right: 0px;
+}
+
+.caixaAlta {
+  font-variant: small-caps;
+}
+
+.modalLembretes-body {
+  width: 96%;
+}
+
+.combo-titulo-lembretes {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  background-clip: border-box;
+  border: 1px solid #c8cad1;
+  width: 45%;
+  border-radius: 0.35rem
+}
+
+.input-group-header {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 161%;
+}
+
+.input-group-header-cards {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 150%;
+  max-width: 150%;
+}
+
+.row-header-cadastro-lembretes {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+  margin-top: -2%;
+  max-width: 200%;
+  width: 153%;
+}
+
+.row-card-notificacao {
+  margin-block-end: 3%;
+  margin-left: 3%;
+  margin-right: -105px;
+}
+
+.card-titulo-lembrete {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  background-clip: border-box;
+  border: 1px solid #c8cad1;
+  width: 102%;
+  border-radius: 0.35rem;
+  margin-block-end: 1%;
+}
+
+.card-notificacao {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  background-clip: border-box;
+  border: 1px solid #c8cad1;
+  width: 57.3%;
+  border-radius: 0.35rem;
+}
+
+.card-parcelas {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  background-clip: border-box;
+  border: 1px solid #c8cad1;
+  width: 9%;
+  border-radius: 0.35rem;
+  margin-left: 2%;
+}
+
+.row-card-titulo-lembrete {
+  margin-block-end: 2%;
+  margin-left: 1%;
+  margin-right: 7px;
+  margin-block-start: 0px;
+}
+
+.col-lg-4 {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 33.333333%;
+  flex: 0 0 31.333333%;
+  max-width: 33.333333%;
+}
+
+.modalLembretes {
+  text-align: center;
+  width: 60%;
+  margin: 0.75rem auto;
+}
+
+.scrollme-lembretes {
+  max-height: 287px;
+  overflow: auto;
+  display: inline-block;
+}
+
+.col-sm-8-lembretes {
+  flex: 0 0 100%;
+  max-width: 90%;
+  padding-right: 1%;
+  padding-left: 1%;
+}
+
+.center-modal-lembretes {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin-right: -12%;
+  margin-left: -1%;
+}
+
+.card-configuracao {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  background-clip: border-box;
+  width: 100%;
+  border-radius: 0.35rem
+}
+
+.checkbox-lembretes-em-aberto {
+  margin: -1.2% 13% -2% -54%;
+}
+
+.badge {
+  display: inline-block;
+  padding: .25em .4em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 2;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: .25rem;
+}
+
+.modalEditarParcelas {
+  text-align: left;
+  width: 24%;
+  margin: 1.75rem auto;
+}

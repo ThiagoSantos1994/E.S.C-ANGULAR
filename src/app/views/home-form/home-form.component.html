@@ -34,8 +34,14 @@
               <i class="fa fa-circle"></i>
               <span>Disponivel</span>
             </span>
+            <!--<span class="user-status">
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <span>{{ dataAtual }}</span>
+            </span>-->
           </div>
+          
         </div>
+        
         <!-- sidebar-header  -->
         <!--<div class="sidebar-search">
           <div>
@@ -63,8 +69,8 @@
             </li>-->
 
             <li class="sidebar">
-              <a href="#!" role="button" title="Meus Lembretes" data-toggle="modal"
-                data-target="#modalDespesasParceladas" (click)="carregarDespesasParceladas()">
+              <a href="#!" role="button" title="Meus Lembretes" data-toggle="modal" data-target="#modalLembretes"
+                (click)="carregarCadastroLembretes()">
                 <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
                 <span>Meus Lembretes</span>
               </a>
@@ -164,6 +170,7 @@
       <app-lancamentos-financeiros-form></app-lancamentos-financeiros-form>
       <app-detalhe-despesas-form></app-detalhe-despesas-form>
       <app-despesas-parceladas-form></app-despesas-parceladas-form>
+      <app-lembretes-form></app-lembretes-form>
     </main>
   </div>
 </body>
