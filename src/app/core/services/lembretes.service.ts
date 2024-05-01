@@ -3,11 +3,10 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Despesa, DespesaParceladaResponse, Parcelas } from '../interfaces/despesa-parcelada-response.interface';
-import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
+import { Lembretes } from '../interfaces/lembretes.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { StringResponse } from '../interfaces/string-response.interface.';
+import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -30,13 +29,19 @@ export class LembretesService {
     return this.subject.asObservable();
   }
 
+  getMonitorLembretesPendentes() : Observable<Lembretes>{
+    return this.http.get<Lembretes>(`springboot-esc-backend//api/lembretes/monitor/${this.sessao.getIdLogin()}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
+
   getNomeDespesasParceladas(isDespesasEmAberto: boolean): Observable<TituloDespesaResponse> {
     let carregar = (isDespesasEmAberto ? "default" : "fechado");
     return this.http.get<TituloDespesaResponse>(`springboot-esc-backend/api/despesasParceladas/obterListaDespesas/${this.sessao.getIdLogin()}/${carregar}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
   }
-
+/*
   getDetalhesDespesaParcelada(idDespesaParcelada: number): Observable<DespesaParceladaResponse> {
     return this.http.get<DespesaParceladaResponse>(`springboot-esc-backend/api/v2/despesasParceladas/consultar/${idDespesaParcelada}/${this.sessao.getIdLogin()}`)
       .pipe(map((response) => { return response }),
@@ -90,6 +95,7 @@ export class LembretesService {
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
   }
+*/
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
-import { DespesaParceladaResponse, Parcelas } from 'src/app/core/interfaces/despesa-parcelada-response.interface';
+import { Lembretes } from 'src/app/core/interfaces/lembretes.interface';
 import { TituloDespesaResponse } from 'src/app/core/interfaces/titulo-despesa-response.interface';
 import { LembretesService } from 'src/app/core/services/lembretes.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
@@ -14,12 +14,13 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
   styleUrls: ['./lembretes-form.component.css']
 })
 export class LembretesFormComponent implements OnInit {
-  private _parcelas = new BehaviorSubject<Parcelas[]>([]);
-  private despesaParceladaDetalhe: DespesaParceladaResponse;
+  private lembretes$: Observable<Lembretes[]>;
+  private _lembretesCheckBox = new BehaviorSubject<Lembretes[]>([]);
   private tituloLembretes: TituloDespesaResponse;
   private idLembreteReferencia: number = 0;
 
   private modalLembretesForm: FormGroup;
+  private checkLembretesForm: FormGroup;
   private modalRef: BsModalRef;
 
   private eventModalConfirmacao: String = "";
@@ -28,6 +29,7 @@ export class LembretesFormComponent implements OnInit {
   private mensagemModalConfirmacao_footer: String = "null";
 
   @ViewChild('modalLembretes') modalLembretes;
+  @ViewChild('modalVisualizarLembretes') modalVisualizarLembretes;
   @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
 
   constructor(
@@ -40,6 +42,7 @@ export class LembretesFormComponent implements OnInit {
 
   ngOnInit() {
     this.loadFormLembretes();
+    this.carregarMonitorLembretes();
 
     this.service.recebeMensagem().subscribe(d => {
       this.loadFormLembretes();
@@ -51,7 +54,6 @@ export class LembretesFormComponent implements OnInit {
 
   loadFormLembretes() {
     this.idLembreteReferencia = -1;
-    this.despesaParceladaDetalhe = null;
 
     this.tituloLembretes = {
       despesas: []
@@ -70,6 +72,38 @@ export class LembretesFormComponent implements OnInit {
     this.service.getNomeDespesasParceladas(isTodosLembretes).subscribe((res) => {
       this.tituloLembretes = res;
     });
+  }
+
+  carregarMonitorLembretes() {
+    this.service.getMonitorLembretesPendentes().subscribe((res: any) => {
+      this.lembretes$ = res;
+      this.abrirMonitorLembretes();
+    });
+  }
+
+  abrirMonitorLembretes() {
+    if (this.lembretes$) {
+      this.checkLembretesForm = this.formBuilder.group({
+        checkMarcarTodosLembretes: [false]
+      });
+
+      this.modalRef = this.modalService.show(this.modalVisualizarLembretes);
+    }
+  }
+
+  onCheckLembretes(checked, lembrete) {
+    lembrete.checked = checked;
+
+    let lembretes = this._lembretesCheckBox.getValue();
+    let index = lembretes.findIndex((d) => d.idLembrete === lembrete.idLembrete);
+
+    if (index >= 0) {
+      lembretes[index].checked = checked;
+    } else {
+      lembretes.push({ ...lembrete });
+    }
+
+    this._lembretesCheckBox.next(lembrete);
   }
 
   /* -------------- Metodos Gerais -------------- */

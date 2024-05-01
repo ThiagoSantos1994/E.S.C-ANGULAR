@@ -84,7 +84,7 @@ th {
 }
 
 .table td {
-  padding: 0.0rem;
+  padding: 2px;
 }
 
 .customcheckbox {
@@ -370,4 +370,16 @@ element.style {
   text-align: left;
   width: 24%;
   margin: 1.75rem auto;
+}
+
+.table-monitor-lembretes {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  background-color: #f8f9fa;
+}
+
+.font-padrao {
+  font-family: system-ui;
+  font-size: small;
 }

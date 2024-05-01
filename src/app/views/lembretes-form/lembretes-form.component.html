@@ -155,6 +155,13 @@
                     <i class="fa fa-clock-o" aria-hidden="true"></i> Agendar
                   </button>
 
+                  <button class="btn text-white" data-mdb-ripple-init
+                    style="background-color: #74335f; height: 0%; margin: 1%;" href="#!" role="button"
+                    title="Programa o agendamento da notificação" data-toggle="modal"
+                    data-target="#modalVisualizarLembretes" (click)="carregarMonitorLembretes()">
+                    <i class="fa fa-clock-o" aria-hidden="true"></i> Lembretes
+                  </button>
+
                 </div>
               </form>
             </div>
@@ -222,9 +229,9 @@
   </form>
 </body>
 
-<!------------------------  Modal Editar Parcelas ------------------------>
+<!------------------------  Modal Agendar Lembrete ------------------------>
 <div class="modal fade" id="modalAgendarLembrete" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" role="document" style="margin: 0% 37%;">
+  <div class="modal-dialog" role="document" style="margin: 1% 37%;">
     <div class="modal-content">
       <div class="form-group modal-header">
         <div>
@@ -267,3 +274,63 @@
     </div>
   </div>
 </div>
+
+<!------------------------  Modal Visualizacao Lembretes ------------------------>
+<form>
+  <ng-template #modalVisualizarLembretes>
+    <div class="modal-content">
+      <div class="form-group modal-header">
+        <div>
+          <i class="fa fa-calendar" aria-hidden="true"></i> Meus Lembretes
+        </div>
+      </div>
+
+      <div class="form-group modal-body" style="padding-block-start: 0%; padding-block-end: 0%; margin: -1%;">
+        <div class="col-sm-8-monitor-lembretes">
+          <table class="table table-monitor-lembretes table-bordered">
+            <thead class="thead-light">
+              <tr>
+                <th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label=""
+                  style="width: 40.1px; font-size: initial;">
+                  <form [formGroup]="checkLembretesForm">
+                    <input type="checkbox" name="lembretes[]" formControlName="checkMarcarTodosLembretes"
+                      onclick="marcarTodosLembretes(this)" (click)="onMarcarDesmarcarCheckBoxes()">
+                  </form>
+                </th>
+                <th class="text-center" scope="col" style="padding: 1%; font-family: system-ui; font-size: small;">
+                  Lembrete(s)</th>
+              </tr>
+            </thead>
+            <tbody class="customtable" *ngIf="lembretes$">
+              <tr *ngFor="let lembrete of lembretes$">
+                <td class="text-center">
+                  <label class="checkbox-wrap checkbox-primary">
+                    <input type="checkbox" name="lembretes[]"
+                      (click)="onCheckParcelaChange($event.target.checked, parcela)">
+                    <span class="checkmark"></span>
+                  </label>
+                </td>
+
+                <td class="text-center font-padrao" style="color: brown;">
+                  {{lembrete.dsTituloLembrete}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div *ngIf="!lembretes$">
+            <div class="alert alert-primary" style="padding-left: 30%;" role="alert">
+              Não há lembretes no momento.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmEditarParcelas()">
+          <i class="far fa-calendar-check"></i> Baixar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Fechar</button>
+      </div>
+    </div>
+  </ng-template>
+</form>

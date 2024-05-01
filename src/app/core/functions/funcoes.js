@@ -35,6 +35,18 @@ function marcarTodasDespesas(obj) {
     }
 }
 
+function marcarTodosLembretes(obj) {
+    var itens = document.getElementsByName('lembretes[]');
+    var quantidade = itens.length;
+
+    for (i = 0; i < quantidade; i++) {
+        var status = (obj.checked) ? true : false;
+
+        itens.item(i).checked = status;
+        corLinha(itens.item(i));
+    }
+}
+
 function toUpper(input) {
     var start = input.selectionStart;
     input.value = input.value.toUpperCase();
