@@ -154,14 +154,6 @@
                     data-target="#modalAgendarLembrete" (click)="onEditarTituloDespesa()">
                     <i class="fa fa-clock-o" aria-hidden="true"></i> Agendar
                   </button>
-
-                  <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #74335f; height: 0%; margin: 1%;" href="#!" role="button"
-                    title="Programa o agendamento da notificação" data-toggle="modal"
-                    data-target="#modalVisualizarLembretes" (click)="carregarMonitorLembretes()">
-                    <i class="fa fa-clock-o" aria-hidden="true"></i> Lembretes
-                  </button>
-
                 </div>
               </form>
             </div>
@@ -275,7 +267,7 @@
   </div>
 </div>
 
-<!------------------------  Modal Visualizacao Lembretes ------------------------>
+<!------------------------  Modal Monitor Visualizacao Lembretes ------------------------>
 <form>
   <ng-template #modalVisualizarLembretes>
     <div class="modal-content">
@@ -298,7 +290,7 @@
                   </form>
                 </th>
                 <th class="text-center" scope="col" style="padding: 1%; font-family: system-ui; font-size: small;">
-                  Lembrete(s)</th>
+                  Descrição do lembrete</th>
               </tr>
             </thead>
             <tbody class="customtable" *ngIf="lembretes$">

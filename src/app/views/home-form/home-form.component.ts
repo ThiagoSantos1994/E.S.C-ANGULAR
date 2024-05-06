@@ -47,9 +47,13 @@ export class HomeFormComponent implements OnInit {
   }
 
   carregarCadastroLembretes() {
-    this.lembreteService.enviaMensagem();
+    this.lembreteService.enviaMensagem("cadastro");
   }
   
+  carregarMonitorLembretes() {
+    this.lembreteService.enviaMensagem("monitor");
+  }
+
   /*getDadosUsuario() {
     const tokenId = this.sessaoService.getToken();
     this.usuario$ = this.homeService.getDadosUsuario(this.sessaoService.getIdLogin());

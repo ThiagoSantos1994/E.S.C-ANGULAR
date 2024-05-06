@@ -45,11 +45,15 @@ export class LembretesFormComponent implements OnInit {
     this.carregarMonitorLembretes();
 
     this.service.recebeMensagem().subscribe(d => {
-      this.loadFormLembretes();
-      this.carregarListaLembretes(true);
+      if (d == "cadastro") {
+        this.loadFormLembretes();
+        this.carregarListaLembretes(true);
+      } else {
+        this.carregarMonitorLembretes();
+      }
     }, () => {
       alert('Ocorreu um erro ao carregar os dados da despesa parcelada, tente novamente mais tarde.')
-    })
+    });
   }
 
   loadFormLembretes() {
@@ -77,18 +81,18 @@ export class LembretesFormComponent implements OnInit {
   carregarMonitorLembretes() {
     this.service.getMonitorLembretesPendentes().subscribe((res: any) => {
       this.lembretes$ = res;
-      this.abrirMonitorLembretes();
+      if (res.length() > 0) {
+        this.abrirMonitorLembretes();
+      }
     });
   }
 
   abrirMonitorLembretes() {
-    if (this.lembretes$) {
-      this.checkLembretesForm = this.formBuilder.group({
-        checkMarcarTodosLembretes: [false]
-      });
+    this.checkLembretesForm = this.formBuilder.group({
+      checkMarcarTodosLembretes: [false]
+    });
 
-      this.modalRef = this.modalService.show(this.modalVisualizarLembretes);
-    }
+    this.modalRef = this.modalService.show(this.modalVisualizarLembretes);
   }
 
   onCheckLembretes(checked, lembrete) {

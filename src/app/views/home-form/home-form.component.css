@@ -278,12 +278,11 @@ body {
 }
 
 .sidebar-wrapper .sidebar-menu .sidebar-dropdown .sidebar-submenu li {
-    padding-left: 25px;
+    padding-left: 10px;
     font-size: 13px;
 }
 
 .sidebar-wrapper .sidebar-menu .sidebar-dropdown .sidebar-submenu li a:before {
-    content: "\f111";
     font-family: "Font Awesome 5 Free";
     font-weight: 400;
     font-style: normal;

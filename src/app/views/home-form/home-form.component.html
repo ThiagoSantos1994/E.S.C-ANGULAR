@@ -39,41 +39,34 @@
               <span>{{ dataAtual }}</span>
             </span>-->
           </div>
-          
         </div>
-        
-        <!-- sidebar-header  -->
-        <!--<div class="sidebar-search">
-          <div>
-            <div class="input-group">
-              <input type="text" class="form-control search-menu" placeholder="Search...">
-              <div class="input-group-append">
-                <span class="input-group-text">
-                  <i class="fa fa-search" aria-hidden="true"></i>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>-->
-        <!-- sidebar-search  -->
+
         <div class="sidebar-menu">
           <ul>
-            <li class="header-menu">
-              <!--<span>General</span>-->
-            </li>
-            <!--<li class="sidebar">
-              <a href="#!">
-                <i class="fas fa-chart-pie"></i>
-                <span>Relatórios</span>
+            <li class="sidebar-dropdown">
+              <a>
+                <i class="fa fa-calendar-check-o"></i>
+                <span>Lembretes</span>
+                <span class="badge badge-pill badge-warning">3</span>
               </a>
-            </li>-->
-
-            <li class="sidebar">
-              <a href="#!" role="button" title="Meus Lembretes" data-toggle="modal" data-target="#modalLembretes"
-                (click)="carregarCadastroLembretes()">
-                <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                <span>Meus Lembretes</span>
-              </a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li>
+                    <a href="#!" role="button" title="Cadastrar e\ou alterar lembretes" data-toggle="modal" data-target="#modalLembretes"
+                      (click)="carregarCadastroLembretes()">
+                      <i class="fa fa-plus"></i>
+                      <span>Cadastrar\Alterar</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#!" role="button" title="Visualizar lembretes em aberto" data-toggle="modal" data-target="#modalVisualizarLembretes"
+                      (click)="carregarMonitorLembretes()">
+                      <i class="fa fa-eye" aria-hidden="true"></i>
+                      <span>Abrir Monitor</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </li>
 
             <li class="sidebar">
@@ -99,50 +92,8 @@
                 <span>Parametrizações</span>
               </a>
             </li>
-
-            <li class="sidebar-dropdown">
-
-              <!--<li class="sidebar-dropdown">
-              <a href="#">
-                <i class="fa fa-chart-line"></i>
-                <span>Relatórios</span>
-              </a>
-              <div class="sidebar-submenu">
-                <ul>
-                  <li>
-                    <a href="#">Pie chart</a>
-                  </li>
-                  <li>
-                    <a href="#">Line chart</a>
-                  </li>
-                  <li>
-                    <a href="#">Bar chart</a>
-                  </li>
-                  <li>
-                    <a href="#">Histogram</a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="sidebar-dropdown">
-              <a href="#">
-                <i class="fa fa-user"></i>
-                <span>Usuario</span>
-              </a>
-              <div class="sidebar-submenu">
-                <ul>
-                  <li>
-                    <a href="#">Alterar Senha</a>
-                  </li>
-                  <li>
-                    <a href="#">Configurações</a>
-                  </li>
-                </ul>
-              </div>
-            </li>-->
           </ul>
         </div>
-        <!-- sidebar-menu  -->
       </div>
 
       <!-- sidebar-content  -->
