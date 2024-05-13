@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
-import { Lembretes } from 'src/app/core/interfaces/lembretes.interface';
-import { TituloDespesaResponse } from 'src/app/core/interfaces/titulo-despesa-response.interface';
+import { DetalheLembrete } from 'src/app/core/interfaces/detalhe-lembrete.interface';
+import { TituloLembretes } from 'src/app/core/interfaces/titulo-lembretes.interface';
 import { LembretesService } from 'src/app/core/services/lembretes.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
 
@@ -14,10 +14,11 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
   styleUrls: ['./lembretes-form.component.css']
 })
 export class LembretesFormComponent implements OnInit {
-  private lembretes$: Observable<Lembretes[]>;
-  private _lembretesCheckBox = new BehaviorSubject<Lembretes[]>([]);
-  private tituloLembretes: TituloDespesaResponse;
+  private lembrete$: Observable<DetalheLembrete[]>;
+  private tituloLembretes$: Observable<TituloLembretes[]>;
+  private _monitorLembretes = new BehaviorSubject<TituloLembretes[]>([]);
   private idLembreteReferencia: number = 0;
+  private checkboxesMarcadas: Boolean = false;
 
   private modalLembretesForm: FormGroup;
   private checkLembretesForm: FormGroup;
@@ -30,6 +31,7 @@ export class LembretesFormComponent implements OnInit {
 
   @ViewChild('modalLembretes') modalLembretes;
   @ViewChild('modalVisualizarLembretes') modalVisualizarLembretes;
+  @ViewChild('modalBaixarLembretesMonitor') modalBaixarLembretesMonitor;
   @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
 
   constructor(
@@ -42,14 +44,14 @@ export class LembretesFormComponent implements OnInit {
 
   ngOnInit() {
     this.loadFormLembretes();
-    this.carregarMonitorLembretes();
+    this.carregarMonitorLembretes(true);
 
     this.service.recebeMensagem().subscribe(d => {
       if (d == "cadastro") {
         this.loadFormLembretes();
-        this.carregarListaLembretes(true);
+        this.carregarListaLembretes(false);
       } else {
-        this.carregarMonitorLembretes();
+        this.carregarMonitorLembretes(true);
       }
     }, () => {
       alert('Ocorreu um erro ao carregar os dados da despesa parcelada, tente novamente mais tarde.')
@@ -58,10 +60,8 @@ export class LembretesFormComponent implements OnInit {
 
   loadFormLembretes() {
     this.idLembreteReferencia = -1;
-
-    this.tituloLembretes = {
-      despesas: []
-    }
+    this.lembrete$ = null;
+    this.tituloLembretes$ = null;
 
     this.modalLembretesForm = this.formBuilder.group({
       checkCarregarLembretesEmAberto: [true],
@@ -70,24 +70,49 @@ export class LembretesFormComponent implements OnInit {
     });
   }
 
-  carregarListaLembretes(isTodosLembretes: boolean) {
-    this.tituloLembretes = null;
+  onCheckCarregarTituloLembretes(checked) {
+    this.carregarListaLembretes(!checked);
+  }
 
-    this.service.getNomeDespesasParceladas(isTodosLembretes).subscribe((res) => {
-      this.tituloLembretes = res;
+  onChangeTituloLembrete(value) {
+    this.idLembreteReferencia = value;
+    this.carregarDetalheLembrete();
+  }
+
+  carregarDetalheLembrete() {
+    this.service.getDetalheLembrete(this.idLembreteReferencia).subscribe((res: any) => {
+      this.lembrete$ = res;
+
+      this.modalLembretesForm = this.formBuilder.group({
+        nomeLembrete: res.dsTituloLembrete,
+        observacoesLembrete: res.dsObservacoes
+      });
     });
   }
 
-  carregarMonitorLembretes() {
-    this.service.getMonitorLembretesPendentes().subscribe((res: any) => {
-      this.lembretes$ = res;
-      if (res.length() > 0) {
-        this.abrirMonitorLembretes();
+  carregarListaLembretes(isTodosLembretes: boolean) {
+    this.service.getTituloLembretes(isTodosLembretes).subscribe((res: any) => {
+      this.tituloLembretes$ = res;
+    });
+  }
+
+  carregarMonitorLembretes(abrirMonitor: boolean) {
+    this.service.getMonitorLembretes().subscribe((res: any) => {
+      this.tituloLembretes$ = res;
+      if (res.length > 0) {
+        this.resetMonitorLembretesObservable();
+        this.setMonitorLembretesObservable(res, false);
+
+        if (abrirMonitor) {
+          this.abrirMonitorLembretes();
+        }
       }
     });
   }
 
   abrirMonitorLembretes() {
+    this.checkboxesMarcadas = false;
+
     this.checkLembretesForm = this.formBuilder.group({
       checkMarcarTodosLembretes: [false]
     });
@@ -95,10 +120,33 @@ export class LembretesFormComponent implements OnInit {
     this.modalRef = this.modalService.show(this.modalVisualizarLembretes);
   }
 
-  onCheckLembretes(checked, lembrete) {
+  abrirModalBaixaLembretesSelecionados() {
+    let lembretesChecked = this.getMonitorLembretesChecked().length;
+    if (lembretesChecked == 0) {
+      alert('Necessario selecionar o lembrete para baixar.');
+    } else {
+      this.modalRef = this.modalService.show(this.modalBaixarLembretesMonitor);
+    }
+  }
+
+  resetMonitorLembretesObservable() {
+    this._monitorLembretes.next([]);
+  }
+
+  setMonitorLembretesObservable(lembrete: TituloLembretes[], checkedDefaultValues: boolean) {
+    let lembretes = this._monitorLembretes.getValue();
+
+    lembrete.forEach(p => {
+      p.checked = checkedDefaultValues;
+      lembretes.push({ ...p });
+      this._monitorLembretes.next(lembretes);
+    });
+  }
+
+  onCheckMonitorLembretesChange(checked, lembrete) {
     lembrete.checked = checked;
 
-    let lembretes = this._lembretesCheckBox.getValue();
+    let lembretes = this._monitorLembretes.getValue();
     let index = lembretes.findIndex((d) => d.idLembrete === lembrete.idLembrete);
 
     if (index >= 0) {
@@ -107,7 +155,43 @@ export class LembretesFormComponent implements OnInit {
       lembretes.push({ ...lembrete });
     }
 
-    this._lembretesCheckBox.next(lembrete);
+    this._monitorLembretes.next(lembretes);
+  }
+
+  onMarcarDesmarcarCheckBoxes() {
+    let checksMarcadas = (this.checkboxesMarcadas == true ? false : true);
+    this.onChangeAllCheckBoxesLembretes(checksMarcadas);
+    this.checkboxesMarcadas = checksMarcadas;
+  }
+
+  onChangeAllCheckBoxesLembretes(checked: boolean) {
+    let lembretes = this._monitorLembretes.value;
+    this.resetMonitorLembretesObservable();
+    this.setMonitorLembretesObservable(lembretes, checked);
+  }
+
+  getMonitorLembretesChecked() {
+    return this._monitorLembretes.getValue().filter((d) => d.checked === true);
+  }
+
+  confirmBaixarNotificacao() {
+    let lembretes = this.getMonitorLembretesChecked();
+    let tipoBaixa = ""
+
+    if ((<HTMLInputElement>document.getElementById("radioAdiarMes")).checked) {
+      tipoBaixa = "mes"
+    } else if ((<HTMLInputElement>document.getElementById("radioAdiarSemana")).checked) {
+      tipoBaixa = "semana"
+    } else if ((<HTMLInputElement>document.getElementById("radioAdiarAno")).checked) {
+      tipoBaixa = "ano"
+    } else {
+      tipoBaixa = "baixar"
+    }
+
+    this.service.baixarLembreteMonitor(tipoBaixa, lembretes).toPromise().then(() => {
+      this.closeModal();
+      this.carregarMonitorLembretes(false);
+    });
   }
 
   /* -------------- Metodos Gerais -------------- */

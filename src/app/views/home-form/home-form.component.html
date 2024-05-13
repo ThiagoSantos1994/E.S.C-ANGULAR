@@ -47,20 +47,20 @@
               <a>
                 <i class="fa fa-calendar-check-o"></i>
                 <span>Lembretes</span>
-                <span class="badge badge-pill badge-warning">3</span>
+                <span class="badge badge-pill badge-warning">{{qtdeLembretes}}</span>
               </a>
               <div class="sidebar-submenu">
                 <ul>
                   <li>
-                    <a href="#!" role="button" title="Cadastrar e\ou alterar lembretes" data-toggle="modal" data-target="#modalLembretes"
-                      (click)="carregarCadastroLembretes()">
+                    <a href="#!" role="button" title="Cadastrar e\ou alterar lembretes" data-toggle="modal"
+                      data-target="#modalLembretes" (click)="carregarCadastroLembretes()">
                       <i class="fa fa-plus"></i>
                       <span>Cadastrar\Alterar</span>
                     </a>
                   </li>
                   <li>
-                    <a href="#!" role="button" title="Visualizar lembretes em aberto" data-toggle="modal" data-target="#modalVisualizarLembretes"
-                      (click)="carregarMonitorLembretes()">
+                    <a href="#!" role="button" title="Visualizar lembretes em aberto" data-toggle="modal"
+                      data-target="#modalVisualizarLembretes" (click)="carregarMonitorLembretes()">
                       <i class="fa fa-eye" aria-hidden="true"></i>
                       <span>Abrir Monitor</span>
                     </a>

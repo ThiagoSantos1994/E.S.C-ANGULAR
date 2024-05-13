@@ -14,7 +14,7 @@
     </div>
 
     <h5>Minhas Despesas Mensais</h5>
-    
+
     <hr>
     <div class="d-grid gap-2 d-md-block btn-group-sm">
       <div class="btn-group mr-2" role="group" aria-label="First group">
@@ -286,18 +286,20 @@
                 <tr>
                   <td colspan="8">
                     <br>
-                    <div class="d-grid gap-2 d-md-block btn-group-sm">
-                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" href="#!"
-                        role="button" data-toggle="modal" (click)="resetModalCriarEditarReceita()"
-                        data-target="#modalCriarEditarReceita">
-                        <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
-                          <i class="fas fa-plus"></i> Criar Nova Receita
-                        </span>
-                        <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes !='0,00'">
-                          <i class="fas fa-plus"></i> Adicionar
-                        </span>
-                      </button>
-                    </div>
+                    <span *ngIf="lancamentosFinanceiros$">
+                      <div class="d-grid gap-2 d-md-block">
+                        <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" href="#!"
+                          role="button" data-toggle="modal" (click)="resetModalCriarEditarReceita()"
+                          data-target="#modalCriarEditarReceita">
+                          <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
+                            <i class="fas fa-plus"></i> Criar Nova Receita
+                          </span>
+                          <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes !='0,00'">
+                            <i class="fas fa-plus"></i> Adicionar
+                          </span>
+                        </button>
+                      </div>
+                    </span>
                   <td></td>
                   <td></td>
                 </tr>
@@ -413,39 +415,48 @@
                 <th></th>
                 <td colspan="7">
                   <br>
-                  <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -2% -12% -2% -16%">
-                    <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
+                  <span *ngIf="lancamentosFinanceiros$">
+                    <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -2% -12% -2% -16%">
+                      <!--<span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
                       <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;"
                         role="button" data-toggle="modal" data-target="#ModalDetalheDespesasMensais"
                         (click)="onNovaDespesa()">
                         <i class="fas fa-plus"></i> Criar Nova Despesa
                       </button>
-                    </span>
+                    </span>-->
 
-                    <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes !='0,00'">
-                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;"
-                        role="button" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
-                        (click)="onNovaDespesa()">
-                        <i class="fas fa-plus"></i> Adicionar
-                      </button>
-                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
-                        role="button" (click)="onExcluirDespesa()">
-                        <i class="fas fa-trash-alt"></i> Excluir
-                      </button>
-                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
-                        role="button" (click)="onQuitarDespesa()">
-                        <i class="far fa-calendar-check"></i> Pagar
-                      </button>
-                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #709977;" href="#!"
-                        role="button" (click)="onDesfazerQuitacaoDespesa()">
-                        <i class="far fa-calendar-times"></i> Desfazer Pagamento
-                      </button>
-                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
-                        role="button" (click)="onNovaLinhaSeparacao()">
-                        <i class="fas fa-bars"></i> Nova Linha
-                      </button>
-                    </span>
-                  </div>
+                      <div *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
+                        <div class="alert alert-primary" style="margin: 0% 10% 1% 11%;" role="alert">
+                          <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                          Nenhuma despesa existente neste mês.
+                        </div>
+                      </div>
+
+                      <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes !='0,00'">
+                        <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;"
+                          role="button" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
+                          (click)="onNovaDespesa()">
+                          <i class="fas fa-plus"></i> Adicionar
+                        </button>
+                        <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
+                          role="button" (click)="onExcluirDespesa()">
+                          <i class="fas fa-trash-alt"></i> Excluir
+                        </button>
+                        <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
+                          role="button" (click)="onQuitarDespesa()">
+                          <i class="far fa-calendar-check"></i> Pagar
+                        </button>
+                        <button class="btn text-white" data-mdb-ripple-init style="background-color: #709977;" href="#!"
+                          role="button" (click)="onDesfazerQuitacaoDespesa()">
+                          <i class="far fa-calendar-times"></i> Desfazer Pagamento
+                        </button>
+                        <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
+                          role="button" (click)="onNovaLinhaSeparacao()">
+                          <i class="fas fa-bars"></i> Nova Linha
+                        </button>
+                      </span>
+                    </div>
+                  </span>
                 </td>
                 <td></td>
                 <td></td>

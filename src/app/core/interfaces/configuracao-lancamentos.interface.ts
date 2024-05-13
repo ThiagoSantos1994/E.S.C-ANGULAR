@@ -3,4 +3,5 @@ export interface ConfiguracaoLancamentos{
     mesReferencia?: number;
     idFuncionario: number;
     bviradaAutomatica: boolean;
+    qtdeLembretes?: number;
 }

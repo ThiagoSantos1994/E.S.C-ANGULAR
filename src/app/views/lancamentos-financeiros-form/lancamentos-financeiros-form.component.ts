@@ -153,6 +153,11 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   gravarReceita() {
+    if (null == this.valorReceitaControl.value) {
+      alert('O Valor da receita não pode estar em branco ou vazio.');
+      return;
+    }
+
     let checkDespesaObrigatoria = this.modalCriarEditarReceitaForm.get('checkDespesaObrigatoria').value;
     let ordem = (null != this.receitaSelecionada ? this.receitaSelecionada.idOrdem : null);
 
@@ -299,7 +304,11 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   onNovaDespesa() {
-    this.carregarDetalheDespesa(this.despesaRef, null, -1)
+    if (null == this.despesaRef) {
+      alert("Necessário primeiro criar uma nova receita.");
+    } else {
+      this.carregarDetalheDespesa(this.despesaRef, null, -1)
+    }
   }
 
   obterNovaDespesaObjeto(idDetalheDespesa: number) {

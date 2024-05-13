@@ -3,10 +3,10 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Lembretes } from '../interfaces/lembretes.interface';
+import { DetalheLembrete } from '../interfaces/detalhe-lembrete.interface';
+import { TituloLembretes } from '../interfaces/titulo-lembretes.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -29,18 +29,31 @@ export class LembretesService {
     return this.subject.asObservable();
   }
 
-  getMonitorLembretesPendentes(): Observable<Lembretes> {
-    return this.http.get<Lembretes>(`springboot-esc-backend/api/lembretes/monitor/${this.sessao.getIdLogin()}`)
+  getDetalheLembrete(idLembrete: number): Observable<DetalheLembrete> {
+    return this.http.get<DetalheLembrete>(`springboot-esc-backend/api/lembretes/detalhe/${idLembrete}/${this.sessao.getIdLogin()}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
   }
 
-  getNomeDespesasParceladas(isDespesasEmAberto: boolean): Observable<TituloDespesaResponse> {
-    let carregar = (isDespesasEmAberto ? "default" : "fechado");
-    return this.http.get<TituloDespesaResponse>(`springboot-esc-backend/api/despesasParceladas/obterListaDespesas/${this.sessao.getIdLogin()}/${carregar}`)
+  getMonitorLembretes(): Observable<TituloLembretes> {
+    return this.http.get<TituloLembretes>(`springboot-esc-backend/api/lembretes/monitor/${this.sessao.getIdLogin()}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
   }
+
+  getTituloLembretes(isLembreteEmAberto: boolean): Observable<TituloLembretes> {
+    let carregar = (isLembreteEmAberto ? "true" : "false");
+    return this.http.get<TituloLembretes>(`springboot-esc-backend/api/lembretes/obterTituloLembretes/${this.sessao.getIdLogin()}/${isLembreteEmAberto}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
+
+  baixarLembreteMonitor(tipoBaixa: String, request: TituloLembretes[]) {
+    return this.http.post(`springboot-esc-backend/api/lembretes/monitor/baixar/${tipoBaixa}`, request).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   /*
     getDetalhesDespesaParcelada(idDespesaParcelada: number): Observable<DespesaParceladaResponse> {
       return this.http.get<DespesaParceladaResponse>(`springboot-esc-backend/api/v2/despesasParceladas/consultar/${idDespesaParcelada}/${this.sessao.getIdLogin()}`)

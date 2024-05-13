@@ -1,4 +1,4 @@
-export interface Lembretes{
+export interface DetalheLembrete{
     idLembrete: number;
     idFuncionario: number;
     numeroDias: number;

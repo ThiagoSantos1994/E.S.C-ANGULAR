@@ -16,7 +16,7 @@ export class HomeFormComponent implements OnInit {
 
   //usuario$: Observable<DadosUsuario>;
   usuarioLogado: string;
-  dataAtual: string;
+  qtdeLembretes: number;
 
   constructor(
     //private homeService: HomeService,
@@ -38,7 +38,7 @@ export class HomeFormComponent implements OnInit {
     }
 
     this.usuarioLogado = this.sessaoService.getUserName();
-    this.dataAtual = new Date().toString();
+    this.qtdeLembretes = null;
     //this.getDadosUsuario();
   }
 
@@ -49,7 +49,7 @@ export class HomeFormComponent implements OnInit {
   carregarCadastroLembretes() {
     this.lembreteService.enviaMensagem("cadastro");
   }
-  
+
   carregarMonitorLembretes() {
     this.lembreteService.enviaMensagem("monitor");
   }

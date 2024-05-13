@@ -28,20 +28,15 @@
             <div class="col-xl-8 col-md-6 mb-1" style="height: min-content;">
               <div class="input-group-header">
                 <select class="form-control form-control-sm combo-titulo-lembretes" id="comboTituloDespesa"
-                  (change)="onChangeTituloDespesa($event.target.value)">
+                  (change)="onChangeTituloLembrete($event.target.value)">
                   <option value=""></option>
-                  <option *ngFor="let lembrete of tituloLembretes.despesas" value={{lembrete.idDespesaParcelada}}>
-                    {{lembrete.dsTituloDespesaParcelada}}
+                  <option *ngFor="let lembrete of tituloLembretes$" value={{lembrete.idLembrete}}>
+                    {{lembrete.dsTituloLembrete}}
                   </option>
                 </select>
 
-                <button class="btn text-white " data-mdb-ripple-init style="background-color: #3a2db4; width: 5%;"
-                  role="button" (click)="carregarDetalheDespesaParcelada()">
-                  <i class="fa fa-search" aria-hidden="true"></i>
-                </button>
-
                 <button class="btn text-white " data-mdb-ripple-init style="background-color: #3aad3a; width: 5%;"
-                  role="button" (click)="loadFormDespesaParcelada()">
+                  role="button" (click)="loadFormLembretes()">
                   <i class="fa fa-plus" aria-hidden="true"></i>
                 </button>
 
@@ -55,8 +50,7 @@
               <form [formGroup]="modalLembretesForm">
                 <small class="form-text text-muted checkbox-lembretes-em-aberto">
                   <input class="form-check-input" type="checkbox" formControlName="checkCarregarLembretesEmAberto"
-                    id="checkCarregarLembretesEmAberto"
-                    (click)="onCheckCarregarNomeDespParceladas($event.target.checked)">
+                    id="checkCarregarLembretesEmAberto" (click)="onCheckCarregarTituloLembretes($event.target.checked)">
                   <label class="form-check-label" for="checkCarregarLembretesEmAberto"
                     title="lista o nome dos lembretes que estão em aberto."> Carregar somente
                     lembretes em aberto.
@@ -82,65 +76,95 @@
                     <div class="card-configuracao">
                       <div>
                         <div class="form-check form-check-inline">
-                          <!--<div *ngIf="detalheLancamentosMensais.despesaMensal.tpRelatorio == 'N'"
-                            class="form-check form-check-inline checkDetalheDespesas">
-                            <span class="badge checkDetalheDespesasComum d-inline">
-                              <i class="fa fa-check-circle"> Despesa Comum</i>
-                            </span>
-                          </div>-->
 
-                          <div class="form-check form-check-inline">
-                            <span class="badge d-inline">
-                              <small class="form-text text-muted" style="font-size: small;">
-                                <i class="fa fa-bell-o" aria-hidden="true"></i>
-                                Novo Lembrete
-                              </small>
-                            </span>
+                          <div *ngIf="!lembrete$">
+                            <div class="form-check form-check-inline">
+                              <span class="badge d-inline">
+                                <small class="form-text text-muted" style="font-size: small;">
+                                  <i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
+                                  Novo Lembrete
+                                </small>
+                              </span>
+                            </div>
                           </div>
 
-                          <div class="form-check form-check-inline">
-                            <span class="badge d-inline">
-                              <small class="form-text text-muted" style="font-size: small;">
-                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                                Todos Dias
-                              </small>
-                            </span>
-                          </div>
+                          <div *ngIf="lembrete$">
+                            <div class="form-check form-check-inline">
+                              <span class="badge d-inline">
+                                <small class="form-text text-muted" style="font-size: small;">
+                                  <i class="fa fa-bell-o" aria-hidden="true"></i>
+                                  {{lembrete$.dataInicial}}
+                                </small>
+                              </span>
+                            </div>
 
-                          <div class="form-check form-check-inline">
-                            <span class="badge d-inline">
-                              <small class="form-text text-muted" style="font-size: small;">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>
-                                Seg,Ter,Qua,Qui,Sex,Sab,Dom
-                              </small>
-                            </span>
-                          </div>
+                            <div *ngIf="lembrete$.tpHabilitaNotificacaoDiaria == 'S'"
+                              class="form-check form-check-inline">
+                              <span class="badge d-inline">
+                                <small class="form-text text-muted" style="font-size: small;">
+                                  <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                                  Todos Dias
+                                </small>
+                              </span>
+                            </div>
 
-                          <div class="form-check form-check-inline">
-                            <span class="badge d-inline">
-                              <small class="form-text text-muted" style="font-size: small;">
-                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                                01/01/24
-                              </small>
-                            </span>
-                          </div>
+                            <div
+                              *ngIf="lembrete$.tpSegunda !== 'N' || lembrete$.tpTerca !== 'N'|| lembrete$.tpQuarta !== 'N' || lembrete$.tpQuinta !== 'N' || lembrete$.tpSexta !== 'N' || lembrete$.tpSabado !== 'N' || lembrete$.tpDomingo !== 'N'"
+                              class="form-check form-check-inline">
+                              <span class="badge d-inline">
+                                <small class="form-check form-check-inline form-text text-muted"
+                                  style="font-size: small;">
+                                  <i class="fa fa-calendar" aria-hidden="true"></i>
+                                  <span style="padding-left: 7%;"></span>
+                                  <div *ngIf="lembrete$.tpSegunda == 'S'">Seg.</div>
+                                  <div *ngIf="lembrete$.tpTerca == 'S'">Ter.</div>
+                                  <div *ngIf="lembrete$.tpQuarta == 'S'">Qua.</div>
+                                  <div *ngIf="lembrete$.tpQuinta == 'S'">Qui.</div>
+                                  <div *ngIf="lembrete$.tpSexta == 'S'">Sex.</div>
+                                  <div *ngIf="lembrete$.tpSabado == 'S'">Sáb.</div>
+                                  <div *ngIf="lembrete$.tpDomingo == 'S'">Dom.</div>
+                                </small>
+                              </span>
+                            </div>
 
-                          <div class="form-check form-check-inline">
-                            <span class="badge d-inline">
-                              <small class="form-text text-muted" style="font-size: small;">
-                                <i class="fa fa-flag-checkered" aria-hidden="true"></i>
-                                10 Dia(s)
-                              </small>
-                            </span>
-                          </div>
+                            <div
+                              *ngIf="lembrete$.data1 !== '' || lembrete$.data2 !== '' || lembrete$.data3 !== '' || lembrete$.data4 !== '' || lembrete$.data5 !== ''"
+                              class="form-check form-check-inline">
+                              <span class="badge d-inline">
+                                <small class="form-check form-check-inline form-text text-muted"
+                                  style="font-size: small;">
+                                  <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                                  <span style="padding-left: 2%;"></span>
+                                  <div *ngIf="lembrete$.data1 !== ''">{{lembrete$.data1}}</div>
+                                  <span style="padding-left: 2%;"></span>
+                                  <div *ngIf="lembrete$.data2 !== ''">{{lembrete$.data2}}</div>
+                                  <span style="padding-left: 2%;"></span>
+                                  <div *ngIf="lembrete$.data3 !== ''">{{lembrete$.data3}}</div>
+                                  <span style="padding-left: 2%;"></span>
+                                  <div *ngIf="lembrete$.data4 !== ''">{{lembrete$.data4}}</div>
+                                  <span style="padding-left: 2%;"></span>
+                                  <div *ngIf="lembrete$.data5 !== ''">{{lembrete$.data5}}</div>
+                                </small>
+                              </span>
+                            </div>
 
-                          <div class="form-check form-check-inline">
-                            <span class="badge d-inline">
-                              <small class="form-text text-muted" style="font-size: small;">
-                                <i class="fa fa-refresh" aria-hidden="true"></i>
-                                AUTO
-                              </small>
-                            </span>
+                            <div *ngIf="lembrete$.numeroDias > 0" class="form-check form-check-inline">
+                              <span class="badge d-inline">
+                                <small class="form-text text-muted" style="font-size: small;">
+                                  <i class="fa fa-flag-checkered" aria-hidden="true"></i>
+                                  {{lembrete$.numeroDias}} Dia(s)
+                                </small>
+                              </span>
+                            </div>
+
+                            <div *ngIf="lembrete$.tpRenovarAuto == 'S'" class="form-check form-check-inline">
+                              <span class="badge d-inline">
+                                <small class="form-text text-muted" style="font-size: small;">
+                                  <i class="fa fa-refresh" aria-hidden="true"></i>
+                                  AUTO
+                                </small>
+                              </span>
+                            </div>
                           </div>
 
                         </div>
@@ -169,7 +193,7 @@
                     Observações do lembrete
                   </small>
                   <form [formGroup]="modalLembretesForm">
-                    <textarea class="form-control" id="observacoesLembrete" rows="7" onkeyup="toUpper(this)"
+                    <textarea class="form-control" id="observacoesLembrete" rows="7"
                       formControlName="observacoesLembrete"></textarea>
                   </form>
                 </div>
@@ -293,12 +317,12 @@
                   Descrição do lembrete</th>
               </tr>
             </thead>
-            <tbody class="customtable" *ngIf="lembretes$">
-              <tr *ngFor="let lembrete of lembretes$">
+            <tbody class="customtable" *ngIf="tituloLembretes$">
+              <tr *ngFor="let lembrete of tituloLembretes$">
                 <td class="text-center">
                   <label class="checkbox-wrap checkbox-primary">
                     <input type="checkbox" name="lembretes[]"
-                      (click)="onCheckParcelaChange($event.target.checked, parcela)">
+                      (click)="onCheckMonitorLembretesChange($event.target.checked, lembrete)">
                     <span class="checkmark"></span>
                   </label>
                 </td>
@@ -310,7 +334,7 @@
             </tbody>
           </table>
 
-          <div *ngIf="!lembretes$">
+          <div *ngIf="!tituloLembretes$">
             <div class="alert alert-primary" style="padding-left: 30%;" role="alert">
               Não há lembretes no momento.
             </div>
@@ -319,8 +343,62 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmEditarParcelas()">
-          <i class="far fa-calendar-check"></i> Baixar</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal"
+          (click)="abrirModalBaixaLembretesSelecionados()">
+          <i class="far fa-calendar-check"></i> Baixar </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Fechar</button>
+      </div>
+    </div>
+  </ng-template>
+</form>
+
+<!------------------------  Modal Baixar Lembretes - Monitor ------------------------>
+<form>
+  <ng-template #modalBaixarLembretesMonitor>
+    <div class="modal-content">
+      <div class="form-group modal-header">
+        <div>
+          <i class="fa fa-calendar-check-o" aria-hidden="true"></i> Selecione abaixo a opção para a baixa do(s)
+          lembrete(s)
+        </div>
+      </div>
+
+      <div class="form-group modal-body" style="padding-block-start: 1%; padding-block-end: 1%; margin: 2%;">
+        <div class="col-sm-8-monitor-lembretes">
+          <form [formGroup]="modalCategoriaDetalheDespesaForm">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="radioButtonBaixaLembrete" id="radioAdiarMes" checked>
+              <label class="form-check-label" for="radioAdiarMes">
+                Adiar notificação para 1 mês
+              </label>
+              <br>
+
+              <input class="form-check-input" type="radio" name="radioButtonBaixaLembrete" id="radioAdiarSemana">
+              <label class="form-check-label" for="radioAdiarSemana">
+                Adiar notificação para 1 semana
+              </label>
+              <br>
+
+              <input class="form-check-input" type="radio" name="radioButtonBaixaLembrete" id="radioAdiarAno">
+              <label class="form-check-label" for="radioAdiarAno">
+                Adiar notificação para 1 ano
+              </label>
+              <br>
+
+              <input class="form-check-input" type="radio" name="radioButtonBaixaLembrete" id="radioBaixar">
+              <label class="form-check-label" for="radioBaixar">
+                Baixar a notificação do lembrete
+              </label>
+              <br>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" style="background-color: #3aad3a;" data-dismiss="modal"
+          (click)="confirmBaixarNotificacao()">
+          <i class="far fa-calendar-check"></i> Confirmar</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Fechar</button>
       </div>
     </div>
