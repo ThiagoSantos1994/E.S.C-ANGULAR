@@ -36,12 +36,12 @@
                 </select>
 
                 <button class="btn text-white " data-mdb-ripple-init style="background-color: #3aad3a; width: 5%;"
-                  role="button" (click)="loadFormLembretes()">
+                  role="button" id="buttonAdicionar" (click)="habilitarCampos()">
                   <i class="fa fa-plus" aria-hidden="true"></i>
                 </button>
 
                 <button class="btn text-white " data-mdb-ripple-init
-                  style="background-color: #c90d0d; width: 5%; margin-left: 0%;" role="button"
+                  style="background-color: #c90d0d; width: 5%; margin-left: 0%;" role="button" id="buttonExcluir"
                   (click)="excluirDespesaParcelada()">
                   <i class="fa fa-trash-o" aria-hidden="true"></i>
                 </button>
@@ -77,7 +77,7 @@
                       <div>
                         <div class="form-check form-check-inline">
 
-                          <div *ngIf="!lembrete$">
+                          <div *ngIf="!detalheLembrete">
                             <div class="form-check form-check-inline">
                               <span class="badge d-inline">
                                 <small class="form-text text-muted" style="font-size: small;">
@@ -88,17 +88,17 @@
                             </div>
                           </div>
 
-                          <div *ngIf="lembrete$">
+                          <div *ngIf="detalheLembrete">
                             <div class="form-check form-check-inline">
                               <span class="badge d-inline">
                                 <small class="form-text text-muted" style="font-size: small;">
                                   <i class="fa fa-bell-o" aria-hidden="true"></i>
-                                  {{lembrete$.dataInicial}}
+                                  {{detalheLembrete.dataInicial}}
                                 </small>
                               </span>
                             </div>
 
-                            <div *ngIf="lembrete$.tpHabilitaNotificacaoDiaria == 'S'"
+                            <div *ngIf="detalheLembrete.tpHabilitaNotificacaoDiaria == 'S'"
                               class="form-check form-check-inline">
                               <span class="badge d-inline">
                                 <small class="form-text text-muted" style="font-size: small;">
@@ -109,55 +109,55 @@
                             </div>
 
                             <div
-                              *ngIf="lembrete$.tpSegunda !== 'N' || lembrete$.tpTerca !== 'N'|| lembrete$.tpQuarta !== 'N' || lembrete$.tpQuinta !== 'N' || lembrete$.tpSexta !== 'N' || lembrete$.tpSabado !== 'N' || lembrete$.tpDomingo !== 'N'"
+                              *ngIf="detalheLembrete.tpSegunda !== 'N' || detalheLembrete.tpTerca !== 'N'|| detalheLembrete.tpQuarta !== 'N' || detalheLembrete.tpQuinta !== 'N' || detalheLembrete.tpSexta !== 'N' || detalheLembrete.tpSabado !== 'N' || detalheLembrete.tpDomingo !== 'N'"
                               class="form-check form-check-inline">
                               <span class="badge d-inline">
                                 <small class="form-check form-check-inline form-text text-muted"
                                   style="font-size: small;">
                                   <i class="fa fa-calendar" aria-hidden="true"></i>
                                   <span style="padding-left: 7%;"></span>
-                                  <div *ngIf="lembrete$.tpSegunda == 'S'">Seg.</div>
-                                  <div *ngIf="lembrete$.tpTerca == 'S'">Ter.</div>
-                                  <div *ngIf="lembrete$.tpQuarta == 'S'">Qua.</div>
-                                  <div *ngIf="lembrete$.tpQuinta == 'S'">Qui.</div>
-                                  <div *ngIf="lembrete$.tpSexta == 'S'">Sex.</div>
-                                  <div *ngIf="lembrete$.tpSabado == 'S'">Sáb.</div>
-                                  <div *ngIf="lembrete$.tpDomingo == 'S'">Dom.</div>
+                                  <div *ngIf="detalheLembrete.tpSegunda == 'S'">Seg.</div>
+                                  <div *ngIf="detalheLembrete.tpTerca == 'S'">Ter.</div>
+                                  <div *ngIf="detalheLembrete.tpQuarta == 'S'">Qua.</div>
+                                  <div *ngIf="detalheLembrete.tpQuinta == 'S'">Qui.</div>
+                                  <div *ngIf="detalheLembrete.tpSexta == 'S'">Sex.</div>
+                                  <div *ngIf="detalheLembrete.tpSabado == 'S'">Sáb.</div>
+                                  <div *ngIf="detalheLembrete.tpDomingo == 'S'">Dom.</div>
                                 </small>
                               </span>
                             </div>
 
                             <div
-                              *ngIf="lembrete$.data1 !== '' || lembrete$.data2 !== '' || lembrete$.data3 !== '' || lembrete$.data4 !== '' || lembrete$.data5 !== ''"
+                              *ngIf="detalheLembrete.data1 !== '' || detalheLembrete.data2 !== '' || detalheLembrete.data3 !== '' || detalheLembrete.data4 !== '' || detalheLembrete.data5 !== ''"
                               class="form-check form-check-inline">
                               <span class="badge d-inline">
                                 <small class="form-check form-check-inline form-text text-muted"
                                   style="font-size: small;">
                                   <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
                                   <span style="padding-left: 2%;"></span>
-                                  <div *ngIf="lembrete$.data1 !== ''">{{lembrete$.data1}}</div>
+                                  <div *ngIf="detalheLembrete.data1 !== ''">{{detalheLembrete.data1}}</div>
                                   <span style="padding-left: 2%;"></span>
-                                  <div *ngIf="lembrete$.data2 !== ''">{{lembrete$.data2}}</div>
+                                  <div *ngIf="detalheLembrete.data2 !== ''">{{detalheLembrete.data2}}</div>
                                   <span style="padding-left: 2%;"></span>
-                                  <div *ngIf="lembrete$.data3 !== ''">{{lembrete$.data3}}</div>
+                                  <div *ngIf="detalheLembrete.data3 !== ''">{{detalheLembrete.data3}}</div>
                                   <span style="padding-left: 2%;"></span>
-                                  <div *ngIf="lembrete$.data4 !== ''">{{lembrete$.data4}}</div>
+                                  <div *ngIf="detalheLembrete.data4 !== ''">{{detalheLembrete.data4}}</div>
                                   <span style="padding-left: 2%;"></span>
-                                  <div *ngIf="lembrete$.data5 !== ''">{{lembrete$.data5}}</div>
+                                  <div *ngIf="detalheLembrete.data5 !== ''">{{detalheLembrete.data5}}</div>
                                 </small>
                               </span>
                             </div>
 
-                            <div *ngIf="lembrete$.numeroDias > 0" class="form-check form-check-inline">
+                            <div *ngIf="detalheLembrete.numeroDias > 0" class="form-check form-check-inline">
                               <span class="badge d-inline">
                                 <small class="form-text text-muted" style="font-size: small;">
                                   <i class="fa fa-flag-checkered" aria-hidden="true"></i>
-                                  {{lembrete$.numeroDias}} Dia(s)
+                                  {{detalheLembrete.numeroDias}} Dia(s)
                                 </small>
                               </span>
                             </div>
 
-                            <div *ngIf="lembrete$.tpRenovarAuto == 'S'" class="form-check form-check-inline">
+                            <div *ngIf="detalheLembrete.tpRenovarAuto == 'S'" class="form-check form-check-inline">
                               <span class="badge d-inline">
                                 <small class="form-text text-muted" style="font-size: small;">
                                   <i class="fa fa-refresh" aria-hidden="true"></i>
@@ -175,7 +175,7 @@
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #74335f; height: 0%; margin: 1%;" href="#!" role="button"
                     title="Programa o agendamento da notificação" data-toggle="modal"
-                    data-target="#modalAgendarLembrete" (click)="onEditarTituloDespesa()">
+                    data-target="#modalAgendarLembrete" id="buttonAgendar">
                     <i class="fa fa-clock-o" aria-hidden="true"></i> Agendar
                   </button>
                 </div>
@@ -203,7 +203,7 @@
 
           <div class="modal-footer">
             <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
-              (click)="gravarDespesaParcelada()">
+              (click)="gravarDetalhesLembrete()" id="buttonGravar">
               <i class="fa fa-floppy-o"></i> Gravar Lembrete
             </button>
           </div>
@@ -247,7 +247,7 @@
 
 <!------------------------  Modal Agendar Lembrete ------------------------>
 <div class="modal fade" id="modalAgendarLembrete" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" role="document" style="margin: 1% 37%;">
+  <div class="modal-dialog" role="document" style="margin: 1% 450px;">
     <div class="modal-content">
       <div class="form-group modal-header">
         <div>
@@ -255,36 +255,109 @@
           Painel de Agendamento
           <br>
           <br>
-          <small class="form-text text-muted">
-            Selecione as opções de agendamento para o lembrete
+          <small class="form-text text-muted" style="font-size: smaller;">
+            Configure abaixo as opções de agendamento para visualização do lembrete
           </small>
         </div>
       </div>
 
       <div class="form-group modal-body" style="padding-block-start: 0%; padding-block-end: 0%; margin: -1%;">
-        <form>
+        <form [formGroup]="modalAgendarLembretesForm">
           <div class="form-group">
-            <label>Valor Parcela:</label>
-            <input class="form-control text-left form-control-sm" id="novoValorParcela" currencyMask maxlength="16"
-              autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',' }" placeholder="">
+            <div class="card-grupo-itens">
+              <div class="form-check form-check-inline">
+                <label for="">Exibir lembrete apartir do dia :</label>
+                <input class="form-control text-left form-control-sm" id="dataLembrete" mask="00/00/0000"
+                  [(ngModel)]="number" style="width: 21%; margin: 1% 1% 1% 1%;">
+              </div>
+
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" formControlName="checkContagemRegressiva"
+                  id="checkContagemRegressiva" (click)="onCheckContagemRegressiva($event.target.checked)">
+                <label class="form-check-label" for="checkContagemRegressiva" style="margin-inline: inherit;">Contagem
+                  Regressiva</label>
+              </div>
+
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" formControlName="checkRenovaAUTO" id="checkRenovaAUTO">
+                <label class="form-check-label" for="checkRenovaAUTO" style="margin-inline: inherit;">Renovar
+                  AUTO alerta</label>
+              </div>
+
+              <div class="form-check form-check-inline">
+                <label class="form-check-label" for="" style="margin-inline: inherit;">Exibir o alerta de
+                  contagem
+                  a partir de: </label>
+                <input class="form-control text-left form-control-sm" formControlName="qtdeDiasContagem"
+                  id="qtdeDiasContagem" mask="00" [(ngModel)]="number" style="width: 8%; margin: 0% -2% 1%;">
+                <label class="form-check-label" for="" style="margin: 1% 3%;"> Dias. </label>
+              </div>
+            </div>
+
             <br>
-            <label>Status Pagamento:</label>
-            <select class="form-control form-control-sm" id="comboStatus">
-              <option value=""></option>
-              <option value="N">Pendente</option>
-              <option value="S">Pago</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="col-form-label">Observações:</label>
-            <textarea class="form-control" id="observacoes"></textarea>
+
+            <div class="card-grupo-itens">
+              <div class="form-check form-check-inline" style="padding-block-end: inherit;">
+                <input class="form-check-input" type="checkbox" formControlName="checkNotificarDiasSemana"
+                  id="checkNotificarDiasSemana" (click)="onCheckNotificarDiasSemana($event.target.checked)">
+                <label class="form-check-label" for="checkNotificarDiasSemana"> Notificar-me todos os dias
+                  da semana marcados abaixo:
+                </label>
+              </div>
+
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" formControlName="checkSeg" id="checkSeg">
+                <label class="form-check-label" for="checkSeg" style="margin-inline: inherit;">Seg.</label>
+
+                <input class="form-check-input" type="checkbox" formControlName="checkTer" id="checkTer">
+                <label class="form-check-label" for="checkTer" style="margin-inline: inherit;">Ter.</label>
+
+                <input class="form-check-input" type="checkbox" formControlName="checkQua" id="checkQua">
+                <label class="form-check-label" for="checkQua" style="margin-inline: inherit;">Qua.</label>
+
+                <input class="form-check-input" type="checkbox" formControlName="checkQui" id="checkQui">
+                <label class="form-check-label" for="checkQui" style="margin-inline: inherit;">Qui.</label>
+
+                <input class="form-check-input" type="checkbox" formControlName="checkSex" id="checkSex">
+                <label class="form-check-label" for="checkSex" style="margin-inline: inherit;">Sex.</label>
+
+                <input class="form-check-input" type="checkbox" formControlName="checkSab" id="checkSab">
+                <label class="form-check-label" for="checkSab" style="margin-inline: inherit;">Sab.</label>
+
+                <input class="form-check-input" type="checkbox" formControlName="checkDom" id="checkDom">
+                <label class="form-check-label" for="checkDom" style="margin-inline: inherit;">Dom.</label>
+              </div>
+            </div>
+
+            <br>
+
+            <div class="card-grupo-itens" style="padding-block-end: 1%;">
+              <div class="form-check form-check-inline" style="padding-block-end: inherit;">
+                <input class="form-check-input" type="checkbox" formControlName="checkNotificarDatas"
+                  id="checkNotificarDatas" (click)="onCheckNotificarDatasProgramadas($event.target.checked)">
+                <label class="form-check-label" for="checkNotificarDatas"> Notificar-me nas datas programadas abaixo:
+                </label>
+              </div>
+
+              <div class="form-check form-check-inline" style="margin-inline: -0.5%;">
+                <input class="form-control text-left form-control-sm" id="data1" mask="00/00/0000" [(ngModel)]="number">
+
+                <input class="form-control text-left form-control-sm" id="data2" mask="00/00/0000" [(ngModel)]="number">
+
+                <input class="form-control text-left form-control-sm" id="data3" mask="00/00/0000" [(ngModel)]="number">
+
+                <input class="form-control text-left form-control-sm" id="data4" mask="00/00/0000" [(ngModel)]="number">
+
+                <input class="form-control text-left form-control-sm" id="data5" mask="00/00/0000" [(ngModel)]="number">
+              </div>
+            </div>
           </div>
         </form>
       </div>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal"
-          (click)="confirmEditarParcelas()">Aplicar</button>
+          (click)="aplicarAgendamentoLembrete()">Aplicar</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Fechar</button>
       </div>
     </div>

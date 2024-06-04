@@ -104,6 +104,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
         checkViradaAutomatica: [res.bviradaAutomatica, Validators.required]
       });
 
+      this.lancamentosFinanceiros$ = null;
+      this.lancamentosMensais = null;
       this.carregarLancamentosFinanceiros();
     },
       err => {

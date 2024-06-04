@@ -89,7 +89,9 @@
               <div class="col mr-4">
                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                   Receita</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {{lancamentosFinanceiros$.vlSaldoPositivo}}</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  <span *ngIf="lancamentosFinanceiros$"> R$ {{lancamentosFinanceiros$.vlSaldoPositivo}}</span>
+                </div>
               </div>
               <div class="col-auto">
                 <i class="fa fa-dollar fa-2x text-gray-300"></i>
@@ -107,7 +109,9 @@
               <div class="col mr-1">
                 <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                   Despesas</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {{lancamentosFinanceiros$.vlTotalDespesas}}</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  <span *ngIf="lancamentosFinanceiros$"> R$ {{lancamentosFinanceiros$.vlTotalDespesas}}</span>
+                </div>
               </div>
               <div class="col-auto">
                 <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -125,8 +129,9 @@
               <div class="col mr-1">
                 <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                   Á Pagar</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">R$
-                  {{lancamentosFinanceiros$.vlTotalPendentePagamento}}</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  <span *ngIf="lancamentosFinanceiros$"> R$ {{lancamentosFinanceiros$.vlTotalPendentePagamento}}</span>
+                </div>
               </div>
               <div class="col-auto">
                 <i class="far fa-handshake fa-2x text-gray-300"></i>
@@ -169,7 +174,8 @@
       <span class="badge badge-info d-inline">
         <i class="fas fa-bullhorn"></i>
       </span>
-      <span (click)="obterDetalhesLabelQuitacaoMes()"> {{lancamentosFinanceiros$.labelQuitacaoParcelasMes}}</span>
+      <span *ngIf="lancamentosFinanceiros$" (click)="obterDetalhesLabelQuitacaoMes()">
+        {{lancamentosFinanceiros$.labelQuitacaoParcelasMes}}</span>
     </div>
   </header>
 
@@ -188,7 +194,8 @@
                   <th scope="col">Opções</th>
                 </tr>
               </thead>
-              <tbody class="customtable">
+
+              <tbody *ngIf="lancamentosFinanceiros$">
                 <tr *ngFor="let despesasFixas of lancamentosFinanceiros$.despesasFixasMensais">
                   <td class="text-left">
                     <span *ngIf="despesasFixas.tpStatus == '+'" class="font-color-receita-positiva">
@@ -313,7 +320,7 @@
               <thead class="thead-light">
                 <tr>
                   <th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label="" style="width: 19.8889px;">
-                    <form [formGroup]="checkDespesasForm">
+                    <form [formGroup]="checkDespesasForm" *ngIf="lancamentosFinanceiros$">
                       <input type="checkbox" formControlName="checkMarcarTodasDespesas" name="despesa[]"
                         onclick="marcarTodasDespesas(this)" (click)="onMarcarDesmarcarCheckBoxes()">
                     </form>
@@ -326,7 +333,7 @@
                   <th scope="col"></th>
                 </tr>
               </thead>
-              <tbody *ngIf="lancamentosFinanceiros$.lancamentosMensais">
+              <tbody *ngIf="lancamentosFinanceiros$">
                 <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais">
                   <th>
                     <label class="checkbox-wrap checkbox-primary">
@@ -336,7 +343,8 @@
                     </label>
                   </th>
 
-                  <td>
+                  <td data-toggle="modal" data-target="#modalDetalheDespesasMensais"
+                    (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)">
                     <span *ngIf="despesa.tpLinhaSeparacao == 'N'">
                       <span>
                         {{despesa.svlTotalDespesa}}
@@ -530,7 +538,7 @@
           </div>
 
           <div class="form-group modal-body" style=" padding-block-end: 0%; padding-block-start: 0%;">
-            <form [formGroup]="modalParametrizacaoForm">
+            <form [formGroup]="modalParametrizacaoForm" *ngIf="lancamentosFinanceiros$">
               <label>Virada do mês deve ocorrer no dia:</label>
               <select class="form-control form-control-sm" formControlName="dataVirada">
                 <option value="1">01</option>

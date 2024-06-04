@@ -3,7 +3,7 @@ export interface DetalheLembrete{
     idFuncionario: number;
     numeroDias: number;
     dsTituloLembrete: string;
-    tpHabilitaNotificacaoDiaria?: number;
+    tpHabilitaNotificacaoDiaria?: string;
     tpSegunda?: string;
     tpTerca?: string;
     tpQuarta?: string;
@@ -22,5 +22,5 @@ export interface DetalheLembrete{
     data4?: string;
     data5?: string;
     checked?: boolean;
-    change?: boolean;
+    changeValues?: boolean;
 }

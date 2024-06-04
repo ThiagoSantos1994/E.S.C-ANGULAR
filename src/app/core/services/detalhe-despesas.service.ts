@@ -13,6 +13,7 @@ import { StringResponse } from '../interfaces/string-response.interface.';
 import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
+import { ObservacoesDetalheDespesaRequest } from '../interfaces/observacoes-detalhe-despesa-request.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +58,19 @@ export class DetalheDespesasService {
     return this.http.get<ChaveKey>(`springboot-esc-backend/api/lancamentosFinanceiros/obterNovaChaveKey/${tipoChave}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
+  }
+
+  getObservacoesDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number): Observable<StringResponse> {
+    return this.http.get<StringResponse>(`springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/observacoes/consultar/${idDespesa}/${idDetalheDespesa}/${ordemExibicao}/${this.sessao.getIdLogin()}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
+
+  gravarObservacoesDetalheDespesa(request: ObservacoesDetalheDespesaRequest) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/observacoes/gravar`;
+    return this.http.post(url, request).pipe(
+      catchError(error => this.handleError(error))
+    );
   }
 
   getDetalheDespesasMensais(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number): Observable<DetalheLancamentosMensais> {

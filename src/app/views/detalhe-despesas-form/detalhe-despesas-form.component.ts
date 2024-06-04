@@ -9,6 +9,7 @@ import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface'
 import { Parcelas } from 'src/app/core/interfaces/despesa-parcelada-response.interface';
 import { DetalheDespesasMensais } from 'src/app/core/interfaces/detalhe-despesas-mensais.interface';
 import { DetalheLancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais-detalhe.interface';
+import { ObservacoesDetalheDespesaRequest } from 'src/app/core/interfaces/observacoes-detalhe-despesa-request.interface';
 import { PagamentoDespesasRequest } from 'src/app/core/interfaces/pagamento-despesas-request.interface';
 import { TituloDespesaResponse } from 'src/app/core/interfaces/titulo-despesa-response.interface';
 import { DespesasParceladasService } from 'src/app/core/services/despesas-parceladas.service';
@@ -26,6 +27,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   private _parcelasAmortizacaoChange = new BehaviorSubject<Parcelas[]>([]);
   private tituloDespesasParceladas: TituloDespesaResponse;
   private detalheLancamentosMensais: DetalheLancamentosMensais;
+  private observacoes: ObservacoesDetalheDespesaRequest;
   private parcelasAmortizacao: Parcelas[];
 
   private modalConfirmacaoQuitarDespesasForm: FormGroup;
@@ -51,6 +53,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   private eventModalEditarValores: string = "";
   private objectModalEditarValores: any;
+  private objectModalObservacoes: any;
 
   @ViewChild('modalDetalheDespesasMensais') modalDetalheDespesasMensais;
   @ViewChild('modalConfirmacaoExcluirDespesa') modalConfirmacaoExcluirDespesa;
@@ -124,6 +127,8 @@ export class DetalheDespesasFormComponent implements OnInit {
 
     this.onEditarValores();
     this.lancamentosService.limparDadosTemporarios().toPromise().then(() => { });
+
+    (<HTMLInputElement>document.getElementById("observacoesDetalhe")).value = "";
   }
 
   onQuitarDespesa() {
@@ -728,6 +733,37 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.closeModal();
   }
 
+  carregarObservacoes(objeto) {
+    this.objectModalObservacoes = objeto;
+
+    this.detalheService.getObservacoesDetalheDespesa(this.despesaRef, objeto.idDetalheDespesa, objeto.idOrdem).subscribe(res => {
+      (<HTMLInputElement>document.getElementById("observacoesDetalhe")).value = res.observacoes;
+    },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  gravarObservacoes() {
+    let objeto = this.objectModalObservacoes;
+
+    let observacaoRequest = this.observacoes = {
+      idDespesa: objeto.idDespesa,
+      idDetalheDespesa: objeto.idDetalheDespesa,
+      idOrdem: objeto.idOrdem,
+      idFuncionario: objeto.idFuncionario,
+      dsObservacoes: (<HTMLInputElement>document.getElementById("observacoesDetalhe")).value
+    }
+
+    this.detalheService.gravarObservacoesDetalheDespesa(observacaoRequest).toPromise().then(() => {
+      alert('Observações gravadas com sucesso!');
+    },
+      err => {
+        console.log(err);
+      });
+  }
+
   atualizarOrdemLinhaDetalheDespesa(acao, objeto) {
     let ordemAtual = objeto.idOrdem;
 
@@ -1018,6 +1054,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
     (<HTMLInputElement>document.getElementById("subTotalValores")).value = "R$ 0,00";
   }
+
 
   carregarParcelasAmortizacao() {
     this.resetParcelasAmortizacaoChange();

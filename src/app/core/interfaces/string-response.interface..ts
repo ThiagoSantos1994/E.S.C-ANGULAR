@@ -1,6 +1,7 @@
 export interface StringResponse{
     mesAno: string,
     mensagem: string;
+    observacoes: string;
     nomeDespesaParcelada: string;
     vlSubTotalDespesa: string;
     vlDespesaParcelada: string;

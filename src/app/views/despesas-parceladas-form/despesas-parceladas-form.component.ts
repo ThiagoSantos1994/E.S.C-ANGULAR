@@ -111,7 +111,7 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   carregarEditorParcelas() {
-    (<HTMLInputElement>document.getElementById("novoValorParcela")).value = (<HTMLInputElement>document.getElementById("valorParcela")).value;
+    (<HTMLInputElement>document.getElementById("novoValorParcela")).value = (<HTMLInputElement>document.getElementById("valorParcela")).value.trim();
     (<HTMLInputElement>document.getElementById("comboStatus")).value = "";
     (<HTMLInputElement>document.getElementById("observacoes")).value = "";
   }
@@ -124,7 +124,7 @@ export class DespesasParceladasFormComponent implements OnInit {
       return;
     }
 
-    let valorParcela = (<HTMLInputElement>document.getElementById("novoValorParcela")).value;
+    let valorParcela = (<HTMLInputElement>document.getElementById("novoValorParcela")).value.trim();
     let statusParcela = (<HTMLInputElement>document.getElementById("comboStatus")).value;
     let observacoes = (<HTMLInputElement>document.getElementById("observacoes")).value;
 
