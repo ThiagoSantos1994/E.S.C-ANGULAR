@@ -36,150 +36,147 @@
                 </select>
 
                 <button class="btn text-white " data-mdb-ripple-init style="background-color: #3aad3a; width: 5%;"
-                  role="button" id="buttonAdicionar" (click)="habilitarCampos()">
+                  role="button" id="buttonAdicionar" (click)="habilitarCampos(true)">
                   <i class="fa fa-plus" aria-hidden="true"></i>
                 </button>
 
                 <button class="btn text-white " data-mdb-ripple-init
                   style="background-color: #c90d0d; width: 5%; margin-left: 0%;" role="button" id="buttonExcluir"
-                  (click)="excluirDespesaParcelada()">
+                  (click)="excluirLembrete()">
                   <i class="fa fa-trash-o" aria-hidden="true"></i>
                 </button>
               </div>
 
-              <form [formGroup]="modalLembretesForm">
-                <small class="form-text text-muted checkbox-lembretes-em-aberto">
-                  <input class="form-check-input" type="checkbox" formControlName="checkCarregarLembretesEmAberto"
-                    id="checkCarregarLembretesEmAberto" (click)="onCheckCarregarTituloLembretes($event.target.checked)">
-                  <label class="form-check-label" for="checkCarregarLembretesEmAberto"
-                    title="lista o nome dos lembretes que estão em aberto."> Carregar somente
-                    lembretes em aberto.
-                  </label>
+              <small class="form-text text-muted checkbox-lembretes-em-aberto">
+                <input class="form-check-input" type="checkbox" id="checkCarregarLembretesEmAberto"
+                  (click)="onCheckCarregarTituloLembretes($event.target.checked)" checked>
+                <label class="form-check-label" for="checkCarregarLembretesEmAberto"
+                  title="lista o nome dos lembretes que estão em aberto."> Carregar somente
+                  lembretes em aberto.
+                </label>
+              </small>
+              <br>
+              <div class="card-titulo-lembrete">
+                <small class="form-text text-muted" style="font-size: small;">
+                  Nome do Lembrete
                 </small>
-                <br>
-                <div class="card-titulo-lembrete">
-                  <small class="form-text text-muted" style="font-size: small;">
-                    Nome do Lembrete
-                  </small>
-                  <div class="row row-card-titulo-lembrete">
-                    <input class="form-control form-control-sm" type="text" formControlName="nomeLembrete"
-                      id="nomeLembrete" onkeyup="toUpper(this)">
-                  </div>
+                <div class="row row-card-titulo-lembrete">
+                  <input class="form-control form-control-sm" type="text" id="nomeLembrete" onkeyup="toUpper(this)">
                 </div>
+              </div>
 
-                <div class="input-group-header-cards">
-                  <div class="card-notificacao">
-                    <small class="form-text text-muted" style="font-size: small;">
-                      Painel de agendamento de notificações
-                    </small>
+              <div class="input-group-header-cards">
+                <div class="card-notificacao">
+                  <small class="form-text text-muted" style="font-size: small;">
+                    Painel de agendamento de notificações
+                  </small>
 
-                    <div class="card-configuracao">
-                      <div>
-                        <div class="form-check form-check-inline">
+                  <div class="card-configuracao">
+                    <div>
+                      <div class="form-check form-check-inline">
 
-                          <div *ngIf="!detalheLembrete">
-                            <div class="form-check form-check-inline">
-                              <span class="badge d-inline">
-                                <small class="form-text text-muted" style="font-size: small;">
-                                  <i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
-                                  Novo Lembrete
-                                </small>
-                              </span>
-                            </div>
+                        <div *ngIf="!detalheLembrete || detalheLembrete.idLembrete == -1">
+                          <div class="form-check form-check-inline">
+                            <span class="badge d-inline">
+                              <small class="form-text text-muted" style="font-size: small;">
+                                <i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
+                                Novo Lembrete
+                              </small>
+                            </span>
                           </div>
-
-                          <div *ngIf="detalheLembrete">
-                            <div class="form-check form-check-inline">
-                              <span class="badge d-inline">
-                                <small class="form-text text-muted" style="font-size: small;">
-                                  <i class="fa fa-bell-o" aria-hidden="true"></i>
-                                  {{detalheLembrete.dataInicial}}
-                                </small>
-                              </span>
-                            </div>
-
-                            <div *ngIf="detalheLembrete.tpHabilitaNotificacaoDiaria == 'S'"
-                              class="form-check form-check-inline">
-                              <span class="badge d-inline">
-                                <small class="form-text text-muted" style="font-size: small;">
-                                  <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                                  Todos Dias
-                                </small>
-                              </span>
-                            </div>
-
-                            <div
-                              *ngIf="detalheLembrete.tpSegunda !== 'N' || detalheLembrete.tpTerca !== 'N'|| detalheLembrete.tpQuarta !== 'N' || detalheLembrete.tpQuinta !== 'N' || detalheLembrete.tpSexta !== 'N' || detalheLembrete.tpSabado !== 'N' || detalheLembrete.tpDomingo !== 'N'"
-                              class="form-check form-check-inline">
-                              <span class="badge d-inline">
-                                <small class="form-check form-check-inline form-text text-muted"
-                                  style="font-size: small;">
-                                  <i class="fa fa-calendar" aria-hidden="true"></i>
-                                  <span style="padding-left: 7%;"></span>
-                                  <div *ngIf="detalheLembrete.tpSegunda == 'S'">Seg.</div>
-                                  <div *ngIf="detalheLembrete.tpTerca == 'S'">Ter.</div>
-                                  <div *ngIf="detalheLembrete.tpQuarta == 'S'">Qua.</div>
-                                  <div *ngIf="detalheLembrete.tpQuinta == 'S'">Qui.</div>
-                                  <div *ngIf="detalheLembrete.tpSexta == 'S'">Sex.</div>
-                                  <div *ngIf="detalheLembrete.tpSabado == 'S'">Sáb.</div>
-                                  <div *ngIf="detalheLembrete.tpDomingo == 'S'">Dom.</div>
-                                </small>
-                              </span>
-                            </div>
-
-                            <div
-                              *ngIf="detalheLembrete.data1 !== '' || detalheLembrete.data2 !== '' || detalheLembrete.data3 !== '' || detalheLembrete.data4 !== '' || detalheLembrete.data5 !== ''"
-                              class="form-check form-check-inline">
-                              <span class="badge d-inline">
-                                <small class="form-check form-check-inline form-text text-muted"
-                                  style="font-size: small;">
-                                  <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                                  <span style="padding-left: 2%;"></span>
-                                  <div *ngIf="detalheLembrete.data1 !== ''">{{detalheLembrete.data1}}</div>
-                                  <span style="padding-left: 2%;"></span>
-                                  <div *ngIf="detalheLembrete.data2 !== ''">{{detalheLembrete.data2}}</div>
-                                  <span style="padding-left: 2%;"></span>
-                                  <div *ngIf="detalheLembrete.data3 !== ''">{{detalheLembrete.data3}}</div>
-                                  <span style="padding-left: 2%;"></span>
-                                  <div *ngIf="detalheLembrete.data4 !== ''">{{detalheLembrete.data4}}</div>
-                                  <span style="padding-left: 2%;"></span>
-                                  <div *ngIf="detalheLembrete.data5 !== ''">{{detalheLembrete.data5}}</div>
-                                </small>
-                              </span>
-                            </div>
-
-                            <div *ngIf="detalheLembrete.numeroDias > 0" class="form-check form-check-inline">
-                              <span class="badge d-inline">
-                                <small class="form-text text-muted" style="font-size: small;">
-                                  <i class="fa fa-flag-checkered" aria-hidden="true"></i>
-                                  {{detalheLembrete.numeroDias}} Dia(s)
-                                </small>
-                              </span>
-                            </div>
-
-                            <div *ngIf="detalheLembrete.tpRenovarAuto == 'S'" class="form-check form-check-inline">
-                              <span class="badge d-inline">
-                                <small class="form-text text-muted" style="font-size: small;">
-                                  <i class="fa fa-refresh" aria-hidden="true"></i>
-                                  AUTO
-                                </small>
-                              </span>
-                            </div>
-                          </div>
-
                         </div>
+
+                        <div *ngIf="detalheLembrete">
+                          <div class="form-check form-check-inline">
+                            <span class="badge d-inline">
+                              <small class="form-text text-muted" style="font-size: small;">
+                                <i class="fa fa-bell-o" aria-hidden="true"></i>
+                                {{dataInicialReferencia}}
+                              </small>
+                            </span>
+                          </div>
+
+                          <div *ngIf="detalheLembrete.tpHabilitaNotificacaoDiaria == 'S'"
+                            class="form-check form-check-inline">
+                            <span class="badge d-inline">
+                              <small class="form-text text-muted" style="font-size: small;">
+                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                                Dias Semana
+                              </small>
+                            </span>
+                          </div>
+
+                          <div
+                            *ngIf="detalheLembrete.tpSegunda !== 'N' || detalheLembrete.tpTerca !== 'N'|| detalheLembrete.tpQuarta !== 'N' || detalheLembrete.tpQuinta !== 'N' || detalheLembrete.tpSexta !== 'N' || detalheLembrete.tpSabado !== 'N' || detalheLembrete.tpDomingo !== 'N'"
+                            class="form-check form-check-inline">
+                            <span class="badge d-inline">
+                              <small class="form-check form-check-inline form-text text-muted"
+                                style="font-size: small;">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                                <span style="padding-left: 7%;"></span>
+                                <div *ngIf="detalheLembrete.tpSegunda == 'S'">Seg.</div>
+                                <div *ngIf="detalheLembrete.tpTerca == 'S'">Ter.</div>
+                                <div *ngIf="detalheLembrete.tpQuarta == 'S'">Qua.</div>
+                                <div *ngIf="detalheLembrete.tpQuinta == 'S'">Qui.</div>
+                                <div *ngIf="detalheLembrete.tpSexta == 'S'">Sex.</div>
+                                <div *ngIf="detalheLembrete.tpSabado == 'S'">Sáb.</div>
+                                <div *ngIf="detalheLembrete.tpDomingo == 'S'">Dom.</div>
+                              </small>
+                            </span>
+                          </div>
+
+                          <div
+                            *ngIf="dataReferencia1 !== '' || dataReferencia2 !== '' || dataReferencia3 !== '' || dataReferencia4 !== '' || dataReferencia5 !== ''"
+                            class="form-check form-check-inline">
+                            <span class="badge d-inline">
+                              <small class="form-check form-check-inline form-text text-muted"
+                                style="font-size: small;">
+                                <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                                <span style="padding-left: 2%;"></span>
+                                <div *ngIf="dataReferencia1 !== ''">{{dataReferencia1}}</div>
+                                <span style="padding-left: 2%;"></span>
+                                <div *ngIf="dataReferencia2 !== ''">{{dataReferencia2}}</div>
+                                <span style="padding-left: 2%;"></span>
+                                <div *ngIf="dataReferencia3 !== ''">{{dataReferencia3}}</div>
+                                <span style="padding-left: 2%;"></span>
+                                <div *ngIf="dataReferencia4 !== ''">{{dataReferencia4}}</div>
+                                <span style="padding-left: 2%;"></span>
+                                <div *ngIf="dataReferencia5 !== ''">{{dataReferencia5}}</div>
+                              </small>
+                            </span>
+                          </div>
+
+                          <div *ngIf="detalheLembrete.numeroDias > 0" class="form-check form-check-inline">
+                            <span class="badge d-inline">
+                              <small class="form-text text-muted" style="font-size: small;">
+                                <i class="fa fa-flag-checkered" aria-hidden="true"></i>
+                                {{detalheLembrete.numeroDias}} Dia(s)
+                              </small>
+                            </span>
+                          </div>
+
+                          <div *ngIf="detalheLembrete.tpRenovarAuto == 'S'" class="form-check form-check-inline">
+                            <span class="badge d-inline">
+                              <small class="form-text text-muted" style="font-size: small;">
+                                <i class="fa fa-refresh" aria-hidden="true"></i>
+                                AUTO
+                              </small>
+                            </span>
+                          </div>
+                        </div>
+
                       </div>
                     </div>
                   </div>
-
-                  <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #74335f; height: 0%; margin: 1%;" href="#!" role="button"
-                    title="Programa o agendamento da notificação" data-toggle="modal"
-                    data-target="#modalAgendarLembrete" id="buttonAgendar">
-                    <i class="fa fa-clock-o" aria-hidden="true"></i> Agendar
-                  </button>
                 </div>
-              </form>
+
+                <button class="btn text-white" data-mdb-ripple-init
+                  style="background-color: #74335f; height: 0%; margin: 1%;" href="#!" role="button"
+                  title="Programa o agendamento da notificação" data-toggle="modal" data-target="#modalAgendarLembrete"
+                  id="buttonAgendar" (click)="carregarModalAgendamentoLembretes()">
+                  <i class="fa fa-clock-o" aria-hidden="true"></i> Agendar
+                </button>
+              </div>
             </div>
           </div>
 
@@ -192,10 +189,7 @@
                   <small class="form-text text-muted" style="font-size: small;">
                     Observações do lembrete
                   </small>
-                  <form [formGroup]="modalLembretesForm">
-                    <textarea class="form-control" id="observacoesLembrete" rows="7"
-                      formControlName="observacoesLembrete"></textarea>
-                  </form>
+                  <textarea class="form-control" id="observacoesLembrete" rows="7"></textarea>
                 </div>
               </div>
             </div>
@@ -204,7 +198,15 @@
           <div class="modal-footer">
             <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
               (click)="gravarDetalhesLembrete()" id="buttonGravar">
-              <i class="fa fa-floppy-o"></i> Gravar Lembrete
+              <i class="fa fa-floppy-o"></i> Salvar
+            </button>
+            <button class="btn text-white" data-mdb-ripple-init style="background-color: #087768;" role="button"
+              (click)="baixarLembrete()" id="buttonBaixar">
+              <i class="fa fa-calendar-check-o"></i> Baixar
+            </button>
+            <button class="btn text-white" data-mdb-ripple-init style="background-color: #d3733b;" role="button"
+              (click)="reativarLembrete()" id="buttonReativar">
+              <i class="fa fa-clock-o"></i> Reativar Lembrete
             </button>
           </div>
         </div>
@@ -247,7 +249,7 @@
 
 <!------------------------  Modal Agendar Lembrete ------------------------>
 <div class="modal fade" id="modalAgendarLembrete" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" role="document" style="margin: 1% 450px;">
+  <div class="modal-dialog" role="document" style="margin: 1% 32%;">
     <div class="modal-content">
       <div class="form-group modal-header">
         <div>
@@ -268,7 +270,7 @@
               <div class="form-check form-check-inline">
                 <label for="">Exibir lembrete apartir do dia :</label>
                 <input class="form-control text-left form-control-sm" id="dataLembrete" mask="00/00/0000"
-                  [(ngModel)]="number" style="width: 21%; margin: 1% 1% 1% 1%;">
+                  [(ngModel)]="number" style="width: 23%; margin: 1% 1% 1% 1%;">
               </div>
 
               <div class="form-check form-check-inline">
@@ -333,9 +335,10 @@
 
             <div class="card-grupo-itens" style="padding-block-end: 1%;">
               <div class="form-check form-check-inline" style="padding-block-end: inherit;">
-                <input class="form-check-input" type="checkbox" formControlName="checkNotificarDatas"
-                  id="checkNotificarDatas" (click)="onCheckNotificarDatasProgramadas($event.target.checked)">
-                <label class="form-check-label" for="checkNotificarDatas"> Notificar-me nas datas programadas abaixo:
+                <input class="form-check-input" type="checkbox" formControlName="checkNotificarDatasProgramadas"
+                  id="checkNotificarDatasProgramadas" (click)="onCheckNotificarDatasProgramadas($event.target.checked)">
+                <label class="form-check-label" for="checkNotificarDatasProgramadas"> Notificar-me nas datas programadas
+                  abaixo:
                 </label>
               </div>
 
@@ -363,6 +366,7 @@
     </div>
   </div>
 </div>
+
 
 <!------------------------  Modal Monitor Visualizacao Lembretes ------------------------>
 <form>

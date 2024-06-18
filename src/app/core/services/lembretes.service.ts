@@ -54,62 +54,17 @@ export class LembretesService {
     );
   }
 
-  /*
-    getDetalhesDespesaParcelada(idDespesaParcelada: number): Observable<DespesaParceladaResponse> {
-      return this.http.get<DespesaParceladaResponse>(`springboot-esc-backend/api/v2/despesasParceladas/consultar/${idDespesaParcelada}/${this.sessao.getIdLogin()}`)
-        .pipe(map((response) => { return response }),
-          catchError(this.handleError));
-    }
-  
-    gerarFluxoParcelas(idDespesaParcelada: number, valorParcela: String, qtdeParcelas: number, dataReferencia: string): Observable<DespesaParceladaResponse> {
-      return this.http.get<DespesaParceladaResponse>(`springboot-esc-backend/api/v2/despesasParceladas/gerarFluxoParcelas/${idDespesaParcelada}/${valorParcela}/${qtdeParcelas}/${dataReferencia}/${this.sessao.getIdLogin()}`)
-        .pipe(map((response) => { return response }),
-          catchError(this.handleError));
-    }
-  
-    gravarDespesa(request: Despesa) {
-      return this.http.post(`springboot-esc-backend/api/despesasParceladas/gravar`, request).pipe(
-        catchError(error => this.handleError(error))
-      );
-    }
-  
-    gravarParcelas(request: Parcelas[]) {
-      return this.http.post(`springboot-esc-backend/api/despesasParceladas/parcelas/gravar`, request).pipe(
-        catchError(error => this.handleError(error))
-      );
-    }
-  
-    excluirDespesa(idDespesaParcelada: number) {
-      return this.http.post(`springboot-esc-backend/api/despesasParceladas/excluir/${idDespesaParcelada}/${this.sessao.getIdLogin()}`, {}).pipe(
-        catchError(error => this.handleError(error))
-      );
-    }
-  
-    quitarDespesa(idDespesaParcelada: number, valorQuitacao: string) {
-      return this.http.post(`springboot-esc-backend/api/despesasParceladas/quitar/${idDespesaParcelada}/${this.sessao.getIdLogin()}/${valorQuitacao}`, {}).pipe(
-        catchError(error => this.handleError(error))
-      );
-    }
-  
-    excluirParcela(idDespesaParcelada: number, idParcela: number) {
-      return this.http.post(`springboot-esc-backend/api/despesasParceladas/parcelas/excluir/${idDespesaParcelada}/${idParcela}/${this.sessao.getIdLogin()}`, {}).pipe(
-        catchError(error => this.handleError(error))
-      );
-    }
-  
-    obterSubTotalDespesasEmAberto(): Observable<StringResponse> {
-      return this.http.get<StringResponse>(`springboot-esc-backend/api/despesasParceladas/obterCalculoValorTotalPendente/${this.sessao.getIdLogin()}`)
-        .pipe(map((response) => { return response }),
-          catchError(this.handleError));
-    }
-  
-    getParcelasParaAmortizacao(idDespesaParcelada: number): Observable<Parcelas[]> {
-      return this.http.get<Parcelas[]>(`springboot-esc-backend/api/despesasParceladas/obterParcelasParaAmortizacao/${idDespesaParcelada}/${this.sessao.getIdLogin()}`)
-        .pipe(map((response) => { return response }),
-          catchError(this.handleError));
-    }
-  */
+  gravarDetalhesLembrete(request: DetalheLembrete) {
+    return this.http.post(`springboot-esc-backend/api/lembretes/detalhe/gravar`, request).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
 
+  excluirDetalhesLembrete(request: DetalheLembrete) {
+    return this.http.post(`springboot-esc-backend/api/lembretes/detalhe/excluir`, request).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('Ocorreu um erro:', error.error.message);

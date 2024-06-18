@@ -47,7 +47,6 @@ export class DespesasParceladasFormComponent implements OnInit {
 
     this.service.recebeMensagem().subscribe(d => {
       this.loadFormDespesaParcelada();
-      this.carregarListaDespesasParceladas(true);
     }, () => {
       alert('Ocorreu um erro ao carregar os dados da despesa parcelada, tente novamente mais tarde.')
     })
@@ -85,6 +84,8 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.service.obterSubTotalDespesasEmAberto().subscribe((res) => {
       this.subTotalDespesasEmAberto = formatRealNumber(res.vlCalculo);
     });
+
+    this.carregarListaDespesasParceladas(true);
   }
 
   onQuantidadeParcelasChange() {

@@ -1,6 +1,7 @@
 export interface DetalheLembrete{
     idLembrete: number;
     idFuncionario: number;
+    tpBaixado: string;
     numeroDias: number;
     dsTituloLembrete: string;
     tpHabilitaNotificacaoDiaria?: string;
