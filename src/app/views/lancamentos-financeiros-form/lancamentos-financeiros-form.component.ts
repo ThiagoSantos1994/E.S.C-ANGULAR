@@ -73,6 +73,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.receitaSelecionada = null;
     this.resetDespesasCheckbox();
     this.carregarLancamentosFinanceiros();
+    this.sessao.validarSessao();
   }
 
   carregarLancamentosFinanceiros() {
@@ -155,6 +156,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   gravarReceita() {
+    
     if (null == this.valorReceitaControl.value) {
       alert('O Valor da receita não pode estar em branco ou vazio.');
       return;

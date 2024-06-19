@@ -10,4 +10,5 @@ export interface StringResponse{
     isTituloJaExistente: string;
     isDespesaExistente: string;
     qtDespesas: string;
+    isSessaoValida: boolean;
 }

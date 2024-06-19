@@ -1,6 +1,7 @@
+import { formatDate } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { BsModalRef, BsModalService, formatDate } from 'ngx-bootstrap';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { BehaviorSubject } from 'rxjs';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
 import { DespesaParceladaResponse, Parcelas } from 'src/app/core/interfaces/despesa-parcelada-response.interface';
@@ -107,7 +108,7 @@ export class DespesasParceladasFormComponent implements OnInit {
       vigenciaIni.setMonth(vigenciaIni.getMonth() + (meses - 1));
 
       //Exibir nova data
-      (<HTMLInputElement>document.getElementById("vigenciaFinal")).value = formatDate(vigenciaIni, 'MM/YYYY');
+      (<HTMLInputElement>document.getElementById("vigenciaFinal")).value = formatDate(vigenciaIni, 'MM/YYYY', 'en-US');
     }
   }
 
@@ -170,9 +171,25 @@ export class DespesasParceladasFormComponent implements OnInit {
 
     parcela.forEach(p => {
       p.changeValues = changeDefaultValues;
+      p.isParcelaEmAtraso = this.convertBooleanToChar(this.isValidaParcelaEmAtraso(p));
       parcelas.push({ ...p });
       this._parcelas.next(parcela);
     });
+  }
+
+  isValidaParcelaEmAtraso(parcela: Parcelas): Boolean {
+    if (parcela.tpBaixado == 'S') {
+      return false;
+    }
+
+    let anoParcela = parserToInt(parcela.dsDataVencimento.substring(3, 7));
+    let anoAtual = parserToInt(this.getAnoAtual());
+
+    if (anoParcela <= anoAtual) {
+      return parserToInt(parcela.dsDataVencimento) < parserToInt(this.getDataMesAtual());
+    } else {
+      return false;
+    }
   }
 
   onValorDespesaChange() {
@@ -515,6 +532,17 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.modalRef.hide();
   }
 
+  convertBooleanToChar(value): string {
+    return (value ? "S" : "N");
+  }
+
+  getDataMesAtual() {
+    return formatDate(Date.now(), 'MM/yyyy', 'en-US');
+  }
+
+  getAnoAtual() {
+    return formatDate(Date.now(), 'yyyy', 'en-US');
+  }
 }
 
 function parserToInt(str) {

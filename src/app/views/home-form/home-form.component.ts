@@ -14,12 +14,10 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
 })
 export class HomeFormComponent implements OnInit {
 
-  //usuario$: Observable<DadosUsuario>;
-  usuarioLogado: string;
-  qtdeLembretes: number;
+  private usuarioLogado: string;
+  private qtdeLembretes: number;
 
   constructor(
-    //private homeService: HomeService,
     private sessaoService: SessaoService,
     private despesasParceladasService: DespesasParceladasService,
     private lembreteService: LembretesService,
@@ -27,46 +25,23 @@ export class HomeFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.validaSessao();
-  }
-
-  validaSessao() {
-    if (!this.sessaoService.isLogged()) {
-      alert('Desculpe! ocorreu um erro ao carregar os dados da pagina, estamos redirecionando para a pagina de login!');
-      this.sessaoService.logout();
-      this.router.navigate(['login']);
-    }
-
+    this.sessaoService.validarSessao();
     this.usuarioLogado = this.sessaoService.getUserName();
     this.qtdeLembretes = null;
-    //this.getDadosUsuario();
   }
 
   carregarDespesasParceladas() {
     this.despesasParceladasService.enviaMensagem();
+    this.sessaoService.validarSessao();
   }
 
   carregarCadastroLembretes() {
     this.lembreteService.enviaMensagem("cadastro");
+    this.sessaoService.validarSessao();
   }
 
   carregarMonitorLembretes() {
     this.lembreteService.enviaMensagem("monitor");
+    this.sessaoService.validarSessao();
   }
-
-  /*getDadosUsuario() {
-    const tokenId = this.sessaoService.getToken();
-    this.usuario$ = this.homeService.getDadosUsuario(this.sessaoService.getIdLogin());
-
-    this.homeService.getDadosUsuario(idLogin).subscribe((response: Usuario) => {
-      this.usuario$ = response;
-    },
-    err => {
-        console.log(err); 
-        alert('Desculpe! ocorreu um erro ao carregar os dados da pagina, estamos redirecionando para a pagina de login!');
-        this.sessaoService.logout();
-        this.router.navigate(['login']);
-    });
-  }*/
-
 }

@@ -13,7 +13,8 @@ export class LoginFormComponent implements OnInit {
 
   loginForm: FormGroup;
   modalReference: any;
-
+  validacaoLogin: boolean;
+  
   @ViewChild('modalLoginInvalido') modalUsuarioInvalido: any;
 
   //Seta o focus do campo caso o login esteja invalido
@@ -33,6 +34,7 @@ export class LoginFormComponent implements OnInit {
       userName: ['', Validators.required],
       password: ['', Validators.required]
     })
+    this.validacaoLogin = true;
   }
 
   login() {
@@ -45,7 +47,8 @@ export class LoginFormComponent implements OnInit {
     },
       err => {
         if (err.status == 401) {
-          this.open(this.modalUsuarioInvalido);
+          this.validacaoLogin = false;
+          //this.open(this.modalUsuarioInvalido);
         }
         console.log(err);
         this.reloadForm();

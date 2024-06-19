@@ -3,7 +3,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { isEmpty } from 'rxjs/operators';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
 import { DetalheLembrete } from 'src/app/core/interfaces/detalhe-lembrete.interface';
 import { TituloLembretes } from 'src/app/core/interfaces/titulo-lembretes.interface';

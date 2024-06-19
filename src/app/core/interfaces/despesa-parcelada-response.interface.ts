@@ -45,4 +45,5 @@ export interface Parcelas {
     tpParcelaAmortizada: String;
     checked?: Boolean;
     changeValues?: Boolean;
+    isParcelaEmAtraso?: String;
 }

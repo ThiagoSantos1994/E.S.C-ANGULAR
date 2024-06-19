@@ -1,45 +1,55 @@
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<!------ Include the above in your HEAD tag ---------->
+<section class="vh-100">
+    <div class="container-fluid h-custom">
+        <div class="row d-flex justify-content-center align-items-center h-100" style="background-color: #677171;">
+            <div class="col-md-9 col-lg-6 col-xl-5">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                    class="img-fluid" alt="Sample image">
+            </div>
+            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                <form [formGroup]="loginForm" (submit)="login()">
+                    <div class="right-content">
+                        <h3 class="form-title" style="color: azure;">E.S.C Login</h3>
+                    </div>
 
-<div class="wrapper fadeInDown">
-    <div id="formContent">
-        <!-- Tabs Titles -->
+                    <div data-mdb-input-init class="form-group form-outline mb-4">
+                        <input type="email" formControlName="userName" id="userName"
+                            class="form-control form-control-lg" placeholder="Digite o usuario" />
+                        <app-vmessage *ngIf="loginForm.get('userName').errors?.required" text='Usuario é obrigatório!'>
+                        </app-vmessage>
+                    </div>
 
-        <!-- Icon -->
-        <div class="fadeIn first">
-            <div id="formFooter">
-                <h3>E.S.C - Login</h3>
+                    <div data-mdb-input-init class="form-group form-outline mb-3">
+                        <input type="password" formControlName="password" id="password"
+                            class="form-control form-control-lg" placeholder="Digite a senha" />
+                        <app-vmessage *ngIf="loginForm.get('password').errors?.required" text='Senha é obrigatório!'>
+                        </app-vmessage>
+                    </div>
+
+                    <div *ngIf="!validacaoLogin">
+                        <span class="alert alert-danger" style="float:right;width:100%;">Usuario e\ou Senha
+                            Inválidos!</span>
+                    </div>
+
+                    <div class="text-center text-lg-start mt-4 pt-2">
+                        <button [disabled]="loginForm.invalid" type="submit" data-mdb-button-init data-mdb-ripple-init
+                            class="btn btn-primary btn-lg"
+                            style="padding-left: 2.5rem; padding-right: 2.5rem;">Entrar</button>
+                    </div>
+
+
+                </form>
             </div>
         </div>
-
-        <form [formGroup]="loginForm" class="form mt-4" (submit)="login()">
-
-            <div class="form-group">
-                <input #userNameFocus formControlName="userName" class="fadeIn second" placeholder="Digite o usuario"
-                    autofocus>
-                <app-vmessage *ngIf="loginForm.get('userName').errors?.required" text='Usuario é obrigatório!'>
-                </app-vmessage>
-            </div>
-
-            <div class="form-group">
-                <input formControlName="password" type="password" class="fadeIn third" placeholder="Digite a senha">
-                <app-vmessage *ngIf="loginForm.get('password').errors?.required" text='Senha é obrigatório!'>
-                </app-vmessage>
-            </div>
-
-            <input [disabled]="loginForm.invalid" type="submit" class="fadeIn fourth" value="Entrar">
-
-            <!-- Remind Passowrd -->
-            <div id="formFooter">
-                <a class="underlineHover" href="#">Esqueceu sua senha?</a>
-            </div>
-        </form>
     </div>
-</div>
+    <div
+        class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
+        <div class="text-white mb-3 mb-md-0">
+            Copyright © 2024. Todos os direitos reservados a Thiago Santos.
+        </div>
+    </div>
+</section>
 
-<ng-template #modalLoginInvalido let-modal>
+<!--<ng-template #modalLoginInvalido let-modal>
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">Oops!!</h4>
         <button type="button" class="close" aria-label="Close" (click)="close()">
@@ -52,4 +62,4 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-dark" (click)="close()">Ok Entendi!</button>
     </div>
-</ng-template>
+</ng-template>-->

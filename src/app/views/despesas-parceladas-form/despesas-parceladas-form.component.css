@@ -434,6 +434,11 @@ element.style {
   background-color: #256d9d;
 }
 
+.badge-atrasado {
+  color: #fff;
+  background-color: #e41b1b;
+}
+
 .modalEditarParcelas {
   text-align: left;
   width: 24%;
