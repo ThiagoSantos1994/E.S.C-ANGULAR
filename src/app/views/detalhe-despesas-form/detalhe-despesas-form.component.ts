@@ -25,7 +25,8 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
 export class DetalheDespesasFormComponent implements OnInit {
   private _detalheDespesasChange = new BehaviorSubject<DetalheDespesasMensais[]>([]);
   private _parcelasAmortizacaoChange = new BehaviorSubject<Parcelas[]>([]);
-  private tituloDespesasParceladas: TituloDespesaResponse;
+  private tituloDespesasParcelada: TituloDespesaResponse;
+  private tituloDespesasRelatorio: TituloDespesaResponse;
   private detalheLancamentosMensais: DetalheLancamentosMensais;
   private observacoes: ObservacoesDetalheDespesaRequest;
   private parcelasAmortizacao: Parcelas[];
@@ -72,7 +73,11 @@ export class DetalheDespesasFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.tituloDespesasParceladas = {
+    this.tituloDespesasParcelada = {
+      despesas: []
+    }
+
+    this.tituloDespesasRelatorio = {
       despesas: []
     }
 
@@ -182,6 +187,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   adicionarNovaDespesa() {
     this.resetDetalheDespesasChange();
+    this.carregarListaDespesasTipoRelatorio();
     this.detalheLancamentosMensais = null;
 
     this.detalheService.getChaveKey("DETALHEDESPESA").subscribe((res) => {
@@ -319,6 +325,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   carregarDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
     this.resetDetalheDespesasChange();
+    this.carregarListaDespesasTipoRelatorio();
 
     this.detalheService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
       this.detalheLancamentosMensais = res;
@@ -339,14 +346,58 @@ export class DetalheDespesasFormComponent implements OnInit {
     });
   }
 
+  bloquearControlesDespesaTipoRelatorio(isBloqueado: boolean) {
+    (<HTMLInputElement>document.getElementById("buttonQuitar")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonDesfazerPagamento")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonImportar")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonAtualizar")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonDespesasParceladas")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonAmortizarParcelas")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonAdiarParcelas")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonDesfazerAdiantarFluxo")).disabled = isBloqueado;
+  }
+
+  validarCategoriaDespesaLoad(despesa: DespesaMensal) {
+    if (despesa.tpAnotacao == "S") {
+      this.onCategoriaRascunho(true);
+    } else if (despesa.tpRelatorio == "S") {
+      this.onCategoriaRelatorio(true);
+    } else if (despesa.tpDebitoAutomatico == "S") {
+      this.onCategoriaDebitoAuto(true);
+    } else if (despesa.tpDebitoCartao == "S") {
+      this.onCategoriaDebitoCartao(true);
+    } else if (despesa.tpEmprestimoAPagar == "S") {
+      this.onCategoriaEmpAPagar(true);
+    } else if (despesa.tpEmprestimo == "S") {
+      this.onCategoriaEmpAReceber(true);
+    } else if (despesa.tpPoupanca == "S") {
+      this.onCategoriaPoupancaPositiva(true);
+    } else if (despesa.tpPoupancaNegativa == "S") {
+      this.onCategoriaPoupancaNegativa(true);
+    } else {
+      this.onCategoriaRascunho(false);
+      this.onCategoriaRelatorio(false);
+      this.onCategoriaDebitoAuto(false);
+      this.onCategoriaDebitoCartao(false);
+      this.onCategoriaEmpAPagar(false);
+      this.onCategoriaEmpAReceber(false);
+      this.onCategoriaPoupancaPositiva(false);
+      this.onCategoriaPoupancaNegativa(false);
+    }
+  }
+
   carregarFormDetalheDespesasMensais(despesa: DespesaMensal) {
     (<HTMLInputElement>document.getElementById("valorLimiteDespesa")).value = despesa.vlLimiteExibicao;
 
     this.modalDetalheDespesasMensaisForm.setValue({
       nomeDespesa: (despesa.dsNomeDespesa),
-      checkLimiteMesAnterior: (despesa.tpReferenciaSaldoMesAnterior == "S" ? true : false),
-      checkReprocessarDespesasNaoParceladas: (despesa.tpReprocessar == "S" ? true : false)
+      checkLimiteMesAnterior: (despesa.tpReferenciaSaldoMesAnterior == "S"),
+      checkReprocessarDespesasNaoParceladas: (despesa.tpReprocessar == "S")
     });
+
+    if (!despesa.isNovaDespesa) {
+      this.bloquearControlesDespesaTipoRelatorio(despesa.tpRelatorio == "S");
+    }
   }
 
   setDetalheDespesaMensalObservable(despesa: DetalheDespesasMensais[]) {
@@ -433,11 +484,19 @@ export class DetalheDespesasFormComponent implements OnInit {
       checkDespesaEmprestimoAPagar: (detalheDespesa.tpEmprestimo == "S" ? true : false),
       checkDespesaEmprestimoAReceber: (detalheDespesa.tpEmprestimoAPagar == "S" ? true : false)
     });
+
+    this.validarCategoriaDespesaLoad(detalheDespesa);
   }
 
   carregarListaDespesasParceladasImportacao(isTodasDespesas: boolean) {
     this.detalheService.getTituloDespesasParceladas(isTodasDespesas).subscribe((res) => {
-      this.tituloDespesasParceladas = res;
+      this.tituloDespesasParcelada = res;
+    });
+  }
+
+  carregarListaDespesasTipoRelatorio() {
+    this.detalheService.getTituloDespesasRelatorio(this.despesaRef).subscribe((res) => {
+      this.tituloDespesasRelatorio = res;
     });
   }
 
@@ -494,6 +553,12 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.changeDetalheDespesasMensais(detalhe);
   }
 
+  onChangeDespesaRelatorioAssociada(despesaRelatorio, detalhe) {
+    detalhe.idDespesaLinkRelatorio = despesaRelatorio;
+    detalhe.tpRelatorio = (despesaRelatorio == 0);
+    this.changeDetalheDespesasMensais(detalhe);
+  }
+
   onChangeStatusPagamentoDetalhe(status, detalhe) {
     detalhe.tpStatus = StatusPagamentoEnum[status];
     this.changeDetalheDespesasMensais(detalhe);
@@ -507,11 +572,92 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.detalheLancamentosMensais.despesaMensal.tpReprocessar = (checked ? 'S' : 'N');
   }
 
+  onCategoriaRascunho(checked) {
+    (<HTMLInputElement>document.getElementById("checkDespesaRelatorio")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAPagar")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAReceber")).disabled = checked;
+
+    if ((<HTMLInputElement>document.getElementById("checkDespesaDebitoAutomatico")).checked) {
+      this.onCategoriaDebitoAuto(true);
+    }
+
+    if ((<HTMLInputElement>document.getElementById("checkDespesaDebitoCartao")).checked) {
+      this.onCategoriaDebitoCartao(true);
+    }
+  }
+
+  onCategoriaRelatorio(checked) {
+    (<HTMLInputElement>document.getElementById("checkDespesaRascunho")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaDebitoAutomatico")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaDebitoCartao")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAPagar")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAReceber")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaPoupancaPositiva")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaPoupancaNegativa")).disabled = checked;
+  }
+
+  onCategoriaDebitoAuto(checked) {
+    (<HTMLInputElement>document.getElementById("checkDespesaRelatorio")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaDebitoCartao")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAPagar")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAReceber")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaPoupancaPositiva")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaPoupancaNegativa")).disabled = checked;
+
+    if ((<HTMLInputElement>document.getElementById("checkDespesaRascunho")).checked) {
+      this.onCategoriaRascunho(true);
+    }
+  }
+
+  onCategoriaDebitoCartao(checked) {
+    (<HTMLInputElement>document.getElementById("checkDespesaRelatorio")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaDebitoAutomatico")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAPagar")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAReceber")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaPoupancaPositiva")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaPoupancaNegativa")).disabled = checked;
+
+    if ((<HTMLInputElement>document.getElementById("checkDespesaRascunho")).checked) {
+      this.onCategoriaRascunho(true);
+    }
+  }
+
+  onCategoriaEmpAPagar(checked) {
+    (<HTMLInputElement>document.getElementById("checkDespesaRelatorio")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaRascunho")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaDebitoAutomatico")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaDebitoCartao")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAReceber")).disabled = checked;
+  }
+
+  onCategoriaEmpAReceber(checked) {
+    (<HTMLInputElement>document.getElementById("checkDespesaRelatorio")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaRascunho")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaDebitoAutomatico")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaDebitoCartao")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAPagar")).disabled = checked;
+  }
+
+  onCategoriaPoupancaPositiva(checked) {
+    (<HTMLInputElement>document.getElementById("checkDespesaRelatorio")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaDebitoAutomatico")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaDebitoCartao")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaPoupancaNegativa")).disabled = checked;
+  }
+
+  onCategoriaPoupancaNegativa(checked) {
+    (<HTMLInputElement>document.getElementById("checkDespesaRelatorio")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaDebitoAutomatico")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaDebitoCartao")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaPoupancaPositiva")).disabled = checked;
+  }
+
   changeDetalheDespesasMensais(detalhe: DetalheDespesasMensais) {
     let detalheDespesa = this._detalheDespesasChange.getValue();
     let index = detalheDespesa.findIndex((d) => d.idDetalheDespesa === detalhe.idDetalheDespesa && d.idOrdem === detalhe.idOrdem);
 
     detalhe.changeValues = true;
+    detalhe.idDetalheReferencia = this.detalheRef;
 
     if (index >= 0) {
       detalheDespesa[index] = detalhe;
@@ -823,6 +969,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     let novoItem: DetalheDespesasMensais = {
       idDespesa: detalheDespesa.idDespesa,
       idDetalheDespesa: detalheDespesa.idDetalheDespesa,
+      idDetalheReferencia: this.detalheRef,
       idFuncionario: Number(this.sessao.getIdLogin()),
       dsDescricao: '',
       dsObservacao: '',

@@ -59,15 +59,9 @@
       </div>
       <div class="col-lg-4 col-md-3 col-sm-12 p-0">
         <select class="form-control search-slt" formControlName="cbAno">
-          <option value="2024">2024</option>
-          <option value="2023">2023</option>
-          <option value="2022">2022</option>
-          <option value="2021">2021</option>
-          <option value="2020">2020</option>
-          <option value="2019">2019</option>
-          <option value="2018">2018</option>
-          <option value="2017">2017</option>
-          <option value="2016">2016</option>
+          <option *ngFor="let ano of parametrizacoes.anosReferenciaFiltro" value={{ano}}>
+            {{ano}}
+          </option>
         </select>
       </div>
 
@@ -365,11 +359,27 @@
                     <span class="text-danger" *ngIf="despesa.statusPercentual == 'Altissimo'">
                       <i class="fas fa-caret-up me-1"></i><span>{{ despesa.percentualUtilizacao}}</span>
                     </span>
+                    <span class="text-info" *ngIf="despesa.tpEmprestimo == 'S'">
+                      <i class="fa fa-minus"></i>
+                    </span>
                   </td>
 
                   <td class="font-weight-bold" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
                     (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)">
-                    {{ despesa.dsTituloDespesa }}
+
+                    <span style="color: #6c0b75;" *ngIf="despesa.tpEmprestimo == 'S'">
+                      <span>{{ despesa.dsTituloDespesa}}</span>
+                    </span>
+                    <span style="color: #2988a5;" *ngIf="despesa.tpAnotacao == 'S'">
+                      <span>{{ despesa.dsTituloDespesa}}</span>
+                    </span>
+                    <span style="color: #8a6b16;" *ngIf="despesa.tpRelatorio == 'S'">
+                      <span>{{ despesa.dsTituloDespesa}}</span>
+                    </span>
+                    <span style="color: #000000;"
+                      *ngIf="despesa.tpEmprestimo == 'N' && despesa.tpAnotacao == 'N' && despesa.tpRelatorio == 'N'">
+                      <span>{{ despesa.dsTituloDespesa}}</span>
+                    </span>
                   </td>
 
                   <td>

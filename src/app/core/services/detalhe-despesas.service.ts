@@ -86,6 +86,12 @@ export class DetalheDespesasService {
         catchError(this.handleError));
   }
 
+  getTituloDespesasRelatorio(idDespesa: number): Observable<TituloDespesaResponse> {
+    return this.http.get<TituloDespesaResponse>(`springboot-esc-backend/api/lancamentosFinanceiros/obterTitulosDespesasRelatorio/${idDespesa}/${this.sessao.getIdLogin()}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
+
   obterExtratoDetalheDespesaQuitacaoMes(idDespesa: number, idDetalheDespesa: number): Observable<StringResponse> {
     return this.http.get<StringResponse>(`springboot-esc-backend/api/detalheDespesas/despesasParceladas/obterRelatorioDespesasParceladasQuitacao/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}`)
       .pipe(map((response) => { return response }),

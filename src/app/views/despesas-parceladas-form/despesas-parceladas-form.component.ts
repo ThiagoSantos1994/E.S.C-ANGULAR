@@ -108,7 +108,7 @@ export class DespesasParceladasFormComponent implements OnInit {
       vigenciaIni.setMonth(vigenciaIni.getMonth() + (meses - 1));
 
       //Exibir nova data
-      (<HTMLInputElement>document.getElementById("vigenciaFinal")).value = formatDate(vigenciaIni, 'MM/YYYY', 'en-US');
+      (<HTMLInputElement>document.getElementById("vigenciaFinal")).value = formatDate(vigenciaIni, 'MM/yyyy', 'en-US');
     }
   }
 
@@ -424,8 +424,6 @@ export class DespesasParceladasFormComponent implements OnInit {
   }
 
   carregarListaDespesasParceladas(isTodasDespesas: boolean) {
-    this.tituloDespesasParceladas = null;
-
     this.service.getNomeDespesasParceladas(isTodasDespesas).subscribe((res) => {
       this.tituloDespesasParceladas = res;
     });

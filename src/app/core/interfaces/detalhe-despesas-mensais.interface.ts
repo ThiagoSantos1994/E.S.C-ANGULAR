@@ -1,6 +1,7 @@
 export interface DetalheDespesasMensais {
     idDespesa: number;
     idDetalheDespesa: number;
+    idDetalheReferencia?: number;
     dsTituloDespesa?: string;
     dsDescricao?: string;
     idOrdem?: number;

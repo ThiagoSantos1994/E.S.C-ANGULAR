@@ -175,37 +175,39 @@
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #666572; padding-left: 24%; padding-right: 24%; margin-block-end: 20%;"
                     href="#!" role="button" title="Importar despesas parceladas" data-toggle="modal"
-                    data-target="#modalImportacaoDespesaParcelada"
-                    (click)="carregarListaDespesasParceladasImportacao()">
+                    data-target="#modalImportacaoDespesaParcelada" (click)="carregarListaDespesasParceladasImportacao()"
+                    id="buttonImportar">
                     <i class="fas fa-download"></i>
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #08575a; padding-left: 27%; padding-right: 27%; margin-block-end: 20%;"
                     href="#!" role="button" title="Atualizar Detalhe Despesas"
-                    (click)="atualizarDetalheDespesasMensais()">
+                    (click)="atualizarDetalheDespesasMensais()" id="buttonAtualizar">
                     <i class="fa fa-refresh"></i>
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #3b056e; margin-block-end: 20%;" href="#!" role="button"
                     title="Cadastro Despesas Parceladas" data-toggle="modal" data-target="#modalDespesasParceladas"
-                    (click)="carregarDespesasParceladas()">
+                    (click)="carregarDespesasParceladas()" id="buttonDespesasParceladas">
                     <i class="fa fa-credit-card"></i>
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #6e0505; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
                     href="#!" role="button" title="Amortizar Parcelas" data-toggle="modal"
-                    data-target="#modalAmortizacaoParcelas" (click)="carregarParcelasAmortizacao()">
+                    data-target="#modalAmortizacaoParcelas" (click)="carregarParcelasAmortizacao()"
+                    id="buttonAmortizarParcelas">
                     <i class="fa fa-calendar" aria-hidden="true"></i>
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #3b056e; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
-                    href="#!" role="button" title="Adiar parcelas" (click)="adiantarFluxoParcelas()">
+                    href="#!" role="button" title="Adiar parcelas" (click)="adiantarFluxoParcelas()"
+                    id="buttonAdiarParcelas">
                     <i class="far fa-calendar-plus" aria-hidden="true"></i>
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #3b056e; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
                     href="#!" role="button" title="Desfazer adiamento de parcelas"
-                    (click)="desfazerAdiantamentoFluxoParcelas()">
+                    (click)="desfazerAdiantamentoFluxoParcelas()" id="buttonDesfazerAdiantarFluxo">
                     <i class="fas fa-calendar-times" aria-hidden="true"></i>
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
@@ -263,7 +265,8 @@
                             <i class="fa fa-chevron-down"></i>
                           </button>
 
-                          <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0">
+                          <span
+                            *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0">
                             <button type="button" class="btn btn-link btn-sm px-0" title="Adicionar observações"
                               data-toggle="modal" data-target="#modalObservacoes"
                               (click)="carregarObservacoes(detalheDespesa)">
@@ -455,10 +458,15 @@
 
                       <td>
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
-                          <div style="width: 200px">
-                            <select class="form-control form-control-sm"
-                              (change)="onChangeCategoriaDetalhe($event.target.value, detalheDespesa)">
+                          <div style="width: 300px">
+                            <select class="form-control form-control-sm" id="comboTituloDespesaRelatorio"
+                              (change)="onChangeDespesaRelatorioAssociada($event.target.value, detalheDespesa)"
+                              [value]="detalheDespesa.idDespesaLinkRelatorio">
                               <option value="0"></option>
+                              <option *ngFor="let despesa of tituloDespesasRelatorio.despesas"
+                                value={{despesa.idDespesa}}>
+                                {{despesa.tituloDespesa}}
+                              </option>
                             </select>
                           </div>
                         </span>
@@ -499,24 +507,24 @@
 
                 <span *ngIf="!detalheLancamentosMensais.despesaMensal.isNovaDespesa">
                   <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
-                    (click)="gravarDetalheDespesas()">
+                    (click)="gravarDetalheDespesas()" id="buttonSalvar">
                     <i class="fa fa-floppy-o"></i> Salvar
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
-                    role="button" (click)="excluirItemDetalheDespesa()">
+                    role="button" (click)="excluirItemDetalheDespesa()" id="buttonExcluir">
                     <i class="fas fa-trash-alt"></i> Excluir
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
-                    role="button" (click)="onQuitarDespesa()">
+                    role="button" (click)="onQuitarDespesa()" id="buttonQuitar">
                     <i class="far fa-calendar-check"></i> Pagar
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init style="background-color: #709977;" href="#!"
-                    role="button" (click)="desfazerPagamentoDespesa()">
+                    role="button" (click)="desfazerPagamentoDespesa()" id="buttonDesfazerPagamento">
                     <i class="far fa-calendar-times"></i> Desfazer
                   </button>
 
                   <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
-                    role="button" (click)="addNovaLinhaDetalheDespesa()">
+                    role="button" (click)="addNovaLinhaDetalheDespesa()" id="buttonNovaLinha">
                     <i class="fas fa-bars"></i> Nova Linha
                   </button>
                 </span>
@@ -545,7 +553,7 @@
         <form [formGroup]="modalImportacaoDespesaParceladaForm">
           <div class="modalImportacaoDespesaParcelada-body form-group">
             <select class="form-control form-control-sm" id="comboTituloDespesaParcelada">
-              <option *ngFor="let despesa of tituloDespesasParceladas.despesas" value={{despesa.idDespesaParcelada}}>
+              <option *ngFor="let despesa of tituloDespesasParcelada.despesas" value={{despesa.idDespesa}}>
                 {{despesa.tituloDespesa}}
               </option>
             </select>
@@ -594,51 +602,51 @@
           <div class="modalCategoriaDetalheDespesa-body form-group"
             style="font-size: medium; color: #a7444e!important;">
             <input class="form-check-input" type="checkbox" formControlName="checkDespesaRascunho"
-              id="checkDespesaRascunho">
+              id="checkDespesaRascunho" (click)="onCategoriaRascunho($event.target.checked)">
             <label class="form-check-label" for="checkDespesaRascunho"
               title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Despesa Rascunho
             </label>
             <br>
             <input class="form-check-input" type="checkbox" formControlName="checkDespesaRelatorio"
-              id="checkDespesaRelatorio">
+              id="checkDespesaRelatorio" (click)="onCategoriaRelatorio($event.target.checked)">
             <label class="form-check-label" for="checkDespesaRelatorio"
               title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Despesa Relatório
             </label>
             <br>
             <input class="form-check-input" type="checkbox" formControlName="checkDespesaDebitoAutomatico"
-              id="checkDespesaDebitoAutomatico">
+              id="checkDespesaDebitoAutomatico" (click)="onCategoriaDebitoAuto($event.target.checked)">
             <label class="form-check-label" for="checkDespesaDebitoAutomatico"
               title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Débito Automatico
             </label>
             <br>
             <input class="form-check-input" type="checkbox" formControlName="checkDespesaDebitoCartao"
-              id="checkDespesaDebitoCartao">
+              id="checkDespesaDebitoCartao" (click)="onCategoriaDebitoCartao($event.target.checked)">
             <label class="form-check-label" for="checkDespesaDebitoCartao"
               title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Débito Cartão
             </label>
             <br>
             <hr>
             <input class="form-check-input" type="checkbox" formControlName="checkDespesaEmprestimoAPagar"
-              id="checkDespesaEmprestimoAPagar">
+              id="checkDespesaEmprestimoAPagar" (click)="onCategoriaEmpAPagar($event.target.checked)">
             <label class="form-check-label" for="checkDespesaEmprestimoAPagar"
               title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Empréstimo a Pagar
             </label>
             <br>
             <input class="form-check-input" type="checkbox" formControlName="checkDespesaEmprestimoAReceber"
-              id="checkDespesaEmprestimoAReceber">
+              id="checkDespesaEmprestimoAReceber" (click)="onCategoriaEmpAReceber($event.target.checked)">
             <label class="form-check-label" for="checkDespesaEmprestimoAReceber"
               title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Empréstimo a Receber
             </label>
             <br>
             <hr>
             <input class="form-check-input" type="checkbox" formControlName="checkDespesaPoupancaPositiva"
-              id="checkDespesaPoupancaPositiva">
+              id="checkDespesaPoupancaPositiva" (click)="onCategoriaPoupancaPositiva($event.target.checked)">
             <label class="form-check-label" for="checkDespesaPoupancaPositiva"
               title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Poupança Positiva
             </label>
             <br>
             <input class="form-check-input" type="checkbox" formControlName="checkDespesaPoupancaNegativa"
-              id="checkDespesaPoupancaNegativa">
+              id="checkDespesaPoupancaNegativa" (click)="onCategoriaPoupancaNegativa($event.target.checked)">
             <label class="form-check-label" for="checkDespesaPoupancaNegativa"
               title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Poupança Negativa
             </label>

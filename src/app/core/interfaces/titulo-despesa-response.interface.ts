@@ -3,7 +3,6 @@ export interface TituloDespesaResponse {
 }
 
 export interface TituloDespesa {
-    idDespesaParcelada: number;
+    idDespesa: number;
     tituloDespesa: String;
-    dsTituloDespesaParcelada: String;
 }

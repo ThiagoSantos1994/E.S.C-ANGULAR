@@ -30,6 +30,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   private despesaRef: number;
   private receitaSelecionada: DespesasFixasMensais;
+  private parametrizacoes: ConfiguracaoLancamentos;
 
   private valorReceitaControl = new FormControl();
   private eventModalConfirmacao: String = "";
@@ -49,6 +50,15 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.parametrizacoes = {
+      dataViradaMes: null,
+      mesReferencia: null,
+      idFuncionario: null,
+      bviradaAutomatica: null,
+      qtdeLembretes: null,
+      anosReferenciaFiltro: []
+    }
+
     this.carregarConfiguracaoLancamentos();
 
     this.modalCriarEditarReceitaForm = this.formBuilder.group({
@@ -89,6 +99,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   carregarConfiguracaoLancamentos() {
     this.lancamentosService.getConfiguracaoLancamentos().toPromise().then((res: ConfiguracaoLancamentos) => {
+      this.parametrizacoes = res;
+      
       let mesReferencia = (res.mesReferencia <= 9 ? "0".concat(res.mesReferencia.toString()) : res.mesReferencia);
 
       this.pesquisaForm = this.formBuilder.group({
