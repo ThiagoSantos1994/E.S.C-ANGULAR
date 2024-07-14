@@ -33,6 +33,12 @@
           (click)="visualizarDespesasMesAnterior()" title="Visualizar despesas mês anterior">
           <i class="fa fa-angle-double-left" aria-hidden="true"></i>
         </button>
+        
+        <button class="btn text-white" data-mdb-ripple-init style="background-color: #59768a;" role="button"
+          (click)="visualizarDespesasMesAtual()" title="Visualizar despesas mês atual">
+          <i class="fa fa-flag-checkered" aria-hidden="true"></i>
+        </button>
+
         <button class="btn text-white" data-mdb-ripple-init style="background-color: #0c1a36;" role="button"
           (click)="visualizarDespesasMesPosterior()" title="Visualizar despesas mês seguinte">
           <i class="fa fa-angle-double-right" aria-hidden="true"></i>
@@ -164,13 +170,15 @@
       </div>
     </div>
 
-    <div class="labelQuitacaoMes">
+    <div class="form-text text-muted labelQuitacaoMes" style="font-size: initial;font-size: 82%;">
       <span class="badge badge-info d-inline">
         <i class="fas fa-bullhorn"></i>
       </span>
       <span *ngIf="lancamentosFinanceiros$" (click)="obterDetalhesLabelQuitacaoMes()">
         {{lancamentosFinanceiros$.labelQuitacaoParcelasMes}}</span>
     </div>
+
+
   </header>
 
   <body class="body">
@@ -584,6 +592,48 @@
     </div>
 
   </body>
+
+  <!------------------------  Modal Autenticacao ------------------------>
+  <ng-template #modalAutenticacaoUsuario>
+    <div class="modal-header">
+      <h6 class="modal-title">
+        <i class="fa fa-user-circle-o" style="font-size: 130%;" aria-hidden="true"></i>
+        Autenticação do usuario
+      </h6>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="modalAutenticacaoForm">
+        <small class="form-text" style="font-size: revert; color: #b90c0c!important">
+          <i class="fa fa-info-circle" aria-hidden="true"></i>
+          Esta ação exige que o usuario logado valide sua identidade.
+        </small>
+        <br>
+        <div class="input-group form-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-user"></i></span>
+          </div>
+          <input type="text" formControlName="usuario" class="form-control" placeholder="Digite o usuario">
+        </div>
+
+        <div class="input-group form-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-key"></i></span>
+          </div>
+          <input type="password" formControlName="senha" class="form-control" placeholder="Digite a senha">
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" data-dismiss="modal"
+        (click)="confirmValidarAutenticidade()">Confirmar</button>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Cancelar</button>
+    </div>
+  </ng-template>
 
   <!------------------------  Modal Confirmação - Excluir Despesa ------------------------>
   <ng-template #modalConfirmacaoExcluirDespesa>

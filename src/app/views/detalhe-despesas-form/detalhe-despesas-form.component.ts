@@ -395,7 +395,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       checkReprocessarDespesasNaoParceladas: (despesa.tpReprocessar == "S")
     });
 
-    if (!despesa.isNovaDespesa) {
+    if (null != despesa.isNovaDespesa && !despesa.isNovaDespesa) {
       this.bloquearControlesDespesaTipoRelatorio(despesa.tpRelatorio == "S");
     }
   }
@@ -481,8 +481,8 @@ export class DetalheDespesasFormComponent implements OnInit {
       checkDespesaDebitoCartao: (detalheDespesa.tpDebitoCartao == "S" ? true : false),
       checkDespesaPoupancaPositiva: (detalheDespesa.tpPoupanca == "S" ? true : false),
       checkDespesaPoupancaNegativa: (detalheDespesa.tpPoupancaNegativa == "S" ? true : false),
-      checkDespesaEmprestimoAPagar: (detalheDespesa.tpEmprestimo == "S" ? true : false),
-      checkDespesaEmprestimoAReceber: (detalheDespesa.tpEmprestimoAPagar == "S" ? true : false)
+      checkDespesaEmprestimoAReceber: (detalheDespesa.tpEmprestimo == "S" ? true : false),
+      checkDespesaEmprestimoAPagar: (detalheDespesa.tpEmprestimoAPagar == "S" ? true : false)
     });
 
     this.validarCategoriaDespesaLoad(detalheDespesa);
@@ -628,6 +628,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("checkDespesaDebitoAutomatico")).disabled = checked;
     (<HTMLInputElement>document.getElementById("checkDespesaDebitoCartao")).disabled = checked;
     (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAReceber")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaPoupancaPositiva")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaPoupancaNegativa")).disabled = checked;
   }
 
   onCategoriaEmpAReceber(checked) {
@@ -636,6 +638,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("checkDespesaDebitoAutomatico")).disabled = checked;
     (<HTMLInputElement>document.getElementById("checkDespesaDebitoCartao")).disabled = checked;
     (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAPagar")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaPoupancaPositiva")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaPoupancaNegativa")).disabled = checked;
   }
 
   onCategoriaPoupancaPositiva(checked) {
@@ -643,6 +647,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("checkDespesaDebitoAutomatico")).disabled = checked;
     (<HTMLInputElement>document.getElementById("checkDespesaDebitoCartao")).disabled = checked;
     (<HTMLInputElement>document.getElementById("checkDespesaPoupancaNegativa")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAPagar")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAReceber")).disabled = checked;
   }
 
   onCategoriaPoupancaNegativa(checked) {
@@ -650,6 +656,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("checkDespesaDebitoAutomatico")).disabled = checked;
     (<HTMLInputElement>document.getElementById("checkDespesaDebitoCartao")).disabled = checked;
     (<HTMLInputElement>document.getElementById("checkDespesaPoupancaPositiva")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAPagar")).disabled = checked;
+    (<HTMLInputElement>document.getElementById("checkDespesaEmprestimoAReceber")).disabled = checked;
   }
 
   changeDetalheDespesasMensais(detalhe: DetalheDespesasMensais) {

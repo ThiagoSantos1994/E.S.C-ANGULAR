@@ -60,7 +60,8 @@ body {
 
 .card-body {
   flex: 1 1 auto;
-  padding: 1.25rem;
+  /*padding: 1.25rem;*/
+  margin: -4% 2% -3% -2%;
 }
 
 .card .card-title {
@@ -356,5 +357,22 @@ element.style {
   text-align: center;
   width: 21%;
   margin: 1.75rem auto;
-  
+}
+
+.modalAutenticarUsuario {
+  text-align: center;
+  width: 21%;
+  margin: 1.75rem auto;
+}
+
+.input-group-prepend span {
+  width: 50px;
+  background-color: #383179;
+  color: rgb(255, 255, 255);
+  border: 0 !important;
+}
+
+input:focus {
+  outline: 0 0 0 0 !important;
+  box-shadow: 0 0 0 0 !important;
 }

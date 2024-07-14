@@ -52,7 +52,7 @@ export class LembretesFormComponent implements OnInit {
 
   ngOnInit() {
     this.loadFormLembretes();
-    this.carregarMonitorLembretes(true);
+    this.carregarMonitorLembretes(true, false);
 
     this.service.recebeMensagem().subscribe(tipo => {
       if (tipo == "cadastro") {
@@ -60,7 +60,7 @@ export class LembretesFormComponent implements OnInit {
         this.loadFormLembretes();
         this.carregarListaLembretes(false);
       } else {
-        this.carregarMonitorLembretes(true);
+        this.carregarMonitorLembretes(true, true);
       }
     }, () => {
       alert('Ocorreu um erro ao carregar os dados da despesa parcelada, tente novamente mais tarde.')
@@ -222,10 +222,10 @@ export class LembretesFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("checkCarregarLembretesEmAberto")).checked = !isTodosLembretes;
   }
 
-  carregarMonitorLembretes(abrirMonitor: boolean) {
+  carregarMonitorLembretes(abrirMonitor: boolean, eventClick: boolean) {
     this.service.getMonitorLembretes().subscribe((res: any) => {
       this.tituloLembretes$ = res;
-      if (res.length > 0) {
+      if (res.length > 0 || eventClick == true) {
         this.resetMonitorLembretesObservable();
         this.setMonitorLembretesObservable(res, false);
 
@@ -589,7 +589,7 @@ export class LembretesFormComponent implements OnInit {
 
     this.service.baixarLembreteMonitor(tipoBaixa, lembretes).toPromise().then(() => {
       this.closeModal();
-      this.carregarMonitorLembretes(false);
+      this.carregarMonitorLembretes(false, true);
     });
   }
 

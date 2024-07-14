@@ -380,49 +380,53 @@
 
       <div class="form-group modal-body" style="padding-block-start: 0%; padding-block-end: 0%; margin: -1%;">
         <div class="col-sm-8-monitor-lembretes">
-          <table class="table table-monitor-lembretes table-bordered">
-            <thead class="thead-light">
-              <tr>
-                <th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label=""
-                  style="width: 40.1px; font-size: initial;">
-                  <form [formGroup]="checkLembretesForm">
-                    <input type="checkbox" name="lembretes[]" formControlName="checkMarcarTodosLembretes"
-                      onclick="marcarTodosLembretes(this)" (click)="onMarcarDesmarcarCheckBoxes()">
-                  </form>
-                </th>
-                <th class="text-center" scope="col" style="padding: 1%; font-family: system-ui; font-size: small;">
-                  Descrição do lembrete</th>
-              </tr>
-            </thead>
-            <tbody class="customtable" *ngIf="tituloLembretes$">
-              <tr *ngFor="let lembrete of tituloLembretes$">
-                <td class="text-center">
-                  <label class="checkbox-wrap checkbox-primary">
-                    <input type="checkbox" name="lembretes[]"
-                      (click)="onCheckMonitorLembretesChange($event.target.checked, lembrete)">
-                    <span class="checkmark"></span>
-                  </label>
-                </td>
+          <div *ngIf="tituloLembretes$.length >= 1">
+            <table class="table table-monitor-lembretes table-bordered">
+              <thead class="thead-light">
+                <tr>
+                  <th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label=""
+                    style="width: 40.1px; font-size: initial;">
+                    <form [formGroup]="checkLembretesForm">
+                      <input type="checkbox" name="lembretes[]" formControlName="checkMarcarTodosLembretes"
+                        onclick="marcarTodosLembretes(this)" (click)="onMarcarDesmarcarCheckBoxes()">
+                    </form>
+                  </th>
+                  <th class="text-center" scope="col" style="padding: 1%; font-family: system-ui; font-size: small;">
+                    Descrição do lembrete</th>
+                </tr>
+              </thead>
+              <tbody class="customtable" *ngIf="tituloLembretes$">
+                <tr *ngFor="let lembrete of tituloLembretes$">
+                  <td class="text-center">
+                    <label class="checkbox-wrap checkbox-primary">
+                      <input type="checkbox" name="lembretes[]"
+                        (click)="onCheckMonitorLembretesChange($event.target.checked, lembrete)">
+                      <span class="checkmark"></span>
+                    </label>
+                  </td>
 
-                <td class="text-center font-padrao" style="color: brown;">
-                  {{lembrete.dsTituloLembrete}}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  <td class="text-center font-padrao" style="color: brown;">
+                    {{lembrete.dsTituloLembrete}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-          <div *ngIf="!tituloLembretes$">
-            <div class="alert alert-primary" style="padding-left: 30%;" role="alert">
-              Não há lembretes no momento.
+          <div *ngIf="tituloLembretes$.length == 0">
+            <div class="alert alert-primary" style="padding-left: 20%;" role="alert">
+              Não há alerta de lembretes no momento :)
             </div>
           </div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal"
-          (click)="abrirModalBaixaLembretesSelecionados()">
-          <i class="far fa-calendar-check"></i> Baixar </button>
+        <div *ngIf="tituloLembretes$.length >= 1">
+          <button type="button" class="btn btn-primary" data-dismiss="modal"
+            (click)="abrirModalBaixaLembretesSelecionados()">
+            <i class="far fa-calendar-check"></i> Baixar </button>
+        </div>
         <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Fechar</button>
       </div>
     </div>

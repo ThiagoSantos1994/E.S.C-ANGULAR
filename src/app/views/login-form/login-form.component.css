@@ -21,4 +21,23 @@
 }
 
 
+.input-group-prepend span {
+  width: 50px;
+  background-color: #383179;
+  color: rgb(255, 255, 255);
+  border: 0 !important;
+}
 
+input:focus {
+  outline: 0 0 0 0 !important;
+  box-shadow: 0 0 0 0 !important;
+}
+
+.fa {
+  display: inline-block;
+  font: normal normal normal 14px / 1 FontAwesome;
+  font-size: xx-large;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

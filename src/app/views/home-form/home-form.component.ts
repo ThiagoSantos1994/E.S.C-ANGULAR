@@ -1,5 +1,7 @@
+import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 
 import { DespesasParceladasService } from 'src/app/core/services/despesas-parceladas.service';
 import { LembretesService } from 'src/app/core/services/lembretes.service';
@@ -16,6 +18,8 @@ export class HomeFormComponent implements OnInit {
 
   private usuarioLogado: string;
   private qtdeLembretes: number;
+  private dataAtual: string;
+  private modalRef: BsModalRef;
 
   constructor(
     private sessaoService: SessaoService,
@@ -28,12 +32,13 @@ export class HomeFormComponent implements OnInit {
     this.sessaoService.validarSessao();
     this.usuarioLogado = this.sessaoService.getUserName();
     this.qtdeLembretes = null;
+    this.dataAtual = this.getDataAtual();
   }
 
   carregarDespesasParceladas() {
-    this.despesasParceladasService.enviaMensagem();
-    this.sessaoService.validarSessao();
-  }
+      this.despesasParceladasService.enviaMensagem();
+      this.sessaoService.validarSessao();  
+    }
 
   carregarCadastroLembretes() {
     this.lembreteService.enviaMensagem("cadastro");
@@ -43,5 +48,9 @@ export class HomeFormComponent implements OnInit {
   carregarMonitorLembretes() {
     this.lembreteService.enviaMensagem("monitor");
     this.sessaoService.validarSessao();
+  }
+
+  getDataAtual() {
+    return formatDate(Date.now(), 'dd/MM/yyyy', 'en-US');
   }
 }

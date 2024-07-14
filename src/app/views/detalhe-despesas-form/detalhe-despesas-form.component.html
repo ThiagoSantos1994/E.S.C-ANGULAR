@@ -678,8 +678,10 @@
 
         <div class="modalEditorValores-body">
           <div class="input-group mb-3">
+            <!--<button (click)="myInput.focus()">Click Me</button>-->
+
             <span class="input-group-text">Novo Valor:</span>
-            <input type="text" #focoInput class="inputNovoValorEditorValores form-control" (click)="onEditarValores()"
+            <input type="text" #myInput class="inputNovoValorEditorValores form-control" (click)="onEditarValores()"
               id="inputNovoValor" currencyMask maxlength="16" autocomplete="off"
               [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', allowNegative: true }">
             <div>

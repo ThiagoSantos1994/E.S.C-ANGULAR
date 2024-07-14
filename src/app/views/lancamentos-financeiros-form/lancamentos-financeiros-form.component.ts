@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ConfiguracaoLancamentos } from 'src/app/core/interfaces/configuracao-lancamentos.interface';
@@ -10,6 +11,7 @@ import { LancamentosFinanceiros } from 'src/app/core/interfaces/lancamentos-fina
 import { LancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais.interface';
 import { DetalheDespesasService } from 'src/app/core/services/detalhe-despesas.service';
 import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
+import { LoginService } from 'src/app/core/services/login.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
 
 @Component({
@@ -26,11 +28,13 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private checkDespesasForm: FormGroup;
   private modalCriarEditarReceitaForm: FormGroup;
   private modalParametrizacaoForm: FormGroup;
+  private modalAutenticacaoForm: FormGroup;
   private modalRef: BsModalRef;
 
   private despesaRef: number;
   private receitaSelecionada: DespesasFixasMensais;
   private parametrizacoes: ConfiguracaoLancamentos;
+  private quantidadeTentativasAutenticacao: number;
 
   private valorReceitaControl = new FormControl();
   private eventModalConfirmacao: String = "";
@@ -40,12 +44,15 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   @ViewChild('modalConfirmacaoExcluirDespesa') modalConfirmacaoExcluirDespesa;
   @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
   @ViewChild('modalCategoriaDetalheDespesa') modalCategoriaDetalheDespesa;
+  @ViewChild('modalAutenticacaoUsuario') modalAutenticacaoUsuario;
 
   constructor(
     private formBuilder: FormBuilder,
-    private sessao: SessaoService,
+    private sessaoService: SessaoService,
     private lancamentosService: LancamentosFinanceirosService,
     private detalheService: DetalheDespesasService,
+    private loginService: LoginService,
+    private router: Router,
     private modalService: BsModalService
   ) { }
 
@@ -72,6 +79,13 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       cbAno: [this.getAnoAtual(), Validators.required]
     });
 
+    this.modalAutenticacaoForm = this.formBuilder.group({
+      usuario: [],
+      senha: []
+    });
+
+    this.quantidadeTentativasAutenticacao = 2; // 3 tentativas para bloqueio
+
     this.lancamentosService.recebeMensagem().subscribe(() => {
       this.carregarDespesas();
     }, () => {
@@ -83,7 +97,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.receitaSelecionada = null;
     this.resetDespesasCheckbox();
     this.carregarLancamentosFinanceiros();
-    this.sessao.validarSessao();
+    this.sessaoService.validarSessao();
   }
 
   carregarLancamentosFinanceiros() {
@@ -100,7 +114,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   carregarConfiguracaoLancamentos() {
     this.lancamentosService.getConfiguracaoLancamentos().toPromise().then((res: ConfiguracaoLancamentos) => {
       this.parametrizacoes = res;
-      
+
       let mesReferencia = (res.mesReferencia <= 9 ? "0".concat(res.mesReferencia.toString()) : res.mesReferencia);
 
       this.pesquisaForm = this.formBuilder.group({
@@ -168,7 +182,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   gravarReceita() {
-    
+
     if (null == this.valorReceitaControl.value) {
       alert('O Valor da receita não pode estar em branco ou vazio.');
       return;
@@ -184,7 +198,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       dvlTotal: this.valorReceitaControl.value,
       dsMes: this.pesquisaForm.get('cbMes').value,
       dsAno: this.pesquisaForm.get('cbAno').value,
-      idFuncionario: Number(this.sessao.getIdLogin()),
+      idFuncionario: Number(this.sessaoService.getIdLogin()),
       idOrdem: ordem,
       tpFixasObrigatorias: (checkDespesaObrigatoria == true ? 'S' : 'N'),
       tpDespesaDebitoCartao: 'N'
@@ -338,7 +352,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       vlLimiteExibicao: "0,00",
       vlTotalDespesa: "0,00",
       idOrdemExibicao: null,
-      idFuncionario: Number(this.sessao.getIdLogin()),
+      idFuncionario: Number(this.sessaoService.getIdLogin()),
       idEmprestimo: null,
       tpReprocessar: 'N',
       tpEmprestimo: 'N',
@@ -378,6 +392,29 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     } else {
       this.modalRef = this.modalService.show(this.modalConfirmacaoExcluirDespesa);
     }
+  }
+
+  confirmValidarAutenticidade() {
+    let usuario = this.modalAutenticacaoForm.get('usuario').value;
+    let senha = this.modalAutenticacaoForm.get('senha').value;
+
+    if (usuario == "" || senha == "") {
+      alert('Necessário digitar o usuario e senha.');
+      return;
+    }
+
+    this.loginService.autenticar(usuario, senha).toPromise().then(res => {
+      this.closeModal();
+      this.abrirModalExcluirTodosLancamentos();
+    },
+      err => {
+        if (this.quantidadeTentativasAutenticacao == 0) {
+          this.closeModal();
+          this.router.navigate(['login']);
+        } else if (err.status == 401) {
+          alert('A autenticação falhou!, voce possui mais ' + (this.quantidadeTentativasAutenticacao--) + ' tentativa(s)');
+        }
+      });
   }
 
   confirmExcluirDespesas() {
@@ -426,7 +463,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let request: ConfiguracaoLancamentos = {
       dataViradaMes: this.modalParametrizacaoForm.get('dataVirada').value,
       bviradaAutomatica: this.modalParametrizacaoForm.get('checkViradaAutomatica').value,
-      idFuncionario: Number(this.sessao.getIdLogin())
+      idFuncionario: Number(this.sessaoService.getIdLogin())
     };
 
     this.lancamentosService.gravarParametrizacao(request).toPromise().then(() => {
@@ -438,9 +475,19 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   excluirTodosLancamentos() {
+    let mes = this.pesquisaForm.get('cbMes').value;
+    let ano = this.pesquisaForm.get('cbAno').value;
+
+    if (mes <= this.getMesAtual() && ano <= this.getAnoAtual()) {
+      this.modalRef = this.modalService.show(this.modalAutenticacaoUsuario);
+    } else {
+      this.abrirModalExcluirTodosLancamentos();
+    }
+  }
+
+  abrirModalExcluirTodosLancamentos() {
     this.eventModalConfirmacao = "ExcluirTodosLancamentos";
     this.mensagemModalConfirmacao = "Atenção: Deseja realmente excluir todos os lançamentos mensais?";
-
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
@@ -463,12 +510,22 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.carregarDespesas();
   }
 
+  visualizarDespesasMesAtual() {
+    this.validarMesPesquisa("*");
+    this.carregarDespesas()
+  }
+
   validarMesPesquisa(ref: String) {
     let mes = this.pesquisaForm.get('cbMes').value;
     let ano = this.pesquisaForm.get('cbAno').value;
 
-    mes = (ref == "+" ? (parseInt(mes) + 1) : (parseInt(mes) - 1));
-    mes = (mes <= 9 ? "0".concat(mes) : mes);
+    if (ref == "*") {
+      mes = this.getMesAtual();
+      ano = this.getAnoAtual();
+    } else {
+      mes = (ref == "+" ? (parseInt(mes) + 1) : (parseInt(mes) - 1));
+      mes = (mes <= 9 ? "0".concat(mes) : mes);
+    }
 
     if (mes <= 0) {
       mes = "01";
@@ -560,7 +617,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   /* -------------- Modal Detalhe Despesas Mensais -------------- */
   carregarDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
-    this.detalheService.enviaMensagem(idDespesa, idDetalheDespesa, ordemExibicao, Number(this.sessao.getIdLogin()), this.pesquisaForm.get('cbMes').value, this.pesquisaForm.get('cbAno').value);
+    this.detalheService.enviaMensagem(idDespesa, idDetalheDespesa, ordemExibicao, Number(this.sessaoService.getIdLogin()), this.pesquisaForm.get('cbMes').value, this.pesquisaForm.get('cbAno').value);
   }
 
   /* -------------- Metodos Gerais -------------- */
