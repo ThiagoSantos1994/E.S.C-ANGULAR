@@ -85,4 +85,5 @@ export class LembretesService {
   getAnoAtual() {
     return formatDate(Date.now(), 'yyyy', 'en-US');
   }
+
 }

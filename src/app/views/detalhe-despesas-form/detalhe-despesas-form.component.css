@@ -10,29 +10,6 @@
     margin: 0 5px;
   }
 
-  .labelQuitacaoMes {
-    padding: 0px 0 1%;
-    font-family: system-ui;
-    font-size: 85%;
-    line-height: 0%;
-  }
-
-  .border-left-receita {
-    border-left: 0.25rem solid #63c73b !important;
-  }
-
-  .border-left-despesas {
-    border-left: 0.25rem solid #c73b3b !important;
-  }
-
-  .border-left-pendente {
-    border-left: 0.25rem solid #ffc107 !important;
-  }
-
-  .border-left-disponivel {
-    border-left: 0.25rem solid #17a2b8 !important;
-  }
-
   .border-saldo-detalhe-despesa {
     border-right: 0.25rem !important;
   }
@@ -69,34 +46,9 @@
     margin-bottom: 10px;
   }
 
-
-  .table {
-    width: 100%;
-    max-width: 100%;
-    margin-bottom: 1rem;
-    background-color: transparent;
-  }
-
-  .table-receita {
-    width: 110%;
-    max-width: 107%;
-    margin-bottom: 1rem;
-    background-color: #f8f9fa;
-    font-size: 93%;
-  }
-
-  .table-despesas {
-    width: 100%;
-    max-width: 100%;
-    margin-bottom: 1rem;
-    background-color: #f8f9fa;
-
-  }
-
   .table-detalhe-despesas {
     width: 100%;
     max-width: 100%;
-    /*margin-bottom: -8rem;*/
     background-color: #f8f9fa;
   }
 
@@ -187,47 +139,6 @@
   .form-check-label {
     margin: 2px -1px;
   }
-
-  .table th,
-  .table thead th {
-    font-weight: 500;
-  }
-
-
-  .table thead th {
-    vertical-align: bottom;
-    border-bottom: 2px solid #dee2e6;
-  }
-
-
-  .table th {
-    padding: 0.2rem;
-    vertical-align: top;
-    border-top: 1px solid #dee2e6;
-    font-family: system-ui;
-    font-size: smaller;
-  }
-
-
-  .table th,
-  .table thead th {
-    font-weight: 500;
-  }
-
-
-  th {
-    text-align: inherit;
-  }
-
-
-  .m-b-20 {
-    margin-bottom: 20px;
-  }
-
-  .table td {
-    padding: 0.0rem;
-  }
-
 
   .customcheckbox {
     display: block;
@@ -335,34 +246,6 @@
     padding-left: 3%;
   }
 
-  .font-color-receita-positiva {
-    color: rgb(66, 165, 57);
-  }
-
-  .font-color-receita-negativa {
-    color: rgb(204, 65, 30);
-  }
-
-  .font-color-receita-anotacao {
-    color: darkgray;
-  }
-
-  .font-color-poupanca-positiva {
-    color: #3b6bd3;
-  }
-
-  .font-color-poupanca-negativa {
-    color: #ee5569;
-  }
-
-  .font-color-receita-adiantada {
-    color: #e98c00;
-  }
-
-  .font-color-linha-separacao {
-    color: rgb(250, 247, 247);
-  }
-
   .checkmark[_ngcontent-c2] {
     position: absolute;
     top: -3px;
@@ -387,12 +270,6 @@
   element.style {
     display: block;
     padding-right: 0px;
-  }
-
-  .modalCriarEditarReceita {
-    text-align: center;
-    width: 25%;
-    margin: 1.75rem auto;
   }
 
   .modalCategoriaDespesa {
@@ -483,14 +360,6 @@
     max-width: 110%;
   }
 
-  .checkDespesaObrigatoria {
-    display: inline-flex;
-    align-items: center;
-    padding-left: 15px;
-    margin-right: 0.75rem;
-    padding-top: 6px;
-  }
-
   .checkCarregarTodasDespParceladas {
     display: inline-flex;
     align-items: center;
@@ -519,7 +388,7 @@
   .caixaAlta {
     font-variant: small-caps;
   }
-  
+
   .modalObservacoesDetalhe-body {
     position: relative;
     -webkit-box-flex: 1;
@@ -562,4 +431,46 @@
   .card-body-saldo-detalhe-despesa {
     padding-left: 3%;
     padding-right: 10%;
+  }
+
+  /*Tables*/
+
+  .table th,
+  .table thead th {
+    font-weight: 500;
+  }
+
+  .table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+    position: sticky;
+    top: 0;
+  }
+
+  .table th {
+    padding: 0.2rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    font-family: system-ui;
+    font-size: smaller;
+  }
+
+  .table th,
+  .table thead th {
+    font-weight: 500;
+  }
+
+  th {
+    text-align: inherit;
+  }
+
+  .table td {
+    padding: 0.0rem;
+  }
+
+  .table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    background-color: transparent;
   }

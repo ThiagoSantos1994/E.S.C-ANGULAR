@@ -33,7 +33,7 @@
           (click)="visualizarDespesasMesAnterior()" title="Visualizar despesas mês anterior">
           <i class="fa fa-angle-double-left" aria-hidden="true"></i>
         </button>
-        
+
         <button class="btn text-white" data-mdb-ripple-init style="background-color: #59768a;" role="button"
           (click)="visualizarDespesasMesAtual()" title="Visualizar despesas mês atual">
           <i class="fa fa-flag-checkered" aria-hidden="true"></i>
@@ -269,13 +269,14 @@
                   </td>
 
                   <td class="text-left">
-                    <button *ngIf="despesasFixas.tpStatus == '< X >'" type="button" disabled
-                      class="btn btn-link btn-sm px-0">
+                    <button *ngIf="despesasFixas.tpStatus == '< X >' || despesasFixas.tpDespesaDebitoCartao == 'S'"
+                      type="button" disabled class="btn btn-link btn-sm px-0">
                       <i class="fas fa-edit"></i>
                     </button>
-                    <button *ngIf="despesasFixas.tpStatus != '< X >'" type="button" class="btn btn-link btn-sm px-0"
-                      data-toggle="modal" data-target="#modalCriarEditarReceita"
-                      (click)="editarReceitaSelecionada(despesasFixas)" title="Editar receita">
+                    <button *ngIf="despesasFixas.tpStatus != '< X >' && despesasFixas.tpDespesaDebitoCartao == 'N'"
+                      type="button" class="btn btn-link btn-sm px-0" data-toggle="modal"
+                      data-target="#modalCriarEditarReceita" (click)="editarReceitaSelecionada(despesasFixas)"
+                      title="Editar receita">
                       <i class="fas fa-edit"></i>
                     </button>
                     <button type="button" class="btn btn-link btn-sm px-0" title="Excluir receita"
@@ -391,6 +392,9 @@
                   </td>
 
                   <td>
+                    <span *ngIf="despesa.tpDebitoCartao == 'S'" class="badge badge-info d-inline rounded-pill d-inline"
+                      style="background-color: #d65e2e;">Débito
+                    </span>
                     <span *ngIf="despesa.statusPagamento == 'Pendente' && despesa.tpRelatorio !== 'S' && despesa.tpEmprestimo !== 'S' 
                     && despesa.tpAnotacao !== 'S'" class="badge badge-warning rounded-pill d-inline">Á Pagar
                     </span>

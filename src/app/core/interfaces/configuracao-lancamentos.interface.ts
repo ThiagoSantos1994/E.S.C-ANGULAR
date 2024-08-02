@@ -4,5 +4,6 @@ export interface ConfiguracaoLancamentos{
     idFuncionario: number;
     bviradaAutomatica: boolean;
     qtdeLembretes?: number;
+    qtdeAcessos?:number;
     anosReferenciaFiltro?: string[];
 }

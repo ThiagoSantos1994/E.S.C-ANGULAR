@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
 import { DetalheLembrete } from 'src/app/core/interfaces/detalhe-lembrete.interface';
 import { TituloLembretes } from 'src/app/core/interfaces/titulo-lembretes.interface';
+import { HomeService } from 'src/app/core/services/home.service';
 import { LembretesService } from 'src/app/core/services/lembretes.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
 
@@ -47,6 +48,7 @@ export class LembretesFormComponent implements OnInit {
     private sessao: SessaoService,
     private modalService: BsModalService,
     private service: LembretesService,
+    private homeService: HomeService,
     private detalheDomain: DetalheDespesasMensaisDomain
   ) { }
 
@@ -548,6 +550,7 @@ export class LembretesFormComponent implements OnInit {
       alert('Lembrete excluido com sucesso!');
       this.carregarListaLembretes(false);
       this.resetCampos();
+      this.atualizaStatusLembreteHome();
     },
       err => {
         alert('Ocorreu um erro ao excluir o lembrete, tente novamente mais tarde.');
@@ -564,6 +567,7 @@ export class LembretesFormComponent implements OnInit {
       alert('Lembrete gravado com sucesso!');
       this.carregarDetalheLembrete();
       this.carregarListaLembretes(false);
+      this.atualizaStatusLembreteHome();
     },
       err => {
         alert('Ocorreu um erro ao gravar o lembrete, tente novamente mais tarde.');
@@ -590,7 +594,12 @@ export class LembretesFormComponent implements OnInit {
     this.service.baixarLembreteMonitor(tipoBaixa, lembretes).toPromise().then(() => {
       this.closeModal();
       this.carregarMonitorLembretes(false, true);
+      this.atualizaStatusLembreteHome();
     });
+  }
+
+  atualizaStatusLembreteHome() {
+    this.homeService.enviaMensagem("");
   }
 
   /* -------------- Metodos Gerais -------------- */

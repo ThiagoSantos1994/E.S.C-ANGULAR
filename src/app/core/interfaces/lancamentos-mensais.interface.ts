@@ -17,6 +17,7 @@ export interface LancamentosMensais{
     tpLinhaSeparacao: string;
     tpDespesaReversa: string;
     tpPoupancaNegativa: string;
+    tpDebitoCartao: string;
     tpRelatorio: string;
     tpReferenciaSaldoMesAnterior: string;
     tpDespesaCompartilhada: string;

@@ -7,10 +7,10 @@ import { ConfiguracaoLancamentos } from '../interfaces/configuracao-lancamentos.
 import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
 import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.interface';
 import { LancamentosFinanceiros } from '../interfaces/lancamentos-financeiros.interface';
+import { LancamentosMensais } from '../interfaces/lancamentos-mensais.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { LancamentosMensais } from '../interfaces/lancamentos-mensais.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -150,12 +150,17 @@ export class LancamentosFinanceirosService {
     if (error.error instanceof ErrorEvent) {
       console.error('Ocorreu um erro:', error.error.message);
     } else {
+      if (error.error.codigo == 204) {
+        alert(error.error.mensagem);
+      } else {
+        alert('Ops, Ocorreu um erro no servidor, tente novamente mais tarde.');
+      }
       console.error(
         `Backend codigo de erro ${error.status}, ` +
-        `request foi: ${error.error}`);
+        `request foi: ${error.error}` +
+        `mensagem: ${error.error.mensagem}`);
     }
 
-    alert('Ops, Ocorreu um erro no servidor, tente novamente mais tarde.')
     return throwError(error);
   }
 }

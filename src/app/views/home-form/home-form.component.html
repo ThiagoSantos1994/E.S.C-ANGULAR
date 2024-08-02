@@ -29,7 +29,7 @@
             <span class="user-name">
               {{ usuarioLogado }}
             </span>
-            <span class="user-role">Administrador</span>
+            <!--<span class="user-role">Administrador</span>-->
             <span class="user-status">
               <i class="fa fa-circle"></i>
               <span>Disponivel</span>
@@ -38,6 +38,12 @@
               <i class="fa fa-calendar" aria-hidden="true"></i>
               <span>{{ dataAtual }}</span>
             </span>
+            <div *ngIf="configuracoesLancamentos">
+              <span class="user-status">
+                <i class="fa fa-thumb-tack" aria-hidden="true"></i>
+                <span>Acesso Nº: {{configuracoesLancamentos.qtdeAcessos}}</span>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -82,6 +88,7 @@
                 data-target="#modalVisualizarLembretes" (click)="carregarMonitorLembretes()">
                 <i class="fa fa-bell" aria-hidden="true"></i>
                 <span>Notificações</span>
+                <span class="badge badge-pill badge-warning">{{configuracoesLancamentos.qtdeLembretes}}</span>
               </a>
             </li>
 

@@ -555,7 +555,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   onChangeDespesaRelatorioAssociada(despesaRelatorio, detalhe) {
     detalhe.idDespesaLinkRelatorio = despesaRelatorio;
-    detalhe.tpRelatorio = (despesaRelatorio == 0);
+    detalhe.tpRelatorio = ((despesaRelatorio > 0) ? 'S' : 'N');
     this.changeDetalheDespesasMensais(detalhe);
   }
 
@@ -921,6 +921,11 @@ export class DetalheDespesasFormComponent implements OnInit {
   atualizarOrdemLinhaDetalheDespesa(acao, objeto) {
     let ordemAtual = objeto.idOrdem;
 
+    if (this.isDetalheNewOrChanged()) {
+      alert('Necessario salvar a despesa para depois alterar a ordem de exibição.');
+      return;
+    }
+
     let novaOrdem = (acao == "UP" ? (objeto.idOrdem - 1) : (objeto.idOrdem + 1));
     if (novaOrdem <= 0) {
       novaOrdem = 1;
@@ -958,6 +963,10 @@ export class DetalheDespesasFormComponent implements OnInit {
   getDetalheDespesasChange() {
     let resultado = this._detalheDespesasChange.getValue().filter((d) => d.changeValues === true);
     return resultado;
+  }
+
+  isDetalheNewOrChanged(): boolean {
+    return this._detalheDespesasChange.getValue().filter((d) => d.changeValues === true).length > 0;
   }
 
   getParcelasAmortizacaoChecked() {

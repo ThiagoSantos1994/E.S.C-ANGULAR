@@ -10,4 +10,5 @@ export interface DespesasFixasMensais{
     idOrdem: number;
     tpFixasObrigatorias: string;
     tpDespesaDebitoCartao: string;
+    idDetalheDespesaDebitoCartao: number;
 }

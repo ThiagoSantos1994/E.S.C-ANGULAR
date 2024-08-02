@@ -112,9 +112,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   carregarConfiguracaoLancamentos() {
-    this.lancamentosService.getConfiguracaoLancamentos().toPromise().then((res: ConfiguracaoLancamentos) => {
-      this.parametrizacoes = res;
-
+    this.lancamentosService.getConfiguracaoLancamentos().subscribe((res: ConfiguracaoLancamentos) => {
+      this.parametrizacoes = res;      
       let mesReferencia = (res.mesReferencia <= 9 ? "0".concat(res.mesReferencia.toString()) : res.mesReferencia);
 
       this.pesquisaForm = this.formBuilder.group({
@@ -201,7 +200,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       idFuncionario: Number(this.sessaoService.getIdLogin()),
       idOrdem: ordem,
       tpFixasObrigatorias: (checkDespesaObrigatoria == true ? 'S' : 'N'),
-      tpDespesaDebitoCartao: 'N'
+      tpDespesaDebitoCartao: 'N',
+      idDetalheDespesaDebitoCartao: null
     };
 
     this.lancamentosService.gravarReceita(request).toPromise().then(() => {
@@ -477,6 +477,12 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   excluirTodosLancamentos() {
     let mes = this.pesquisaForm.get('cbMes').value;
     let ano = this.pesquisaForm.get('cbAno').value;
+    let isDespesaExistente = (this.despesaRef !== null);
+
+    if (!isDespesaExistente) {
+      alert('Não é possivel excluir lançamentos que não foram processados ou não existem.');
+      return;
+    }
 
     if (mes <= this.getMesAtual() && ano <= this.getAnoAtual()) {
       this.modalRef = this.modalService.show(this.modalAutenticacaoUsuario);

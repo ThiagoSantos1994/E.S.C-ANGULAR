@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 //import { DadosUsuario } from '../interfaces/dados-usuario.interface';
 import { TokenService } from './token.service';
@@ -16,6 +16,16 @@ export class HomeService {
   constructor(
     private http: HttpClient,
     private token: TokenService) { }
+
+  private subject = new Subject<String>();
+
+  public enviaMensagem(tipoMensagem: String) {
+    this.subject.next(tipoMensagem);
+  }
+
+  public recebeMensagem(): Observable<String> {
+    return this.subject.asObservable();
+  }
 
   /*getDadosUsuario(id: string): Observable<DadosUsuario> {
     let headers = new HttpHeaders().append('Authorization', this.token.getToken());
