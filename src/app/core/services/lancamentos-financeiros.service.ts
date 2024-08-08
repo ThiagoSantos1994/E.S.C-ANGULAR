@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { LancamentosFinanceirosDomain } from '../domain/lancamentos-financeiros.domain';
+import { CategoriaDespesas } from '../interfaces/categoria-despesa.interface';
 import { ConfiguracaoLancamentos } from '../interfaces/configuracao-lancamentos.interface';
 import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
 import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.interface';
@@ -26,8 +27,8 @@ export class LancamentosFinanceirosService {
 
   private subject = new Subject<any>();
 
-  public enviaMensagem() {
-    this.subject.next();
+  public enviaMensagem(tipoMensagem: String) {
+    this.subject.next(tipoMensagem);
   }
 
   public recebeMensagem(): Observable<any> {
@@ -45,6 +46,12 @@ export class LancamentosFinanceirosService {
 
   getConfiguracaoLancamentos(): Observable<ConfiguracaoLancamentos> {
     return this.http.get<ConfiguracaoLancamentos>(`springboot-esc-backend/api/parametros/obterConfiguracaoLancamentos/${this.sessao.getIdLogin()}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
+
+  getSubTotalCategoriaDespesas(idDespesa: number): Observable<CategoriaDespesas> {
+    return this.http.get<CategoriaDespesas>(`springboot-esc-backend/api/lancamentosFinanceiros/categoriaDespesa/subTotal/${idDespesa}/${this.sessao.getIdLogin()}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
   }

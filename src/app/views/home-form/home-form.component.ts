@@ -70,6 +70,11 @@ export class HomeFormComponent implements OnInit {
     this.sessaoService.validarSessao();
   }
 
+  carregarCategoriaDespesas() {
+    this.lancamentosService.enviaMensagem("categorias");
+    this.sessaoService.validarSessao();
+  }
+
   getDataAtual() {
     return formatDate(Date.now(), 'dd/MM/yyyy', 'en-US');
   }

@@ -681,9 +681,12 @@
             <!--<button (click)="myInput.focus()">Click Me</button>-->
 
             <span class="input-group-text">Novo Valor:</span>
-            <input type="text" #myInput class="inputNovoValorEditorValores form-control" (click)="onEditarValores()"
+            <!--<input type="text" #myInput class="inputNovoValorEditorValores form-control" (click)="onEditarValores()"
               id="inputNovoValor" currencyMask maxlength="16" autocomplete="off"
-              [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', allowNegative: true }">
+              [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', allowNegative: true }">-->
+
+            <input type="text" #myInput class="inputNovoValorEditorValores form-control" (click)="onEditarValores()"
+              id="inputNovoValor">
             <div>
               <small class="form-text text-muted">
                 <i class="fa fa-info-circle" aria-hidden="true"></i>
@@ -695,6 +698,9 @@
             maxlength="16" autocomplete="off"
             [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', allowNegative: true }">
         </div>
+
+        <input type="text" #myInput class="form-control" id="inputObservacoesEditorValores" hidden>
+        <input type="text" #myInput class="form-control" id="observacoes" hidden>
 
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="confirmGravarEditarValores()"

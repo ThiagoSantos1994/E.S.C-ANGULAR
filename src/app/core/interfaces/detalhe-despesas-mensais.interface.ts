@@ -22,6 +22,7 @@ export interface DetalheDespesasMensais {
     tpLinhaSeparacao?: string;
     tpParcelaAdiada?: string;
     tpParcelaAmortizada?: string;
+    dsObservacoesEditorValores?: string;
     changeValues?: boolean;
     checked?: boolean;
 }

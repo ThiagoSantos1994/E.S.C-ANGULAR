@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { CategoriaDespesas } from 'src/app/core/interfaces/categoria-despesa.interface';
 import { ConfiguracaoLancamentos } from 'src/app/core/interfaces/configuracao-lancamentos.interface';
 import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
 import { DespesasFixasMensais } from 'src/app/core/interfaces/despesas-fixas-mensais.interface';
@@ -22,6 +23,7 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
 export class LancamentosFinanceirosFormComponent implements OnInit {
   private lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]>;
   private lancamentosMensais: LancamentosMensais[];
+  private categoriaDespesa: CategoriaDespesas;
   private _despesasCheckbox = new BehaviorSubject<LancamentosMensais[]>([]);
 
   private pesquisaForm: FormGroup;
@@ -86,8 +88,12 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     this.quantidadeTentativasAutenticacao = 2; // 3 tentativas para bloqueio
 
-    this.lancamentosService.recebeMensagem().subscribe(() => {
-      this.carregarDespesas();
+    this.lancamentosService.recebeMensagem().subscribe(tipo => {
+      if (tipo == "recarregarDetalhes") {
+        this.carregarDespesas();
+      } else if (tipo == "categorias") {
+        this.carregarCategoriaDespesas();
+      }
     }, () => {
       alert('Ocorreu um erro ao carregar as informações da despesa, tente novamente mais tarde.')
     });
@@ -111,9 +117,23 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     });
   }
 
+  carregarCategoriaDespesas() {
+    if (this.despesaRef == null) {
+      this.categoriaDespesa = null;
+      return;
+    }
+
+    this.lancamentosService.getSubTotalCategoriaDespesas(this.despesaRef).subscribe((res: CategoriaDespesas) => {
+      this.categoriaDespesa = res;
+    },
+      err => {
+        console.log(err);
+      });
+  }
+
   carregarConfiguracaoLancamentos() {
     this.lancamentosService.getConfiguracaoLancamentos().subscribe((res: ConfiguracaoLancamentos) => {
-      this.parametrizacoes = res;      
+      this.parametrizacoes = res;
       let mesReferencia = (res.mesReferencia <= 9 ? "0".concat(res.mesReferencia.toString()) : res.mesReferencia);
 
       this.pesquisaForm = this.formBuilder.group({

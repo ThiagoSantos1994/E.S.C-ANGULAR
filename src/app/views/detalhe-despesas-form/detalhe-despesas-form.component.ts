@@ -46,6 +46,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   private nomeDespesa: string
   private tituloDespesaParceladaAmortizacao: string;
   private checkboxesMarcadas: Boolean = false;
+  private observacoesEditorValores: string = "";
 
   private eventModalConfirmacao: string = "";
   private mensagemModalConfirmacao_header: string = "";
@@ -437,7 +438,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
     let despesa = this.detalheDomain.getDespesaMensal();
     this.carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao);
-    this.lancamentosService.enviaMensagem();
+    this.lancamentosService.enviaMensagem("recarregarDetalhes");
   }
 
   resetCheckBoxMarcarTodos() {
@@ -1129,21 +1130,43 @@ export class DetalheDespesasFormComponent implements OnInit {
 
     input.addEventListener('keyup', function (e) {
       var key = e.which || e.keyCode;
+
+      if (key >= 96 && key <= 105) {
+        mascaraMoedaInputDinamico(input);
+      }
+
       if (key == 13) {
         let valorAtual = parseFloat(formatRealNumber((document.getElementById("subTotalValores") as HTMLInputElement).value));
         let inputValue = (document.getElementById("inputNovoValor") as HTMLInputElement).value;
+        let inputObservacoes = (document.getElementById("inputObservacoesEditorValores") as HTMLInputElement).value;
+        let observacoes = (document.getElementById("observacoes") as HTMLInputElement).value;
 
-        if (parseFloat(formatRealNumber(inputValue)) !== 0) {
+        if (validarCaracteresInput(inputValue) && "" !== inputObservacoes) {
+          inputObservacoes = inputObservacoes.concat(inputValue);
+
+          (document.getElementById("observacoes") as HTMLInputElement).value = observacoes.concat(inputObservacoes.concat('\\n'));
+          
+          console.log(observacoes.concat(inputObservacoes.concat('\\n')));
+          
+          (document.getElementById("inputObservacoesEditorValores") as HTMLInputElement).value = "";
+        }
+
+        if (!validarCaracteresInput(inputValue) && parseFloat(formatRealNumber(inputValue)) >= 0) {
           let novoValor = isValorNegativo(inputValue) ? parseFloat("-" + formatRealNumber(inputValue)) : parseFloat(formatRealNumber(inputValue));
 
           let calculo = (novoValor + valorAtual).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
 
           (<HTMLInputElement>document.getElementById("subTotalValores")).value = calculo;
+
+          if (!validarCaracteresInput(inputValue)) {
+            (<HTMLInputElement>document.getElementById("inputObservacoesEditorValores")).value = inputValue.concat(' - ');
+          }
         }
 
         //limpa o campo de input
-        (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
+        (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "";
       }
+
     });
   }
 
@@ -1154,6 +1177,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     switch (this.eventModalEditarValores) {
       case 'detalheDespColValorTotal': {
         objeto.vlTotal = novoValor.trim();
+        objeto.dsObservacoesEditorValores = (document.getElementById("observacoes") as HTMLInputElement).value;
         this.changeDetalheDespesasMensais(objeto);
         break;
       }
@@ -1178,6 +1202,8 @@ export class DetalheDespesasFormComponent implements OnInit {
   setModalEditarValores(valor, evento, objeto) {
     (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "";
     (<HTMLInputElement>document.getElementById("subTotalValores")).value = "R$ 0,00";
+    (<HTMLInputElement>document.getElementById("inputObservacoesEditorValores")).value = "";
+    (<HTMLInputElement>document.getElementById("observacoes")).value = "";
 
     this.eventModalEditarValores = (evento == "reset" ? this.eventModalEditarValores : evento);
     this.objectModalEditarValores = (evento == "reset" ? this.objectModalEditarValores : objeto);
@@ -1217,6 +1243,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.objectModalEditarValores = null;
     (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "R$ 0,00";
     (<HTMLInputElement>document.getElementById("subTotalValores")).value = "R$ 0,00";
+    (<HTMLInputElement>document.getElementById("inputObservacoesEditorValores")).value = "";
+    (<HTMLInputElement>document.getElementById("observacoes")).value = "";
   }
 
 
@@ -1273,6 +1301,28 @@ function formatRealNumber(str) {
     tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, "$1.$2");
 
   return tmp;
+}
+
+function mascaraMoedaInputDinamico(valor) {
+  var valorAlterado = valor.value;
+
+  if (validarCaracteresInput(valorAlterado)) {
+    return;
+  }
+
+  valorAlterado = valorAlterado.replace(/\D/g, ""); // Remove todos os não dígitos
+  valorAlterado = valorAlterado.replace(/(\d+)(\d{2})$/, "$1,$2"); // Adiciona a parte de centavos
+  valorAlterado = valorAlterado.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."); // Adiciona pontos a cada três dígitos
+  valor.value = valorAlterado;
+}
+
+function validarCaracteresInput(valor): boolean {
+  if (valor.includes('/', ',', '-', '(', ')')) {
+    return true;
+  }
+
+  let regex = /[a-zA-Z]/;
+  return regex.test(valor);
 }
 
 function isValorNegativo(str) {
