@@ -957,6 +957,14 @@ export class DetalheDespesasFormComponent implements OnInit {
     return this._detalheDespesasChange.getValue().filter((d) => d.checked === true && d.idDespesaParcelada !== 0 && d.tpLinhaSeparacao == 'N');
   }
 
+  getDetalheDespesasParceladasSemParcelasAdiantadasChecked() {
+    return this._detalheDespesasChange.getValue().filter((d) => d.checked === true && d.idDespesaParcelada !== 0 && d.tpLinhaSeparacao == 'N' && d.tpParcelaAdiada == 'N');
+  }
+
+  getDetalheDespesasParceladasComParcelasAdiantadasChecked() {
+    return this._detalheDespesasChange.getValue().filter((d) => d.checked === true && d.idDespesaParcelada !== 0 && d.tpLinhaSeparacao == 'N' && d.tpParcelaAdiada == 'S');
+  }
+
   getDetalheDespesasCheckedPagamento() {
     return this._detalheDespesasChange.getValue().filter((d) => d.checked === true && d.tpAnotacao == 'N' && d.tpLinhaSeparacao == 'N');
   }
@@ -1034,57 +1042,43 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmAdiantarFluxoParcelas() {
-    let despesas = this.getDetalheDespesasParceladasChecked();
+    let despesas = this.getDetalheDespesasParceladasSemParcelasAdiantadasChecked();
 
     if (despesas.length == 0) {
       alert('Necessario selecionar alguma *DESPESA PARCELADA* para ser adiada.');
       return;
-    } else if (despesas.length > 1) {
-      alert('Selecione uma despesa por vez para adiar a parcela.');
-      return;
     }
 
-    despesas.forEach((d) => {
-      if (d.tpParcelaAdiada == 'N') {
-        this.detalheService.adiantarFluxoParcelas(d.idDespesa, d.idDetalheDespesa, d.idDespesaParcelada, d.idParcela).toPromise().then(() => {
-          this.closeModal();
-          this.recarregarDetalheDespesa();
-          alert('Parcela adiantada com sucesso! \n \n *ATENÇÃO* Não esquecer de reprocessar as despesas no mês seguinte!');
-        },
-          err => {
-            console.log(err);
-          });
-      } else {
-        alert('Não é permitido adiantar a parcela de uma mesma despesa 2x no mesmo mês.');
-      }
-    });
+    this.detalheService.adiantarFluxoParcelas(despesas).toPromise().then(() => {
+      this.closeModal();
+      this.recarregarDetalheDespesa();
+      alert('Parcela adiantada com sucesso! \n \n *ATENÇÃO* Não esquecer de reprocessar as despesas no mês seguinte!');
+    },
+      err => {
+        console.log(err);
+      });
   }
 
   confirmDesfazerAdiantamentoFluxoParcelas() {
-    let despesas = this.getDetalheDespesasParceladasChecked();
+    let despesas = this.getDetalheDespesasParceladasComParcelasAdiantadasChecked();
 
     if (despesas.length == 0) {
-      alert('Necessario selecionar somente *DESPESAS PARCELADAS* para desfazer o adiantamento de parcela.');
-      return;
-    } else if (despesas.length > 1) {
-      alert('Selecione uma despesa por vez para desfazer o adiantamento de parcela.');
+      alert('Necessario selecionar alguma *DESPESA PARCELADA* para ser adiada.');
       return;
     }
 
-    despesas.forEach((d) => {
-      this.detalheService.desfazerAdiantamentoFluxoParcelas(d.idDespesa, d.idDetalheDespesa, d.idDespesaParcelada, d.idParcela).toPromise().then(() => {
-        this.closeModal();
-        this.recarregarDetalheDespesa();
-        alert('Processamento concluido com sucesso!');
-      },
-        err => {
-          console.log(err);
-        });
-    });
+    this.detalheService.desfazerAdiantamentoFluxoParcelas(despesas).toPromise().then(() => {
+      this.closeModal();
+      this.recarregarDetalheDespesa();
+      alert('');
+    },
+      err => {
+        console.log(err);
+      });
   }
 
   carregarDespesasParceladas() {
-    this.despesasParceladasService.enviaMensagem();
+    this.despesasParceladasService.enviaMensagem(null);
   }
 
   adiantarFluxoParcelas() {
@@ -1145,9 +1139,9 @@ export class DetalheDespesasFormComponent implements OnInit {
           inputObservacoes = inputObservacoes.concat(inputValue);
 
           (document.getElementById("observacoes") as HTMLInputElement).value = observacoes.concat(inputObservacoes.concat('\\n'));
-          
+
           console.log(observacoes.concat(inputObservacoes.concat('\\n')));
-          
+
           (document.getElementById("inputObservacoesEditorValores") as HTMLInputElement).value = "";
         }
 
@@ -1168,6 +1162,10 @@ export class DetalheDespesasFormComponent implements OnInit {
       }
 
     });
+  }
+
+  abrirModalCadastroDespesasParceladas(despesa) {
+    this.despesasParceladasService.enviaMensagem(despesa);
   }
 
   confirmGravarEditarValores() {

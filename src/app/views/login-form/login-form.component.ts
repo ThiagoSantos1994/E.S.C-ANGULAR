@@ -14,7 +14,7 @@ export class LoginFormComponent implements OnInit {
   loginForm: FormGroup;
   modalReference: any;
   validacaoLogin: boolean;
-  
+
   @ViewChild('modalLoginInvalido') modalUsuarioInvalido: any;
 
   //Seta o focus do campo caso o login esteja invalido
@@ -32,7 +32,8 @@ export class LoginFormComponent implements OnInit {
     this.sessaoService.logout();
     this.loginForm = this.formBuilder.group({
       userName: ['', Validators.required],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
+      checkMantenhaMeConectado: ['']
     })
     this.validacaoLogin = true;
   }
@@ -40,9 +41,10 @@ export class LoginFormComponent implements OnInit {
   login() {
     let userName = this.loginForm.get('userName').value;
     let password = this.loginForm.get('password').value;
+    let isIgnorarValidacaoSessao = !this.loginForm.get('checkMantenhaMeConectado').value;
 
     this.loginService.autenticar(userName, password).toPromise().then(res => {
-      this.sessaoService.setTokenAutenticador(res.autenticacao, res.idLogin, res.nomeUsuario);
+      this.sessaoService.setTokenAutenticador(res.autenticacao, res.idLogin, res.nomeUsuario, isIgnorarValidacaoSessao);
       this.router.navigate(['dashboard']);
     },
       err => {

@@ -56,7 +56,7 @@ export class HomeFormComponent implements OnInit {
   }
 
   carregarDespesasParceladas() {
-    this.despesasParceladasService.enviaMensagem();
+    this.despesasParceladasService.enviaMensagem(null);
     this.sessaoService.validarSessao();
   }
 
@@ -67,11 +67,6 @@ export class HomeFormComponent implements OnInit {
 
   carregarMonitorLembretes() {
     this.lembreteService.enviaMensagem("monitor");
-    this.sessaoService.validarSessao();
-  }
-
-  carregarCategoriaDespesas() {
-    this.lancamentosService.enviaMensagem("categorias");
     this.sessaoService.validarSessao();
   }
 

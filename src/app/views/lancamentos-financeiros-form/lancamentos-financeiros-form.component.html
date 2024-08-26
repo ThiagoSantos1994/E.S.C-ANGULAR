@@ -608,12 +608,14 @@
             <div>
               <i class="fa fa-bars" aria-hidden="true"></i>
               Categorias
-              <p style="padding-block-start: 4%; color: brown;"></p>
             </div>
           </div>
 
           <div class="form-group modal-body" style=" padding-block-end: 0%; padding-block-start: 0%;">
             <div *ngIf="categoriaDespesa !== null">
+              <div class="form-text text-muted labelQuitacaoMes" style="font-size: initial;font-size: 82%;">
+                <p>Mês Referência: {{categoriaDespesa.mesAnoReferencia}}</p>
+              </div>
               <table class="table table-categorias">
                 <thead class="thead-light">
                   <tr>
@@ -623,7 +625,7 @@
                 </thead>
 
                 <tbody>
-                  <tr *ngFor="let categorias of categoriaDespesa">
+                  <tr *ngFor="let categorias of categoriaDespesa.categorias">
                     <td>
                       {{categorias.nomeCategoria}}
                     </td>
@@ -644,7 +646,17 @@
           </div>
 
           <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="visualizarCategoriasMesAnterior()"
+              title="Visualizar categorias do mês anterior">
+              <i class="fa fa-angle-double-left" aria-hidden="true"></i>
+            </button>
+
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+
+            <button type="button" class="btn btn-primary" (click)="visualizarCategoriasMesSeguinte()"
+              title="Visualizar categorias do mês seguinte">
+              <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+            </button>
           </div>
         </div>
       </div>

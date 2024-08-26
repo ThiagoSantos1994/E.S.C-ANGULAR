@@ -7,6 +7,7 @@ import { StringResponse } from '../interfaces/string-response.interface.';
 const KEY_TOKEN = 'tokenID';
 const KEY_ID = 'idLogin';
 const KEY_USER = 'userName';
+const KEY_VALIDAR_SESSAO = 'validarSessao';
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {
@@ -19,10 +20,11 @@ export class TokenService {
         return !!this.getToken();
     }
 
-    setToken(token: string, idLogin: number, usuario: string) {
+    setToken(token: string, idLogin: number, usuario: string, isIgnorarSessao: boolean) {
         window.localStorage.setItem(KEY_TOKEN, token);
         window.localStorage.setItem(KEY_ID, idLogin.toString());
         window.localStorage.setItem(KEY_USER, usuario.toString());
+        window.localStorage.setItem(KEY_VALIDAR_SESSAO, isIgnorarSessao.toString());
     }
 
     validarSessao(): Observable<StringResponse> {
@@ -43,10 +45,15 @@ export class TokenService {
         return window.localStorage.getItem(KEY_USER);
     }
 
+    getValidarSessao() {
+        return window.localStorage.getItem(KEY_VALIDAR_SESSAO);
+    }
+
     removeToken() {
         window.localStorage.removeItem(KEY_TOKEN);
         window.localStorage.removeItem(KEY_ID);
         window.localStorage.getItem(KEY_USER);
+        window.localStorage.getItem(KEY_VALIDAR_SESSAO);
     }
 
     private handleError(error: HttpErrorResponse) {

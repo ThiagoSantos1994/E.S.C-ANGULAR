@@ -4,7 +4,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CategoriaDespesas } from 'src/app/core/interfaces/categoria-despesa.interface';
+import { CategoriaDespesasResponse } from 'src/app/core/interfaces/categoria-despesa-response.interface';
 import { ConfiguracaoLancamentos } from 'src/app/core/interfaces/configuracao-lancamentos.interface';
 import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
 import { DespesasFixasMensais } from 'src/app/core/interfaces/despesas-fixas-mensais.interface';
@@ -23,7 +23,7 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
 export class LancamentosFinanceirosFormComponent implements OnInit {
   private lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]>;
   private lancamentosMensais: LancamentosMensais[];
-  private categoriaDespesa: CategoriaDespesas;
+  private categoriaDespesa: CategoriaDespesasResponse;
   private _despesasCheckbox = new BehaviorSubject<LancamentosMensais[]>([]);
 
   private pesquisaForm: FormGroup;
@@ -34,6 +34,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private modalRef: BsModalRef;
 
   private despesaRef: number;
+  private despesaRefCategoria: number;
   private receitaSelecionada: DespesasFixasMensais;
   private parametrizacoes: ConfiguracaoLancamentos;
   private quantidadeTentativasAutenticacao: number;
@@ -91,8 +92,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.recebeMensagem().subscribe(tipo => {
       if (tipo == "recarregarDetalhes") {
         this.carregarDespesas();
-      } else if (tipo == "categorias") {
-        this.carregarCategoriaDespesas();
       }
     }, () => {
       alert('Ocorreu um erro ao carregar as informações da despesa, tente novamente mais tarde.')
@@ -114,21 +113,31 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.lancamentosFinanceiros$ = res;
       this.lancamentosMensais = res.lancamentosMensais;
       this.despesaRef = res.idDespesa;
+      this.carregarCategoriaDespesas(this.despesaRef);
     });
   }
 
-  carregarCategoriaDespesas() {
-    if (this.despesaRef == null) {
-      this.categoriaDespesa = null;
-      return;
+  carregarCategoriaDespesas(idDespesa: number) {
+    if (this.despesaRefCategoria == null) {
+      this.despesaRefCategoria = idDespesa;
     }
 
-    this.lancamentosService.getSubTotalCategoriaDespesas(this.despesaRef).subscribe((res: CategoriaDespesas) => {
-      this.categoriaDespesa = res;
-    },
-      err => {
-        console.log(err);
-      });
+    if (idDespesa != null) {
+      this.lancamentosService.getSubTotalCategoriaDespesas(idDespesa).subscribe((res: any) => {
+        this.categoriaDespesa = res;
+      },
+        err => {
+          console.log(err);
+        });
+    }
+  }
+
+  visualizarCategoriasMesAnterior() {
+    this.carregarCategoriaDespesas(--this.despesaRefCategoria);
+  }
+
+  visualizarCategoriasMesSeguinte() {
+    this.carregarCategoriaDespesas(++this.despesaRefCategoria);
   }
 
   carregarConfiguracaoLancamentos() {
@@ -201,7 +210,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   gravarReceita() {
-
     if (null == this.valorReceitaControl.value) {
       alert('O Valor da receita não pode estar em branco ou vazio.');
       return;

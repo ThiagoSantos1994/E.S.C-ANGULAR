@@ -13,8 +13,8 @@ export class SessaoService {
         this.tokenService.hasToken() && this.decodeAndNotify()
     }
 
-    setTokenAutenticador(token: string, idLogin: number, usuario: string) {
-        this.tokenService.setToken(token, idLogin, usuario);
+    setTokenAutenticador(token: string, idLogin: number, usuario: string, isIgnorarSessao: boolean) {
+        this.tokenService.setToken(token, idLogin, usuario, isIgnorarSessao);
         this.decodeAndNotify();
     }
 
@@ -23,13 +23,15 @@ export class SessaoService {
     }
 
     validarSessao() {
-        this.tokenService.validarSessao().toPromise().then((res) => {
-            if (res.isSessaoValida.valueOf() == false) {
-                alert('Tempo de sessão expirado, redirecionando para o login.');
-                this.router.navigate(['login']);
-                this.logout();
-            }
-        });
+        if (this.tokenService.getValidarSessao() == 'true') {
+            this.tokenService.validarSessao().toPromise().then((res) => {
+                if (res.isSessaoValida.valueOf() == false) {
+                    alert('Tempo de sessão expirado, redirecionando para o login.');
+                    this.router.navigate(['login']);
+                    this.logout();
+                }
+            });
+        }
     }
 
     isLogged() {

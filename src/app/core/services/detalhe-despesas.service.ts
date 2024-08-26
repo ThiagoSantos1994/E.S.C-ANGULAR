@@ -173,14 +173,14 @@ export class DetalheDespesasService {
         catchError(this.handleError));
   }
 
-  adiantarFluxoParcelas(idDespesa: number, idDetalheDespesa: number, idDespesaParcelada: number, idParcela: number) {
-    return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/parcelas/adiantarFluxoParcelas/${idDespesa}/${idDetalheDespesa}/${idDespesaParcelada}/${idParcela}/${this.sessao.getIdLogin()}`, {}).pipe(
+  adiantarFluxoParcelas(despesas: DetalheDespesasMensais[]) {
+    return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/parcelas/adiantarFluxoParcelas`, despesas).pipe(
       catchError(error => this.handleError(error))
     );
   }
 
-  desfazerAdiantamentoFluxoParcelas(idDespesa: number, idDetalheDespesa: number, idDespesaParcelada: number, idParcela: number) {
-    return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/parcelas/desfazerAdiantamentoFluxoParcelas/${idDespesa}/${idDetalheDespesa}/${idDespesaParcelada}/${idParcela}/${this.sessao.getIdLogin()}`, {}).pipe(
+  desfazerAdiantamentoFluxoParcelas(despesas: DetalheDespesasMensais[]) {
+    return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/parcelas/desfazerAdiantamentoFluxoParcelas`, despesas).pipe(
       catchError(error => this.handleError(error))
     );
   }

@@ -22,8 +22,8 @@ export class DespesasParceladasService {
 
   private subject = new Subject<any>();
 
-  public enviaMensagem() {
-    this.subject.next(null);
+  public enviaMensagem(despesa) {
+    this.subject.next(despesa);
   }
 
   public recebeMensagem(): Observable<any> {

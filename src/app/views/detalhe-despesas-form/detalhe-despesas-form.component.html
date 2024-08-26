@@ -302,7 +302,7 @@
                                 value={{detalheDespesa.dsTituloDespesa}} onkeyup="toUpper(this)"
                                 style="color: #000000;">
                             </span>
-                            <span *ngIf="detalheDespesa.tpReprocessar == 'S'">
+                            <span *ngIf="detalheDespesa.tpReprocessar == 'S' && detalheDespesa.tpAnotacao !== 'S'">
                               <input type="text" class="form-control form-control-sm text-center"
                                 (input)="onChangeDescricaoDespesa($event.target.value, detalheDespesa)"
                                 value={{detalheDespesa.dsTituloDespesa}} onkeyup="toUpper(this)"
@@ -319,7 +319,9 @@
 
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada !== 0">
                           <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
-                            <div style="width: 590px; color: #040c6bab">
+                            <div style="width: 590px; color: #040c6bab" data-toggle="modal"
+                              data-target="#modalDespesasParceladas"
+                              (click)="abrirModalCadastroDespesasParceladas(detalheDespesa)">
                               <b title="Despesa Parcelada">{{detalheDespesa.dsTituloDespesa}}</b>
                             </div>
                           </span>

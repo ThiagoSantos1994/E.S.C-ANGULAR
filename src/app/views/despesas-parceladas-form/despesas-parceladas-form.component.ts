@@ -44,16 +44,16 @@ export class DespesasParceladasFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loadFormDespesaParcelada();
+    this.loadFormDespesaParcelada(null);
 
-    this.service.recebeMensagem().subscribe(d => {
-      this.loadFormDespesaParcelada();
+    this.service.recebeMensagem().subscribe(despesa => {
+      this.loadFormDespesaParcelada(despesa);
     }, () => {
       alert('Ocorreu um erro ao carregar os dados da despesa parcelada, tente novamente mais tarde.')
     })
   }
 
-  loadFormDespesaParcelada() {
+  loadFormDespesaParcelada(objDetalheDespesa) {
     this.idDespesaReferencia = -1;
     this.despesaParceladaDetalhe = null;
     this.checkboxesMarcadas = false;
@@ -87,6 +87,10 @@ export class DespesasParceladasFormComponent implements OnInit {
     });
 
     this.carregarListaDespesasParceladas(true);
+
+    if (null != objDetalheDespesa) {
+      this.onChangeTituloDespesa(objDetalheDespesa.idDespesaParcelada);
+    }
   }
 
   onQuantidadeParcelasChange() {
@@ -485,7 +489,7 @@ export class DespesasParceladasFormComponent implements OnInit {
 
   confirmExcluirDespesa() {
     this.service.excluirDespesa(this.idDespesaReferencia).toPromise().then(() => {
-      this.loadFormDespesaParcelada()
+      this.loadFormDespesaParcelada(null);
       alert('Despesa excluida com sucesso!');
     },
       err => {
