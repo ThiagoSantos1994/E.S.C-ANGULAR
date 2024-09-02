@@ -4,5 +4,12 @@ export interface TituloDespesaResponse {
 
 export interface TituloDespesa {
     idDespesa: number;
+    idConsolidacao: number;
+    tituloDespesa: String;
+}
+
+export interface DespesaSelecionadaImportacao {
+    idDespesa: number;
+    idConsolidacao: number;
     tituloDespesa: String;
 }

@@ -14,6 +14,7 @@ import { LancamentosFinanceirosFormComponent } from './lancamentos-financeiros-f
 import { LoginFormComponent } from "./login-form/login-form.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { LembretesFormComponent } from "./lembretes-form/lembretes-form.component";
+import { ConsolidacoesDespesasFormComponent } from "./consolidacoes-despesas-form/consolidacoes-despesas-form.component";
 
 @NgModule({
     declarations: [
@@ -23,6 +24,7 @@ import { LembretesFormComponent } from "./lembretes-form/lembretes-form.componen
         LancamentosFinanceirosFormComponent,
         DetalheDespesasFormComponent,
         DespesasParceladasFormComponent,
+        ConsolidacoesDespesasFormComponent,
         LembretesFormComponent
     ],
     imports: [

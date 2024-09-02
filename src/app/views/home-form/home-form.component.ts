@@ -60,6 +60,11 @@ export class HomeFormComponent implements OnInit {
     this.sessaoService.validarSessao();
   }
 
+  carregarConsolidacoes() {
+    this.despesasParceladasService.enviaMensagem(null);
+    this.sessaoService.validarSessao();
+  }
+
   carregarCadastroLembretes() {
     this.lembreteService.enviaMensagem("cadastro");
     this.sessaoService.validarSessao();

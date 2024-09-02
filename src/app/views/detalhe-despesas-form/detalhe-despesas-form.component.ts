@@ -160,6 +160,7 @@ export class DetalheDespesasFormComponent implements OnInit {
         idDespesa: d.idDespesa,
         idDetalheDespesa: d.idDetalheDespesa,
         idDespesaParcelada: d.idDespesaParcelada,
+        idConsolidacao: d.idConsolidacao,
         idParcela: d.idParcela,
         idOrdem: d.idOrdem,
         idFuncionario: d.idFuncionario,
@@ -502,13 +503,14 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   onImportarDespesaParcelada() {
-    if ((document.getElementById("comboTituloDespesaParcelada") as HTMLInputElement).value == "") {
+    let valor = (document.getElementById("comboTituloDespesaParcelada") as HTMLInputElement).value;
+    if (valor == "") {
       alert('Necessário selecionar alguma despesa para importação.');
       return;
     }
 
     this.eventModalConfirmacao = "ImportacaoDespesaParcelada";
-    this.mensagemModalConfirmacao_header = "Deseja importar esta despesa parcelada ?"
+    this.mensagemModalConfirmacao_header = (valor.indexOf('-') < 0 ? "Deseja importar esta despesa parcelada ?" : "Deseja importar esta consolidação?")
     this.mensagemModalConfirmacao_body = "null";
     this.mensagemModalConfirmacao_footer = "null";
 
@@ -857,10 +859,17 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmImportarDespesaParcelada() {
-    let idDespesaParcelada = +(document.getElementById("comboTituloDespesaParcelada") as HTMLInputElement).value;
+    let idDespesaImportacao = +(document.getElementById("comboTituloDespesaParcelada") as HTMLInputElement).value;
+    let idConsolidacaoImportacao = null;
+
+    if (idDespesaImportacao < 0) {
+      idConsolidacaoImportacao = Math.abs(idDespesaImportacao);
+      idDespesaImportacao = 0;
+    }
+
     let detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
 
-    this.detalheService.processarImportacaoDespesasParceladas(detalheDespesa.idDespesa, detalheDespesa.idDetalheDespesa, idDespesaParcelada).toPromise().then(() => {
+    this.detalheService.processarImportacaoDespesasParceladas(detalheDespesa.idDespesa, detalheDespesa.idDetalheDespesa, idDespesaImportacao, idConsolidacaoImportacao).toPromise().then(() => {
       this.carregarListaDespesasParceladasImportacao(false);
       this.recarregarDetalheDespesa();
     },
@@ -996,6 +1005,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       idDespesa: detalheDespesa.idDespesa,
       idDetalheDespesa: detalheDespesa.idDetalheDespesa,
       idDetalheReferencia: this.detalheRef,
+      idConsolidacao: null,
       idFuncionario: Number(this.sessao.getIdLogin()),
       dsDescricao: '',
       dsObservacao: '',

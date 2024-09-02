@@ -2,6 +2,7 @@ export interface PagamentoDespesasRequest {
     idDespesa: number;
     idDetalheDespesa: number;
     idDespesaParcelada: number;
+    idConsolidacao: number;
     idParcela: number;
     idOrdem: number;
     idFuncionario: number;

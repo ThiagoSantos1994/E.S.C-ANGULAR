@@ -146,8 +146,8 @@ export class DetalheDespesasService {
     );
   }
 
-  processarImportacaoDespesasParceladas(idDespesa: number, idDetalheDespesa: number, idDespesaParcelada: number) {
-    const url = `springboot-esc-backend/api/lancamentosFinanceiros/importacao/despesaParcelada/${idDespesa}/${idDetalheDespesa}/${idDespesaParcelada}/${this.sessao.getIdLogin()}`;
+  processarImportacaoDespesasParceladas(idDespesa: number, idDetalheDespesa: number, idDespesaParcelada: number, idConsolidacao: number) {
+    const url = `springboot-esc-backend/api/lancamentosFinanceiros/importacao/despesaParcelada/${idDespesa}/${idDetalheDespesa}/${idDespesaParcelada}/${idConsolidacao}/${this.sessao.getIdLogin()}`;
     return this.http.post(url, {}).pipe(
       catchError(error => this.handleError(error))
     );

@@ -294,7 +294,8 @@
                       </td>
 
                       <td>
-                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0">
+                        <span
+                          *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao == 0">
                           <div style="width: 590px">
                             <span *ngIf="detalheDespesa.tpReprocessar !== 'S' && detalheDespesa.tpAnotacao !== 'S'">
                               <input type="text" class="form-control form-control-sm text-center"
@@ -317,7 +318,8 @@
                           </div>
                         </span>
 
-                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada !== 0">
+                        <span
+                          *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada !== 0 && detalheDespesa.idConsolidacao == 0">
                           <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
                             <div style="width: 590px; color: #040c6bab" data-toggle="modal"
                               data-target="#modalDespesasParceladas"
@@ -328,6 +330,24 @@
                           <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
                             <div style="width: 590px; color: #bdbdbd">
                               {{detalheDespesa.dsTituloDespesa}}
+                            </div>
+                          </span>
+                        </span>
+
+                        <span
+                          *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao !== 0">
+                          <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
+                            <div style="width: 590px; color: #055551ab" data-toggle="modal"
+                              data-target="#modalDespesasParceladas"
+                              (click)="abrirModalCadastroDespesasParceladas(detalheDespesa)">
+                              <b title="Despesa Consolidada"> <i class="fa fa-object-group" aria-hidden="true"
+                                  style="padding: 0% 1%;"></i>
+                                {{detalheDespesa.dsTituloDespesa}}</b>
+                            </div>
+                          </span>
+                          <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
+                            <div style="width: 590px; color: #bdbdbd">
+                              <i class="fa fa-object-group" aria-hidden="true"></i> {{detalheDespesa.dsTituloDespesa}}
                             </div>
                           </span>
                         </span>
