@@ -47,7 +47,7 @@
 
                 <button class="btn text-white " data-mdb-ripple-init
                   style="background-color: #c90d0d; width: 5%; margin-left: 0%;" role="button"
-                  (click)="excluirDespesaParcelada()">
+                  (click)="excluirConsolidacao()">
                   <i class="fa fa-trash-o" aria-hidden="true"></i>
                 </button>
               </div>
@@ -59,7 +59,7 @@
                     (click)="onCheckCarregarNomeDespParceladas($event.target.checked)">
                   <label class="form-check-label" for="checkCarregarDespesasPendente"
                     title="lista os nomes das despesas parceladas que ainda não foram quitadas."> Carregar somente as
-                    consolidações em aberto.
+                    consolidações ativas.
                   </label>
                 </small>
 
@@ -107,13 +107,14 @@
                 <table class="table table-lista-parcelas table-bordered">
                   <thead class="thead-light">
                     <tr>
-                      <th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label=""
+                      <!--<th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label=""
                         style="width: 19.8889px;">
                         <form [formGroup]="modalConsolidacoesForm">
                           <input type="checkbox" name="parcela[]" formControlName="checkMarcarTodasParcelas"
                             onclick="marcarTodasParcelas(this)" (click)="onMarcarDesmarcarCheckBoxes()">
                         </form>
-                      </th>
+                      </th>-->
+                      <th><i class="fa fa-trash" aria-hidden="true"></i></th>
                       <th scope="col">Descrição Despesa</th>
                       <th scope="col">Parcela R$</th>
                       <th scope="col">Status</th>
@@ -166,7 +167,15 @@
           <div class="modal-footer">
             <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
               (click)="gravarConsolidacao()">
-              <i class="fa fa-floppy-o"></i> Gravar
+              <i class="fa fa-floppy-o"></i> Salvar
+            </button>
+            <button class="btn text-white" data-mdb-ripple-init style="background-color: #087768;" role="button"
+              (click)="baixarConsolidacao()" id="buttonBaixar">
+              <i class="fa fa-calendar-check-o"></i> Baixar
+            </button>
+            <button class="btn text-white" data-mdb-ripple-init style="background-color: #d3733b;" role="button"
+              (click)="reativarConsolidacao()" id="buttonReativar">
+              <i class="fa fa-calendar-o"></i> Reativar Consolidacao
             </button>
           </div>
         </div>

@@ -290,6 +290,12 @@
     margin: 1.75rem auto;
   }
 
+  .modalAssociarDespesaParceladaConsolidacao {
+    text-align: left;
+    width: 34%;
+    margin: 1.75rem auto;
+  }
+
   .modalEditorValores {
     text-align: left;
     width: 24%;
@@ -321,6 +327,11 @@
     padding-right: 2%;
   }
 
+  .modalAssociarDespesaParceladaConsolidacao-body {
+    padding-left: 2%;
+    padding-right: 2%;
+  }
+  
   .modalDetalheDespesasMensais-body {
     width: 96%;
     margin: 0.6rem auto;

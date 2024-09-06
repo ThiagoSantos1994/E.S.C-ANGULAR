@@ -180,7 +180,35 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     this.eventModalConfirmacao = "ExcluirConsolidacao";
     this.mensagemModalConfirmacao_header = "Deseja excluir esta despesa parcelada?";
     this.mensagemModalConfirmacao_body = "";
-    this.mensagemModalConfirmacao_footer = "Este processo exclui todos os lançamentos mensais processados!";
+    this.mensagemModalConfirmacao_footer = "Este processo exclui a consolidação as despesas associadas são desassociadas e exibidas nas despesas mensais importadas.";
+
+    if (null == this.consolidacao) {
+      alert('Necessário selecionar uma consolidacao.')
+      return;
+    }
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  baixarConsolidacao() {
+    this.eventModalConfirmacao = "BaixarConsolidacao";
+    this.mensagemModalConfirmacao_header = "Deseja baixar esta consolidacao?";
+    this.mensagemModalConfirmacao_body = "";
+    this.mensagemModalConfirmacao_footer = "Este processo oculta a despesa consolidada para importação nos lançamentos mensais.";
+
+    if (null == this.consolidacao) {
+      alert('Necessário selecionar uma consolidacao.')
+      return;
+    }
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  reativarConsolidacao() {
+    this.eventModalConfirmacao = "ReativarConsolidacao";
+    this.mensagemModalConfirmacao_header = "Deseja reativar esta consolidação?";
+    this.mensagemModalConfirmacao_body = "";
+    this.mensagemModalConfirmacao_footer = "Este processo exibe novamente a despesa consolidada para importação nos lançamentos mensais.";
 
     if (null == this.consolidacao) {
       alert('Necessário selecionar uma consolidacao.')
@@ -194,7 +222,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     this.eventModalConfirmacao = "DesassociarDespesas";
     this.mensagemModalConfirmacao_header = "Deseja desassociar a(s) despesa(s) selecionada(s)?";
     this.mensagemModalConfirmacao_body = "";
-    this.mensagemModalConfirmacao_footer = "Atenção: a(s) despesas(s) serão desassociadas dos lançamentos mensais importadas.";
+    this.mensagemModalConfirmacao_footer = "Atenção: a(s) despesas(s) desassociadas serão exibidas novamente na despesa mensal.";
 
     if (null == this.consolidacao) {
       alert('Necessário selecionar uma consolidação.')
@@ -212,12 +240,12 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
   recarregarDetalheConsolidacao() {
     this.idConsolidacaoRef = this.consolidacao.idConsolidacao;
 
-    this.carregarListaConsolidacoes(false);
+    this.carregarListaConsolidacoes(true);
     this.carregarDetalhesConsolidacao();
   }
 
-  carregarListaConsolidacoes(isTodasDespesas: boolean) {
-    this.service.getTitulosConsolidacao(isTodasDespesas).subscribe((res) => {
+  carregarListaConsolidacoes(isConsolidacoesAtivas: boolean) {
+    this.service.getTitulosConsolidacao(isConsolidacoesAtivas).subscribe((res) => {
       this.tituloConsolidacoes = res;
     });
   }
@@ -263,7 +291,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
   }
 
   confirmExcluirConsolidacao() {
-    this.service.excluirConsolidacao(this.idConsolidacaoRef).toPromise().then(() => {
+    this.service.excluirConsolidacao(this.consolidacao).toPromise().then(() => {
       this.loadFormConsolidacoes(null);
       alert('Consolidação excluida com sucesso!');
     },

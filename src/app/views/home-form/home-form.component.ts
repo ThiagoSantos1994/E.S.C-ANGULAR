@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ConfiguracaoLancamentos } from 'src/app/core/interfaces/configuracao-lancamentos.interface';
+import { ConsolidacaoService } from 'src/app/core/services/consolidacao.service';
 
 import { DespesasParceladasService } from 'src/app/core/services/despesas-parceladas.service';
 import { HomeService } from 'src/app/core/services/home.service';
@@ -29,6 +30,7 @@ export class HomeFormComponent implements OnInit {
     private lancamentosService: LancamentosFinanceirosService,
     private homeService: HomeService,
     private despesasParceladasService: DespesasParceladasService,
+    private consolidacaoService: ConsolidacaoService,
     private lembreteService: LembretesService,
     private router: Router
   ) { }
@@ -61,7 +63,7 @@ export class HomeFormComponent implements OnInit {
   }
 
   carregarConsolidacoes() {
-    this.despesasParceladasService.enviaMensagem(null);
+    this.consolidacaoService.enviaMensagem(null);
     this.sessaoService.validarSessao();
   }
 

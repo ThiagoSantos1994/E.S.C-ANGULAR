@@ -187,9 +187,10 @@
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #3b056e; margin-block-end: 20%;" href="#!" role="button"
-                    title="Cadastro Despesas Parceladas" data-toggle="modal" data-target="#modalDespesasParceladas"
-                    (click)="carregarDespesasParceladas()" id="buttonDespesasParceladas">
-                    <i class="fa fa-credit-card"></i>
+                    title="Consolidar despesas selecionadas" data-toggle="modal"
+                    data-target="#modalAssociarDespesaParceladaConsolidacao"
+                    (click)="carregarListaConsolidacoesParaAssociacao()" id="buttonAssociarDespesaAConsolidacao">
+                    <i class="fa fa-object-group"></i>
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #6e0505; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
@@ -266,7 +267,7 @@
                           </button>
 
                           <span
-                            *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0">
+                            *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao == 0">
                             <button type="button" class="btn btn-link btn-sm px-0" title="Adicionar observações"
                               data-toggle="modal" data-target="#modalObservacoes"
                               (click)="carregarObservacoes(detalheDespesa)">
@@ -338,8 +339,8 @@
                           *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao !== 0">
                           <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
                             <div style="width: 590px; color: #055551ab" data-toggle="modal"
-                              data-target="#modalDespesasParceladas"
-                              (click)="abrirModalCadastroDespesasParceladas(detalheDespesa)">
+                              data-target="#modalConsolidacoes"
+                              (click)="abrirModalCadastroConsolidacoes(detalheDespesa)">
                               <b title="Despesa Consolidada"> <i class="fa fa-object-group" aria-hidden="true"
                                   style="padding: 0% 1%;"></i>
                                 {{detalheDespesa.dsTituloDespesa}}</b>
@@ -598,6 +599,53 @@
           <button type="button" class="btn btn-primary" style="background-color: #3b6bd3;"
             (click)="onImportarDespesaParcelada()">
             <i class="fa fa-download"></i> Importar Despesa
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!------------------------  Modal Associar Despesa Parcelada A Consolidacao------------------------>
+  <div class="modal fade" id="modalAssociarDespesaParceladaConsolidacao" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content modalAssociarDespesaParceladaConsolidacao">
+        <div class="form-group modal-header">
+          <div>
+            <i class="fa fa-object-group" aria-hidden="true"></i>
+            Consolidação de Despesa Parcelada
+            <small class="form-text text-muted">
+              <i class="fa fa-info-circle" aria-hidden="true"></i>
+              Selecione abaixo a consolidação para associação:
+            </small>
+          </div>
+        </div>
+        <form [formGroup]="modalAssociarDespesaParceladaConsolidacaoForm">
+          <div class="modalAssociarDespesaParceladaConsolidacao-body form-group">
+            <select class="form-control form-control-sm" id="comboTituloConsolidacao">
+              <option *ngFor="let despesa of tituloDespesasConsolidacao.despesas" value={{despesa.idConsolidacao}}>
+                {{despesa.tituloDespesa}}
+              </option>
+            </select>
+            <div class="row">
+              <br>
+              <div class="form-check-inline checkCarregarTodasDespParceladas">
+                <input class="form-check-input" type="checkbox" formControlName="checkCarregarTodasConsolidacoes"
+                  id="checkCarregarTodasConsolidacoes"
+                  (click)="onCheckCarregarTodasConsolidacoes($event.target.checked)">
+                <label class="form-check-label" for="checkCarregarTodasConsolidacoes"
+                  style="font-size: smaller; color: #a7444e!important">
+                  Carregar todas as consolidações cadastradas no sistema.
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" style="background-color: #3b6bd3;"
+            (click)="onAssociarDespesaParceladaConsolidacao()">
+            <i class="fa fa-check"></i> Associar Despesa(s)
           </button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
         </div>

@@ -12,6 +12,7 @@ import { DetalheLancamentosMensais } from 'src/app/core/interfaces/lancamentos-m
 import { ObservacoesDetalheDespesaRequest } from 'src/app/core/interfaces/observacoes-detalhe-despesa-request.interface';
 import { PagamentoDespesasRequest } from 'src/app/core/interfaces/pagamento-despesas-request.interface';
 import { TituloDespesaResponse } from 'src/app/core/interfaces/titulo-despesa-response.interface';
+import { ConsolidacaoService } from 'src/app/core/services/consolidacao.service';
 import { DespesasParceladasService } from 'src/app/core/services/despesas-parceladas.service';
 import { DetalheDespesasService } from 'src/app/core/services/detalhe-despesas.service';
 import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
@@ -27,6 +28,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   private _parcelasAmortizacaoChange = new BehaviorSubject<Parcelas[]>([]);
   private tituloDespesasParcelada: TituloDespesaResponse;
   private tituloDespesasRelatorio: TituloDespesaResponse;
+  private tituloDespesasConsolidacao: TituloDespesaResponse;
   private detalheLancamentosMensais: DetalheLancamentosMensais;
   private observacoes: ObservacoesDetalheDespesaRequest;
   private parcelasAmortizacao: Parcelas[];
@@ -35,6 +37,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   private modalCategoriaDetalheDespesaForm: FormGroup;
   private modalDetalheDespesasMensaisForm: FormGroup;
   private modalImportacaoDespesaParceladaForm: FormGroup;
+  private modalAssociarDespesaParceladaConsolidacaoForm: FormGroup;
   private checkDespesasForm: FormGroup;
   private modalRef: BsModalRef;
 
@@ -70,6 +73,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     private detalheService: DetalheDespesasService,
     private despesasParceladasService: DespesasParceladasService,
     private lancamentosService: LancamentosFinanceirosService,
+    private consolidacaoService: ConsolidacaoService,
     private detalheDomain: DetalheDespesasMensaisDomain
   ) { }
 
@@ -79,6 +83,10 @@ export class DetalheDespesasFormComponent implements OnInit {
     }
 
     this.tituloDespesasRelatorio = {
+      despesas: []
+    }
+
+    this.tituloDespesasConsolidacao = {
       despesas: []
     }
 
@@ -105,7 +113,11 @@ export class DetalheDespesasFormComponent implements OnInit {
 
     this.modalImportacaoDespesaParceladaForm = this.formBuilder.group({
       checkCarregarTodasDespesasParceladas: ['']
-    })
+    });
+
+    this.modalAssociarDespesaParceladaConsolidacaoForm = this.formBuilder.group({
+      checkCarregarTodasConsolidacoes: ['']
+    });
 
     this.checkDespesasForm = this.formBuilder.group({
       checkMarcarTodasDespesas: [false]
@@ -117,6 +129,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.modalConfirmacaoQuitarDespesasForm.reset();
       this.modalCategoriaDetalheDespesaForm.reset();
       this.modalImportacaoDespesaParceladaForm.reset();
+      this.modalAssociarDespesaParceladaConsolidacaoForm.reset();
       this.despesaRef = d.idDespesa;
       this.detalheRef = d.idDetalheDespesa;
       this.mesRef = d.mesPesquisaForm;
@@ -318,6 +331,10 @@ export class DetalheDespesasFormComponent implements OnInit {
         this.confirmAlterarTituloDespesa();
         break;
       }
+      case 'AssociarDespesaParceladaConsolidacao': {
+        this.confirmAssociarDespesaConsolidacao();
+        break;
+      }
       default: {
       }
     }
@@ -496,10 +513,31 @@ export class DetalheDespesasFormComponent implements OnInit {
     });
   }
 
+  carregarListaConsolidacoesParaAssociacao(isTodasDespesas: boolean) {
+    this.detalheService.getTituloConsolidacoesParaAssociacao(isTodasDespesas).subscribe((res) => {
+      this.tituloDespesasConsolidacao = res;
+    });
+  }
+
   carregarListaDespesasTipoRelatorio() {
     this.detalheService.getTituloDespesasRelatorio(this.despesaRef).subscribe((res) => {
       this.tituloDespesasRelatorio = res;
     });
+  }
+
+  onAssociarDespesaParceladaConsolidacao() {
+    let valor = (document.getElementById("comboTituloConsolidacao") as HTMLInputElement).value;
+    if (valor == "") {
+      alert('Necessário selecionar uma consolidação para associação.');
+      return;
+    }
+
+    this.eventModalConfirmacao = "AssociarDespesaParceladaConsolidacao";
+    this.mensagemModalConfirmacao_header = "Deseja realmente associar a(s) despesa(s) a esta consolidação?";
+    this.mensagemModalConfirmacao_body = "null";
+    this.mensagemModalConfirmacao_footer = "null";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
   onImportarDespesaParcelada() {
@@ -519,6 +557,10 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   onCheckCarregarTodasDespParceladas(checked) {
     this.carregarListaDespesasParceladasImportacao(checked);
+  }
+
+  onCheckCarregarTodasConsolidacoes(checked) {
+    this.carregarListaConsolidacoesParaAssociacao(checked);
   }
 
   onCheckDetalheDespesaChange(checked, detalhe) {
@@ -860,7 +902,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   confirmImportarDespesaParcelada() {
     let idDespesaImportacao = +(document.getElementById("comboTituloDespesaParcelada") as HTMLInputElement).value;
-    let idConsolidacaoImportacao = null;
+    let idConsolidacaoImportacao = 0;
 
     if (idDespesaImportacao < 0) {
       idConsolidacaoImportacao = Math.abs(idDespesaImportacao);
@@ -1005,7 +1047,8 @@ export class DetalheDespesasFormComponent implements OnInit {
       idDespesa: detalheDespesa.idDespesa,
       idDetalheDespesa: detalheDespesa.idDetalheDespesa,
       idDetalheReferencia: this.detalheRef,
-      idConsolidacao: null,
+      idConsolidacao: 0,
+      idDespesaConsolidacao: 0,
       idFuncionario: Number(this.sessao.getIdLogin()),
       dsDescricao: '',
       dsObservacao: '',
@@ -1178,6 +1221,10 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.despesasParceladasService.enviaMensagem(despesa);
   }
 
+  abrirModalCadastroConsolidacoes(despesa) {
+    this.consolidacaoService.enviaMensagem(despesa);
+  }
+
   confirmGravarEditarValores() {
     let novoValor = (document.getElementById("subTotalValores") as HTMLInputElement).value.replace('R$', '');
     let objeto = this.objectModalEditarValores;
@@ -1233,6 +1280,26 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.mensagemModalConfirmacao_footer = "Obs: Será alterado o titulo das demais despesas relacionadas.";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  confirmAssociarDespesaConsolidacao() {
+    let despesas = this.getDetalheDespesasParceladasChecked();
+
+    if (despesas.length == 0) {
+        alert('Necessário selecionar alguma despesa parcelada para ser consolidada.');
+        return;
+    }
+
+    let idConsolidacao = +(document.getElementById("comboTituloConsolidacao") as HTMLInputElement).value;
+
+    this.detalheService.associarDespesasConsolidacao(idConsolidacao, despesas).toPromise().then(() => {
+      this.closeModal();
+      this.recarregarDetalheDespesa();
+      alert('Despesa(s) associada(s) com sucesso!');
+    },
+      err => {
+        console.log(err);
+      });
   }
 
   confirmAlterarTituloDespesa() {

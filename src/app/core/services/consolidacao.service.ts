@@ -3,11 +3,11 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { ConsolidacaoDespesas } from '../interfaces/consolidacao-despesas.interface';
 import { Consolidacao } from '../interfaces/consolidacao.interface';
 import { TituloConsolidacaoResponse } from '../interfaces/titulo-consolidacao-response.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { ConsolidacaoDespesas } from '../interfaces/consolidacao-despesas.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -49,8 +49,8 @@ export class ConsolidacaoService {
     );
   }
 
-  excluirConsolidacao(idConsolidacao: number) {
-    return this.http.post(`springboot-esc-backend/api/consolidacao/excluir/${idConsolidacao}/${this.sessao.getIdLogin()}`, {}).pipe(
+  excluirConsolidacao(request: Consolidacao) {
+    return this.http.post(`springboot-esc-backend/api/consolidacao/excluir`, request).pipe(
       catchError(error => this.handleError(error))
     );
   }

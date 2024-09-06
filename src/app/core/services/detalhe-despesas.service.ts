@@ -86,6 +86,13 @@ export class DetalheDespesasService {
         catchError(this.handleError));
   }
 
+  getTituloConsolidacoesParaAssociacao(tpListarTodasDespesas: boolean): Observable<TituloDespesaResponse> {
+    const carregar = (tpListarTodasDespesas ? "default" : "ativas");
+    return this.http.get<TituloDespesaResponse>(`springboot-esc-backend/api/consolidacao/importacao/consultarConsolidacoes/${this.sessao.getIdLogin()}/${carregar}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
+
   getTituloDespesasRelatorio(idDespesa: number): Observable<TituloDespesaResponse> {
     return this.http.get<TituloDespesaResponse>(`springboot-esc-backend/api/lancamentosFinanceiros/obterTitulosDespesasRelatorio/${idDespesa}/${this.sessao.getIdLogin()}`)
       .pipe(map((response) => { return response }),
@@ -181,6 +188,12 @@ export class DetalheDespesasService {
 
   desfazerAdiantamentoFluxoParcelas(despesas: DetalheDespesasMensais[]) {
     return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/parcelas/desfazerAdiantamentoFluxoParcelas`, despesas).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  associarDespesasConsolidacao(idConsolidacao: number, despesas: DetalheDespesasMensais[]) {
+    return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/consolidacao/associar/${idConsolidacao}`, despesas).pipe(
       catchError(error => this.handleError(error))
     );
   }

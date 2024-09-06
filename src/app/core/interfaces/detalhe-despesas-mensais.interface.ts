@@ -8,6 +8,7 @@ export interface DetalheDespesasMensais {
     idParcela?: number;
     idDespesaParcelada?: number;
     idConsolidacao?: number;
+    idDespesaConsolidacao?: number;
     idFuncionario: number;
     idDespesaLinkRelatorio?: number;
     vlTotal?: string;
