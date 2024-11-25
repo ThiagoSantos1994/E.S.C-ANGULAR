@@ -54,10 +54,10 @@
 
               <form [formGroup]="modalConsolidacoesForm">
                 <small class="form-text text-muted checkbox-despesas-em-aberto">
-                  <input class="form-check-input" type="checkbox" formControlName="checkCarregarDespesasPendente"
-                    id="checkCarregarDespesasPendente"
-                    (click)="onCheckCarregarNomeDespParceladas($event.target.checked)">
-                  <label class="form-check-label" for="checkCarregarDespesasPendente"
+                  <input class="form-check-input" type="checkbox" formControlName="checkCarregarNomeConsolidacoes"
+                    id="checkCarregarNomeConsolidacoes"
+                    (click)="onCheckCarregarNomeConsolidacoes($event.target.checked)">
+                  <label class="form-check-label" for="checkCarregarNomeConsolidacoes"
                     title="lista os nomes das despesas parceladas que ainda não foram quitadas."> Carregar somente as
                     consolidações ativas.
                   </label>

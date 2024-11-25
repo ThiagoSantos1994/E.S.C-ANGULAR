@@ -2,6 +2,7 @@ export interface StringResponse{
     mesAno: string,
     mensagem: string;
     observacoes: string;
+    historico: string;
     nomeDespesaParcelada: string;
     vlSubTotalDespesa: string;
     vlDespesaParcelada: string;

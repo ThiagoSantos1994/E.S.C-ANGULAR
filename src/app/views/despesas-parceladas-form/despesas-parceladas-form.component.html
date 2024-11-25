@@ -76,7 +76,7 @@
                   </small>
                   <div class="row row-card-titulo-despesas-parceladas">
                     <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa"
-                      id="nomeDespesa" onkeyup="toUpper(this)">
+                      id="nomeDespesa" onkeyup="toUpper(this)" />
                   </div>
                   <small class="form-text text-muted label-associacao" style="font-size: small;">
                     <span *ngIf="despesaParceladaDetalhe == null">
@@ -197,7 +197,7 @@
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #3b056e;padding-left: 28%; padding-right: 23%;" href="#!" role="button"
                     title="Quitar totalmente despesa e parcelas" data-toggle="modal"
-                    data-target="#modalConfirmacaoQuitarDespesaParcelada">
+                    data-target="#modalConfirmacaoQuitarDespesaParcelada" (click)="carregarModalQuitarDespesa()">
                     <i class="fa fa-handshake-o" aria-hidden="true"></i>
                   </button>
                   <br>
@@ -230,11 +230,18 @@
                             onclick="marcarTodasParcelas(this)" (click)="onMarcarDesmarcarCheckBoxes()">
                         </form>
                       </th>
-                      <th scope="col">Nº Parcela</th>
-                      <th scope="col">Mês Vencimento</th>
+                      <th scope="col">Parcela</th>
+                      <th scope="col">Vencimento</th>
                       <th scope="col">Status</th>
                       <th scope="col">Valor R$</th>
                       <th scope="col">Observações</th>
+                      <th scope="col">
+                        <span *ngIf="despesaParceladaDetalhe">
+                          <span *ngIf="despesaParceladaDetalhe.isDespesaComParcelaAmortizada === 'S'">
+                            Amortz
+                          </span>
+                        </span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody *ngIf="despesaParceladaDetalhe">
@@ -268,7 +275,7 @@
                           <i class="fa fa-check" aria-hidden="true"></i>
                         </span>
                         <span *ngIf="parcela.tpBaixado =='S' && parcela.tpParcelaAdiada == 'S'"
-                          class="badge badge-adiantada rounded-pill d-inline">Adiant*
+                          class="badge badge-adiantada rounded-pill d-inline">Adiada*
                         </span>
                       </td>
 
@@ -278,6 +285,22 @@
 
                       <td>
                         {{parcela.dsObservacoes}}
+                      </td>
+
+                      <td>
+                        <span *ngIf="despesaParceladaDetalhe.isDespesaComParcelaAmortizada === 'S'">
+                          <label class="checkbox-wrap checkbox-primary">
+                            <span *ngIf="parcela.tpParcelaAmortizada == 'S'">
+                              <input type="checkbox"
+                                (click)="onCheckParcelaAmortizadaChange($event.target.checked, parcela)" checked>
+                            </span>
+                            <span *ngIf="parcela.tpParcelaAmortizada == 'N'">
+                              <input type="checkbox"
+                                (click)="onCheckParcelaAmortizadaChange($event.target.checked, parcela)">
+                            </span>
+                            <span class="checkmark"></span>
+                          </label>
+                        </span>
                       </td>
                     </tr>
                   </tbody>
@@ -295,6 +318,13 @@
           </div>
 
           <div class="modal-footer">
+            <span *ngIf="despesaParceladaDetalhe !== null && despesaParceladaDetalhe.despesas.tpBaixado == 'S'">
+              <button class="btn text-white" data-mdb-ripple-init style="background-color: #2bc44c;" role="button"
+                (click)="reativarDespesaParcelada()">
+                <i class="fa fa-calendar-check-o"></i> Reativar Despesa
+              </button>
+            </span>
+
             <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
               (click)="gravarDespesaParcelada()">
               <i class="fa fa-floppy-o"></i> Salvar Despesa
@@ -407,7 +437,7 @@
           </div>
           <div class="form-group">
             <label class="col-form-label">Observações:</label>
-            <textarea class="form-control" id="observacoes"></textarea>
+            <textarea class="form-control" id="observacoesEdicao"></textarea>
           </div>
         </form>
       </div>

@@ -132,7 +132,7 @@ export class DespesasParceladasFormComponent implements OnInit {
 
     let valorParcela = (<HTMLInputElement>document.getElementById("novoValorParcela")).value.trim();
     let statusParcela = (<HTMLInputElement>document.getElementById("comboStatus")).value;
-    let observacoes = (<HTMLInputElement>document.getElementById("observacoes")).value;
+    let observacoes = (<HTMLInputElement>document.getElementById("observacoesEdicao")).value;
 
     parcelas.forEach((parcela) => {
       if (valorParcela !== "") {
@@ -313,6 +313,10 @@ export class DespesasParceladasFormComponent implements OnInit {
         this.confirmGravarDespesa();
         break;
       }
+      case 'ReativarDespesaParcelada': {
+        this.confirmReativarDespesa();
+        break;
+      }
       case 'GerarFluxoParcelas': {
         this.confirmGerarFluxoParcelas();
         break;
@@ -335,16 +339,24 @@ export class DespesasParceladasFormComponent implements OnInit {
   confirmExcluirParcela() {
     let parcelas = this.getParcelasChecked();
 
-    parcelas.forEach((parcela) => {
-      this.service.excluirParcela(parcela.idDespesaParcelada, parcela.idParcela).toPromise().then(() => {
-        this.recarregarDetalheDespesa();
-      },
-        err => {
-          console.log(err);
-        });
-    })
+    this.service.excluirParcela(parcelas).toPromise().then(() => {
+      this.recarregarDetalheDespesa();
+    },
+      err => {
+        console.log(err);
+      });
 
     this.closeModal();
+  }
+
+  carregarModalQuitarDespesa() {
+    (<HTMLInputElement>document.getElementById("valorTotalDespesaComDesconto")).value =
+      formatRealNumber(this.despesaParceladaDetalhe.valorTotalDespesaPendente.toString());
+  }
+
+  onCheckParcelaAmortizadaChange(checked, parcela) {
+    parcela.tpParcelaAmortizada = (checked ? 'S' : 'N');
+    this.changeParcelas(parcela);
   }
 
   confirmQuitarDespesa() {
@@ -448,6 +460,16 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.checkboxesMarcadas = checksMarcadas;
   }
 
+  reativarDespesaParcelada() {
+    this.eventModalConfirmacao = "ReativarDespesaParcelada";
+
+    this.mensagemModalConfirmacao_header = "null";
+    this.mensagemModalConfirmacao_body = "Deseja reativar esta despesa ?";
+    this.mensagemModalConfirmacao_footer = "null";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
   gravarDespesaParcelada() {
     if (!this.validarCamposObrigatorios(true)) {
       if (null == this.despesaParceladaDetalhe) {
@@ -468,6 +490,18 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
+
+  confirmReativarDespesa() {
+    let despesa = this.despesaParceladaDetalhe.despesas;
+    despesa.tpBaixado = 'N'
+    
+    this.service.gravarDespesa(despesa).toPromise().then(() => {
+      alert('Despesa reativada com sucesso!');
+      this.recarregarDetalheDespesa();
+    });
+
+    this.closeModal();
+  }
 
   confirmGravarDespesa() {
     let despesa = this.despesaParceladaDetalhe.despesas;

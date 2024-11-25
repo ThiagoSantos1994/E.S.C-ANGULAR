@@ -19,7 +19,7 @@
                 <span aria-hidden="true">&times;</span>
               </button>
             </span>
-            Titulo da Despesa:
+            Nome da Despesa:
           </h6>
 
           <form [formGroup]="modalDetalheDespesasMensaisForm">
@@ -201,14 +201,14 @@
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #3b056e; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
-                    href="#!" role="button" title="Adiar parcelas" (click)="adiantarFluxoParcelas()"
+                    href="#!" role="button" title="Adiar parcelas" (click)="adiarFluxoParcelas()"
                     id="buttonAdiarParcelas">
                     <i class="far fa-calendar-plus" aria-hidden="true"></i>
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #3b056e; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
                     href="#!" role="button" title="Desfazer adiamento de parcelas"
-                    (click)="desfazerAdiantamentoFluxoParcelas()" id="buttonDesfazerAdiantarFluxo">
+                    (click)="desfazerAdiamentoFluxoParcelas()" id="buttonDesfazerAdiamentoFluxoParcelas">
                     <i class="fas fa-calendar-times" aria-hidden="true"></i>
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
@@ -255,7 +255,7 @@
                         </label>
                       </td>
                       <td>
-                        <div style="width: 55px;">
+                        <div style="width: 70px;">
                           <button type="button" class="btn btn-link btn-sm px-0" title="Subir item"
                             (click)="atualizarOrdemLinhaDetalheDespesa('UP', detalheDespesa)">
                             <i class="fa fa-chevron-up"></i>
@@ -268,10 +268,25 @@
 
                           <span
                             *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao == 0">
+                            <button type="button" class="btn btn-link btn-sm px-0" title="Histórico de Alterações"
+                              data-toggle="modal" data-target="#modalHistorico"
+                              (click)="carregarHistorico(detalheDespesa)">
+                              <i class="fa fa-history"></i>
+                            </button>
+
                             <button type="button" class="btn btn-link btn-sm px-0" title="Adicionar observações"
                               data-toggle="modal" data-target="#modalObservacoes"
                               (click)="carregarObservacoes(detalheDespesa)">
                               <i class="fa fa-commenting"></i>
+                            </button>
+                          </span>
+
+                          <span
+                            *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao !== 0">
+                            <button type="button" class="btn btn-link btn-sm px-0" title="Detalhes Consolidacao"
+                              data-toggle="modal" data-target="#modalConsolidacoes"
+                              (click)="abrirModalCadastroConsolidacoes(detalheDespesa)">
+                              <i class="fa fa-eye"></i>
                             </button>
                           </span>
                         </div>
@@ -338,16 +353,23 @@
                         <span
                           *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao !== 0">
                           <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
-                            <div style="width: 590px; color: #055551ab" data-toggle="modal"
+                            <!--<div style="width: 590px; color: #055551ab" data-toggle="modal"
                               data-target="#modalConsolidacoes"
                               (click)="abrirModalCadastroConsolidacoes(detalheDespesa)">
+                              <b title="Despesa Consolidada"> <i class="fa fa-object-group" aria-hidden="true"
+                                  style="padding: 0% 1%;"></i>
+                                {{detalheDespesa.dsTituloDespesa}}</b>
+                            </div>-->
+                            <div style="width: 590px; color: #055551ab"
+                              (click)="obterExtratoDespesaConsolidada(detalheDespesa)">
                               <b title="Despesa Consolidada"> <i class="fa fa-object-group" aria-hidden="true"
                                   style="padding: 0% 1%;"></i>
                                 {{detalheDespesa.dsTituloDespesa}}</b>
                             </div>
                           </span>
                           <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
-                            <div style="width: 590px; color: #bdbdbd">
+                            <div style="width: 590px; color: #bdbdbd"
+                              (click)="obterExtratoDespesaConsolidada(detalheDespesa)">
                               <i class="fa fa-object-group" aria-hidden="true"></i> {{detalheDespesa.dsTituloDespesa}}
                             </div>
                           </span>
@@ -870,6 +892,29 @@
           style="background-color: #3b6bd3;">
           <i class="fa fa-floppy-o"></i> Gravar
         </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!------------------------  Modal Historico Alteracoes ------------------------>
+<div class="modal fade" id="modalHistorico" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content modalHistoricoDetalhe">
+      <div class="form-group modal-header">
+        <label>
+          <i class="fa fa-history" aria-hidden="true"></i>
+          Histórico de Alterações
+        </label>
+      </div>
+
+      <div class="modalHistoricoDetalhe-body">
+        <textarea class="form-control" id="historicoDetalhe"
+          style="height: 247px;font-family: system-ui;font-size: small;"></textarea>
+      </div>
+
+      <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
       </div>
     </div>

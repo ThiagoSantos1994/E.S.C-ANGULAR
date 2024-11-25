@@ -1,4 +1,5 @@
 export interface ObservacoesDetalheDespesaRequest {
+    idObservacao: number;
     idDespesa: number;
     idDetalheDespesa: number;
     idOrdem: number;

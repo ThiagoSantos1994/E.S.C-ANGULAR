@@ -59,6 +59,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   private eventModalEditarValores: string = "";
   private objectModalEditarValores: any;
   private objectModalObservacoes: any;
+  private objectModalHistorico: any;
 
   @ViewChild('modalDetalheDespesasMensais') modalDetalheDespesasMensais;
   @ViewChild('modalConfirmacaoExcluirDespesa') modalConfirmacaoExcluirDespesa;
@@ -165,11 +166,10 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmQuitarDespesas() {
-    let observacaoPagamento: string = this.modalConfirmacaoQuitarDespesasForm.get('observacaoPagamento').value;
-    let detalheDespesas = this.getDetalheDespesasCheckedPagamento();
+    let despesasRequest: PagamentoDespesasRequest[] = [];
 
-    detalheDespesas.forEach((d) => {
-      let request: PagamentoDespesasRequest = {
+    this.getDetalheDespesasCheckedPagamento().forEach((d) => {
+      let despesa: PagamentoDespesasRequest = {
         idDespesa: d.idDespesa,
         idDetalheDespesa: d.idDetalheDespesa,
         idDespesaParcelada: d.idDespesaParcelada,
@@ -180,23 +180,21 @@ export class DetalheDespesasFormComponent implements OnInit {
         vlTotal: d.vlTotal,
         vlTotalPago: d.vlTotal,
         tpStatus: d.tpStatus,
-        dsObservacoes: (d.dsObservacao == "" ? observacaoPagamento : d.dsObservacao),
+        dsObservacoes: (d.dsObservacao == "" ? this.modalConfirmacaoQuitarDespesasForm.get('observacaoPagamento').value : d.dsObservacao),
         dsObservacoesComplementar: d.dsObservacao2,
         isProcessamentoAdiantamentoParcelas: false
       };
 
-      this.detalheService.processarPagamentoDetalheDespesa(request).toPromise().then(() => {
-        d.tpStatus = 'Pago'
-        d.vlTotalPago = d.vlTotal;
-        d.dsObservacao = (d.dsObservacao.trim() == "" ? observacaoPagamento : d.dsObservacao);
-
-        this.changeDetalheDespesasMensais(d);
-      },
-        err => {
-          console.log(err);
-        });
+      despesasRequest.push(despesa);
     });
-    this.recarregarDetalheDespesa();
+
+    this.detalheService.processarPagamentoDetalheDespesa(despesasRequest).toPromise().then(() => {
+      this.recarregarDetalheDespesa();
+    },
+      err => {
+        console.log(err);
+      });
+
     this.closeModal();
   }
 
@@ -231,7 +229,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       idDetalheDespesa: idDetalheDespesa,
       dsTituloDespesa: "",
       dsNomeDespesa: "",
-      dsExtratoDespesa: "Para salvar esta despesa, é necessário digitar a Descrição da Despesa e Limite Despesa.",
+      dsExtratoDespesa: "Para salvar esta despesa, é necessário digitar o Nome da Despesa e o valor Limite Referencia.",
       vlLimite: "0,00",
       vlLimiteExibicao: "0,00",
       vlTotalDespesa: "0,00",
@@ -308,7 +306,7 @@ export class DetalheDespesasFormComponent implements OnInit {
         break;
       }
       case 'OrdenarRegistrosDetalheDespesas': {
-        this.confirmOrganizarRegistrosDetalheDespesa();
+        this.confirmOrganizarRegistrosDetalheDespesa(true);
         break;
       }
       case 'ImportacaoDespesaParcelada': {
@@ -319,12 +317,12 @@ export class DetalheDespesasFormComponent implements OnInit {
         this.confirmAtualizarDetalheDespesas();
         break;
       }
-      case 'AdiantarFluxoParcelas': {
-        this.confirmAdiantarFluxoParcelas();
+      case 'AdiarFluxoParcelas': {
+        this.confirmAdiarFluxoParcelas();
         break;
       }
-      case 'DesfazerAdiantamentoFluxoParcelas': {
-        this.confirmDesfazerAdiantamentoFluxoParcelas();
+      case 'DesfazerAdiamentoFluxoParcelas': {
+        this.confirmDesfazerAdiamentoFluxoParcelas();
         break;
       }
       case 'AlterarTituloDespesa': {
@@ -360,6 +358,11 @@ export class DetalheDespesasFormComponent implements OnInit {
         });
       }
 
+      if (res.detalheDespesaMensal.length == 0) {
+        this.addNovaLinhaDetalheDespesa();
+        return;
+      }
+
       this.setDetalheDespesaMensalObservable(res.detalheDespesaMensal);
       this.carregarFormDetalheDespesasMensais(res.despesaMensal);
     });
@@ -373,7 +376,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("buttonDespesasParceladas")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("buttonAmortizarParcelas")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("buttonAdiarParcelas")).disabled = isBloqueado;
-    (<HTMLInputElement>document.getElementById("buttonDesfazerAdiantarFluxo")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonDesfazerAdiamentoFluxoParcelas")).disabled = isBloqueado;
   }
 
   validarCategoriaDespesaLoad(despesa: DespesaMensal) {
@@ -463,6 +466,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.checkDespesasForm = this.formBuilder.group({
       checkMarcarTodasDespesas: [false]
     });
+
+    this.checkboxesMarcadas = false;
   }
 
   confirmGravarDespesaParceladaAmortizacao() {
@@ -830,19 +835,24 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmGravarDetalheDespesas() {
+    let detalhesRequest: DetalheDespesasMensais[] = [];
+
     this.getDetalheDespesasChange().forEach((d) => {
       d.dsDescricao = d.dsTituloDespesa;
       d.vlTotal = d.vlTotal.replace('.', '');
       d.vlTotalPago = d.vlTotalPago.replace('.', '');
 
-      this.detalheService.gravarDetalheDespesa(d).toPromise().then(() => { },
-        err => {
-          console.log(err);
-        }
-      );
-    })
+      detalhesRequest.push(d);
+    });
 
-    this.gravarDespesa(this.detalheLancamentosMensais.despesaMensal);
+    this.detalheService.gravarDetalheDespesa(detalhesRequest).toPromise().then(() => {
+      this.gravarDespesa(this.detalheLancamentosMensais.despesaMensal);
+    },
+      err => {
+        console.log(err);
+      }
+    );
+
     this.closeModal();
   }
 
@@ -879,7 +889,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     let despesas = this.getDetalheDespesasChecked();
 
     this.detalheService.excluritemDetalheDespesa(despesas).toPromise().then(() => {
-      this.recarregarDetalheDespesa();
+      this.confirmOrganizarRegistrosDetalheDespesa(false);
     },
       err => {
         console.log(err);
@@ -888,12 +898,14 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.closeModal();
   }
 
-  confirmOrganizarRegistrosDetalheDespesa() {
+  confirmOrganizarRegistrosDetalheDespesa(isExibirConfirmacao: boolean) {
     let detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
 
     this.detalheService.organizarListaItensDetalheDespesa(detalheDespesa.idDespesa, detalheDespesa.idDetalheDespesa).toPromise().then(() => {
       this.recarregarDetalheDespesa();
-      alert('Lista de despesas ordenada com sucesso.');
+      if (isExibirConfirmacao) {
+        alert('Lista de despesas ordenada com sucesso.');
+      }
     },
       err => {
         console.log(err);
@@ -913,7 +925,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
     this.detalheService.processarImportacaoDespesasParceladas(detalheDespesa.idDespesa, detalheDespesa.idDetalheDespesa, idDespesaImportacao, idConsolidacaoImportacao).toPromise().then(() => {
       this.carregarListaDespesasParceladasImportacao(false);
-      this.recarregarDetalheDespesa();
+      this.confirmOrganizarRegistrosDetalheDespesa(false);
     },
       err => {
         console.log(err);
@@ -921,20 +933,21 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   confirmDesfazerPagamentoDespesa() {
-    let despesas = this.getDetalheDespesasChecked();
+    let detalhesRequest: DetalheDespesasMensais[] = [];
 
-    despesas.forEach((d) => {
+    this.getDetalheDespesasChecked().forEach((d) => {
       d.tpStatus = 'Pendente';
       d.dsObservacao = '';
 
-      this.detalheService.gravarDetalheDespesa(d).toPromise().then(() => {
-        this.changeDetalheDespesasMensais(d);
-        this.recarregarDetalheDespesa();
-      },
-        err => {
-          console.log(err);
-        });
-    })
+      detalhesRequest.push(d);
+    });
+
+    this.detalheService.gravarDetalheDespesa(detalhesRequest).toPromise().then(() => {
+      this.recarregarDetalheDespesa();
+    },
+      err => {
+        console.log(err);
+      });
 
     this.closeModal();
   }
@@ -942,8 +955,20 @@ export class DetalheDespesasFormComponent implements OnInit {
   carregarObservacoes(objeto) {
     this.objectModalObservacoes = objeto;
 
-    this.detalheService.getObservacoesDetalheDespesa(this.despesaRef, objeto.idDetalheDespesa, objeto.idOrdem).subscribe(res => {
+    this.detalheService.getObservacoesDetalheDespesa(this.despesaRef, objeto.idDetalheDespesa, objeto.idObservacao).subscribe(res => {
       (<HTMLInputElement>document.getElementById("observacoesDetalhe")).value = res.observacoes;
+    },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  carregarHistorico(objeto) {
+    this.objectModalHistorico = objeto;
+
+    this.detalheService.getHistoricoDetalheDespesa(objeto.idDetalheDespesaLog, this.despesaRef, objeto.idDetalheDespesa).subscribe(res => {
+      (<HTMLInputElement>document.getElementById("historicoDetalhe")).value = res.historico;
     },
       err => {
         console.log(err);
@@ -955,6 +980,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     let objeto = this.objectModalObservacoes;
 
     let observacaoRequest = this.observacoes = {
+      idObservacao: objeto.idObservacao,
       idDespesa: objeto.idDespesa,
       idDetalheDespesa: objeto.idDetalheDespesa,
       idOrdem: objeto.idOrdem,
@@ -1009,11 +1035,11 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   getDetalheDespesasParceladasSemParcelasAdiantadasChecked() {
-    return this._detalheDespesasChange.getValue().filter((d) => d.checked === true && d.idDespesaParcelada !== 0 && d.tpLinhaSeparacao == 'N' && d.tpParcelaAdiada == 'N');
+    return this._detalheDespesasChange.getValue().filter((d) => d.checked === true && (d.idDespesaParcelada !== 0 || d.idConsolidacao !== 0) && d.tpLinhaSeparacao == 'N' && d.tpParcelaAdiada == 'N');
   }
 
   getDetalheDespesasParceladasComParcelasAdiantadasChecked() {
-    return this._detalheDespesasChange.getValue().filter((d) => d.checked === true && d.idDespesaParcelada !== 0 && d.tpLinhaSeparacao == 'N' && d.tpParcelaAdiada == 'S');
+    return this._detalheDespesasChange.getValue().filter((d) => d.checked === true && (d.idDespesaParcelada !== 0 || d.idConsolidacao !== 0) && d.tpLinhaSeparacao == 'N' && d.tpParcelaAdiada == 'S');
   }
 
   getDetalheDespesasCheckedPagamento() {
@@ -1054,6 +1080,8 @@ export class DetalheDespesasFormComponent implements OnInit {
       dsObservacao: '',
       dsObservacao2: '',
       idOrdem: null, // Somenta para nova linha
+      idObservacao: 0,
+      idDetalheDespesaLog: 0,
       idParcela: 0,
       idDespesaParcelada: 0,
       idDespesaLinkRelatorio: 0,
@@ -1086,7 +1114,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     let despesa = this.detalheLancamentosMensais.despesaMensal;
 
     this.detalheService.reprocessarImportacaoDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, this.mesRef, this.anoRef, (despesa.tpReprocessar == "S" ? true : false)).toPromise().then(() => {
-      this.recarregarDetalheDespesa();
+      this.confirmOrganizarRegistrosDetalheDespesa(false);
       alert('Atualização realizada com sucesso!');
     },
       err => {
@@ -1094,7 +1122,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       });
   }
 
-  confirmAdiantarFluxoParcelas() {
+  confirmAdiarFluxoParcelas() {
     let despesas = this.getDetalheDespesasParceladasSemParcelasAdiantadasChecked();
 
     if (despesas.length == 0) {
@@ -1102,17 +1130,17 @@ export class DetalheDespesasFormComponent implements OnInit {
       return;
     }
 
-    this.detalheService.adiantarFluxoParcelas(despesas).toPromise().then(() => {
+    this.detalheService.adiarFluxoParcelas(despesas).toPromise().then(() => {
       this.closeModal();
       this.recarregarDetalheDespesa();
-      alert('Parcela adiantada com sucesso! \n \n *ATENÇÃO* Não esquecer de reprocessar as despesas no mês seguinte!');
+      alert('Parcela(s) adiada(s) com sucesso! \n \n *ATENÇÃO* Não esquecer de reprocessar as despesas no mês seguinte!');
     },
       err => {
         console.log(err);
       });
   }
 
-  confirmDesfazerAdiantamentoFluxoParcelas() {
+  confirmDesfazerAdiamentoFluxoParcelas() {
     let despesas = this.getDetalheDespesasParceladasComParcelasAdiantadasChecked();
 
     if (despesas.length == 0) {
@@ -1120,10 +1148,9 @@ export class DetalheDespesasFormComponent implements OnInit {
       return;
     }
 
-    this.detalheService.desfazerAdiantamentoFluxoParcelas(despesas).toPromise().then(() => {
+    this.detalheService.desfazerAdiamentoFluxoParcelas(despesas).toPromise().then(() => {
       this.closeModal();
       this.recarregarDetalheDespesa();
-      alert('');
     },
       err => {
         console.log(err);
@@ -1134,8 +1161,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.despesasParceladasService.enviaMensagem(null);
   }
 
-  adiantarFluxoParcelas() {
-    this.eventModalConfirmacao = "AdiantarFluxoParcelas";
+  adiarFluxoParcelas() {
+    this.eventModalConfirmacao = "AdiarFluxoParcelas";
     this.mensagemModalConfirmacao_header = "Deseja adiar a parcela da despesa selecionada?"
     this.mensagemModalConfirmacao_body = "";
     this.mensagemModalConfirmacao_footer = "Obs: Ação válida somente para DESPESAS PARCELADAS.";
@@ -1143,8 +1170,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
 
-  desfazerAdiantamentoFluxoParcelas() {
-    this.eventModalConfirmacao = "DesfazerAdiantamentoFluxoParcelas";
+  desfazerAdiamentoFluxoParcelas() {
+    this.eventModalConfirmacao = "DesfazerAdiamentoFluxoParcelas";
     this.mensagemModalConfirmacao_header = "Deseja *DESFAZER* o adiamento da parcela da despesa selecionada?"
     this.mensagemModalConfirmacao_body = "";
     this.mensagemModalConfirmacao_footer = "Obs: Ação válida somente para DESPESAS PARCELADAS.";
@@ -1160,10 +1187,11 @@ export class DetalheDespesasFormComponent implements OnInit {
       return;
     }
 
-    let novoItem = this.novaLinhaDetalheDespesa(detalheDespesa);
+    let novaLinha: DetalheDespesasMensais[] = [];
+    novaLinha.push(this.novaLinhaDetalheDespesa(detalheDespesa));
 
-    this.detalheService.gravarDetalheDespesa(novoItem).toPromise().then(() => {
-      this.recarregarDetalheDespesa();
+    this.detalheService.gravarDetalheDespesa(novaLinha).toPromise().then(() => {
+      this.confirmOrganizarRegistrosDetalheDespesa(false);
     },
       err => {
         console.log(err);
@@ -1223,6 +1251,15 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   abrirModalCadastroConsolidacoes(despesa) {
     this.consolidacaoService.enviaMensagem(despesa);
+  }
+
+  obterExtratoDespesaConsolidada(despesa) {
+    this.detalheService.obterExtratoDespesasParceladasConsolidadas(this.despesaRef, this.detalheRef, despesa.idConsolidacao).toPromise().then((res) => {
+      alert('* VISUALIZAÇÃO DESPESAS PARCELADAS CONSOLIDADAS * \r\n \r\n' + res.nomeDespesaParcelada);
+    },
+      err => {
+        alert('Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.');
+      });
   }
 
   confirmGravarEditarValores() {
@@ -1286,8 +1323,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     let despesas = this.getDetalheDespesasParceladasChecked();
 
     if (despesas.length == 0) {
-        alert('Necessário selecionar alguma despesa parcelada para ser consolidada.');
-        return;
+      alert('Necessário selecionar alguma despesa parcelada para ser consolidada.');
+      return;
     }
 
     let idConsolidacao = +(document.getElementById("comboTituloConsolidacao") as HTMLInputElement).value;

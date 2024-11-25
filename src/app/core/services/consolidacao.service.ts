@@ -30,8 +30,8 @@ export class ConsolidacaoService {
     return this.subject.asObservable();
   }
 
-  getTitulosConsolidacao(isConsolidacaoEmAberto: boolean): Observable<TituloConsolidacaoResponse[]> {
-    let carregar = (isConsolidacaoEmAberto ? true : false);
+  getTitulosConsolidacao(isBaixado: boolean): Observable<TituloConsolidacaoResponse[]> {
+    let carregar = (isBaixado ? true : false);
     return this.http.get<TituloConsolidacaoResponse[]>(`springboot-esc-backend/api/consolidacao/obterTituloConsolidacoes/${this.sessao.getIdLogin()}/${carregar}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
@@ -71,12 +71,17 @@ export class ConsolidacaoService {
     if (error.error instanceof ErrorEvent) {
       console.error('Ocorreu um erro:', error.error.message);
     } else {
+      if (error.error.codigo == 204 || error.error.codigo == 400) {
+        alert(error.error.mensagem);
+      } else {
+        alert('Ops, Ocorreu um erro no servidor, tente novamente mais tarde.');
+      }
       console.error(
         `Backend codigo de erro ${error.status}, ` +
-        `request foi: ${error.error}`);
+        `request foi: ${error.error}` +
+        `mensagem: ${error.error.mensagem}`);
     }
 
-    alert('Ops, Ocorreu um erro no servidor, tente novamente mais tarde.')
     return throwError(error);
   }
 

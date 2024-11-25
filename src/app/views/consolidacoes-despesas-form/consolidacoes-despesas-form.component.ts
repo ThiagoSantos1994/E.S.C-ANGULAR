@@ -59,7 +59,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     this.tituloConsolidacoes = null;
 
     this.modalConsolidacoesForm = this.formBuilder.group({
-      checkCarregarDespesasPendente: [true],
+      checkCarregarNomeConsolidacoes: [true],
       checkMarcarTodasParcelas: [false],
       nomeConsolidacao: ['']
     });
@@ -240,18 +240,18 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
   recarregarDetalheConsolidacao() {
     this.idConsolidacaoRef = this.consolidacao.idConsolidacao;
 
-    this.carregarListaConsolidacoes(true);
+    this.carregarListaConsolidacoes(false);
     this.carregarDetalhesConsolidacao();
   }
 
-  carregarListaConsolidacoes(isConsolidacoesAtivas: boolean) {
-    this.service.getTitulosConsolidacao(isConsolidacoesAtivas).subscribe((res) => {
+  carregarListaConsolidacoes(isConsolidacoesBaixadas: boolean) {
+    this.service.getTitulosConsolidacao(isConsolidacoesBaixadas).subscribe((res) => {
       this.tituloConsolidacoes = res;
     });
   }
 
-  onCheckCarregarNomeDespParceladas(checked) {
-    this.carregarListaConsolidacoes(checked);
+  onCheckCarregarNomeConsolidacoes(checked) {
+    this.carregarListaConsolidacoes(!checked);
   }
 
   onChangeTituloConsolidacao(value) {
@@ -352,36 +352,4 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
 
 function parserToInt(str) {
   return parseInt(str.replace(/[\D]+/g, ''));
-}
-
-function formatRealNumber(str) {
-  var tmp = parserToInt(str) + '';
-  tmp = tmp.replace(/([0-9]{2})$/g, ".$1");
-  if (tmp.length > 6)
-    tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, "$1.$2");
-
-  return tmp.replace('.', ',');
-}
-
-function isValorNegativo(str) {
-  let regex = new RegExp("-");
-  return regex.test(str);
-}
-
-function parseDate(texto) {
-  let dataDigitadaSplit = texto.split("/");
-
-  let dia = dataDigitadaSplit[0];
-  let mes = dataDigitadaSplit[1];
-  let ano = dataDigitadaSplit[2];
-
-  if (ano.length < 4 && parseInt(ano) < 50) {
-    ano = "20" + ano;
-  } else if (ano.length < 4 && parseInt(ano) >= 50) {
-    ano = "19" + ano;
-  }
-  ano = parseInt(ano);
-  mes = mes - 1;
-
-  return new Date(ano, mes, dia);
 }

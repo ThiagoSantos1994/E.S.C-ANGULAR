@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { LancamentosFinanceirosDomain } from '../domain/lancamentos-financeiros.domain';
+import { CategoriaDespesasResponse } from '../interfaces/categoria-despesa-response.interface';
 import { ConfiguracaoLancamentos } from '../interfaces/configuracao-lancamentos.interface';
 import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
 import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.interface';
@@ -11,7 +12,6 @@ import { LancamentosMensais } from '../interfaces/lancamentos-mensais.interface'
 import { StringResponse } from '../interfaces/string-response.interface.';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { CategoriaDespesasResponse } from '../interfaces/categoria-despesa-response.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -157,7 +157,7 @@ export class LancamentosFinanceirosService {
     if (error.error instanceof ErrorEvent) {
       console.error('Ocorreu um erro:', error.error.message);
     } else {
-      if (error.error.codigo == 204) {
+      if (error.error.codigo == 204 || error.error.codigo == 400) {
         alert(error.error.mensagem);
       } else {
         alert('Ops, Ocorreu um erro no servidor, tente novamente mais tarde.');
