@@ -117,7 +117,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     });
 
     this.modalAssociarDespesaParceladaConsolidacaoForm = this.formBuilder.group({
-      checkCarregarTodasConsolidacoes: ['']
+      checkCarregarTodasConsolidacoes: [false]
     });
 
     this.checkDespesasForm = this.formBuilder.group({

@@ -53,11 +53,12 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
   loadFormConsolidacoes(objConsolidacao) {
     this.idConsolidacaoRef = -1;
     this.consolidacao = null;
-    this.checkboxesMarcadas = false;
-    this.resetDetalhesObservable();
-
     this.tituloConsolidacoes = null;
-
+    this.checkboxesMarcadas = false;
+    
+    this.resetDetalhesObservable();
+    this.desabilitarCampos();
+    
     this.modalConsolidacoesForm = this.formBuilder.group({
       checkCarregarNomeConsolidacoes: [true],
       checkMarcarTodasParcelas: [false],
@@ -68,6 +69,21 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
 
     if (null != objConsolidacao) {
       this.onChangeTituloConsolidacao(objConsolidacao.idConsolidacao);
+    }
+  }
+
+  desabilitarCampos() {
+    (<HTMLInputElement>document.getElementById("buttonBaixar")).disabled = true;
+    (<HTMLInputElement>document.getElementById("buttonReativar")).disabled = true;
+  }
+
+  habilitarCampos(consolidacao: Consolidacao) {
+    if (consolidacao.tpBaixado == "S") {
+      (<HTMLInputElement>document.getElementById("buttonBaixar")).disabled = true;
+      (<HTMLInputElement>document.getElementById("buttonReativar")).disabled = false;
+    } else {
+      (<HTMLInputElement>document.getElementById("buttonBaixar")).disabled = false;
+      (<HTMLInputElement>document.getElementById("buttonReativar")).disabled = true;
     }
   }
 
@@ -134,7 +150,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
       this.consolidacao = res;
 
       (<HTMLInputElement>document.getElementById("nomeConsolidacao")).value = res.dsTituloConsolidacao.toString();
-
+      this.habilitarCampos(res);
       this.resetDetalhesObservable();
       this.setDetalhesObservable(res.despesasConsolidadas, false);
     });
@@ -154,6 +170,14 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
       }
       case 'DesassociarDespesas': {
         this.confirmDesassociarDespesa();
+        break;
+      }
+      case 'BaixarConsolidacao': {
+        this.confirmBaixarConsolidacao();
+        break;
+      }
+      case 'ReativarConsolidacao': {
+        this.confirmReativarConsolidacao();
         break;
       }
       default: {
@@ -176,6 +200,30 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     this.closeModal();
   }
 
+  confirmBaixarConsolidacao() {
+    let consolidacao = this.consolidacao;
+    consolidacao.tpBaixado = "S";
+
+    this.service.gravarConsolidacao(this.consolidacao).toPromise().then(() => {
+      alert('Consolidacao atualizada com sucesso!');
+      this.recarregarDetalheConsolidacao();
+    });
+
+    this.closeModal();
+  }
+
+  confirmReativarConsolidacao() {
+    let consolidacao = this.consolidacao;
+    consolidacao.tpBaixado = "N";
+
+    this.service.gravarConsolidacao(this.consolidacao).toPromise().then(() => {
+      alert('Consolidacao atualizada com sucesso!');
+      this.recarregarDetalheConsolidacao();
+    });
+
+    this.closeModal();
+  }
+
   excluirConsolidacao() {
     this.eventModalConfirmacao = "ExcluirConsolidacao";
     this.mensagemModalConfirmacao_header = "Deseja excluir esta despesa parcelada?";
@@ -194,7 +242,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     this.eventModalConfirmacao = "BaixarConsolidacao";
     this.mensagemModalConfirmacao_header = "Deseja baixar esta consolidacao?";
     this.mensagemModalConfirmacao_body = "";
-    this.mensagemModalConfirmacao_footer = "Este processo oculta a despesa consolidada para importação nos lançamentos mensais.";
+    this.mensagemModalConfirmacao_footer = "Após confirmação, a despesa consolidada não será mais exibida para importação nos lançamentos mensais.";
 
     if (null == this.consolidacao) {
       alert('Necessário selecionar uma consolidacao.')

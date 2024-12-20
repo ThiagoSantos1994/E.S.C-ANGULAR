@@ -562,9 +562,11 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     }
 
     if (mes <= 0) {
-      mes = "01";
-    } else if (mes == 13) {
       mes = "12";
+      ano = (parseInt(ano) - 1);
+    } else if (mes == 13) {
+      mes = "01";
+      ano = (parseInt(ano) + 1);
     }
 
     this.pesquisaForm = this.formBuilder.group({
