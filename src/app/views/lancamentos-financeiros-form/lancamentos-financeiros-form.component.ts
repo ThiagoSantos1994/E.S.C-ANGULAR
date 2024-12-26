@@ -144,10 +144,11 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.getConfiguracaoLancamentos().subscribe((res: ConfiguracaoLancamentos) => {
       this.parametrizacoes = res;
       let mesReferencia = (res.mesReferencia <= 9 ? "0".concat(res.mesReferencia.toString()) : res.mesReferencia);
+      let anoReferencia = (null == res.anoReferencia ? this.getAnoAtual() : res.anoReferencia.toString());
 
       this.pesquisaForm = this.formBuilder.group({
         cbMes: [mesReferencia, Validators.required],
-        cbAno: [this.getAnoAtual(), Validators.required]
+        cbAno: [anoReferencia, Validators.required]
       });
 
       this.checkDespesasForm = this.formBuilder.group({
@@ -554,12 +555,13 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let ano = this.pesquisaForm.get('cbAno').value;
 
     if (ref == "*") {
-      mes = this.getMesAtual();
-      ano = this.getAnoAtual();
+      mes = this.parametrizacoes.mesReferencia;
+      ano = this.parametrizacoes.anoReferencia;
     } else {
       mes = (ref == "+" ? (parseInt(mes) + 1) : (parseInt(mes) - 1));
-      mes = (mes <= 9 ? "0".concat(mes) : mes);
     }
+    
+    mes = (mes <= 9 ? "0".concat(mes) : mes);
 
     if (mes <= 0) {
       mes = "12";
