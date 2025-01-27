@@ -158,14 +158,28 @@
           <hr style="border-top: 1px solid rgba(0,0,0,.1); margin-block: auto;">
 
           <div [formGroup]="modalDetalheDespesasMensaisForm">
-            <small class="form-text text-muted" style="padding-left: 78%;">
-              <input class="form-check-input" type="checkbox" formControlName="checkReprocessarDespesasNaoParceladas"
-                id="checkReprocessarDespesasNaoParceladas"
-                (click)="onCheckReprocessarDespesasNaoParceladas($event.target.checked)">
-              <label class="form-check-label" for="checkReprocessarDespesasNaoParceladas"
-                title="Fixa os valores das despesas NÃO PARCELAS do mês anterior."> Fixar valor despesas p/ proximo
-                mês. </label>
-            </small>
+            <div class="row-header-detalhe-despesas-mensais">
+              <div style="padding-left: 3.5%">
+                <small class="form-text text-muted">
+                  <input class="form-check-input" type="checkbox" formControlName="checkVisualizarParcelasConsolidadas"
+                    id="checkVisualizarParcelasConsolidadas"
+                    (click)="onCheckVisualizarParcelasConsolidadas($event.target.checked)">
+                  <label class="form-check-label" for="checkVisualizarParcelasConsolidadas"
+                    title="Exibe as despesas parceladas que estão consolidadas."> Exibir despesas
+                    consolidadas</label>
+                </small>
+              </div>
+              <div style="padding-left: 62%;">
+                <small class="form-text text-muted">
+                  <input class="form-check-input" type="checkbox"
+                    formControlName="checkReprocessarDespesasNaoParceladas" id="checkReprocessarDespesasNaoParceladas"
+                    (click)="onCheckReprocessarDespesasNaoParceladas($event.target.checked)">
+                  <label class="form-check-label" for="checkReprocessarDespesasNaoParceladas"
+                    title="Fixa os valores das despesas NÃO PARCELAS do mês anterior."> Fixar valor despesas p/ proximo
+                    mês</label>
+                </small>
+              </div>
+            </div>
           </div>
 
           <div class="p-2 text-center bg-light">

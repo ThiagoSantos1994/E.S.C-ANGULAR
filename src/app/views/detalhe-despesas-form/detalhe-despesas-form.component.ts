@@ -49,6 +49,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   private nomeDespesa: string
   private tituloDespesaParceladaAmortizacao: string;
   private checkboxesMarcadas: Boolean = false;
+  private checkVisualizarParcelasConsolidadas: Boolean = false;
   private observacoesEditorValores: string = "";
 
   private eventModalConfirmacao: string = "";
@@ -98,7 +99,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.modalDetalheDespesasMensaisForm = this.formBuilder.group({
       nomeDespesa: [''],
       checkLimiteMesAnterior: [''],
-      checkReprocessarDespesasNaoParceladas: ['']
+      checkReprocessarDespesasNaoParceladas: [''],
+      checkVisualizarParcelasConsolidadas: ['']
     });
 
     this.modalCategoriaDetalheDespesaForm = this.formBuilder.group({
@@ -135,6 +137,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.detalheRef = d.idDetalheDespesa;
       this.mesRef = d.mesPesquisaForm;
       this.anoRef = d.anoPesquisaForm;
+      this.checkVisualizarParcelasConsolidadas = false;
 
       if (null == d.idDetalheDespesa) {
         this.adicionarNovaDespesa();
@@ -266,6 +269,8 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   validarAcaoVisualizacao(idDespesa: number, idDetalheDespesa: number) {
+    this.checkVisualizarParcelasConsolidadas = false;
+  
     this.detalheService.obterMesAnoPorID(idDespesa).subscribe((res) => {
       if ("ERRO" == res.mesAno) {
         this.detalheService.obterMesAnoPorID(idDespesa - 1).subscribe((res) => {
@@ -340,11 +345,15 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.eventModalConfirmacao = "";
   }
 
+  isExibirParcelasConsolidadas(): Boolean {
+    return !this.checkVisualizarParcelasConsolidadas;
+  }
+
   carregarDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
     this.resetDetalheDespesasChange();
     this.carregarListaDespesasTipoRelatorio();
 
-    this.detalheService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao).subscribe((res) => {
+    this.detalheService.getDetalheDespesasMensais(idDespesa, idDetalheDespesa, ordemExibicao, this.isExibirParcelasConsolidadas()).subscribe((res) => {
       this.detalheLancamentosMensais = res;
       this.despesaRef = res.despesaMensal.idDespesa;
       this.detalheRef = res.despesaMensal.idDetalheDespesa;
@@ -414,7 +423,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.modalDetalheDespesasMensaisForm.setValue({
       nomeDespesa: (despesa.dsNomeDespesa),
       checkLimiteMesAnterior: (despesa.tpReferenciaSaldoMesAnterior == "S"),
-      checkReprocessarDespesasNaoParceladas: (despesa.tpReprocessar == "S")
+      checkReprocessarDespesasNaoParceladas: (despesa.tpReprocessar == "S"),
+      checkVisualizarParcelasConsolidadas: this.checkVisualizarParcelasConsolidadas
     });
 
     if (null != despesa.isNovaDespesa && !despesa.isNovaDespesa) {
@@ -458,7 +468,9 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.resetCheckBoxMarcarTodos();
 
     let despesa = this.detalheDomain.getDespesaMensal();
+
     this.carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao);
+
     this.lancamentosService.enviaMensagem("recarregarDetalhes");
   }
 
@@ -519,7 +531,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   carregarListaConsolidacoesParaAssociacao(isTodasDespesas: boolean) {
-    this.detalheService.getTituloConsolidacoesParaAssociacao(isTodasDespesas).subscribe((res) => {
+    this.detalheService.getTituloConsolidacoesParaAssociacao(this.despesaRef, this.detalheRef, isTodasDespesas).subscribe((res) => {
       this.tituloDespesasConsolidacao = res;
     });
   }
@@ -620,6 +632,11 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   onCheckReprocessarDespesasNaoParceladas(checked) {
     this.detalheLancamentosMensais.despesaMensal.tpReprocessar = (checked ? 'S' : 'N');
+  }
+
+  onCheckVisualizarParcelasConsolidadas(checked) {
+    this.checkVisualizarParcelasConsolidadas = checked;
+    this.recarregarDetalheDespesa();
   }
 
   onCategoriaRascunho(checked) {

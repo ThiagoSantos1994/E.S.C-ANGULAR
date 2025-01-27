@@ -79,8 +79,8 @@ export class DetalheDespesasService {
     );
   }
 
-  getDetalheDespesasMensais(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number): Observable<DetalheLancamentosMensais> {
-    return this.http.get<DetalheLancamentosMensais>(`springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/consultar/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/${ordemExibicao}`)
+  getDetalheDespesasMensais(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number, exibirConsolidacao: Boolean): Observable<DetalheLancamentosMensais> {
+    return this.http.get<DetalheLancamentosMensais>(`springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/consultar/${idDespesa}/${idDetalheDespesa}/${this.sessao.getIdLogin()}/${ordemExibicao}/${exibirConsolidacao}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
   }
@@ -92,9 +92,9 @@ export class DetalheDespesasService {
         catchError(this.handleError));
   }
 
-  getTituloConsolidacoesParaAssociacao(tpListarTodasDespesas: boolean): Observable<TituloDespesaResponse> {
+  getTituloConsolidacoesParaAssociacao(idDespesa: number, idDetalheDespesa: number, tpListarTodasDespesas: boolean): Observable<TituloDespesaResponse> {
     const carregar = (tpListarTodasDespesas ? "default" : "ativas");
-    return this.http.get<TituloDespesaResponse>(`springboot-esc-backend/api/consolidacao/importacao/consultarConsolidacoes/${this.sessao.getIdLogin()}/${carregar}`)
+    return this.http.get<TituloDespesaResponse>(`springboot-esc-backend/api/consolidacao/importacao/consultarConsolidacoes/${this.sessao.getIdLogin()}/${idDespesa}/${idDetalheDespesa}/${carregar}`)
       .pipe(map((response) => { return response }),
         catchError(this.handleError));
   }

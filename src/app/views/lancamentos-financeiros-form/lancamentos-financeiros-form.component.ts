@@ -60,15 +60,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.parametrizacoes = {
-      dataViradaMes: null,
-      mesReferencia: null,
-      idFuncionario: null,
-      bviradaAutomatica: null,
-      qtdeLembretes: null,
-      anosReferenciaFiltro: []
-    }
-
     this.carregarConfiguracaoLancamentos();
 
     this.modalCriarEditarReceitaForm = this.formBuilder.group({
@@ -141,6 +132,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   carregarConfiguracaoLancamentos() {
+    this.inicializarVariaveis();
+
     this.lancamentosService.getConfiguracaoLancamentos().subscribe((res: ConfiguracaoLancamentos) => {
       this.parametrizacoes = res;
       let mesReferencia = (res.mesReferencia <= 9 ? "0".concat(res.mesReferencia.toString()) : res.mesReferencia);
@@ -167,6 +160,22 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       err => {
         console.log(err);
       });
+  }
+
+  inicializarVariaveis() {
+    this.parametrizacoes = {
+      dataViradaMes: null,
+      mesReferencia: null,
+      idFuncionario: null,
+      bviradaAutomatica: null,
+      qtdeLembretes: null,
+      anosReferenciaFiltro: []
+    };
+
+    this.categoriaDespesa = {
+      categorias: null,
+      mesAnoReferencia: ""
+    };
   }
 
   /* -------------- Receitas Fixas Mensais -------------- */
@@ -450,14 +459,16 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let despesas = this.getDespesasChecked();
 
     despesas.forEach((despesa) => {
-      this.lancamentosService.excluirDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao).toPromise().then(() => { },
+      this.lancamentosService.excluirDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao).toPromise().then(() => {
+        this.detalheService.excluirDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, -1).toPromise().then(() => { },
+          err => {
+            console.log(err);
+            return;
+          });
+      },
         err => {
           console.log(err);
-        });
-
-      this.detalheService.excluirDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, -1).toPromise().then(() => { },
-        err => {
-          console.log(err);
+          return;
         });
     })
 
@@ -560,7 +571,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     } else {
       mes = (ref == "+" ? (parseInt(mes) + 1) : (parseInt(mes) - 1));
     }
-    
+
     mes = (mes <= 9 ? "0".concat(mes) : mes);
 
     if (mes <= 0) {

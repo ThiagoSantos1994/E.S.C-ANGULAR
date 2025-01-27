@@ -47,14 +47,30 @@ export class HomeFormComponent implements OnInit {
   }
 
   carregarConfiguracaoLancamentos() {
+    this.inicializarVariaveis();
+
     this.lancamentosService.getConfiguracaoLancamentos().subscribe((res: ConfiguracaoLancamentos) => {
       this.configuracoesLancamentos = res;
       this.usuarioLogado = this.sessaoService.getUserName();
-      this.dataAtual = this.getDataAtual();
     },
       err => {
         console.log(err);
       });
+  }
+
+  inicializarVariaveis() {
+    this.configuracoesLancamentos = {
+      dataViradaMes: 0,
+      mesReferencia: 0,
+      anoReferencia: 0,
+      idFuncionario: 0,
+      bviradaAutomatica: false,
+      qtdeLembretes: 0,
+      qtdeAcessos: 0,
+      anosReferenciaFiltro: null
+    };
+
+    this.dataAtual = this.getDataAtual();
   }
 
   carregarDespesasParceladas() {
