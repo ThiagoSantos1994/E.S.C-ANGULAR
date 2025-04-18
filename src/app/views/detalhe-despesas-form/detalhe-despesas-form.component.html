@@ -28,10 +28,10 @@
                 <div class="input-group-header-titulo">
                   <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa"
                     onkeyup="toUpper(this)" placeholder="Ex: Fatura cartão crédito">
-                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #666572;" href="#!"
-                    role="button" title="Edita o titulo de todas as despesas associadas."
-                    (click)="onEditarTituloDespesa()">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                  <button class="btn text-white " data-mdb-ripple-init style="background-color: #666572;" role="button"
+                    data-toggle="modal" data-target="#modalAssociarDespesaMensalExistente"
+                    id="buttonAssociarDespesaExistente" (click)="carregarListaDespesasAlteracao()">
+                    <i class="fa fa-pencil-square-o"></i>
                   </button>
                 </div>
                 <br>
@@ -39,7 +39,16 @@
                   <div class="card-categorias">
                     <div>
                       <div *ngIf="detalheLancamentosMensais" class="form-check form-check-inline">
-                        <div *ngIf="detalheLancamentosMensais.despesaMensal.tpRelatorio == 'N'"
+
+                        <div *ngIf="detalheLancamentosMensais.despesaMensal.isNovaDespesa"
+                          class="form-check form-check-inline checkDetalheDespesas">
+                          <span class="badge checkDetalheDespesasNova d-inline">
+                            <i class="fa fa-star"> Nova Despesa</i>
+                          </span>
+                        </div>
+
+                        <div
+                          *ngIf="!detalheLancamentosMensais.despesaMensal.isNovaDespesa && detalheLancamentosMensais.despesaMensal.tpRelatorio == 'N'"
                           class="form-check form-check-inline checkDetalheDespesas">
                           <span class="badge checkDetalheDespesasComum d-inline">
                             <i class="fa fa-check-circle"> Despesa Comum</i>
@@ -227,7 +236,8 @@
                   </button>
                   <button class="btn text-white" data-mdb-ripple-init
                     style="background-color: #0f030a; padding-left: 24%; padding-right: 24%; margin-block-end: 20%;"
-                    href="#!" role="button" title="Ordenar registros" (click)="onOrdenarRegistrosDetalheDespesas()">
+                    href="#!" role="button" title="Ordenar registros" (click)="onOrdenarRegistrosDetalheDespesas()"
+                    id="buttonOrdenarRegistros">
                     <i class=" fa fa-sort-amount-desc" aria-hidden="true"></i>
                   </button>
                 </div>
@@ -602,10 +612,10 @@
         <div class="form-group modal-header">
           <div>
             <i class="fa fa-download" aria-hidden="true"></i>
-            Importar Despesas Parceladas
+            Importar Despesas & Consolidações
             <small class="form-text text-muted">
               <i class="fa fa-info-circle" aria-hidden="true"></i>
-              Selecione abaixo a despesa para importação:
+              Selecione abaixo um item para importação:
             </small>
           </div>
         </div>
@@ -624,7 +634,7 @@
                   (click)="onCheckCarregarTodasDespParceladas($event.target.checked)">
                 <label class="form-check-label" for="checkCarregarTodasDespesasParceladas"
                   style="font-size: smaller; color: #a7444e!important">
-                  Carregar todas as despesas parceladas cadastradas no sistema.
+                  Carregar todas as despesas parceladas e consolidações.
                 </label>
               </div>
             </div>
@@ -649,10 +659,10 @@
         <div class="form-group modal-header">
           <div>
             <i class="fa fa-object-group" aria-hidden="true"></i>
-            Consolidação de Despesa Parcelada
+            Consolidar Despesas Parceladas
             <small class="form-text text-muted">
               <i class="fa fa-info-circle" aria-hidden="true"></i>
-              Selecione abaixo a consolidação para associação:
+              Selecione abaixo uma consolidação:
             </small>
           </div>
         </div>
@@ -671,7 +681,7 @@
                   (click)="onCheckCarregarTodasConsolidacoes($event.target.checked)">
                 <label class="form-check-label" for="checkCarregarTodasConsolidacoes"
                   style="font-size: smaller; color: #a7444e!important">
-                  Carregar todas as consolidações cadastradas no sistema.
+                  Carregar todas as consolidações cadastradas.
                 </label>
               </div>
             </div>
@@ -764,6 +774,43 @@
           <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
             (click)="aplicarCategoriaDespesa()">
             <i class="fa fa-floppy-o"></i> Aplicar
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!------------------------  Modal Alterar Despesa Mensal Existente ------------------------>
+  <div class="modal fade" id="modalAssociarDespesaMensalExistente" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content modalAssociarDespesaMensalExistente">
+        <div class="form-group modal-header">
+          <div>
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+            Alteração de Despesa Mensal
+            <br>
+            <br>
+            <small class="form-text text-muted">
+              <i class="fa fa-info-circle" aria-hidden="true"></i>
+              ATENÇÃO: Este procedimento altera o titulo e todas as referencias desta despesa pela que for selecionada.
+            </small>
+          </div>
+        </div>
+        <form [formGroup]="modalAssociarDespesaMensalExistenteForm">
+          <div class="modalAssociarDespesaMensalExistente-body form-group">
+            <select class="form-control form-control-sm" id="comboTituloDespesaExistente">
+              <option *ngFor="let despesa of tituloDespesasAlteracao.despesas" value={{despesa.idDetalheDespesa}}>
+                {{despesa.tituloDespesa}}
+              </option>
+            </select>
+          </div>
+        </form>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" style="background-color: #b1291f;"
+            (click)="onAssociarDespesaMensalExistente()">
+            <i class="fa fa-check"></i> Alterar Despesa
           </button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
         </div>
@@ -948,7 +995,7 @@
       </button>
     </div>
     <div class="form-group modal-body">
-      Deseja Quitar a(s) despesa(s) selecionada(s)?
+      Deseja baixar o pagamento da(s) despesa(s) selecionada(s)?
       <br>
       <br>
       <div>

@@ -296,6 +296,12 @@
     margin: 1.75rem auto;
   }
 
+  .modalAssociarDespesaMensalExistente {
+    text-align: left;
+    width: 34%;
+    margin: 1.75rem auto;
+  }
+
   .modalEditorValores {
     text-align: left;
     width: 24%;
@@ -338,6 +344,11 @@
     padding-right: 2%;
   }
   
+  .modalAssociarDespesaMensalExistente-body {
+    padding-left: 2%;
+    padding-right: 2%;
+  }
+
   .modalDetalheDespesasMensais-body {
     width: 96%;
     margin: 0.6rem auto;
@@ -399,6 +410,12 @@
   .checkDetalheDespesasComum {
     color: #fff;
     background-color: #1c793b;
+    font-size: 82%;
+  }
+
+  .checkDetalheDespesasNova {
+    color: #fff;
+    background-color: #a2b93c;
     font-size: 82%;
   }
 

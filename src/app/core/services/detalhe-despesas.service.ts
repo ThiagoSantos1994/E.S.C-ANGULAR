@@ -99,6 +99,12 @@ export class DetalheDespesasService {
         catchError(this.handleError));
   }
 
+  getTituloDespesaAlteracao(idDespesa: number, anoReferencia: number): Observable<TituloDespesaResponse> {
+    return this.http.get<TituloDespesaResponse>(`springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/obterDespesasMensaisParaAssociacao/${idDespesa}/${this.sessao.getIdLogin()}/${anoReferencia}`)
+      .pipe(map((response) => { return response }),
+        catchError(this.handleError));
+  }
+
   getTituloDespesasRelatorio(idDespesa: number): Observable<TituloDespesaResponse> {
     return this.http.get<TituloDespesaResponse>(`springboot-esc-backend/api/lancamentosFinanceiros/obterTitulosDespesasRelatorio/${idDespesa}/${this.sessao.getIdLogin()}`)
       .pipe(map((response) => { return response }),
@@ -206,6 +212,12 @@ export class DetalheDespesasService {
 
   associarDespesasConsolidacao(idConsolidacao: number, despesas: DetalheDespesasMensais[]) {
     return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/consolidacao/associar/${idConsolidacao}`, despesas).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  alterarReferenciaDespesaMensal(idDespesa: number, idDetalheDespesa: number, idDetalheDespesaNova: number) {
+    return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/alterarReferenciaDespesa/${idDespesa}/${idDetalheDespesa}/${idDetalheDespesaNova}/${this.sessao.getIdLogin()}`, null).pipe(
       catchError(error => this.handleError(error))
     );
   }

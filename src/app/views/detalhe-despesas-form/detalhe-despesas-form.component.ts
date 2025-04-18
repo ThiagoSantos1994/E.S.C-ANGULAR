@@ -29,6 +29,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   private tituloDespesasParcelada: TituloDespesaResponse;
   private tituloDespesasRelatorio: TituloDespesaResponse;
   private tituloDespesasConsolidacao: TituloDespesaResponse;
+  private tituloDespesasAlteracao: TituloDespesaResponse;
   private detalheLancamentosMensais: DetalheLancamentosMensais;
   private observacoes: ObservacoesDetalheDespesaRequest;
   private parcelasAmortizacao: Parcelas[];
@@ -38,6 +39,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   private modalDetalheDespesasMensaisForm: FormGroup;
   private modalImportacaoDespesaParceladaForm: FormGroup;
   private modalAssociarDespesaParceladaConsolidacaoForm: FormGroup;
+  private modalAssociarDespesaMensalExistenteForm: FormGroup;
   private checkDespesasForm: FormGroup;
   private modalRef: BsModalRef;
 
@@ -67,6 +69,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   @ViewChild('modalConfirmacaoQuitarDespesas') modalConfirmacaoQuitarDespesas;
   @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
   @ViewChild('modalCategoriaDetalheDespesa') modalCategoriaDetalheDespesa;
+  @ViewChild('modalAssociarDespesaMensalExistente') modalAssociarDespesaMensalExistente;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -92,6 +95,10 @@ export class DetalheDespesasFormComponent implements OnInit {
       despesas: []
     }
 
+    this.tituloDespesasAlteracao = {
+      despesas: []
+    }
+
     this.modalConfirmacaoQuitarDespesasForm = this.formBuilder.group({
       observacaoPagamento: ['']
     });
@@ -114,6 +121,9 @@ export class DetalheDespesasFormComponent implements OnInit {
       checkDespesaEmprestimoAReceber: ['']
     });
 
+    this.modalAssociarDespesaMensalExistenteForm = this.formBuilder.group({
+    });
+
     this.modalImportacaoDespesaParceladaForm = this.formBuilder.group({
       checkCarregarTodasDespesasParceladas: ['']
     });
@@ -133,6 +143,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.modalCategoriaDetalheDespesaForm.reset();
       this.modalImportacaoDespesaParceladaForm.reset();
       this.modalAssociarDespesaParceladaConsolidacaoForm.reset();
+      this.modalAssociarDespesaMensalExistenteForm.reset();
       this.despesaRef = d.idDespesa;
       this.detalheRef = d.idDetalheDespesa;
       this.mesRef = d.mesPesquisaForm;
@@ -232,7 +243,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       idDetalheDespesa: idDetalheDespesa,
       dsTituloDespesa: "",
       dsNomeDespesa: "",
-      dsExtratoDespesa: "Para salvar esta despesa, é necessário digitar o Nome da Despesa e o valor Limite Referencia.",
+      dsExtratoDespesa: "Para salvar esta despesa, é necessário digitar o Nome da Despesa e opcionalmente um Limite Referencia.",
       vlLimite: "0,00",
       vlLimiteExibicao: "0,00",
       vlTotalDespesa: "0,00",
@@ -270,7 +281,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   validarAcaoVisualizacao(idDespesa: number, idDetalheDespesa: number) {
     this.checkVisualizarParcelasConsolidadas = false;
-  
+
     this.detalheService.obterMesAnoPorID(idDespesa).subscribe((res) => {
       if ("ERRO" == res.mesAno) {
         this.detalheService.obterMesAnoPorID(idDespesa - 1).subscribe((res) => {
@@ -338,6 +349,10 @@ export class DetalheDespesasFormComponent implements OnInit {
         this.confirmAssociarDespesaConsolidacao();
         break;
       }
+      case 'AssociarDespesaMensalExistente': {
+        this.confirmAssociarDespesaMensalExistente();
+        break;
+      }
       default: {
       }
     }
@@ -358,6 +373,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.despesaRef = res.despesaMensal.idDespesa;
       this.detalheRef = res.despesaMensal.idDetalheDespesa;
       this.nomeDespesa = res.despesaMensal.dsTituloDespesa;
+      this.detalheLancamentosMensais.despesaMensal.isNovaDespesa = false;
 
       if (ordemExibicao == null) {
         this.detalheService.getExtratoDetalheDespesa(idDespesa, idDetalheDespesa).subscribe((res) => {
@@ -382,10 +398,25 @@ export class DetalheDespesasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("buttonDesfazerPagamento")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("buttonImportar")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("buttonAtualizar")).disabled = isBloqueado;
-    (<HTMLInputElement>document.getElementById("buttonDespesasParceladas")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonAssociarDespesaAConsolidacao")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("buttonAmortizarParcelas")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("buttonAdiarParcelas")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("buttonDesfazerAdiamentoFluxoParcelas")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("checkVisualizarParcelasConsolidadas")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("checkReprocessarDespesasNaoParceladas")).disabled = isBloqueado;
+  }
+
+  bloquearControlesNovaDespesa(isBloqueado: boolean) {
+    (<HTMLInputElement>document.getElementById("buttonImportar")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonAtualizar")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonAssociarDespesaAConsolidacao")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonAmortizarParcelas")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonAdiarParcelas")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonDesfazerAdiamentoFluxoParcelas")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonOrdenarRegistros")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("checkVisualizarParcelasConsolidadas")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("checkReprocessarDespesasNaoParceladas")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("buttonAssociarDespesaExistente")).disabled = isBloqueado;
   }
 
   validarCategoriaDespesaLoad(despesa: DespesaMensal) {
@@ -427,7 +458,9 @@ export class DetalheDespesasFormComponent implements OnInit {
       checkVisualizarParcelasConsolidadas: this.checkVisualizarParcelasConsolidadas
     });
 
-    if (null != despesa.isNovaDespesa && !despesa.isNovaDespesa) {
+    this.bloquearControlesNovaDespesa(despesa.isNovaDespesa);
+
+    if (despesa.isNovaDespesa == false) {
       this.bloquearControlesDespesaTipoRelatorio(despesa.tpRelatorio == "S");
     }
   }
@@ -536,6 +569,12 @@ export class DetalheDespesasFormComponent implements OnInit {
     });
   }
 
+  carregarListaDespesasAlteracao() {
+    this.detalheService.getTituloDespesaAlteracao(this.despesaRef, Number(this.anoRef)).subscribe((res) => {
+      this.tituloDespesasAlteracao = res;
+    });
+  }
+
   carregarListaDespesasTipoRelatorio() {
     this.detalheService.getTituloDespesasRelatorio(this.despesaRef).subscribe((res) => {
       this.tituloDespesasRelatorio = res;
@@ -553,6 +592,21 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.mensagemModalConfirmacao_header = "Deseja realmente associar a(s) despesa(s) a esta consolidação?";
     this.mensagemModalConfirmacao_body = "null";
     this.mensagemModalConfirmacao_footer = "null";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  onAssociarDespesaMensalExistente() {
+    let valor = (document.getElementById("comboTituloDespesaExistente") as HTMLInputElement).value;
+    if (valor == "") {
+      alert('Necessário selecionar uma despesa.');
+      return;
+    }
+
+    this.eventModalConfirmacao = "AssociarDespesaMensalExistente";
+    this.mensagemModalConfirmacao_header = "Deseja realmente alterar as referencias da despesa atual pela selecionada?";
+    this.mensagemModalConfirmacao_body = " ";
+    this.mensagemModalConfirmacao_footer = "A alteração é irreversível!";
 
     this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
   }
@@ -775,10 +829,8 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   gravarDetalheDespesas() {
     let despesa = this.detalheLancamentosMensais.despesaMensal;
-    despesa.dsNomeDespesa = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
 
-    if (despesa.dsNomeDespesa == "") {
-      alert('Digite o titulo da despesa.');
+    if (!this.validarAlteracaoTituloDespesaExistente(despesa)) {
       return;
     }
 
@@ -786,8 +838,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       let valorLimiteDespesa = formatRealNumber((document.getElementById("valorLimiteDespesa") as HTMLInputElement).value);
 
       if (valorLimiteDespesa == "NaN" || valorLimiteDespesa == "0") {
-        alert('Necessário digitar o valor Limite Despesa.');
-        return;
+        valorLimiteDespesa = "0,00";
       }
 
       despesa.vlLimite = valorLimiteDespesa;
@@ -799,7 +850,7 @@ export class DetalheDespesasFormComponent implements OnInit {
         return;
       } else {
         this.eventModalConfirmacao = "GravarDetalheDespesas";
-        this.mensagemModalConfirmacao_header = "Deseja salvar as alterações ?"
+        this.mensagemModalConfirmacao_header = (despesa.isNovaDespesa ? "Deseja gravar esta nova despesa?" : "Deseja salvar as alterações ?")
         this.mensagemModalConfirmacao_body = "null";
         this.mensagemModalConfirmacao_footer = "null";
 
@@ -811,6 +862,28 @@ export class DetalheDespesasFormComponent implements OnInit {
         console.log(err);
       }
     );
+  }
+
+  validarAlteracaoTituloDespesaExistente(despesa: DespesaMensal): boolean {
+    let tituloAnterior = despesa.dsNomeDespesa;
+    let tituloAtual = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
+
+    if (tituloAtual == "") {
+      alert('Digite o titulo da despesa.');
+      return false;
+    }
+
+    if (tituloAnterior == "") {
+      despesa.dsNomeDespesa = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
+      tituloAnterior = despesa.dsNomeDespesa;
+    }
+
+    if (tituloAtual.trim() !== tituloAnterior.trim()) {
+      this.onEditarTituloDespesa();
+      return false;
+    }
+
+    return true;
   }
 
   gravarDespesa(despesa: DespesaMensal) {
@@ -1350,6 +1423,20 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.closeModal();
       this.recarregarDetalheDespesa();
       alert('Despesa(s) associada(s) com sucesso!');
+    },
+      err => {
+        console.log(err);
+      });
+  }
+
+  confirmAssociarDespesaMensalExistente() {
+    let idDetalheDespesaAssociada = Number((document.getElementById("comboTituloDespesaExistente") as HTMLInputElement).value);
+
+    this.detalheService.alterarReferenciaDespesaMensal(this.despesaRef, this.detalheRef, idDetalheDespesaAssociada).toPromise().then(() => {
+      this.closeModal();
+      alert('Despesa alterada com sucesso!');
+      this.detalheDomain.getDespesaMensal().idDetalheDespesa = idDetalheDespesaAssociada;
+      this.recarregarDetalheDespesa();
     },
       err => {
         console.log(err);
