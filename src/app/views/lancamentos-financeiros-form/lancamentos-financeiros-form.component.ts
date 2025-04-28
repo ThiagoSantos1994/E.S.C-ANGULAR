@@ -211,7 +211,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   resetModalCriarEditarReceita() {
     this.receitaSelecionada = null;
-    this.valorReceitaControl.setValue(null);
+    this.valorReceitaControl.setValue("0.00");
     this.modalCriarEditarReceitaForm.setValue({
       nomeReceita: '',
       tipoReceita: '+',
@@ -220,7 +220,9 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   gravarReceita() {
-    if (null == this.valorReceitaControl.value) {
+    if (this.modalCriarEditarReceitaForm.get('tipoReceita').value == "< X >") {
+      this.valorReceitaControl.setValue("0.00");
+    } else if (null == this.valorReceitaControl.value) {
       alert('O Valor da receita não pode estar em branco ou vazio.');
       return;
     }
@@ -322,6 +324,16 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     },
       err => {
         console.log(err);
+      });
+  }
+
+  confirmExecutarBackup() {
+    this.lancamentosService.executarBackup().subscribe(res => {
+      alert(res.mensagem);
+    },
+      err => {
+        console.log(err);
+        alert('Ocorreu um erro ao realizar o Backup, contate o desenvolvedor do sistema.');
       });
   }
 
@@ -514,6 +526,13 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       });
   }
 
+  executarBackup() {
+    this.eventModalConfirmacao = "ExecutarBackup";
+    this.mensagemModalConfirmacao = "Deseja executar o Backup da Base de Dados?";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
   excluirTodosLancamentos() {
     let mes = this.pesquisaForm.get('cbMes').value;
     let ano = this.pesquisaForm.get('cbAno').value;
@@ -610,6 +629,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       }
       case 'DesfazerQuitacaoLancamentos': {
         this.confirmDesfazerQuitacaoDespesas();
+        break;
+      }
+      case 'ExecutarBackup': {
+        this.confirmExecutarBackup();
         break;
       }
       default: {

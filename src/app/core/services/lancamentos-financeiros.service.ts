@@ -126,6 +126,12 @@ export class LancamentosFinanceirosService {
     );
   }
 
+  executarBackup(): Observable<StringResponse> {
+    const url = `springboot-esc-backend/api/backup/processar`;
+    return this.http.post<StringResponse>(url, {}).pipe(map((response) => { return response }),
+      catchError(this.handleError));
+  }
+
   gravarDespesaMensal(despesa: DespesaMensal) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/incluir`;
     return this.http.post(url, despesa).pipe(

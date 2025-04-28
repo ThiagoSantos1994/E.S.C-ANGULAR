@@ -451,22 +451,16 @@
                 <td colspan="7">
                   <br>
                   <span *ngIf="lancamentosFinanceiros$">
-                    <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -2% -12% -2% -16%">
-                      <!--<span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
-                      <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;"
-                        role="button" data-toggle="modal" data-target="#ModalDetalheDespesasMensais"
-                        (click)="onNovaDespesa()">
-                        <i class="fas fa-plus"></i> Criar Nova Despesa
-                      </button>
-                    </span>-->
-
-                      <div *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
+                    <div *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
+                      <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -2% -12% -2% -16%">
                         <div class="alert alert-primary" style="margin: 0% 10% 1% 11%;" role="alert">
                           <i class="fa fa-calendar-o" aria-hidden="true"></i>
                           Nenhuma despesa existente neste mês.
                         </div>
                       </div>
+                    </div>
 
+                    <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -2% 0% 0% 0%;width: fit-content;">
                       <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes !='0,00'">
                         <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;"
                           role="button" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
@@ -585,6 +579,13 @@
                   title="Habilita\Desabilita a virada do mês automaticamente na data selecionada de cada mês.">*Habilitar
                   virada
                   automatica.</label>
+              </div>
+              <hr>
+              <div>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                  style="background-color: #317943; padding: 0% 22% 0%" (click)="executarBackup()">
+                  <i class="fa fa-cloud"></i> Executar Backup
+                </button>
               </div>
             </form>
           </div>
