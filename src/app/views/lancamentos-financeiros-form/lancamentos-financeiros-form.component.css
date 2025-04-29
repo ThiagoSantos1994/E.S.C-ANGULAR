@@ -26,7 +26,7 @@ label {
 }
 
 .border-left-pendente {
-  border-left: 0.25rem solid #ffc107 !important;
+  border-left: 0.25rem solid #c99806 !important;
 }
 
 .border-left-disponivel {
@@ -389,4 +389,43 @@ element.style {
 input:focus {
   outline: 0 0 0 0 !important;
   box-shadow: 0 0 0 0 !important;
+}
+
+.divContainer {
+  width: 100%;
+  float: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.conteudoFixo {
+  position: relative;
+  float: left;
+  width: 100%;
+}
+
+.conteudoNormal {
+  float: left;
+  height: 430px;
+  width: 100%;
+  overflow: auto;
+  position: relative;
+}
+
+.pisca {
+  animation: pisca 1s infinite;
+}
+
+@keyframes pisca {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
