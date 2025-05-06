@@ -207,6 +207,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       tipoReceita: receita.tpStatus,
       checkDespesaObrigatoria: (receita.tpFixasObrigatorias == "S" ? true : false)
     });
+
+    setarFocoCampo('nomeReceita');
   }
 
   resetModalCriarEditarReceita() {
@@ -217,6 +219,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       tipoReceita: '+',
       checkDespesaObrigatoria: true
     });
+
+    setarFocoCampo('nomeReceita');
   }
 
   gravarReceita() {
@@ -709,4 +713,16 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     return formatDate(Date.now(), 'yyyy', 'en-US');
   }
 
+}
+
+async function setarFocoCampo(inputName: string) {
+  await aguardarTempo(500); // Aguarda 1/2 segundo
+  const campoInput = document.getElementById(inputName) as HTMLInputElement;
+
+  // Define o foco no campo
+  campoInput.focus();
+}
+
+async function aguardarTempo(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

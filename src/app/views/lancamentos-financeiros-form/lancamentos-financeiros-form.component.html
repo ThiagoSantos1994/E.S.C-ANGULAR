@@ -120,11 +120,17 @@
                     <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                       Despesas</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800" style="color: #dc3545 !important;">
-                      <span *ngIf="lancamentosFinanceiros$"> R$ {{lancamentosFinanceiros$.vlTotalDespesas}}</span>
+                      <span *ngIf="lancamentosFinanceiros$" style="margin-right: 5%;"> R$
+                        {{lancamentosFinanceiros$.vlTotalDespesas}}</span>
+                      <span *ngIf="lancamentosFinanceiros$.statusSaldoMes == 'Negativo'">
+                        <i class="fas fa-caret-up me-1 pisca"></i>
+                      </span>
                     </div>
                   </div>
+
                   <div class="col-auto">
-                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    <i class="fas fa-calendar fa-2x text-gray-300"
+                      title="Saldo inicial do Mês (Despesas): {{lancamentosFinanceiros$.vlSaldoInicialMes}} R$"></i>
                   </div>
                 </div>
               </div>

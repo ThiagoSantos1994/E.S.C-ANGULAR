@@ -1185,7 +1185,8 @@ export class DetalheDespesasFormComponent implements OnInit {
       tpLinhaSeparacao: 'N',
       tpParcelaAdiada: 'N',
       tpParcelaAmortizada: 'N',
-      changeValues: true
+      changeValues: true,
+      isNovaLinhaEmBranco: true
     };
 
     return novoItem;
@@ -1398,6 +1399,8 @@ export class DetalheDespesasFormComponent implements OnInit {
 
     (<HTMLInputElement>document.getElementById("subTotalValores")).value =
       valorAtual.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+
+    setarFocoCampo('inputNovoValor');
   }
 
   onEditarTituloDespesa() {
@@ -1544,4 +1547,16 @@ function validarCaracteresInput(valor): boolean {
 function isValorNegativo(str) {
   let regex = new RegExp("-");
   return regex.test(str);
+}
+
+async function setarFocoCampo(inputName: string) {
+  await aguardarTempo(500); // Aguarda 1/2 segundo
+  const campoInput = document.getElementById(inputName) as HTMLInputElement;
+
+  // Define o foco no campo
+  campoInput.focus();
+}
+
+async function aguardarTempo(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

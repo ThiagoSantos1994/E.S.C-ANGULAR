@@ -29,4 +29,5 @@ export interface DetalheDespesasMensais {
     dsObservacoesEditorValores?: string;
     changeValues?: boolean;
     checked?: boolean;
+    isNovaLinhaEmBranco?: boolean;
 }
