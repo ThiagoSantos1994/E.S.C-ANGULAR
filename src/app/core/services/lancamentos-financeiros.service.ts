@@ -12,6 +12,8 @@ import { LancamentosMensais } from '../interfaces/lancamentos-mensais.interface'
 import { StringResponse } from '../interfaces/string-response.interface.';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
+import { MensagemService } from './mensagem.service';
+import { TipoMensagem } from '../enums/tipo-mensagem-enums';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +24,7 @@ export class LancamentosFinanceirosService {
     private http: HttpClient,
     private token: TokenService,
     private sessao: SessaoService,
+    private mensagemService: MensagemService,
     private lancamentosFinanceirosDomain: LancamentosFinanceirosDomain
   ) { }
 
@@ -160,13 +163,14 @@ export class LancamentosFinanceirosService {
   }
 
   private handleError(error: HttpErrorResponse) {
+    this.fecharSpinner();
     if (error.error instanceof ErrorEvent) {
       console.error('Ocorreu um erro:', error.error.message);
     } else {
       if (error.error.codigo == 204 || error.error.codigo == 400) {
-        alert(error.error.mensagem);
+        this.mensagemService.enviarMensagem(error.error.mensagem, TipoMensagem.Alerta);
       } else {
-        alert('Ops, Ocorreu um erro no servidor, tente novamente mais tarde.');
+        this.mensagemService.enviarMensagem("Ops!! Ocorreu um erro no servidor. Tente novamente mais tarde.", TipoMensagem.Erro);
       }
       console.error(
         `Backend codigo de erro ${error.status}, ` +
@@ -175,5 +179,9 @@ export class LancamentosFinanceirosService {
     }
 
     return throwError(error);
+  }
+
+  fecharSpinner() {
+    this.mensagemService.enviarMensagem(null, null);
   }
 }

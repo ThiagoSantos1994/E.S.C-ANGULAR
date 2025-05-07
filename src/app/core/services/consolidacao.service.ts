@@ -8,6 +8,8 @@ import { Consolidacao } from '../interfaces/consolidacao.interface';
 import { TituloConsolidacaoResponse } from '../interfaces/titulo-consolidacao-response.interface';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
+import { MensagemService } from './mensagem.service';
+import { TipoMensagem } from '../enums/tipo-mensagem-enums';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +19,7 @@ export class ConsolidacaoService {
   constructor(
     private http: HttpClient,
     private token: TokenService,
+    private mensagemService: MensagemService,
     private sessao: SessaoService
   ) { }
 
@@ -68,13 +71,14 @@ export class ConsolidacaoService {
   }
 
   private handleError(error: HttpErrorResponse) {
+    this.fecharSpinner();
     if (error.error instanceof ErrorEvent) {
       console.error('Ocorreu um erro:', error.error.message);
     } else {
       if (error.error.codigo == 204 || error.error.codigo == 400) {
-        alert(error.error.mensagem);
+        this.mensagemService.enviarMensagem(error.error.mensagem, TipoMensagem.Alerta);
       } else {
-        alert('Ops, Ocorreu um erro no servidor, tente novamente mais tarde.');
+        this.mensagemService.enviarMensagem("Ops!! Ocorreu um erro no servidor. Tente novamente mais tarde.", TipoMensagem.Erro);
       }
       console.error(
         `Backend codigo de erro ${error.status}, ` +
@@ -83,6 +87,10 @@ export class ConsolidacaoService {
     }
 
     return throwError(error);
+  }
+
+  fecharSpinner() {
+    this.mensagemService.enviarMensagem(null, null);
   }
 
   getMesAtual() {

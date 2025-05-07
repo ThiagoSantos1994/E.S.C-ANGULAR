@@ -522,8 +522,6 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.mensagens.enviarMensagem("Processamento concluido com sucesso!", TipoMensagem.Sucesso);
     },
       err => {
-        this.fecharSpinner();
-        this.mensagens.enviarMensagem("Ocorreu um erro na importação dos lançamentos mensais.", TipoMensagem.Erro);
         console.log(err);
       });
   }

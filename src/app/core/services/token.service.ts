@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { StringResponse } from '../interfaces/string-response.interface.';
+import { MensagemService } from './mensagem.service';
+import { TipoMensagem } from '../enums/tipo-mensagem-enums';
 
 const KEY_TOKEN = 'tokenID';
 const KEY_ID = 'idLogin';
@@ -13,7 +15,8 @@ const KEY_VALIDAR_SESSAO = 'validarSessao';
 export class TokenService {
 
     constructor(
-        private http: HttpClient
+        private http: HttpClient,
+        private mensagemService: MensagemService
     ) { }
 
     hasToken() {
@@ -57,13 +60,14 @@ export class TokenService {
     }
 
     private handleError(error: HttpErrorResponse) {
+        this.fecharSpinner();
         if (error.error instanceof ErrorEvent) {
             console.error('Ocorreu um erro:', error.error.message);
         } else {
             if (error.error.codigo == 204 || error.error.codigo == 400) {
-                alert(error.error.mensagem);
+                this.mensagemService.enviarMensagem(error.error.mensagem, TipoMensagem.Alerta);
             } else {
-                alert('Ops, Ocorreu um erro no servidor, tente novamente mais tarde.');
+                this.mensagemService.enviarMensagem("Ops!! Ocorreu um erro no servidor. Tente novamente mais tarde.", TipoMensagem.Erro);
             }
             console.error(
                 `Backend codigo de erro ${error.status}, ` +
@@ -72,5 +76,9 @@ export class TokenService {
         }
 
         return throwError(error);
+    }
+
+    fecharSpinner() {
+        this.mensagemService.enviarMensagem(null, null);
     }
 }

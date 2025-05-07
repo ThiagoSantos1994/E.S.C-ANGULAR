@@ -5,6 +5,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
 import { CategoriaDespesaEnum, StatusPagamentoEnum } from 'src/app/core/enums/detalhe-despesas-enums';
+import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
 import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
 import { Parcelas } from 'src/app/core/interfaces/despesa-parcelada-response.interface';
 import { DetalheDespesasMensais } from 'src/app/core/interfaces/detalhe-despesas-mensais.interface';
@@ -16,6 +17,7 @@ import { ConsolidacaoService } from 'src/app/core/services/consolidacao.service'
 import { DespesasParceladasService } from 'src/app/core/services/despesas-parceladas.service';
 import { DetalheDespesasService } from 'src/app/core/services/detalhe-despesas.service';
 import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
+import { MensagemService } from 'src/app/core/services/mensagem.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
 
 @Component({
@@ -79,6 +81,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     private despesasParceladasService: DespesasParceladasService,
     private lancamentosService: LancamentosFinanceirosService,
     private consolidacaoService: ConsolidacaoService,
+    private mensagem: MensagemService,
     private detalheDomain: DetalheDespesasMensaisDomain
   ) { }
 
@@ -156,7 +159,7 @@ export class DetalheDespesasFormComponent implements OnInit {
         this.carregarDetalheDespesa(d.idDespesa, d.idDetalheDespesa, d.idOrdemExibicao);
       }
     }, () => {
-      alert('Ocorreu um erro ao carregar os detalhes da despesa, tente novamente mais tarde.')
+      this.mensagem.enviarMensagem("Ocorreu um erro ao carregar os detalhes da despesa, tente novamente mais tarde.", TipoMensagem.Erro);
     })
 
     this.onEditarValores();
@@ -169,7 +172,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     let despesas = this.getDetalheDespesasCheckedPagamento();
 
     if (despesas.length === 0) {
-      alert("Necessário marcar alguma despesa para pagar.");
+      this.mensagem.enviarMensagem("Necessário marcar alguma despesa para pagar.", TipoMensagem.Alerta);
     } else {
       this.modalRef = this.modalService.show(this.modalConfirmacaoQuitarDespesas);
 
@@ -490,7 +493,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.mensagemModalConfirmacao_footer = "null";
 
     if (this.getDetalheDespesasChecked().length == 0) {
-      alert('Necessário selecionar alguma despesa para excluir.')
+      this.mensagem.enviarMensagem("Necessário marcar alguma despesa para excluir.", TipoMensagem.Alerta);
       return;
     }
 
@@ -584,7 +587,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   onAssociarDespesaParceladaConsolidacao() {
     let valor = (document.getElementById("comboTituloConsolidacao") as HTMLInputElement).value;
     if (valor == "") {
-      alert('Necessário selecionar uma consolidação para associação.');
+      this.mensagem.enviarMensagem("Necessário selecionar uma consolidação para associação.", TipoMensagem.Alerta);
       return;
     }
 
@@ -599,7 +602,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   onAssociarDespesaMensalExistente() {
     let valor = (document.getElementById("comboTituloDespesaExistente") as HTMLInputElement).value;
     if (valor == "") {
-      alert('Necessário selecionar uma despesa.');
+      this.mensagem.enviarMensagem("Necessário selecionar uma despesa.", TipoMensagem.Alerta);
       return;
     }
 
@@ -614,7 +617,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   onImportarDespesaParcelada() {
     let valor = (document.getElementById("comboTituloDespesaParcelada") as HTMLInputElement).value;
     if (valor == "") {
-      alert('Necessário selecionar alguma despesa para importação.');
+      this.mensagem.enviarMensagem("Necessário selecionar alguma despesa para importação.", TipoMensagem.Alerta);
       return;
     }
 
@@ -846,7 +849,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
     this.detalheService.validarDuplicidadeTituloDespesa(this.despesaRef, this.detalheRef, despesa.dsNomeDespesa).subscribe(res => {
       if (res.mensagem !== 'OK') {
-        alert(res.mensagem);
+        this.mensagem.enviarMensagem(res.mensagem, TipoMensagem.Erro);
         return;
       } else {
         this.eventModalConfirmacao = "GravarDetalheDespesas";
@@ -858,7 +861,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       }
     },
       err => {
-        alert('Ocorreu um erro ao validar o titulo da despesa, tente novamente mais tarde.');
+        this.mensagem.enviarMensagem("Ocorreu um erro ao validar o titulo da despesa, tente novamente mais tarde.", TipoMensagem.Erro);
         console.log(err);
       }
     );
@@ -869,7 +872,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     let tituloAtual = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
 
     if (tituloAtual == "") {
-      alert('Digite o titulo da despesa.');
+      this.mensagem.enviarMensagem("Digite o nome da despesa.", TipoMensagem.Alerta);
       return false;
     }
 
@@ -890,7 +893,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.detalheService.gravarDespesaMensal(despesa).toPromise().then(() => {
       this.detalheDomain.setDespesaMensal(despesa);
       this.recarregarDetalheDespesa();
-      alert('Dados gravados com sucesso!');
+      this.mensagem.enviarMensagem("Dados gravados com sucesso!", TipoMensagem.Sucesso);
     },
       err => {
         console.log(err);
@@ -902,7 +905,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       alert('CONSULTA DE DESPESAS Á QUITAR: \r\n \r\nValor R$   -   DESCRIÇÃO \r\n \r\n' + res.relatorioDespesas);
     },
       err => {
-        alert('Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.');
+        this.mensagem.enviarMensagem("Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.", TipoMensagem.Erro);
       });
   }
 
@@ -949,7 +952,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   validarDuplicidadeTituloDespesa(nomeDespesa: string): Boolean {
     this.detalheService.validarDuplicidadeTituloDespesa(this.despesaRef, this.detalheRef, nomeDespesa).subscribe(res => {
       if (res.mensagem !== 'OK') {
-        alert(res.mensagem);
+        this.mensagem.enviarMensagem(res.mensagem, TipoMensagem.Erro);
         return false;
       }
     },
@@ -968,7 +971,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.mensagemModalConfirmacao_footer = "null";
 
     if (this.getDetalheDespesasChecked().length == 0) {
-      alert('Necessário marcar alguma despesa para alterar o status do pagamento.')
+      this.mensagem.enviarMensagem("Necessário marcar alguma despesa para alterar o status do pagamento.", TipoMensagem.Alerta);
       return;
     }
 
@@ -994,7 +997,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.detalheService.organizarListaItensDetalheDespesa(detalheDespesa.idDespesa, detalheDespesa.idDetalheDespesa).toPromise().then(() => {
       this.recarregarDetalheDespesa();
       if (isExibirConfirmacao) {
-        alert('Lista de despesas ordenada com sucesso.');
+        this.mensagem.enviarMensagem("Lista de despesas ordenada com sucesso.", TipoMensagem.Sucesso);
       }
     },
       err => {
@@ -1079,7 +1082,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     }
 
     this.detalheService.gravarObservacoesDetalheDespesa(observacaoRequest).toPromise().then(() => {
-      alert('Observações gravadas com sucesso!');
+      this.mensagem.enviarMensagem("Observações gravadas com sucesso!", TipoMensagem.Sucesso);
     },
       err => {
         console.log(err);
@@ -1090,7 +1093,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     let ordemAtual = objeto.idOrdem;
 
     if (this.isDetalheNewOrChanged()) {
-      alert('Necessario salvar a despesa para depois alterar a ordem de exibição.');
+      this.mensagem.enviarMensagem("Necessario salvar a despesa para depois alterar a ordem de exibição.", TipoMensagem.Alerta);
       return;
     }
 
@@ -1206,7 +1209,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
     this.detalheService.reprocessarImportacaoDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, this.mesRef, this.anoRef, (despesa.tpReprocessar == "S" ? true : false)).toPromise().then(() => {
       this.confirmOrganizarRegistrosDetalheDespesa(false);
-      alert('Atualização realizada com sucesso!');
+      this.mensagem.enviarMensagem("Atualização realizada com sucesso!", TipoMensagem.Sucesso);
     },
       err => {
         console.log(err);
@@ -1217,14 +1220,14 @@ export class DetalheDespesasFormComponent implements OnInit {
     let despesas = this.getDetalheDespesasParceladasSemParcelasAdiantadasChecked();
 
     if (despesas.length == 0) {
-      alert('Necessario selecionar alguma *DESPESA PARCELADA* para ser adiada.');
+      this.mensagem.enviarMensagem("Necessario selecionar alguma *DESPESA PARCELADA* para ser adiada.", TipoMensagem.Alerta);
       return;
     }
 
     this.detalheService.adiarFluxoParcelas(despesas).toPromise().then(() => {
       this.closeModal();
       this.recarregarDetalheDespesa();
-      alert('Parcela(s) adiada(s) com sucesso! \n \n *ATENÇÃO* Não esquecer de reprocessar as despesas no mês seguinte!');
+      this.mensagem.enviarMensagem("Parcela(s) adiada(s) com sucesso! \n \n *ATENÇÃO* Não esquecer de reprocessar as despesas no mês seguinte!", TipoMensagem.Sucesso);
     },
       err => {
         console.log(err);
@@ -1235,7 +1238,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     let despesas = this.getDetalheDespesasParceladasComParcelasAdiantadasChecked();
 
     if (despesas.length == 0) {
-      alert('Necessario selecionar alguma *DESPESA PARCELADA* para ser adiada.');
+      this.mensagem.enviarMensagem("Necessario selecionar alguma *DESPESA PARCELADA* para ser adiada.", TipoMensagem.Alerta);
       return;
     }
 
@@ -1274,7 +1277,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     let detalheDespesa = this.detalheLancamentosMensais.despesaMensal;
 
     if (detalheDespesa.isNovaDespesa) {
-      alert('Necessário salvar a despesa para depois adicionar novas linhas.');
+      this.mensagem.enviarMensagem("Necessário salvar a despesa para depois adicionar novas linhas.", TipoMensagem.Alerta);
       return;
     }
 
@@ -1349,7 +1352,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       alert('* VISUALIZAÇÃO DESPESAS PARCELADAS CONSOLIDADAS * \r\n \r\n' + res.nomeDespesaParcelada);
     },
       err => {
-        alert('Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.');
+        this.mensagem.enviarMensagem("Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.", TipoMensagem.Erro);
       });
   }
 
@@ -1416,7 +1419,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     let despesas = this.getDetalheDespesasParceladasChecked();
 
     if (despesas.length == 0) {
-      alert('Necessário selecionar alguma despesa parcelada para ser consolidada.');
+      this.mensagem.enviarMensagem("Necessário selecionar alguma despesa parcelada para ser consolidada.", TipoMensagem.Alerta);
       return;
     }
 
@@ -1425,7 +1428,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.detalheService.associarDespesasConsolidacao(idConsolidacao, despesas).toPromise().then(() => {
       this.closeModal();
       this.recarregarDetalheDespesa();
-      alert('Despesa(s) associada(s) com sucesso!');
+      this.mensagem.enviarMensagem("Despesa(s) associada(s) com sucesso!", TipoMensagem.Sucesso);
     },
       err => {
         console.log(err);
@@ -1437,7 +1440,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
     this.detalheService.alterarReferenciaDespesaMensal(this.despesaRef, this.detalheRef, idDetalheDespesaAssociada).toPromise().then(() => {
       this.closeModal();
-      alert('Despesa alterada com sucesso!');
+      this.mensagem.enviarMensagem("Despesa alterada com sucesso!", TipoMensagem.Sucesso);
       this.detalheDomain.getDespesaMensal().idDetalheDespesa = idDetalheDespesaAssociada;
       this.recarregarDetalheDespesa();
     },
@@ -1450,7 +1453,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     let nomeDespesa = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
 
     this.lancamentosService.editarTituloDespesa(this.detalheRef, nomeDespesa).subscribe(res => {
-      alert('Titulo alterado com sucesso!');
+      this.mensagem.enviarMensagem("Titulo alterado com sucesso!", TipoMensagem.Sucesso);
       this.recarregarDetalheDespesa();
     },
       err => {
@@ -1472,10 +1475,10 @@ export class DetalheDespesasFormComponent implements OnInit {
 
     let despesas = this.getDetalheDespesasParceladasChecked();
     if (despesas.length == 0) {
-      alert('Selecione uma despesa por vez para realizar a amortização.');
+      this.mensagem.enviarMensagem("Selecione uma despesa por vez para realizar a amortização.", TipoMensagem.Alerta);
       return;
     } else if (despesas.length > 1) {
-      alert('Necessário selecionar alguma despesa PARCELADA para realizar a amortização.');
+      this.mensagem.enviarMensagem("Necessário selecionar alguma despesa PARCELADA para realizar a amortização.", TipoMensagem.Alerta);
       return;
     }
 
