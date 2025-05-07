@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
 import { CategoriaDespesasResponse } from 'src/app/core/interfaces/categoria-despesa-response.interface';
 import { ConfiguracaoLancamentos } from 'src/app/core/interfaces/configuracao-lancamentos.interface';
 import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
@@ -13,6 +14,7 @@ import { LancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais.
 import { DetalheDespesasService } from 'src/app/core/services/detalhe-despesas.service';
 import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
 import { LoginService } from 'src/app/core/services/login.service';
+import { MensagemService } from 'src/app/core/services/mensagem.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
 
 @Component({
@@ -56,7 +58,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     private detalheService: DetalheDespesasService,
     private loginService: LoginService,
     private router: Router,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private mensagens: MensagemService
   ) { }
 
   ngOnInit() {
@@ -85,7 +88,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
         this.carregarDespesas();
       }
     }, () => {
-      alert('Ocorreu um erro ao carregar as informações da despesa, tente novamente mais tarde.')
+      this.mensagens.enviarMensagem("Ocorreu um erro ao carregar as informações da despesa, tente novamente mais tarde.", TipoMensagem.Erro);
     });
   }
 
@@ -227,7 +230,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     if (this.modalCriarEditarReceitaForm.get('tipoReceita').value == "< X >") {
       this.valorReceitaControl.setValue("0.00");
     } else if (null == this.valorReceitaControl.value) {
-      alert('O Valor da receita não pode estar em branco ou vazio.');
+      this.mensagens.enviarMensagem("O Valor da receita não pode estar em branco ou vazio.", TipoMensagem.Generica);
       return;
     }
 
@@ -290,7 +293,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   confirmExcluirTodosLancamentos() {
     this.lancamentosService.excluirTodosLancamentos(this.despesaRef).toPromise().then(() => {
       this.carregarDespesas();
-      alert("Lançamentos excluido com sucesso!");
+      this.mensagens.enviarMensagem("Lançamentos excluido com sucesso!", TipoMensagem.Sucesso);
     },
       err => {
         console.log(err);
@@ -310,7 +313,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let despesas = this.getDespesasCheckedSemLinhaSeparacao();
 
     if (despesas.length === 0) {
-      alert("Necessário marcar alguma despesa para desfazer o pagamento.");
+      this.mensagens.enviarMensagem("Necessário marcar alguma despesa para desfazer o pagamento.", TipoMensagem.Generica);
     } else {
       this.eventModalConfirmacao = "DesfazerQuitacaoLancamentos";
       this.mensagemModalConfirmacao = "Deseja *DESFAZER* o pagamento  da(s) despesa(s) selecionadas(s) ?";
@@ -332,12 +335,17 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   confirmExecutarBackup() {
+    this.iniciarSpinner();
     this.lancamentosService.executarBackup().subscribe(res => {
+      this.fecharSpinner();
       alert(res.mensagem);
+      //TODO - Melhorar modal para mensagens grandes.
+      //this.mensagens.enviarMensagem(res.mensagem, TipoMensagem.Generica);
     },
       err => {
+        this.fecharSpinner();
         console.log(err);
-        alert('Ocorreu um erro ao realizar o Backup, contate o desenvolvedor do sistema.');
+        this.mensagens.enviarMensagem("Ocorreu um erro ao realizar o Backup, contate o desenvolvedor do sistema.", TipoMensagem.Erro);
       });
   }
 
@@ -345,7 +353,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let despesas = this.getDespesasChecked();
 
     if (despesas.length === 0) {
-      alert("Necessário marcar alguma despesa para pagar.");
+      this.mensagens.enviarMensagem("Necessário marcar alguma despesa para pagar.", TipoMensagem.Generica);
     } else {
       this.eventModalConfirmacao = "QuitarLancamentos";
       this.mensagemModalConfirmacao = "Deseja quitar a(s) despesa(s) selecionadas(s) ?";
@@ -389,7 +397,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   onNovaDespesa() {
     if (null == this.despesaRef) {
-      alert("Necessário primeiro criar uma nova receita.");
+      this.mensagens.enviarMensagem("Necessário primeiro criar uma nova receita.", TipoMensagem.Generica);
     } else {
       this.carregarDetalheDespesa(this.despesaRef, null, -1)
     }
@@ -442,7 +450,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let despesas = this.getDespesasChecked();
 
     if (despesas.length === 0) {
-      alert("Necessário marcar alguma despesa para excluir.");
+      this.mensagens.enviarMensagem("Necessário marcar alguma despesa para excluir.", TipoMensagem.Generica);
     } else {
       this.modalRef = this.modalService.show(this.modalConfirmacaoExcluirDespesa);
     }
@@ -453,7 +461,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let senha = this.modalAutenticacaoForm.get('senha').value;
 
     if (usuario == "" || senha == "") {
-      alert('Necessário digitar o usuario e senha.');
+      this.mensagens.enviarMensagem("Necessário digitar o usuario e senha.", TipoMensagem.Generica);
       return;
     }
 
@@ -466,7 +474,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
           this.closeModal();
           this.router.navigate(['login']);
         } else if (err.status == 401) {
-          alert('A autenticação falhou!, voce possui mais ' + (this.quantidadeTentativasAutenticacao--) + ' tentativa(s)');
+          this.mensagens.enviarMensagem("A autenticação falhou!, voce possui mais " + (this.quantidadeTentativasAutenticacao--) + " tentativa(s)", TipoMensagem.Alerta);
         }
       });
   }
@@ -502,15 +510,20 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   confirmImportacaoLancamentos() {
+    this.iniciarSpinner();
+
     let idDespesa = (this.despesaRef !== null ? this.despesaRef : 0);
     let mesReferencia = this.pesquisaForm.get('cbMes').value;
     let anoReferencia = this.pesquisaForm.get('cbAno').value;
 
     this.lancamentosService.processarImportacaoLancamentos(idDespesa, mesReferencia, anoReferencia).toPromise().then(() => {
+      this.fecharSpinner();
       this.carregarDespesas();
-      alert("Processamento concluido com sucesso!");
+      this.mensagens.enviarMensagem("Processamento concluido com sucesso!", TipoMensagem.Sucesso);
     },
       err => {
+        this.fecharSpinner();
+        this.mensagens.enviarMensagem("Ocorreu um erro na importação dos lançamentos mensais.", TipoMensagem.Erro);
         console.log(err);
       });
   }
@@ -523,10 +536,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     };
 
     this.lancamentosService.gravarParametrizacao(request).toPromise().then(() => {
-      alert('Parametros gravados com sucesso!');
+      this.mensagens.enviarMensagem("Parametros gravados com sucesso!", TipoMensagem.Sucesso);
     },
       err => {
-        alert('Ocorreu um erro ao gravar as parametrizações, tente novamente mais tarde.');
+        this.mensagens.enviarMensagem("Ocorreu um erro ao gravar as parametrizações, tente novamente mais tarde.", TipoMensagem.Erro);
       });
   }
 
@@ -543,7 +556,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let isDespesaExistente = (this.despesaRef !== null);
 
     if (!isDespesaExistente) {
-      alert('Não é possivel excluir lançamentos que não foram processados ou não existem.');
+      this.mensagens.enviarMensagem("Não é possivel excluir lançamentos que não foram processados e/ou não existem.", TipoMensagem.Generica);
       return;
     }
 
@@ -562,10 +575,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   obterDetalhesLabelQuitacaoMes() {
     this.lancamentosService.obterExtratoDespesaQuitacaoMes(this.despesaRef).toPromise().then((res) => {
-      alert('CONSULTA DE DESPESAS Á QUITAR: \r\n \r\nValor R$   -   DESCRIÇÃO \r\n \r\n' + res.relatorioDespesas);
+      alert('CONSULTA DE DESPESAS Á QUITAR: \r\n \r\nValor R$   -   DESCRIÇÃO \r\n \r\n' + res.relatorioDespesas)
     },
       err => {
-        alert('Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.');
+        this.mensagens.enviarMensagem("Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.", TipoMensagem.Erro);
       });
   }
 
@@ -713,6 +726,14 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     return formatDate(Date.now(), 'yyyy', 'en-US');
   }
 
+  /* -------------- Spinner --------------- */
+  iniciarSpinner() {
+    this.mensagens.enviarMensagem(null, TipoMensagem.Spinner);
+  }
+
+  fecharSpinner() {
+    this.mensagens.enviarMensagem(null, null);
+  }
 }
 
 async function setarFocoCampo(inputName: string) {
@@ -723,6 +744,6 @@ async function setarFocoCampo(inputName: string) {
   campoInput.focus();
 }
 
-async function aguardarTempo(ms: number): Promise<void> {
+async function aguardarTempo(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }

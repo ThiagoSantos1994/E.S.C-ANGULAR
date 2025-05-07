@@ -15,6 +15,7 @@ import { LoginFormComponent } from "./login-form/login-form.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { LembretesFormComponent } from "./lembretes-form/lembretes-form.component";
 import { ConsolidacoesDespesasFormComponent } from "./consolidacoes-despesas-form/consolidacoes-despesas-form.component";
+import { MensagensFormComponent } from "./mensagens-form/mensagens-form.component";
 
 @NgModule({
     declarations: [
@@ -25,7 +26,8 @@ import { ConsolidacoesDespesasFormComponent } from "./consolidacoes-despesas-for
         DetalheDespesasFormComponent,
         DespesasParceladasFormComponent,
         ConsolidacoesDespesasFormComponent,
-        LembretesFormComponent
+        LembretesFormComponent,
+        MensagensFormComponent
     ],
     imports: [
         CommonModule, /*Todo modulo que for criado, é importante importar esse cara*/

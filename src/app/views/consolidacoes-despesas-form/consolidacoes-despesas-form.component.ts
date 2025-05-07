@@ -70,6 +70,8 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     if (null != objConsolidacao) {
       this.onChangeTituloConsolidacao(objConsolidacao.idConsolidacao);
     }
+
+    setarFocoCampo("nomeConsolidacao");
   }
 
   desabilitarCampos() {
@@ -400,4 +402,16 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
 
 function parserToInt(str) {
   return parseInt(str.replace(/[\D]+/g, ''));
+}
+
+async function setarFocoCampo(inputName: string) {
+  await aguardarTempo(500); // Aguarda 1/2 segundo
+  const campoInput = document.getElementById(inputName) as HTMLInputElement;
+
+  // Define o foco no campo
+  campoInput.focus();
+}
+
+async function aguardarTempo(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

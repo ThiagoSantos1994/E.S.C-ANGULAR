@@ -91,6 +91,8 @@ export class DespesasParceladasFormComponent implements OnInit {
     if (null != objDetalheDespesa) {
       this.onChangeTituloDespesa(objDetalheDespesa.idDespesaParcelada);
     }
+
+    setarFocoCampo("nomeDespesa");
   }
 
   onQuantidadeParcelasChange() {
@@ -494,7 +496,7 @@ export class DespesasParceladasFormComponent implements OnInit {
   confirmReativarDespesa() {
     let despesa = this.despesaParceladaDetalhe.despesas;
     despesa.tpBaixado = 'N'
-    
+
     this.service.gravarDespesa(despesa).toPromise().then(() => {
       alert('Despesa reativada com sucesso!');
       this.recarregarDetalheDespesa();
@@ -615,4 +617,16 @@ function parseDate(texto) {
   mes = mes - 1;
 
   return new Date(ano, mes, dia);
+}
+
+async function setarFocoCampo(inputName: string) {
+  await aguardarTempo(500); // Aguarda 1/2 segundo
+  const campoInput = document.getElementById(inputName) as HTMLInputElement;
+
+  // Define o foco no campo
+  campoInput.focus();
+}
+
+async function aguardarTempo(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

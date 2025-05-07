@@ -1557,6 +1557,6 @@ async function setarFocoCampo(inputName: string) {
   campoInput.focus();
 }
 
-async function aguardarTempo(ms: number): Promise<void> {
+async function aguardarTempo(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
