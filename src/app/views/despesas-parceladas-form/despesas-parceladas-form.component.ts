@@ -4,9 +4,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { BehaviorSubject } from 'rxjs';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
+import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
 import { DespesaParceladaResponse, Parcelas } from 'src/app/core/interfaces/despesa-parcelada-response.interface';
 import { TituloDespesaResponse } from 'src/app/core/interfaces/titulo-despesa-response.interface';
 import { DespesasParceladasService } from 'src/app/core/services/despesas-parceladas.service';
+import { MensagemService } from 'src/app/core/services/mensagem.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
 
 @Component({
@@ -40,6 +42,7 @@ export class DespesasParceladasFormComponent implements OnInit {
     private sessao: SessaoService,
     private modalService: BsModalService,
     private service: DespesasParceladasService,
+    private mensagem: MensagemService,
     private detalheDomain: DetalheDespesasMensaisDomain
   ) { }
 
@@ -49,7 +52,7 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.service.recebeMensagem().subscribe(despesa => {
       this.loadFormDespesaParcelada(despesa);
     }, () => {
-      alert('Ocorreu um erro ao carregar os dados da despesa parcelada, tente novamente mais tarde.')
+      this.mensagem.enviarMensagem("Ocorreu um erro ao carregar os dados da despesa parcelada, tente novamente mais tarde.", TipoMensagem.Erro);
     })
   }
 
@@ -100,7 +103,7 @@ export class DespesasParceladasFormComponent implements OnInit {
 
     campo.onblur = () => {
       if (!this.validarVigenciaInicial()) {
-        alert('Favor selecionar o periodo da vigencia inicial.');
+        this.mensagem.enviarMensagem("Favor selecionar o periodo da vigencia inicial.", TipoMensagem.Alerta);
         (<HTMLInputElement>document.getElementById("parcelas")).value = "";
         return;
       }
@@ -128,7 +131,7 @@ export class DespesasParceladasFormComponent implements OnInit {
     let parcelas = this.getParcelasChecked();
 
     if (parcelas.length == 0) {
-      alert('Necessário selecionar a(s) parcela(s) para editar.');
+      this.mensagem.enviarMensagem("Necessário selecionar a(s) parcela(s) para editar.", TipoMensagem.Alerta);
       return;
     }
 
@@ -221,7 +224,7 @@ export class DespesasParceladasFormComponent implements OnInit {
 
   onGerarFluxoParcelas() {
     if (!this.validarCamposObrigatorios(false)) {
-      alert('Necessário preencher os campos para gerar o fluxo de parcelas.')
+      this.mensagem.enviarMensagem("Necessário preencher os campos para gerar o fluxo de parcelas.", TipoMensagem.Alerta);
       return;
     }
 
@@ -276,7 +279,7 @@ export class DespesasParceladasFormComponent implements OnInit {
     let despesaSelecionada = this.idDespesaReferencia;
 
     if (despesaSelecionada <= 0) {
-      alert('Necessário selecionar uma despesa para pesquisar.');
+      this.mensagem.enviarMensagem("Necessário selecionar uma despesa para pesquisar.", TipoMensagem.Alerta);
       return;
     }
 
@@ -363,7 +366,7 @@ export class DespesasParceladasFormComponent implements OnInit {
 
   confirmQuitarDespesa() {
     if (this.idDespesaReferencia == -1) {
-      alert('Necessário selecionar uma despesa para quitar.');
+      this.mensagem.enviarMensagem("Necessário selecionar uma despesa para quitar.", TipoMensagem.Alerta);
       return;
     }
 
@@ -372,9 +375,11 @@ export class DespesasParceladasFormComponent implements OnInit {
       valorDespesaComDesconto = (<HTMLInputElement>document.getElementById("valorDespesa")).value;
     }
 
+    this.iniciarSpinner();
     this.service.quitarDespesa(this.idDespesaReferencia, formatRealNumber(valorDespesaComDesconto)).toPromise().then(() => {
+      this.fecharSpinner();
       this.recarregarDetalheDespesa();
-      alert('Baixa realizada com sucesso!');
+      this.mensagem.enviarMensagem("Baixa realizada com sucesso!", TipoMensagem.Sucesso);
     },
       err => {
         console.log(err);
@@ -389,13 +394,16 @@ export class DespesasParceladasFormComponent implements OnInit {
     let valorParcela = formatRealNumber((<HTMLInputElement>document.getElementById("valorParcela")).value);
     let dataReferencia = (this.modalDespesasParceladasForm.get('cbMesVigencia').value + "-" + this.modalDespesasParceladasForm.get('cbAnoVigencia').value);
 
+    this.iniciarSpinner();
     this.service.gerarFluxoParcelas(despesa, valorParcela, parcelas, dataReferencia).subscribe((res) => {
       this.despesaParceladaDetalhe = res;
       this.setParcelasObservable(res.parcelas, true);
+      this.fecharSpinner();
     },
       err => {
         console.log(err);
-        alert('Ocorreu um erro ao gerar o fluxo de parcelas, tente novamente mais tarde.')
+        this.fecharSpinner();
+        this.mensagem.enviarMensagem("Ocorreu um erro ao gerar o fluxo de parcelas, tente novamente mais tarde.", TipoMensagem.Erro);
       });
   }
 
@@ -406,7 +414,7 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.mensagemModalConfirmacao_footer = "Este processo exclui todos os lançamentos mensais processados!";
 
     if (null == this.despesaParceladaDetalhe) {
-      alert('Necessário selecionar uma despesa para excluir.')
+      this.mensagem.enviarMensagem("Necessário selecionar uma despesa para excluir.", TipoMensagem.Alerta);
       return;
     }
 
@@ -420,12 +428,12 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.mensagemModalConfirmacao_footer = "Atenção: a(s) parcela(s) importadas e processadas na despesa mensal serão excluidas*";
 
     if (null == this.despesaParceladaDetalhe) {
-      alert('Necessário selecionar uma despesa para excluir.')
+      this.mensagem.enviarMensagem("Necessário selecionar uma despesa para excluir.", TipoMensagem.Alerta);
       return;
     }
 
     if (this.getParcelasChecked().length == 0) {
-      alert('Necessario selecionar a(s) parcela(s) para serem excluidas.');
+      this.mensagem.enviarMensagem("Necessario selecionar a(s) parcela(s) para serem excluidas.", TipoMensagem.Alerta);
       return;
     }
 
@@ -475,9 +483,9 @@ export class DespesasParceladasFormComponent implements OnInit {
   gravarDespesaParcelada() {
     if (!this.validarCamposObrigatorios(true)) {
       if (null == this.despesaParceladaDetalhe) {
-        alert('Necessário gerar as parcelas para depois salvar a despesa.')
+        this.mensagem.enviarMensagem("Necessário gerar as parcelas para depois salvar a despesa.", TipoMensagem.Alerta);
       } else {
-        alert('Necessário preencher todos os campos para salvar a despesa.')
+        this.mensagem.enviarMensagem("Necessário preencher todos os campos para salvar a despesa.", TipoMensagem.Alerta);
       }
 
       return;
@@ -497,8 +505,10 @@ export class DespesasParceladasFormComponent implements OnInit {
     let despesa = this.despesaParceladaDetalhe.despesas;
     despesa.tpBaixado = 'N'
 
+    this.iniciarSpinner();
     this.service.gravarDespesa(despesa).toPromise().then(() => {
-      alert('Despesa reativada com sucesso!');
+      this.mensagem.enviarMensagem("Despesa reativada com sucesso!", TipoMensagem.Sucesso);
+      this.fecharSpinner();
       this.recarregarDetalheDespesa();
     });
 
@@ -509,14 +519,16 @@ export class DespesasParceladasFormComponent implements OnInit {
     let despesa = this.despesaParceladaDetalhe.despesas;
     let parcelas = this.getParcelasChange();
 
+    this.iniciarSpinner();
     this.service.gravarDespesa(despesa).toPromise().then(() => {
       this.service.gravarParcelas(parcelas).toPromise().then(() => { },
         err => {
-          alert('Ocorreu um erro ao gravar as parcelas, tente novamente mais tarde.');
+          this.mensagem.enviarMensagem("Ocorreu um erro ao gravar as parcelas, tente novamente mais tarde.", TipoMensagem.Erro);
           console.log(err);
         });
 
-      alert('Gravação realizada com sucesso!');
+      this.fecharSpinner();
+      this.mensagem.enviarMensagem("Gravação realizada com sucesso!", TipoMensagem.Sucesso);
       this.recarregarDetalheDespesa();
     });
 
@@ -526,10 +538,10 @@ export class DespesasParceladasFormComponent implements OnInit {
   confirmExcluirDespesa() {
     this.service.excluirDespesa(this.idDespesaReferencia).toPromise().then(() => {
       this.loadFormDespesaParcelada(null);
-      alert('Despesa excluida com sucesso!');
+      this.mensagem.enviarMensagem("Despesa excluida com sucesso!", TipoMensagem.Sucesso);
     },
       err => {
-        alert('Ocorreu um erro ao excluir esta despesa, tente novamente mais tarde.');
+        this.mensagem.enviarMensagem("Ocorreu um erro ao excluir esta despesa, tente novamente mais tarde.", TipoMensagem.Erro);
         console.log(err);
       });
 
@@ -580,6 +592,15 @@ export class DespesasParceladasFormComponent implements OnInit {
 
   getAnoAtual() {
     return formatDate(Date.now(), 'yyyy', 'en-US');
+  }
+
+  /* -------------- Spinner --------------- */
+  iniciarSpinner() {
+    this.mensagem.enviarMensagem(null, TipoMensagem.Spinner);
+  }
+
+  fecharSpinner() {
+    this.mensagem.enviarMensagem(null, null);
   }
 }
 

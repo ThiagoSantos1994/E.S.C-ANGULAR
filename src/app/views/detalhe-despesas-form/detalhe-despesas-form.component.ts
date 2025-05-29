@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -72,6 +72,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
   @ViewChild('modalCategoriaDetalheDespesa') modalCategoriaDetalheDespesa;
   @ViewChild('modalAssociarDespesaMensalExistente') modalAssociarDespesaMensalExistente;
+  @ViewChild('fechaModalEditorValores') fechaModalEditorValores: ElementRef;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -1296,6 +1297,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   /* -------------- Modal Editor Valores -------------- */
   onEditarValores() {
     var input = document.getElementById("inputNovoValor");
+    let gravar = this;
 
     input.addEventListener('keyup', function (e) {
       var key = e.which || e.keyCode;
@@ -1330,12 +1332,14 @@ export class DetalheDespesasFormComponent implements OnInit {
           if (!validarCaracteresInput(inputValue)) {
             (<HTMLInputElement>document.getElementById("inputObservacoesEditorValores")).value = inputValue.concat(' - ');
           }
+        } else if (inputValue == "") {
+          // Se não tiver input de valores, grava e fecha o modal automaticamente.
+          gravar.confirmGravarEditarValores();
         }
 
         //limpa o campo de input
         (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "";
       }
-
     });
   }
 
@@ -1382,7 +1386,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     }
 
     this.resetModalEditarValores;
-    this.closeModal();
+    this.fechaModalEditorValores.nativeElement.click();
   }
 
   setModalEditarValores(valor, evento, objeto) {
@@ -1552,6 +1556,7 @@ function isValorNegativo(str) {
   return regex.test(str);
 }
 
+//Setar foco em campo input
 async function setarFocoCampo(inputName: string) {
   await aguardarTempo(500); // Aguarda 1/2 segundo
   const campoInput = document.getElementById(inputName) as HTMLInputElement;

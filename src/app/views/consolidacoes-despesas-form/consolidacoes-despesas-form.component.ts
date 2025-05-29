@@ -3,10 +3,12 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { BehaviorSubject } from 'rxjs';
+import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
 import { ConsolidacaoDespesas } from 'src/app/core/interfaces/consolidacao-despesas.interface';
 import { Consolidacao } from 'src/app/core/interfaces/consolidacao.interface';
 import { TituloConsolidacaoResponse } from 'src/app/core/interfaces/titulo-consolidacao-response.interface';
 import { ConsolidacaoService } from 'src/app/core/services/consolidacao.service';
+import { MensagemService } from 'src/app/core/services/mensagem.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
 
 @Component({
@@ -37,7 +39,8 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private sessao: SessaoService,
     private modalService: BsModalService,
-    private service: ConsolidacaoService
+    private service: ConsolidacaoService,
+    private mensagem: MensagemService
   ) { }
 
   ngOnInit() {
@@ -46,7 +49,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     this.service.recebeMensagem().subscribe(consolidacao => {
       this.loadFormConsolidacoes(consolidacao);
     }, () => {
-      alert('Ocorreu um erro ao carregar os dados da consolidação, tente novamente mais tarde.')
+      this.mensagem.enviarMensagem("Ocorreu um erro ao carregar os dados da consolidação, tente novamente mais tarde.", TipoMensagem.Erro);
     })
   }
 
@@ -55,10 +58,10 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     this.consolidacao = null;
     this.tituloConsolidacoes = null;
     this.checkboxesMarcadas = false;
-    
+
     this.resetDetalhesObservable();
     this.desabilitarCampos();
-    
+
     this.modalConsolidacoesForm = this.formBuilder.group({
       checkCarregarNomeConsolidacoes: [true],
       checkMarcarTodasParcelas: [false],
@@ -140,7 +143,8 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     let consolidacaoSelecionada = this.idConsolidacaoRef;
 
     if (consolidacaoSelecionada <= 0) {
-      alert('Necessário selecionar uma consolidação para pesquisar.');
+      this.mensagem.enviarMensagem("Necessário selecionar uma consolidação para pesquisar.", TipoMensagem.Alerta);
+      setarFocoCampo("nomeConsolidacao");
       return;
     }
 
@@ -207,7 +211,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     consolidacao.tpBaixado = "S";
 
     this.service.gravarConsolidacao(this.consolidacao).toPromise().then(() => {
-      alert('Consolidacao atualizada com sucesso!');
+      this.mensagem.enviarMensagem("Consolidacao atualizada com sucesso!", TipoMensagem.Sucesso);
       this.recarregarDetalheConsolidacao();
     });
 
@@ -219,7 +223,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     consolidacao.tpBaixado = "N";
 
     this.service.gravarConsolidacao(this.consolidacao).toPromise().then(() => {
-      alert('Consolidacao atualizada com sucesso!');
+      this.mensagem.enviarMensagem("Consolidacao atualizada com sucesso!", TipoMensagem.Sucesso);
       this.recarregarDetalheConsolidacao();
     });
 
@@ -233,7 +237,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     this.mensagemModalConfirmacao_footer = "Este processo exclui a consolidação as despesas associadas são desassociadas e exibidas nas despesas mensais importadas.";
 
     if (null == this.consolidacao) {
-      alert('Necessário selecionar uma consolidacao.')
+      this.mensagem.enviarMensagem("Necessário selecionar uma consolidação.", TipoMensagem.Alerta);
       return;
     }
 
@@ -247,7 +251,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     this.mensagemModalConfirmacao_footer = "Após confirmação, a despesa consolidada não será mais exibida para importação nos lançamentos mensais.";
 
     if (null == this.consolidacao) {
-      alert('Necessário selecionar uma consolidacao.')
+      this.mensagem.enviarMensagem("Necessário selecionar uma consolidação.", TipoMensagem.Alerta);
       return;
     }
 
@@ -261,7 +265,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     this.mensagemModalConfirmacao_footer = "Este processo exibe novamente a despesa consolidada para importação nos lançamentos mensais.";
 
     if (null == this.consolidacao) {
-      alert('Necessário selecionar uma consolidacao.')
+      this.mensagem.enviarMensagem("Necessário selecionar uma consolidação.", TipoMensagem.Alerta);
       return;
     }
 
@@ -275,12 +279,12 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     this.mensagemModalConfirmacao_footer = "Atenção: a(s) despesas(s) desassociadas serão exibidas novamente na despesa mensal.";
 
     if (null == this.consolidacao) {
-      alert('Necessário selecionar uma consolidação.')
+      this.mensagem.enviarMensagem("Necessário selecionar uma consolidação.", TipoMensagem.Alerta);
       return;
     }
 
     if (this.getDespesasChecked().length == 0) {
-      alert('Necessario selecionar a(s) despesa(s) para serem desassociadas.');
+      this.mensagem.enviarMensagem("Necessario selecionar a(s) despesa(s) para serem desassociadas.", TipoMensagem.Alerta);
       return;
     }
 
@@ -317,7 +321,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
 
   gravarConsolidacao() {
     if (!this.validarCamposObrigatorios()) {
-      alert('Necessário digitar o nome da consolidacao.')
+      this.mensagem.enviarMensagem("Necessario digitar o nome da consolidação.", TipoMensagem.Alerta);
       return;
     }
 
@@ -333,7 +337,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
 
   confirmGravarConsolidacao() {
     this.service.gravarConsolidacao(this.consolidacao).toPromise().then(() => {
-      alert('Gravação realizada com sucesso!');
+      this.mensagem.enviarMensagem("Gravação realizada com sucesso!", TipoMensagem.Sucesso);
       this.recarregarDetalheConsolidacao();
     });
 
@@ -343,10 +347,10 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
   confirmExcluirConsolidacao() {
     this.service.excluirConsolidacao(this.consolidacao).toPromise().then(() => {
       this.loadFormConsolidacoes(null);
-      alert('Consolidação excluida com sucesso!');
+      this.mensagem.enviarMensagem("Consolidação excluida com sucesso!", TipoMensagem.Sucesso);
     },
       err => {
-        alert('Ocorreu um erro ao excluir esta consolidacao, tente novamente mais tarde.');
+        this.mensagem.enviarMensagem("Ocorreu um erro ao excluir esta consolidacao, tente novamente mais tarde.", TipoMensagem.Erro);
         console.log(err);
       });
 
