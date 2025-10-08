@@ -154,8 +154,7 @@
                     <div class="input-valor-despesa">
                       <input type="text" class="text-center form-control input-valor-despesa" id="valorDespesa"
                         currencyMask maxlength="16" autocomplete="off"
-                        [options]="{ prefix: '', thousands: '.', decimal: ',' }" (click)="onValorDespesaChange()"
-                        >
+                        [options]="{ prefix: '', thousands: '.', decimal: ',' }" (click)="onValorDespesaChange()">
                     </div>
                   </div>
 
@@ -246,7 +245,8 @@
                     </tr>
                   </thead>
                   <tbody *ngIf="despesaParceladaDetalhe">
-                    <tr *ngFor="let parcela of despesaParceladaDetalhe.parcelas">
+                    <tr *ngFor="let parcela of despesaParceladaDetalhe.parcelas"
+                      [attr.id]="parcela.tpBaixado === 'N' ? 'parcela-a-pagar' : null">
                       <td>
                         <label class="checkbox-wrap checkbox-primary">
                           <input type="checkbox" name="parcela[]"

@@ -22,7 +22,6 @@
             Administrador</h5>
         </div>
 
-
         <hr>
         <div class="d-grid gap-2 d-md-block btn-group-sm">
           <div class="btn-group mr-2" role="group" aria-label="First group">
@@ -56,7 +55,7 @@
 
         <div class="row" [formGroup]="pesquisaForm">
           <div class="col-lg-6 col-md-3 col-sm-12 p-0.3">
-            <select class="form-control search-slt" formControlName="cbMes" style="width: 102%;">
+            <select class="form-control search-slt" formControlName="cbMes" style="width: 103%;">
               <option value="01">Janeiro</option>
               <option value="02">Fevereiro</option>
               <option value="03">Março</option>
@@ -218,118 +217,63 @@
                 </thead>
 
                 <tbody *ngIf="lancamentosFinanceiros$">
-                  <tr *ngFor="let despesasFixas of lancamentosFinanceiros$.despesasFixasMensais">
+                  <tr *ngFor="let item of lancamentosFinanceiros$.despesasFixasMensais">
                     <td class="text-left">
-                      <span *ngIf="despesasFixas.tpStatus == '+'" class="font-color-receita-positiva">
-                        <span class="badge badge-success d-inline">
-                          <i class="fas fa-plus"></i>
+                      <ng-container *ngIf="receitaMap[item.tpStatus] as status">
+                        <span [class]="status.textClass">
+                          <span *ngIf="status.icon" class="badge d-inline" [ngClass]="status.badgeClass"
+                            [style.background-color]="status.bgColor">
+                            <i [class]="status.icon"></i>
+                          </span>
+                          {{ item.dsDescricao }}
                         </span>
-                        {{ despesasFixas.dsDescricao }}
-                      </span>
-
-                      <span *ngIf="despesasFixas.tpStatus == '-'" class="font-color-receita-negativa">
-                        <span class="badge badge-danger d-inline">
-                          <i class="fas fa-minus"></i>
-                        </span>
-                        {{ despesasFixas.dsDescricao }}
-                      </span>
-
-                      <span *ngIf="despesasFixas.tpStatus == '< i >'" class="font-color-receita-anotacao">
-                        <span class="badge badge-info d-inline">
-                          <i class="far fa-sticky-note"></i>
-                        </span>
-                        {{despesasFixas.dsDescricao }}
-                      </span>
-
-                      <span *ngIf="despesasFixas.tpStatus == 'P(+)'" class="font-color-poupanca-positiva">
-                        <span class="badge badge-info d-inline" style="background-color: #3b6bd3">
-                          <i class="fa fa-key"></i>
-                        </span>
-                        {{despesasFixas.dsDescricao }}
-                      </span>
-
-                      <span *ngIf="despesasFixas.tpStatus == 'P(-)'" class="font-color-poupanca-negativa">
-                        <span class="badge badge-info d-inline" style="background-color: #ee5569">
-                          <i class="fa fa-key"></i>
-                        </span>
-                        {{despesasFixas.dsDescricao }}
-                      </span>
-
-                      <span *ngIf="despesasFixas.tpStatus == '->'" class="font-color-receita-adiantada">
-                        <span class="badge badge-info d-inline" style="background-color: #e98c00">
-                          <i class="fa fa-share"></i>
-                        </span>
-                        {{despesasFixas.dsDescricao }}
-                      </span>
-
-                      <span *ngIf="despesasFixas.tpStatus == '< X >'" class="font-color-linha-separacao">
-                        {{ despesasFixas.dsDescricao }}
-                      </span>
+                      </ng-container>
                     </td>
 
                     <td>
-                      <span *ngIf="despesasFixas.tpStatus == '+'" class="font-color-receita-positiva">{{
-                        despesasFixas.vlTotal }}</span>
-                      <span *ngIf="despesasFixas.tpStatus == '-'" class="font-color-receita-negativa">{{
-                        despesasFixas.vlTotal }}</span>
-                      <span *ngIf="despesasFixas.tpStatus == '< i >'" class="font-color-receita-anotacao">{{
-                        despesasFixas.vlTotal }}</span>
-                      <span *ngIf="despesasFixas.tpStatus == '< X >'" class="font-color-linha-separacao">
-                        {{ despesasFixas.vlTotal }}
-                      </span>
-                      <span *ngIf="despesasFixas.tpStatus == 'P(+)'" class="font-color-poupanca-positiva">
-                        {{ despesasFixas.vlTotal }}
-                      </span>
-                      <span *ngIf="despesasFixas.tpStatus == 'P(-)'" class="font-color-poupanca-negativa">
-                        {{ despesasFixas.vlTotal }}
-                      </span>
-                      <span *ngIf="despesasFixas.tpStatus == '->'" class="font-color-receita-adiantada">
-                        {{ despesasFixas.vlTotal }}
+                      <span *ngIf="receitaMap[item.tpStatus]" [class]="receitaMap[item.tpStatus].textClass">
+                        {{ item.vlTotal }}
                       </span>
                     </td>
 
                     <td class="text-left">
-                      <button *ngIf="despesasFixas.tpStatus == '< X >' || despesasFixas.tpDespesaDebitoCartao == 'S'"
-                        type="button" disabled class="btn btn-link btn-sm px-0">
+                      <button *ngIf="item.tpStatus == '< X >' || item.tpDespesaDebitoCartao == 'S'" type="button"
+                        disabled class="btn btn-link btn-sm px-0">
                         <i class="fas fa-edit"></i>
                       </button>
-                      <button *ngIf="despesasFixas.tpStatus != '< X >' && despesasFixas.tpDespesaDebitoCartao == 'N'"
-                        type="button" class="btn btn-link btn-sm px-0" data-toggle="modal"
-                        data-target="#modalCriarEditarReceita" (click)="editarReceitaSelecionada(despesasFixas)"
-                        title="Editar receita">
+                      <button *ngIf="item.tpStatus != '< X >' && item.tpDespesaDebitoCartao == 'N'" type="button"
+                        class="btn btn-link btn-sm px-0" data-toggle="modal" data-target="#modalCriarEditarReceita"
+                        (click)="editarReceitaSelecionada(item)" title="Editar receita">
                         <i class="fas fa-edit"></i>
                       </button>
                       <button type="button" class="btn btn-link btn-sm px-0" title="Excluir receita"
-                        (click)="onReceitaSelecionada(despesasFixas)">
+                        (click)="onReceitaSelecionada(item)">
                         <i class="far fa-calendar-times"></i>
                       </button>
                       <button type="button" class="btn btn-link btn-sm px-0" title="Subir item"
-                        (click)="subirLinhaReceita(despesasFixas)">
+                        (click)="subirLinhaReceita(item)">
                         <i class="fa fa-chevron-up"></i>
                       </button>
                       <button type="button" class="btn btn-link btn-sm px-0" title="Descer item"
-                        (click)="descerLinhaReceita(despesasFixas)">
+                        (click)="descerLinhaReceita(item)">
                         <i class="fa fa-chevron-down"></i>
                       </button>
                     </td>
                   </tr>
+
                   <tr>
                     <td colspan="8">
                       <br>
-                      <span *ngIf="lancamentosFinanceiros$">
-                        <div class="d-grid gap-2 d-md-block">
-                          <button class="btn text-white" data-mdb-ripple-init
-                            style="background-color: #3b6bd3; width: 45%;" href="#!" role="button" data-toggle="modal"
-                            (click)="resetModalCriarEditarReceita()" data-target="#modalCriarEditarReceita">
-                            <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
-                              <i class="fas fa-plus"></i> Criar Nova Receita
-                            </span>
-                            <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes !='0,00'">
-                              <i class="fas fa-plus"></i>
-                            </span>
-                          </button>
-                        </div>
-                      </span>
+                      <div class="d-grid gap-2 d-md-block">
+                        <button class="btn text-white" style="background-color: #3b6bd3; width: 45%;"
+                          data-toggle="modal" (click)="resetModalCriarEditarReceita()"
+                          data-target="#modalCriarEditarReceita">
+                          <i class="fas fa-plus"></i>
+                          <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes == '0,00'"> Criar Nova Receita
+                          </span>
+                        </button>
+                      </div>
+                    </td>
                     <td></td>
                     <td></td>
                   </tr>
@@ -356,6 +300,7 @@
                     <th scope="col"></th>
                   </tr>
                 </thead>
+
                 <tbody *ngIf="lancamentosFinanceiros$">
                   <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais">
                     <th>
@@ -366,93 +311,48 @@
                       </label>
                     </th>
 
-                    <td data-toggle="modal" data-target="#modalDetalheDespesasMensais"
+                    <td *ngIf="despesa.tpLinhaSeparacao === 'N'" data-toggle="modal"
+                      data-target="#modalDetalheDespesasMensais"
                       (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)">
-                      <span *ngIf="despesa.tpLinhaSeparacao == 'N'">
-                        <span>
-                          {{despesa.svlTotalDespesa}}
-                        </span>
-                      </span>
+                      {{ despesa.svlTotalDespesa }}
                     </td>
 
-                    <td class="text-right" *ngIf="despesa.tpLinhaSeparacao == 'N'">
-                      <span class="text-info" *ngIf="despesa.statusPercentual == 'Baixo'">
-                        <i class="fas fa-caret-down me-1"></i><span>{{ despesa.percentualUtilizacao}}</span>
+                    <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'">
+                      <span [ngClass]="getPercentualClass(despesa.statusPercentual)">
+                        <i [ngClass]="getPercentualIcon(despesa.statusPercentual)"></i>
+                        <span>{{ despesa.percentualUtilizacao }}</span>
                       </span>
-                      <span class="text-success" *ngIf="despesa.statusPercentual == 'Medio'">
-                        <i class="fas fa-caret-down me-1"></i><span>{{ despesa.percentualUtilizacao}}</span>
-                      </span>
-                      <span class="text-warning" *ngIf="despesa.statusPercentual == 'Alto'">
-                        <i class="fas fa-caret-up me-1"></i><span>{{ despesa.percentualUtilizacao}}</span>
-                      </span>
-                      <span class="text-danger" *ngIf="despesa.statusPercentual == 'Altissimo'">
-                        <i class="fas fa-caret-up me-1 pisca"></i><span>{{ despesa.percentualUtilizacao}}</span>
-                      </span>
-                      <span class="text-info" *ngIf="despesa.tpEmprestimo == 'S'">
+                      <span class="text-info" *ngIf="despesa.tpEmprestimo === 'S'">
                         <i class="fa fa-minus"></i>
                       </span>
                     </td>
 
                     <td class="font-weight-bold" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
                       (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)">
-
-                      <span style="color: #6c0b75;" *ngIf="despesa.tpEmprestimo == 'S'">
-                        <span>{{ despesa.dsTituloDespesa}}</span>
-                      </span>
-                      <span style="color: #2988a5;" *ngIf="despesa.tpAnotacao == 'S'">
-                        <span>{{ despesa.dsTituloDespesa}}</span>
-                      </span>
-                      <span style="color: #8a6b16;" *ngIf="despesa.tpRelatorio == 'S'">
-                        <span>{{ despesa.dsTituloDespesa}}</span>
-                      </span>
-                      <span style="color: #3d8836;" *ngIf="despesa.tpPoupanca == 'S'">
-                        <span>{{ despesa.dsTituloDespesa}}</span>
-                      </span>
-                      <span style="color: #000000;"
-                        *ngIf="despesa.tpEmprestimo == 'N' && despesa.tpAnotacao == 'N' && despesa.tpRelatorio == 'N' && despesa.tpPoupanca == 'N'">
-                        <span>{{ despesa.dsTituloDespesa}}</span>
+                      <span [style.color]="getTituloColor(despesa)">
+                        {{ despesa.dsTituloDespesa }}
                       </span>
                     </td>
 
                     <td>
-                      <span *ngIf="despesa.tpDebitoCartao == 'S'"
-                        class="badge badge-info d-inline rounded-pill d-inline"
-                        style="background-color: #d65e2e;">Débito
-                      </span>
-                      <span *ngIf="despesa.statusPagamento == 'Pendente' && despesa.tpRelatorio !== 'S' && despesa.tpEmprestimo !== 'S' 
-                      && despesa.tpAnotacao !== 'S' && despesa.tpPoupanca !== 'S'"
-                        class="badge badge-warning rounded-pill d-inline">Á Pagar
-                      </span>
-                      <span *ngIf="despesa.statusPagamento == 'Pago' && despesa.tpRelatorio !== 'S' && despesa.tpEmprestimo !== 'S' 
-                        && despesa.tpAnotacao != 'S' && despesa.tpPoupanca !== 'S' "
-                        class="badge badge-success rounded-pill d-inline">Pago
-                        <i class="fa fa-check" aria-hidden="true"></i>
-                      </span>
-                      <span *ngIf="despesa.tpRelatorio == 'S'" class="badge badge-info d-inline rounded-pill d-inline"
-                        style="background-color: #8a6b16;">Relatório
-                      </span>
-                      <span *ngIf="despesa.tpEmprestimo == 'S'" class="badge badge-info d-inline rounded-pill d-inline"
-                        style="background-color: #6c0b75;">Empréstimo
-                      </span>
-                      <span *ngIf="despesa.tpAnotacao == 'S'" class="badge badge-info d-inline rounded-pill d-inline"
-                        style="background-color: #2988a5;">Rascunho
-                      </span>
-                      <span *ngIf="despesa.tpPoupanca == 'S'" class="badge badge-info d-inline rounded-pill d-inline"
-                        style="background-color: #3baf31;">Poupança <i class="fa fa-plus" aria-hidden="true"></i>
-                      </span>
+                      <ng-container *ngFor="let badge of getBadges(despesa)">
+                        <span class="badge badge-info rounded-pill d-inline" [style.background-color]="badge.color">
+                          {{ badge.label }} <i *ngIf="badge.icon" [class]="badge.icon"></i>
+                        </span>
+                      </ng-container>
                     </td>
 
                     <td>{{ despesa.svlTotalDespesaPaga }}</td>
 
-                    <td *ngIf="despesa.tpLinhaSeparacao == 'S'"></td>
+                    <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
+                    <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
+
                     <td class="text-left">
-                      <button *ngIf="despesa.tpLinhaSeparacao == 'S'" type="button" disabled
-                        class="btn btn-link btn-sm px-0">
-                        <i class="fas fa-edit"></i>
-                      </button>
-                      <button *ngIf="despesa.tpLinhaSeparacao == 'N'" type="button" class="btn btn-link btn-sm px-0"
-                        data-toggle="modal" data-target="#modalDetalheDespesasMensais"
-                        (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)"
+                      <button type="button" class="btn btn-link btn-sm px-0"
+                        [disabled]="despesa.tpLinhaSeparacao === 'S'"
+                        [attr.data-toggle]="despesa.tpLinhaSeparacao === 'N' ? 'modal' : null"
+                        [attr.data-target]="despesa.tpLinhaSeparacao === 'N' ? '#modalDetalheDespesasMensais' : null"
+                        (click)="despesa.tpLinhaSeparacao === 'N' && carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)"
                         title="Editar despesa">
                         <i class="fas fa-edit"></i>
                       </button>
@@ -467,6 +367,7 @@
                     </td>
                   </tr>
                 </tbody>
+
                 <tr>
                   <th></th>
                   <td colspan="7">
@@ -534,13 +435,14 @@
 
                 <label>Categoria</label>
                 <select class="form-control form-control-sm" formControlName="tipoReceita">
-                  <option value="+">Receita ( + )</option>
-                  <option value="-">Despesa ( - )</option>
+                  <option value="+">Receita</option>
+                  <option value="-">Despesa</option>
+                  <option value="< i >">Anotação</option>
                   <option value="< X >">Linha Separacao</option>
-                  <option value="< i >">Anotação ( i )</option>
-                  <option value="P(+)">Poupança Positiva ( P+ )</option>
-                  <option value="P(-)">Poupança Negativa ( P- )</option>
-                  <option value="->">Reserva Mês Seguinte ( -> )</option>
+                  <option value="P(+)">Poupança (Inclusão)</option>
+                  <option value="P(-)">Poupança (Retirada)</option>
+                  <option value="->">Reserva Mês Seguinte</option>
+                  <option value="PVD+">Reserva Previdencia Privada</option>
                 </select>
 
                 <div class="row">

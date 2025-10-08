@@ -732,6 +732,93 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   fecharSpinner() {
     this.mensagens.enviarMensagem(null, null);
   }
+
+  receitaMap = {
+    '+': {
+      textClass: 'font-color-receita-positiva',
+      badgeClass: 'badge-success',
+      icon: 'fas fa-plus'
+    },
+    '-': {
+      textClass: 'font-color-receita-negativa',
+      badgeClass: 'badge-danger',
+      icon: 'fas fa-minus'
+    },
+    '< i >': {
+      textClass: 'font-color-receita-anotacao',
+      badgeClass: 'badge-info',
+      icon: 'far fa-sticky-note'
+    },
+    'P(+)': {
+      textClass: 'font-color-poupanca-positiva',
+      badgeClass: 'badge-info',
+      icon: 'fa fa-key',
+      bgColor: '#3b6bd3'
+    },
+    'P(-)': {
+      textClass: 'font-color-poupanca-negativa',
+      badgeClass: 'badge-info',
+      icon: 'fa fa-key',
+      bgColor: '#ee5569'
+    },
+    '->': {
+      textClass: 'font-color-receita-adiantada',
+      badgeClass: 'badge-info',
+      icon: 'fa fa-share',
+      bgColor: '#e98c00'
+    },
+    'PVD+': {
+      textClass: 'font-color-reserva-previdencia',
+      badgeClass: 'badge-info',
+      icon: 'fa fa-calculator',
+      bgColor: '#99126585'
+    },
+    '< X >': {
+      textClass: 'font-color-linha-separacao'
+    }
+  };
+
+  getPercentualClass(status: string): string {
+    return {
+      'Baixo': 'text-info',
+      'Medio': 'text-success',
+      'Alto': 'text-warning',
+      'Altissimo': 'text-danger'
+    }[status] || '';
+  }
+
+  getPercentualIcon(status: string): string {
+    return {
+      'Baixo': 'fas fa-caret-down me-1',
+      'Medio': 'fas fa-caret-down me-1',
+      'Alto': 'fas fa-caret-up me-1',
+      'Altissimo': 'fas fa-caret-up me-1 pisca'
+    }[status] || '';
+  }
+
+  getTituloColor(d: any): string {
+    if (d.tpEmprestimo === 'S') return '#6c0b75';
+    if (d.tpAnotacao === 'S') return '#2988a5';
+    if (d.tpRelatorio === 'S') return '#8a6b16';
+    if (d.tpPoupanca === 'S') return '#3d8836';
+    return '#000000';
+  }
+
+  getBadges(d: any): { label: string, color: string, icon?: string }[] {
+    const badges = [];
+    if (d.tpDebitoCartao === 'S') badges.push({ label: 'Débito', color: '#d65e2e' });
+    if (d.statusPagamento === 'Pendente' && !this.hasTipoEspecial(d)) badges.push({ label: 'Á Pagar', color: '#ee5569' });
+    if (d.statusPagamento === 'Pago' && !this.hasTipoEspecial(d)) badges.push({ label: 'Pago', color: '#28a745', icon: 'fa fa-check' });
+    if (d.tpRelatorio === 'S') badges.push({ label: 'Relatório', color: '#8a6b16' });
+    if (d.tpEmprestimo === 'S') badges.push({ label: 'Empréstimo', color: '#6c0b75' });
+    if (d.tpAnotacao === 'S') badges.push({ label: 'Rascunho', color: '#2988a5' });
+    if (d.tpPoupanca === 'S') badges.push({ label: 'Poupança', color: '#3baf31', icon: 'fa fa-plus' });
+    return badges;
+  }
+
+  hasTipoEspecial(d: any): boolean {
+    return d.tpRelatorio === 'S' || d.tpEmprestimo === 'S' || d.tpAnotacao === 'S' || d.tpPoupanca === 'S';
+  }
 }
 
 async function setarFocoCampo(inputName: string) {

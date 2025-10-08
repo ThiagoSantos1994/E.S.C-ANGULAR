@@ -4,10 +4,12 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
+import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
 import { DetalheLembrete } from 'src/app/core/interfaces/detalhe-lembrete.interface';
 import { TituloLembretes } from 'src/app/core/interfaces/titulo-lembretes.interface';
 import { HomeService } from 'src/app/core/services/home.service';
 import { LembretesService } from 'src/app/core/services/lembretes.service';
+import { MensagemService } from 'src/app/core/services/mensagem.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
 
 @Component({
@@ -49,7 +51,7 @@ export class LembretesFormComponent implements OnInit {
     private modalService: BsModalService,
     private service: LembretesService,
     private homeService: HomeService,
-    private detalheDomain: DetalheDespesasMensaisDomain
+    private mensagens: MensagemService
   ) { }
 
   ngOnInit() {
@@ -65,7 +67,7 @@ export class LembretesFormComponent implements OnInit {
         this.carregarMonitorLembretes(true, true);
       }
     }, () => {
-      alert('Ocorreu um erro ao carregar os dados da despesa parcelada, tente novamente mais tarde.')
+      this.mensagens.enviarMensagem("Ocorreu um erro ao carregar os dados da despesa parcelada, tente novamente mais tarde.", TipoMensagem.Erro);
     });
   }
 
@@ -251,7 +253,7 @@ export class LembretesFormComponent implements OnInit {
   abrirModalBaixaLembretesSelecionados() {
     let lembretesChecked = this.getMonitorLembretesChecked().length;
     if (lembretesChecked == 0) {
-      alert('Necessario selecionar o lembrete para baixar.');
+      this.mensagens.enviarMensagem("Necessário selecionar um lembrete para realizar a baixa.", TipoMensagem.Generica);
     } else {
       this.modalRef = this.modalService.show(this.modalBaixarLembretesMonitor);
     }
@@ -286,6 +288,13 @@ export class LembretesFormComponent implements OnInit {
     this._monitorLembretes.next(lembretes);
   }
 
+  onAbrirModalLembretes(idLembrete) {
+    this.closeModal(); //fecha o modal monitor
+    this.modalAgendarLembretesForm.reset;
+
+    this.onChangeTituloLembrete(idLembrete);
+  }
+
   onMarcarDesmarcarCheckBoxes() {
     let checksMarcadas = (this.checkboxesMarcadas == true ? false : true);
     this.onChangeAllCheckBoxesLembretes(checksMarcadas);
@@ -304,7 +313,7 @@ export class LembretesFormComponent implements OnInit {
 
   gravarDetalhesLembrete() {
     if (!this.validarCamposObrigatorios()) {
-      alert('Necessário preencher o nome do lembrete para salvar.')
+      this.mensagens.enviarMensagem("Necessário preencher o nome do lembrete antes de salvar", TipoMensagem.Generica);
       return;
     }
 
@@ -535,7 +544,7 @@ export class LembretesFormComponent implements OnInit {
     request.tpBaixado = (tpBaixar ? 'S' : 'N');
 
     this.service.gravarDetalhesLembrete(request).toPromise().then(() => {
-      alert('Lembrete atualizado com sucesso!');
+      this.mensagens.enviarMensagem("Lembrete atualizado com sucesso.", TipoMensagem.Sucesso);
       this.carregarDetalheLembrete();
       this.carregarListaLembretes(false);
     });
@@ -547,13 +556,13 @@ export class LembretesFormComponent implements OnInit {
     let request = this.detalheLembrete;
 
     this.service.excluirDetalhesLembrete(request).toPromise().then(() => {
-      alert('Lembrete excluido com sucesso!');
+      this.mensagens.enviarMensagem("Lembrete excluido com sucesso.", TipoMensagem.Sucesso);
       this.carregarListaLembretes(false);
       this.resetCampos();
       this.atualizaStatusLembreteHome();
     },
       err => {
-        alert('Ocorreu um erro ao excluir o lembrete, tente novamente mais tarde.');
+        this.mensagens.enviarMensagem("Ocorreu um erro ao excluir o lembrete, tente novamente mais tarde.", TipoMensagem.Erro);
         console.log(err);
       });
 
@@ -564,13 +573,13 @@ export class LembretesFormComponent implements OnInit {
     let request = this.detalheLembrete;
 
     this.service.gravarDetalhesLembrete(request).toPromise().then(() => {
-      alert('Lembrete gravado com sucesso!');
+      this.mensagens.enviarMensagem("Lembrete gravado com sucesso.", TipoMensagem.Sucesso);
       this.carregarDetalheLembrete();
       this.carregarListaLembretes(false);
       this.atualizaStatusLembreteHome();
     },
       err => {
-        alert('Ocorreu um erro ao gravar o lembrete, tente novamente mais tarde.');
+        this.mensagens.enviarMensagem("Ocorreu um erro ao gravar o lembrete, tente novamente mais tarde.", TipoMensagem.Erro);
         console.log(err);
       });
 

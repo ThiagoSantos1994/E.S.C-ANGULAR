@@ -307,6 +307,7 @@ export class DespesasParceladasFormComponent implements OnInit {
 
       this.resetParcelasObservable();
       this.setParcelasObservable(res.parcelas, false);
+      this.scrollAutomaticoParcelaPendente();
     });
   }
 
@@ -567,6 +568,15 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.despesaParceladaDetalhe.parcelas.forEach(parcela => {
       this.onCheckParcelaChange(checked, parcela);
     });
+  }
+
+  scrollAutomaticoParcelaPendente(): void {
+    setTimeout(() => {
+      const elemento = document.getElementById('parcela-a-pagar');
+      if (elemento) {
+        elemento.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 0); // Aguarda renderização do DOM
   }
 
   getParcelasChecked() {

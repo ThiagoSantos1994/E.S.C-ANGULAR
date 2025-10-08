@@ -322,6 +322,14 @@ th {
   color: #e98c00;
 }
 
+.font-color-reserva-previdencia {
+  color: #99126585;
+}
+
+.font-color-saldo-previdencia {
+  color: #10808f85;
+}
+
 .font-color-linha-separacao {
   color: rgb(250, 247, 247);
 }
