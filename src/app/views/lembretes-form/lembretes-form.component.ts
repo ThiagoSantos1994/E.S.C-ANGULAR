@@ -1,9 +1,9 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
+import { delay } from 'rxjs/operators';
 import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
 import { DetalheLembrete } from 'src/app/core/interfaces/detalhe-lembrete.interface';
 import { TituloLembretes } from 'src/app/core/interfaces/titulo-lembretes.interface';
@@ -40,10 +40,10 @@ export class LembretesFormComponent implements OnInit {
   private mensagemModalConfirmacao_body: String = "null";
   private mensagemModalConfirmacao_footer: String = "null";
 
-  @ViewChild('modalLembretes') modalLembretes;
-  @ViewChild('modalVisualizarLembretes') modalVisualizarLembretes;
-  @ViewChild('modalBaixarLembretesMonitor') modalBaixarLembretesMonitor;
-  @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
+  @ViewChild('modalLembretes', { static: false }) modalLembretes;
+  @ViewChild('modalVisualizarLembretes', { static: false }) modalVisualizarLembretes;
+  @ViewChild('modalBaixarLembretesMonitor', { static: false }) modalBaixarLembretesMonitor;
+  @ViewChild('modalConfirmacaoEventos', { static: false }) modalConfirmacaoEventos;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -56,8 +56,6 @@ export class LembretesFormComponent implements OnInit {
 
   ngOnInit() {
     this.loadFormLembretes();
-    this.carregarMonitorLembretes(true, false);
-
     this.service.recebeMensagem().subscribe(tipo => {
       if (tipo == "cadastro") {
         this.modalAgendarLembretesForm.reset;

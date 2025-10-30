@@ -14,12 +14,12 @@ export class MensagensFormComponent implements OnInit {
   private modalRef: NgbModalRef | null = null;
   private mensagemModal: String = "";
 
-  @ViewChild('modalMensagemSucesso') modalMensagemSucesso;
-  @ViewChild('modalMensagemAlerta') modalMensagemAlerta;
-  @ViewChild('modalMensagemErro') modalMensagemErro;
-  @ViewChild('modalMensagemGenerica') modalMensagemGenerica;
-  @ViewChild('modalMensagemTransparente') modalMensagemTransparente;
-  @ViewChild('modalSpinnerProcessando') modalSpinnerProcessando;
+  @ViewChild('modalMensagemSucesso', { static: false }) modalMensagemSucesso;
+  @ViewChild('modalMensagemAlerta', { static: false }) modalMensagemAlerta;
+  @ViewChild('modalMensagemErro', { static: false }) modalMensagemErro;
+  @ViewChild('modalMensagemGenerica', { static: false }) modalMensagemGenerica;
+  @ViewChild('modalMensagemTransparente', { static: false }) modalMensagemTransparente;
+  @ViewChild('modalSpinnerProcessando', { static: false }) modalSpinnerProcessando;
 
   constructor(
     private modalService: NgbModal,

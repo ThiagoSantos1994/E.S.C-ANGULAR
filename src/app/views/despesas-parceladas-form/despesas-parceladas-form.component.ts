@@ -1,7 +1,7 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
 import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
@@ -34,8 +34,8 @@ export class DespesasParceladasFormComponent implements OnInit {
   private subTotalDespesasEmAberto: String = "0,00";
   private checkboxesMarcadas: Boolean = false;
 
-  @ViewChild('modalDespesasParceladas') modalDespesasParceladas;
-  @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
+  @ViewChild('modalDespesasParceladas', { static: false }) modalDespesasParceladas;
+  @ViewChild('modalConfirmacaoEventos', { static: false }) modalConfirmacaoEventos;
 
   constructor(
     private formBuilder: FormBuilder,

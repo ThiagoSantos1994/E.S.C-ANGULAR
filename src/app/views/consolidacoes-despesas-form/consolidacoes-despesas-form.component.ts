@@ -1,7 +1,7 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
 import { ConsolidacaoDespesas } from 'src/app/core/interfaces/consolidacao-despesas.interface';
@@ -32,8 +32,8 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
 
   private checkboxesMarcadas: Boolean = false;
 
-  @ViewChild('modalConsolidacoes') modalConsolidacoes;
-  @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
+  @ViewChild('modalConsolidacoes', { static: false }) modalConsolidacoes;
+  @ViewChild('modalConfirmacaoEventos', { static: false }) modalConfirmacaoEventos;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -155,7 +155,8 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     this.service.getDetalhesConsolidacao(consolidacao).subscribe((res) => {
       this.consolidacao = res;
 
-      (<HTMLInputElement>document.getElementById("nomeConsolidacao")).value = res.dsTituloConsolidacao.toString();
+      this.modalConsolidacoesForm.get('nomeConsolidacao').setValue(res.dsTituloConsolidacao);
+      //(<HTMLInputElement>document.getElementById("nomeConsolidacao")).value = res.dsTituloConsolidacao.toString();
       this.habilitarCampos(res);
       this.resetDetalhesObservable();
       this.setDetalhesObservable(res.despesasConsolidadas, false);

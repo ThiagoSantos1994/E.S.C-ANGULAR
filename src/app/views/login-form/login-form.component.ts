@@ -15,10 +15,10 @@ export class LoginFormComponent implements OnInit {
   modalReference: any;
   validacaoLogin: boolean;
 
-  @ViewChild('modalLoginInvalido') modalUsuarioInvalido: any;
+  @ViewChild('modalLoginInvalido', { static: false }) modalUsuarioInvalido: any;
 
   //Seta o focus do campo caso o login esteja invalido
-  @ViewChild('userNameFocus') userNameInput: ElementRef;
+  @ViewChild('userNameFocus', { static: false }) userNameInput: ElementRef;
 
   constructor(
     private formBuilder: FormBuilder,

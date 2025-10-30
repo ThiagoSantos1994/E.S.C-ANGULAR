@@ -1,9 +1,16 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../out-tsc/app",
-    "module": "es2015",
-    "types": []
+    "target": "es2015",
+    "lib": [
+      "es2015",
+      "dom"
+    ],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true
   },
   "exclude": [
     "src/test.ts",

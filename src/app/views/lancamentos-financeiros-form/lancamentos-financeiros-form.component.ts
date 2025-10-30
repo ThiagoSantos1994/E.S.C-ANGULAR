@@ -13,6 +13,7 @@ import { LancamentosFinanceiros } from 'src/app/core/interfaces/lancamentos-fina
 import { LancamentosMensais } from 'src/app/core/interfaces/lancamentos-mensais.interface';
 import { DetalheDespesasService } from 'src/app/core/services/detalhe-despesas.service';
 import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
+import { LembretesService } from 'src/app/core/services/lembretes.service';
 import { LoginService } from 'src/app/core/services/login.service';
 import { MensagemService } from 'src/app/core/services/mensagem.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
@@ -47,10 +48,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private checkboxesMarcadas: Boolean = false;
   private exibirValores: Boolean = true;
 
-  @ViewChild('modalConfirmacaoExcluirDespesa') modalConfirmacaoExcluirDespesa;
-  @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
-  @ViewChild('modalCategoriaDetalheDespesa') modalCategoriaDetalheDespesa;
-  @ViewChild('modalAutenticacaoUsuario') modalAutenticacaoUsuario;
+  @ViewChild('modalConfirmacaoExcluirDespesa', { static: false }) modalConfirmacaoExcluirDespesa;
+  @ViewChild('modalConfirmacaoEventos', { static: false }) modalConfirmacaoEventos;
+  @ViewChild('modalCategoriaDetalheDespesa', { static: false }) modalCategoriaDetalheDespesa;
+  @ViewChild('modalAutenticacaoUsuario', { static: false }) modalAutenticacaoUsuario;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -60,7 +61,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     private loginService: LoginService,
     private router: Router,
     private modalService: BsModalService,
-    private mensagens: MensagemService
+    private mensagens: MensagemService,
+    private lembreteService: LembretesService
   ) { }
 
   ngOnInit() {
@@ -91,6 +93,12 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     }, () => {
       this.mensagens.enviarMensagem("Ocorreu um erro ao carregar as informações da despesa, tente novamente mais tarde.", TipoMensagem.Erro);
     });
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.lembreteService.enviaMensagem("loadHome");
+    }, 500);
   }
 
   carregarDespesas() {

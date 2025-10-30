@@ -66,13 +66,13 @@ export class DetalheDespesasFormComponent implements OnInit {
   private objectModalObservacoes: any;
   private objectModalHistorico: any;
 
-  @ViewChild('modalDetalheDespesasMensais') modalDetalheDespesasMensais;
-  @ViewChild('modalConfirmacaoExcluirDespesa') modalConfirmacaoExcluirDespesa;
-  @ViewChild('modalConfirmacaoQuitarDespesas') modalConfirmacaoQuitarDespesas;
-  @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
-  @ViewChild('modalCategoriaDetalheDespesa') modalCategoriaDetalheDespesa;
-  @ViewChild('modalAssociarDespesaMensalExistente') modalAssociarDespesaMensalExistente;
-  @ViewChild('fechaModalEditorValores') fechaModalEditorValores: ElementRef;
+  @ViewChild('modalDetalheDespesasMensais', { static: false }) modalDetalheDespesasMensais;
+  @ViewChild('modalConfirmacaoExcluirDespesa', { static: false }) modalConfirmacaoExcluirDespesa;
+  @ViewChild('modalConfirmacaoQuitarDespesas', { static: false }) modalConfirmacaoQuitarDespesas;
+  @ViewChild('modalConfirmacaoEventos', { static: false }) modalConfirmacaoEventos;
+  @ViewChild('modalCategoriaDetalheDespesa', { static: false }) modalCategoriaDetalheDespesa;
+  @ViewChild('modalAssociarDespesaMensalExistente', { static: false }) modalAssociarDespesaMensalExistente;
+  @ViewChild('fechaModalEditorValores', { static: false }) fechaModalEditorValores: ElementRef;
 
   constructor(
     private formBuilder: FormBuilder,
