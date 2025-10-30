@@ -95,11 +95,15 @@
             <div class="card border-left-receita shadow h-100 py-0">
               <div class="card-body">
                 <div class="row no-gutters align-items-center">
-                  <div class="col mr-4">
+                  <div class="col mr-4" (click)="ocultarExibirValores()" style="cursor: pointer;"
+                    title="Clique para Ocultar\Exibir os valores">
                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                       Receita</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800" style="color: #28a745 !important;">
-                      <span *ngIf="lancamentosFinanceiros$"> R$ {{lancamentosFinanceiros$.vlSaldoPositivo}}</span>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"
+                      style="color: #28a745 !important;font-size: 22px;font-family: sans-serif;padding: 2% 0%;">
+                      <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
+                        R$ {{ lancamentosFinanceiros$.vlSaldoPositivo }}
+                      </ng-container>
                     </div>
                   </div>
                   <div class="col-auto">
@@ -115,15 +119,15 @@
             <div class="card border-left-despesas shadow h-100 py-0">
               <div class="card-body">
                 <div class="row no-gutters align-items-center">
-                  <div class="col mr-1">
+                  <div class="col mr-1" (click)="ocultarExibirValores()" style="cursor: pointer;"
+                    title="Clique para Ocultar\Exibir os valores">
                     <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                       Despesas</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800" style="color: #dc3545 !important;">
-                      <span *ngIf="lancamentosFinanceiros$" style="margin-right: 5%;"> R$
-                        {{lancamentosFinanceiros$.vlTotalDespesas}}</span>
-                      <span *ngIf="lancamentosFinanceiros$.statusSaldoMes == 'Negativo'">
-                        <i class="fas fa-caret-up me-1 pisca"></i>
-                      </span>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"
+                      style="color: #dc3545 !important; margin-right: 5%; padding: 0% 0% 2% 0%;">
+                      <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
+                        R$ {{ lancamentosFinanceiros$.vlTotalDespesas }}
+                      </ng-container>
                     </div>
                   </div>
 
@@ -131,6 +135,21 @@
                     <i class="fas fa-calendar fa-2x text-gray-300"
                       title="Saldo inicial do Mês (Despesas): {{lancamentosFinanceiros$.vlSaldoInicialMes}} R$"></i>
                   </div>
+                </div>
+
+                <div class="progress" style="height: 12px;">
+                  <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
+                    <div class="progress-bar bg-danger" role="progressbar"
+                      [style.width]="lancamentosFinanceiros$.pcUtilizacaoDespesasMes"
+                      [attr.aria-valuenow]="lancamentosFinanceiros$.pcUtilizacaoDespesasMes" aria-valuemin="0"
+                      aria-valuemax="100" [ngClass]="{
+        'bg-success': removerPorcentagem(lancamentosFinanceiros$.pcUtilizacaoDespesasMes) < 50,
+        'bg-warning': removerPorcentagem(lancamentosFinanceiros$.pcUtilizacaoDespesasMes) >= 50 && removerPorcentagem(lancamentosFinanceiros$.pcUtilizacaoDespesasMes) < 80,
+        'bg-danger': removerPorcentagem(lancamentosFinanceiros$.pcUtilizacaoDespesasMes) >= 80
+      }">
+                      {{ lancamentosFinanceiros$.pcUtilizacaoDespesasMes }}
+                    </div>
+                  </ng-container>
                 </div>
               </div>
             </div>
@@ -141,13 +160,16 @@
             <div class="card border-left-pendente shadow h-100 py-0">
               <div class="card-body">
                 <div class="row no-gutters align-items-center">
-                  <div class="col mr-1">
+                  <div class="col mr-1" (click)="ocultarExibirValores()" style="cursor: pointer;"
+                    title="Clique para Ocultar\Exibir os valores">
                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1"
                       style="color: #c99806!important;">
                       Á Pagar</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800" style="color: #c99806!important;">
-                      <span *ngIf="lancamentosFinanceiros$"> R$
-                        {{lancamentosFinanceiros$.vlTotalPendentePagamento}}</span>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"
+                      style="color: #c99806!important;font-size: 22px;font-family: sans-serif;padding: 2% 0%;">
+                      <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
+                        R$ {{ lancamentosFinanceiros$.vlTotalPendentePagamento }}
+                      </ng-container>
                     </div>
                   </div>
                   <div class="col-auto">
@@ -163,18 +185,27 @@
             <div class="card border-left-disponivel shadow h-100 py-0">
               <div class="card-body">
                 <div class="row no-gutters align-items-center">
-                  <div class="col mr-1">
+                  <div class="col mr-1" (click)="ocultarExibirValores()" style="cursor: pointer;"
+                    title="Clique para Ocultar\Exibir os valores">
                     <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Saldo Disponível
                     </div>
                     <span *ngIf="lancamentosFinanceiros$">
                       <div *ngIf="lancamentosFinanceiros$.statusSaldoMes == 'Negativo'"
-                        class="h5 mb-0 font-weight-bold text-danger pisca">
-                        R$ {{lancamentosFinanceiros$.vlSaldoDisponivelMes}}
+                        class="h5 mb-0 font-weight-bold text-danger pisca" style="
+    font-size: 22px;
+    font-family: sans-serif;
+    padding: 2% 0%;">
+                        <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
+                          R$ {{ lancamentosFinanceiros$.vlSaldoDisponivelMes }}
+                        </ng-container>
                       </div>
 
                       <div *ngIf="lancamentosFinanceiros$.statusSaldoMes == 'Positivo'"
-                        class="h5 mb-0 font-weight-bold text-gray-800" style="color: #17a2b8!important">R$
-                        {{lancamentosFinanceiros$.vlSaldoDisponivelMes}}
+                        class="h5 mb-0 font-weight-bold text-gray-800"
+                        style="color: #17a2b8!important;font-size: 22px;font-family: sans-serif;padding: 2% 0%;">
+                        <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
+                          R$ {{ lancamentosFinanceiros$.vlSaldoDisponivelMes }}
+                        </ng-container>
                       </div>
                     </span>
                   </div>
@@ -185,6 +216,13 @@
               </div>
             </div>
           </div>
+
+          <ng-template #oculto>
+            ****
+          </ng-template>
+          <ng-template #ocultoDescritivo>
+            Neste mês será quitado **/** Despesas Parceladas, Totalizando: ****R$
+          </ng-template>
         </div>
 
         <div class="form-text text-muted labelQuitacaoMes" style="font-size: initial;font-size: 91%;">
@@ -192,7 +230,9 @@
             <i class="fas fa-bullhorn"></i>
           </span>
           <span *ngIf="lancamentosFinanceiros$" (click)="obterDetalhesLabelQuitacaoMes()">
-            {{lancamentosFinanceiros$.labelQuitacaoParcelasMes}}</span>
+            <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else ocultoDescritivo">
+              {{lancamentosFinanceiros$.labelQuitacaoParcelasMes}}</ng-container>
+          </span>
         </div>
       </div>
     </header>
@@ -232,7 +272,9 @@
 
                     <td>
                       <span *ngIf="receitaMap[item.tpStatus]" [class]="receitaMap[item.tpStatus].textClass">
-                        {{ item.vlTotal }}
+                        <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
+                          {{ item.vlTotal }}
+                        </ng-container>
                       </span>
                     </td>
 
@@ -314,13 +356,16 @@
                     <td *ngIf="despesa.tpLinhaSeparacao === 'N'" data-toggle="modal"
                       data-target="#modalDetalheDespesasMensais"
                       (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)">
-                      {{ despesa.svlTotalDespesa }}
+                      <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
+                        {{ despesa.svlTotalDespesa }}
+                      </ng-container>
                     </td>
 
-                    <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'">
-                      <span [ngClass]="getPercentualClass(despesa.statusPercentual)">
-                        <i [ngClass]="getPercentualIcon(despesa.statusPercentual)"></i>
-                        <span>{{ despesa.percentualUtilizacao }}</span>
+                    <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'"
+                      title="Referência (Mês Anterior\Limite): {{despesa.percentualUtilizacao}}">
+                      <span [ngClass]="getPercentualReceitaClass(despesa.statusPercentualReceita)">
+                        <i [ngClass]="getPercentualReceitaIcon(despesa.statusPercentualReceita)"></i>
+                        <span>{{ despesa.percentualReceita }}</span>
                       </span>
                       <span class="text-info" *ngIf="despesa.tpEmprestimo === 'S'">
                         <i class="fa fa-minus"></i>

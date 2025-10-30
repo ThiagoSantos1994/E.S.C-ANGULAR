@@ -61,7 +61,7 @@ body {
 .card-body {
   flex: 1 1 auto;
   /*padding: 1.25rem;*/
-  margin: -4% 2% -3% -2%;
+  margin: -5% 2% -5% -3%;
 }
 
 .card .card-title {

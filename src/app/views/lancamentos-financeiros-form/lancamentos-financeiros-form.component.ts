@@ -45,6 +45,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private eventModalConfirmacao: String = "";
   private mensagemModalConfirmacao: String = "";
   private checkboxesMarcadas: Boolean = false;
+  private exibirValores: Boolean = true;
 
   @ViewChild('modalConfirmacaoExcluirDespesa') modalConfirmacaoExcluirDespesa;
   @ViewChild('modalConfirmacaoEventos') modalConfirmacaoEventos;
@@ -109,6 +110,14 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.despesaRef = res.idDespesa;
       this.carregarCategoriaDespesas(this.despesaRef);
     });
+  }
+
+  ocultarExibirValores(): void {
+    this.exibirValores = !this.exibirValores;
+  }
+
+  removerPorcentagem(valor: string): string {
+    return valor.replace('%', '');
   }
 
   carregarCategoriaDespesas(idDespesa: number) {
@@ -791,6 +800,24 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     return {
       'Baixo': 'fas fa-caret-down me-1',
       'Medio': 'fas fa-caret-down me-1',
+      'Alto': 'fas fa-caret-up me-1',
+      'Altissimo': 'fas fa-caret-up me-1 pisca'
+    }[status] || '';
+  }
+
+  getPercentualReceitaClass(status: string): string {
+    return {
+      'Baixo': 'text-success',
+      'Medio': 'text-warning',
+      'Alto': 'text-danger',
+      'Altissimo': 'text-danger'
+    }[status] || '';
+  }
+
+  getPercentualReceitaIcon(status: string): string {
+    return {
+      'Baixo': 'fas fa-caret-down me-1',
+      'Medio': 'fas fa-caret-up me-1',
       'Alto': 'fas fa-caret-up me-1',
       'Altissimo': 'fas fa-caret-up me-1 pisca'
     }[status] || '';

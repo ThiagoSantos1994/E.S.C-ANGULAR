@@ -10,6 +10,8 @@ export interface LancamentosMensais{
     vlTotalDespesaPendente: number;
     vlTotalDespesaPaga: number;
     percentualUtilizacao: string;
+    percentualReceita: string;
+    statusPercentualReceita: string;
     tpEmprestimo: string;
     tpPoupanca: string;
     tpAnotacao: string;
