@@ -17,6 +17,33 @@ import { LembretesService } from 'src/app/core/services/lembretes.service';
 import { LoginService } from 'src/app/core/services/login.service';
 import { MensagemService } from 'src/app/core/services/mensagem.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ChartComponent,
+  ApexDataLabels,
+  ApexPlotOptions,
+  ApexYAxis,
+  ApexLegend,
+  ApexStroke,
+  ApexXAxis,
+  ApexFill,
+  ApexTooltip
+} from "ng-apexcharts";
+import { RelatorioDespesasReceitas } from 'src/app/core/interfaces/relatorio-despesas-receitas.interface';
+
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  dataLabels: ApexDataLabels;
+  plotOptions: ApexPlotOptions;
+  yaxis: ApexYAxis;
+  xaxis: ApexXAxis;
+  fill: ApexFill;
+  tooltip: ApexTooltip;
+  stroke: ApexStroke;
+  legend: ApexLegend;
+};
 
 @Component({
   selector: 'app-lancamentos-financeiros-form',
@@ -26,6 +53,7 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
 export class LancamentosFinanceirosFormComponent implements OnInit {
   private lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]>;
   private lancamentosMensais: LancamentosMensais[];
+  private relatorioLancamentos: RelatorioDespesasReceitas;
   private categoriaDespesa: CategoriaDespesasResponse;
   private _despesasCheckbox = new BehaviorSubject<LancamentosMensais[]>([]);
 
@@ -47,11 +75,13 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private mensagemModalConfirmacao: String = "";
   private checkboxesMarcadas: Boolean = false;
   private exibirValores: Boolean = true;
+  private chartOptions: any;
 
   @ViewChild('modalConfirmacaoExcluirDespesa', { static: false }) modalConfirmacaoExcluirDespesa;
   @ViewChild('modalConfirmacaoEventos', { static: false }) modalConfirmacaoEventos;
   @ViewChild('modalCategoriaDetalheDespesa', { static: false }) modalCategoriaDetalheDespesa;
   @ViewChild('modalAutenticacaoUsuario', { static: false }) modalAutenticacaoUsuario;
+  @ViewChild("chart", { static: false }) chart: ChartComponent;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -115,9 +145,83 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.getLancamentosFinanceiros(mes, ano).subscribe((res: any) => {
       this.lancamentosFinanceiros$ = res;
       this.lancamentosMensais = res.lancamentosMensais;
+      this.relatorioLancamentos = res.relatorioDespesasReceitas;
       this.despesaRef = res.idDespesa;
       this.carregarCategoriaDespesas(this.despesaRef);
+      this.carregarGrafico();
     });
+  }
+
+  carregarGrafico() {
+    let receitas = this.relatorioLancamentos.receitas;
+    let despesas = this.relatorioLancamentos.despesas;
+    let mesReferencia = this.relatorioLancamentos.meses;
+
+    this.chartOptions = {
+      chart: {
+        type: "bar",
+        height: 310
+      },
+      series: [
+        {
+          name: "Receita",
+          data: receitas
+        },
+        {
+          name: "Despesa",
+          data: despesas
+        }
+      ],
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          columnWidth: "75%",
+          endingShape: "flat"
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function (val) {
+          return "R$ " + val.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
+        },
+        style: {
+          fontSize: "11px",
+          colors: ["#fcebebff"]
+        }
+      },
+      stroke: {
+        show: true,
+        width: 1,
+        colors: ["transparent"]
+      },
+      xaxis: {
+        categories: mesReferencia
+      },
+      yaxis: {
+        title: {
+          text: "Despesa x Receita"
+        }
+      },
+      fill: {
+        opacity: 1,
+        colors: [
+          function ({ seriesIndex }) {
+            return seriesIndex === 0 ? "#008FFB" : "#FF0000"; // Receita = azul, Despesa = vermelho
+          }
+        ]
+      },
+      tooltip: {
+        y: {
+          formatter: function (val) {
+            return "R$ " + val;
+          }
+        }
+      }
+    };
+
   }
 
   ocultarExibirValores(): void {

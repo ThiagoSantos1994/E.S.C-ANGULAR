@@ -1,5 +1,6 @@
 import { DespesasFixasMensais } from "./despesas-fixas-mensais.interface";
 import { LancamentosMensais } from "./lancamentos-mensais.interface";
+import { RelatorioDespesasReceitas } from "./relatorio-despesas-receitas.interface";
 
 export interface LancamentosFinanceiros{
     idDespesa: number,
@@ -13,6 +14,7 @@ export interface LancamentosFinanceiros{
     pcUtilizacaoDespesasMes: string;
     labelQuitacaoParcelasMes: string;
     statusSaldoMes: string;
+    relatorioDespesasReceitas: RelatorioDespesasReceitas[];
     despesasFixasMensais: DespesasFixasMensais[];
     lancamentosMensais: LancamentosMensais[];
 }

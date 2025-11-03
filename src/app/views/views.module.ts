@@ -16,6 +16,7 @@ import { NotFoundComponent } from "./not-found/not-found.component";
 import { LembretesFormComponent } from "./lembretes-form/lembretes-form.component";
 import { ConsolidacoesDespesasFormComponent } from "./consolidacoes-despesas-form/consolidacoes-despesas-form.component";
 import { MensagensFormComponent } from "./mensagens-form/mensagens-form.component";
+import { NgApexchartsModule } from "ng-apexcharts";
 
 @NgModule({
     declarations: [
@@ -37,7 +38,8 @@ import { MensagensFormComponent } from "./mensagens-form/mensagens-form.componen
         RouterModule,
         FormsModule,
         NgxMaskModule.forChild(),
-        CurrencyMaskModule
+        CurrencyMaskModule,
+        NgApexchartsModule
     ]
 })
 

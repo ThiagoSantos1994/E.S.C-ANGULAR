@@ -437,3 +437,8 @@ input:focus {
     opacity: 1;
   }
 }
+
+#chart {
+  max-width: 650px;
+  margin: 45px auto;
+}
