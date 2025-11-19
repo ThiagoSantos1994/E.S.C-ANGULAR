@@ -227,7 +227,7 @@ export class LembretesFormComponent implements OnInit {
   carregarMonitorLembretes(abrirMonitor: boolean, eventClick: boolean) {
     this.service.getMonitorLembretes().subscribe((res: any) => {
       this.tituloLembretes$ = res;
-      if (res.length > 0 || eventClick == true) {
+      if (res.length > 0 && eventClick == true) {
         this.resetMonitorLembretesObservable();
         this.setMonitorLembretesObservable(res, false);
 

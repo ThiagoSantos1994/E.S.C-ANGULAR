@@ -336,7 +336,7 @@
                       <td>
                         <span
                           *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao == 0">
-                          <div style="width: 590px">
+                          <div style="width: 570px">
                             <span *ngIf="detalheDespesa.tpReprocessar !== 'S' && detalheDespesa.tpAnotacao !== 'S'">
                               <input type="text" class="form-control form-control-sm text-center"
                                 (input)="onChangeDescricaoDespesa($event.target.value, detalheDespesa)"
@@ -361,14 +361,14 @@
                         <span
                           *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada !== 0 && detalheDespesa.idConsolidacao == 0">
                           <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
-                            <div style="width: 590px; color: #040c6bab" data-toggle="modal"
+                            <div style="width: 570px; color: #040c6bab" data-toggle="modal"
                               data-target="#modalDespesasParceladas"
                               (click)="abrirModalCadastroDespesasParceladas(detalheDespesa)">
                               <b title="Despesa Parcelada">{{detalheDespesa.dsTituloDespesa}}</b>
                             </div>
                           </span>
                           <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
-                            <div style="width: 590px; color: #bdbdbd">
+                            <div style="width: 570px; color: #bdbdbd">
                               {{detalheDespesa.dsTituloDespesa}}
                             </div>
                           </span>
@@ -384,7 +384,7 @@
                                   style="padding: 0% 1%;"></i>
                                 {{detalheDespesa.dsTituloDespesa}}</b>
                             </div>-->
-                            <div style="width: 590px; color: #055551ab"
+                            <div style="width: 570px; color: #055551ab"
                               (click)="obterExtratoDespesaConsolidada(detalheDespesa)">
                               <b title="Despesa Consolidada"> <i class="fa fa-object-group" aria-hidden="true"
                                   style="padding: 0% 1%;"></i>
@@ -392,7 +392,7 @@
                             </div>
                           </span>
                           <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
-                            <div style="width: 590px; color: #bdbdbd"
+                            <div style="width: 570px; color: #bdbdbd"
                               (click)="obterExtratoDespesaConsolidada(detalheDespesa)">
                               <i class="fa fa-object-group" aria-hidden="true"></i> {{detalheDespesa.dsTituloDespesa}}
                             </div>
@@ -418,7 +418,7 @@
                       </td>
 
                       <td>
-                        <div style="width: 100px">
+                        <div style="width: 92px">
                           <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
                             <select class="form-control form-control-sm"
                               (change)="onChangeStatusPagamentoDetalhe($event.target.value, detalheDespesa)"
@@ -594,7 +594,7 @@
 
                   <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
                     role="button" (click)="addNovaLinhaDetalheDespesa()" id="buttonNovaLinha">
-                    <i class="fas fa-bars"></i> Nova Linha
+                    <i class="fa fa-arrows-v"></i> Nova Linha
                   </button>
                 </span>
               </span>

@@ -79,11 +79,11 @@ body {
 }
 
 .table-receita {
-  width: 110%;
-  max-width: 107%;
+  width: 115%;
+  max-width: 110%;
   margin-bottom: 1rem;
   background-color: #f8f9fa;
-  font-size: 93%;
+  font-size: 90%;
 }
 
 .table-categorias {
@@ -98,8 +98,8 @@ body {
   width: 100%;
   max-width: 100%;
   margin-bottom: 1rem;
+  font-size: 97%;
   background-color: #f8f9fa;
-
 }
 
 .table-detalhe-despesas {

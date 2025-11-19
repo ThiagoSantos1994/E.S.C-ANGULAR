@@ -34,16 +34,33 @@ export class ConsolidacaoService {
   }
 
   getTitulosConsolidacao(isBaixado: boolean): Observable<TituloConsolidacaoResponse[]> {
-    let carregar = (isBaixado ? true : false);
-    return this.http.get<TituloConsolidacaoResponse[]>(`springboot-esc-backend/api/consolidacao/obterTituloConsolidacoes/${this.sessao.getIdLogin()}/${carregar}`)
-      .pipe(map((response) => { return response }),
-        catchError(this.handleError));
+    const params = {
+      idFuncionario: this.sessao.getIdLogin().toString(),
+      tpBaixado: isBaixado.toString()
+    };
+
+    return this.http.get<TituloConsolidacaoResponse[]>(
+      'springboot-esc-backend/api/consolidacao/obterTituloConsolidacoes',
+      { params }
+    ).pipe(
+      map(response => response),
+      catchError(this.handleError)
+    );
   }
 
   getDetalhesConsolidacao(idConsolidacao: number): Observable<Consolidacao> {
-    return this.http.get<Consolidacao>(`springboot-esc-backend/api/consolidacao/consultar/${idConsolidacao}/${this.sessao.getIdLogin()}`)
-      .pipe(map((response) => { return response }),
-        catchError(this.handleError));
+    const params = {
+      idConsolidacao: idConsolidacao.toString(),
+      idFuncionario: this.sessao.getIdLogin().toString()
+    };
+
+    return this.http.get<Consolidacao>(
+      'springboot-esc-backend/api/consolidacao/consultar',
+      { params }
+    ).pipe(
+      map(response => response),
+      catchError(this.handleError)
+    );
   }
 
   gravarConsolidacao(request: Consolidacao) {

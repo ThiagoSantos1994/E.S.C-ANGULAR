@@ -407,7 +407,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("buttonAdiarParcelas")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("buttonDesfazerAdiamentoFluxoParcelas")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("checkVisualizarParcelasConsolidadas")).disabled = isBloqueado;
-    (<HTMLInputElement>document.getElementById("checkReprocessarDespesasNaoParceladas")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("checkReprocessarDespesasNaoParceladas")).disabled = true;
   }
 
   bloquearControlesNovaDespesa(isBloqueado: boolean) {
@@ -419,7 +419,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("buttonDesfazerAdiamentoFluxoParcelas")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("buttonOrdenarRegistros")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("checkVisualizarParcelasConsolidadas")).disabled = isBloqueado;
-    (<HTMLInputElement>document.getElementById("checkReprocessarDespesasNaoParceladas")).disabled = isBloqueado;
+    (<HTMLInputElement>document.getElementById("checkReprocessarDespesasNaoParceladas")).disabled = true;
     (<HTMLInputElement>document.getElementById("buttonAssociarDespesaExistente")).disabled = isBloqueado;
   }
 

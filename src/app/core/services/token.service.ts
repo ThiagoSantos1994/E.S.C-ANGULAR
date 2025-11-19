@@ -31,9 +31,17 @@ export class TokenService {
     }
 
     validarSessao(): Observable<StringResponse> {
-        return this.http.get<StringResponse>(`springboot-esc-backend/api/sessao/validar/${this.getIdLogin()}`)
-            .pipe(map((response) => { return response }),
-                catchError(this.handleError));
+        const params = {
+            idFuncionario: this.getIdLogin().toString()
+        };
+
+        return this.http.get<StringResponse>(
+            'springboot-esc-backend/api/sessao/validar',
+            { params }
+        ).pipe(
+            map(response => response),
+            catchError(this.handleError)
+        );
     }
 
     getToken() {

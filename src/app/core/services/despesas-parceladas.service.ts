@@ -34,22 +34,57 @@ export class DespesasParceladasService {
   }
 
   getNomeDespesasParceladas(isDespesasEmAberto: boolean): Observable<TituloDespesaResponse> {
-    let carregar = (isDespesasEmAberto ? "default" : "fechado");
-    return this.http.get<TituloDespesaResponse>(`springboot-esc-backend/api/despesasParceladas/obterListaDespesas/${this.sessao.getIdLogin()}/${carregar}`)
-      .pipe(map((response) => { return response }),
-        catchError(this.handleError));
+    const params = {
+      idFuncionario: this.sessao.getIdLogin().toString(),
+      status: isDespesasEmAberto ? 'default' : 'fechado'
+    };
+
+    return this.http.get<TituloDespesaResponse>(
+      'springboot-esc-backend/api/despesasParceladas/obterListaDespesas',
+      { params }
+    ).pipe(
+      map(response => response),
+      catchError(this.handleError)
+    );
   }
 
   getDetalhesDespesaParcelada(idDespesaParcelada: number): Observable<DespesaParceladaResponse> {
-    return this.http.get<DespesaParceladaResponse>(`springboot-esc-backend/api/v2/despesasParceladas/consultar/${idDespesaParcelada}/${this.sessao.getIdLogin()}/false`)
-      .pipe(map((response) => { return response }),
-        catchError(this.handleError));
+    const params = {
+      idDespesaParcelada: idDespesaParcelada.toString(),
+      idFuncionario: this.sessao.getIdLogin().toString(),
+      isPendentes: 'false'
+    };
+
+    return this.http.get<DespesaParceladaResponse>(
+      'springboot-esc-backend/api/v2/despesasParceladas/consultar',
+      { params }
+    ).pipe(
+      map(response => response),
+      catchError(this.handleError)
+    );
   }
 
-  gerarFluxoParcelas(idDespesaParcelada: number, valorParcela: String, qtdeParcelas: number, dataReferencia: string): Observable<DespesaParceladaResponse> {
-    return this.http.get<DespesaParceladaResponse>(`springboot-esc-backend/api/v2/despesasParceladas/gerarFluxoParcelas/${idDespesaParcelada}/${valorParcela}/${qtdeParcelas}/${dataReferencia}/${this.sessao.getIdLogin()}`)
-      .pipe(map((response) => { return response }),
-        catchError(this.handleError));
+  gerarFluxoParcelas(
+    idDespesaParcelada: number,
+    valorParcela: string,
+    qtdeParcelas: number,
+    dataReferencia: string
+  ): Observable<DespesaParceladaResponse> {
+    const params = {
+      idDespesaParcelada: idDespesaParcelada.toString(),
+      valorParcela: valorParcela,
+      qtdeParcelas: qtdeParcelas.toString(),
+      dataReferencia: dataReferencia,
+      idFuncionario: this.sessao.getIdLogin().toString()
+    };
+
+    return this.http.get<DespesaParceladaResponse>(
+      'springboot-esc-backend/api/v2/despesasParceladas/gerarFluxoParcelas',
+      { params }
+    ).pipe(
+      map(response => response),
+      catchError(this.handleError)
+    );
   }
 
   gravarDespesa(request: Despesa) {
@@ -65,13 +100,28 @@ export class DespesasParceladasService {
   }
 
   excluirDespesa(idDespesaParcelada: number) {
-    return this.http.post(`springboot-esc-backend/api/despesasParceladas/excluir/${idDespesaParcelada}/${this.sessao.getIdLogin()}`, {}).pipe(
+    const params = {
+      idDespesaParcelada: idDespesaParcelada.toString(),
+      idFuncionario: this.sessao.getIdLogin().toString()
+    };
+
+    const url = 'springboot-esc-backend/api/despesasParceladas/excluir';
+
+    return this.http.delete(url, { params }).pipe(
       catchError(error => this.handleError(error))
     );
   }
 
   quitarDespesa(idDespesaParcelada: number, valorQuitacao: string) {
-    return this.http.post(`springboot-esc-backend/api/despesasParceladas/quitar/${idDespesaParcelada}/${this.sessao.getIdLogin()}/${valorQuitacao}`, {}).pipe(
+    const params = {
+      idDespesaParcelada: idDespesaParcelada.toString(),
+      idFuncionario: this.sessao.getIdLogin().toString(),
+      valorQuitacao: valorQuitacao
+    };
+
+    const url = 'springboot-esc-backend/api/despesasParceladas/quitar';
+
+    return this.http.post(url, {}, { params }).pipe(
       catchError(error => this.handleError(error))
     );
   }
@@ -83,15 +133,32 @@ export class DespesasParceladasService {
   }
 
   obterSubTotalDespesasEmAberto(): Observable<StringResponse> {
-    return this.http.get<StringResponse>(`springboot-esc-backend/api/despesasParceladas/obterCalculoValorTotalPendente/${this.sessao.getIdLogin()}`)
-      .pipe(map((response) => { return response }),
-        catchError(this.handleError));
+    const params = {
+      idFuncionario: this.sessao.getIdLogin().toString()
+    };
+
+    return this.http.get<StringResponse>(
+      'springboot-esc-backend/api/despesasParceladas/obterCalculoValorTotalPendente',
+      { params }
+    ).pipe(
+      map(response => response),
+      catchError(this.handleError)
+    );
   }
 
   getParcelasParaAmortizacao(idDespesaParcelada: number): Observable<Parcelas[]> {
-    return this.http.get<Parcelas[]>(`springboot-esc-backend/api/despesasParceladas/obterParcelasParaAmortizacao/${idDespesaParcelada}/${this.sessao.getIdLogin()}`)
-      .pipe(map((response) => { return response }),
-        catchError(this.handleError));
+    const params = {
+      idDespesaParcelada: idDespesaParcelada.toString(),
+      idFuncionario: this.sessao.getIdLogin().toString()
+    };
+
+    return this.http.get<Parcelas[]>(
+      'springboot-esc-backend/api/despesasParceladas/obterParcelasParaAmortizacao',
+      { params }
+    ).pipe(
+      map(response => response),
+      catchError(this.handleError)
+    );
   }
 
   private handleError(error: HttpErrorResponse) {

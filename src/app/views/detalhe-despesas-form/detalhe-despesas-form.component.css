@@ -116,7 +116,7 @@
     /* -webkit-box-pack: end; */
     -ms-flex-pack: end;
     justify-content: flex-start;
-    padding: 0.5rem;
+    padding: 0% 1% 0% 1%;
     border-top: 0px solid #e9ecef;
     margin-left: -2%;
   }
@@ -343,7 +343,7 @@
     padding-left: 2%;
     padding-right: 2%;
   }
-  
+
   .modalAssociarDespesaMensalExistente-body {
     padding-left: 2%;
     padding-right: 2%;

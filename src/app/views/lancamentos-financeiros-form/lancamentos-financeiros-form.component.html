@@ -419,7 +419,7 @@
                     <br>
                     <span *ngIf="lancamentosFinanceiros$">
                       <div *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
-                        <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -2% -12% -2% -16%">
+                        <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -1% 0% -6% -5%">
                           <div class="alert alert-primary" style="margin: 0% 10% 1% 11%;" role="alert">
                             <i class="fa fa-calendar-o" aria-hidden="true"></i>
                             Nenhuma despesa existente neste mês.
@@ -427,7 +427,7 @@
                         </div>
                       </div>
 
-                      <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -1% 0% 0% -5%;">
+                      <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -1% 0% -6% -5%;">
                         <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes !='0,00'">
                           <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3; padding-left: 6%;
     padding-right: 6%;" role="button" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
@@ -448,7 +448,7 @@
                           </button>
                           <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a; padding-left: 6%;
     padding-right: 6%;" href="#!" role="button" (click)="onNovaLinhaSeparacao()">
-                            <i class="fas fa-bars" title="Adicionar nova linha em branco"></i>
+                            <i class="fa fa-arrows-v" title="Adicionar nova linha em branco"></i>
                           </button>
                         </span>
                       </div>

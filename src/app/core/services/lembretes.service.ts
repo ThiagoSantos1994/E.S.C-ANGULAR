@@ -33,26 +33,57 @@ export class LembretesService {
   }
 
   getDetalheLembrete(idLembrete: number): Observable<DetalheLembrete> {
-    return this.http.get<DetalheLembrete>(`springboot-esc-backend/api/lembretes/detalhe/${idLembrete}/${this.sessao.getIdLogin()}`)
-      .pipe(map((response) => { return response }),
-        catchError(this.handleError));
+    const params = {
+      idLembrete: idLembrete.toString(),
+      idFuncionario: this.sessao.getIdLogin().toString()
+    };
+
+    return this.http.get<DetalheLembrete>(
+      'springboot-esc-backend/api/lembretes/detalhe',
+      { params }
+    ).pipe(
+      map(response => response),
+      catchError(this.handleError)
+    );
   }
 
   getMonitorLembretes(): Observable<TituloLembretes> {
-    return this.http.get<TituloLembretes>(`springboot-esc-backend/api/lembretes/monitor/${this.sessao.getIdLogin()}`)
-      .pipe(map((response) => { return response }),
-        catchError(this.handleError));
+    const params = {
+      idFuncionario: this.sessao.getIdLogin().toString()
+    };
+
+    return this.http.get<TituloLembretes>(
+      'springboot-esc-backend/api/lembretes/monitor',
+      { params }
+    ).pipe(
+      map(response => response),
+      catchError(this.handleError)
+    );
   }
 
   getTituloLembretes(isLembreteEmAberto: boolean): Observable<TituloLembretes> {
-    let carregar = (isLembreteEmAberto ? "true" : "false");
-    return this.http.get<TituloLembretes>(`springboot-esc-backend/api/lembretes/obterTituloLembretes/${this.sessao.getIdLogin()}/${isLembreteEmAberto}`)
-      .pipe(map((response) => { return response }),
-        catchError(this.handleError));
+    const params = {
+      idFuncionario: this.sessao.getIdLogin().toString(),
+      tpBaixado: isLembreteEmAberto.toString()
+    };
+
+    return this.http.get<TituloLembretes>(
+      'springboot-esc-backend/api/lembretes/obterTituloLembretes',
+      { params }
+    ).pipe(
+      map(response => response),
+      catchError(this.handleError)
+    );
   }
 
-  baixarLembreteMonitor(tipoBaixa: String, request: TituloLembretes[]) {
-    return this.http.post(`springboot-esc-backend/api/lembretes/monitor/baixar/${tipoBaixa}`, request).pipe(
+  baixarLembreteMonitor(tipoBaixa: string, request: TituloLembretes[]) {
+    const params = {
+      tipoBaixa: tipoBaixa
+    };
+
+    const url = 'springboot-esc-backend/api/lembretes/monitor/baixar';
+
+    return this.http.post(url, request, { params }).pipe(
       catchError(error => this.handleError(error))
     );
   }
