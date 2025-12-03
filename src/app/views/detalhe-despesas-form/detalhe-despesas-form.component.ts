@@ -254,6 +254,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       idOrdemExibicao: null,
       idFuncionario: Number(this.sessao.getIdLogin()),
       idEmprestimo: null,
+      idConsolidacao: 0,
       tpReprocessar: 'N',
       tpEmprestimo: 'N',
       tpPoupanca: 'N',
@@ -269,6 +270,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       tpReferenciaSaldoMesAnterior: 'N',
       tpVisualizacaoTemp: 'N',
       tpDespesaCompartilhada: 'N',
+      tpDespesaConsolidacao: 'N',
       isNovaDespesa: true
     }
 

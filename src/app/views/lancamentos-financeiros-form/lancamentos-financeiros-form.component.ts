@@ -62,6 +62,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private modalCriarEditarReceitaForm: FormGroup;
   private modalParametrizacaoForm: FormGroup;
   private modalAutenticacaoForm: FormGroup;
+  private modalConsolidacaoDespesasMensaisForm: FormGroup;
   private modalRef: BsModalRef;
 
   private despesaRef: number;
@@ -81,6 +82,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   @ViewChild('modalConfirmacaoEventos', { static: false }) modalConfirmacaoEventos;
   @ViewChild('modalCategoriaDetalheDespesa', { static: false }) modalCategoriaDetalheDespesa;
   @ViewChild('modalAutenticacaoUsuario', { static: false }) modalAutenticacaoUsuario;
+  @ViewChild('modalConsolidacaoDespesasMensais', { static: false }) modalConsolidacaoDespesasMensais;
   @ViewChild("chart", { static: false }) chart: ChartComponent;
 
   constructor(
@@ -112,6 +114,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.modalAutenticacaoForm = this.formBuilder.group({
       usuario: [],
       senha: []
+    });
+
+    this.modalConsolidacaoDespesasMensaisForm = this.formBuilder.group({
+      nomeConsolidacao: []
     });
 
     this.quantidadeTentativasAutenticacao = 2; // 3 tentativas para bloqueio
@@ -232,6 +238,9 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     return valor.replace('%', '');
   }
 
+  teste() {
+    alert('chegou aqui')
+  }
   carregarCategoriaDespesas(idDespesa: number) {
     if (this.despesaRefCategoria == null) {
       this.despesaRefCategoria = idDespesa;
@@ -446,11 +455,14 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   confirmDesfazerQuitacaoDespesas() {
     let despesas = this.getDespesasCheckedSemLinhaSeparacao();
 
+    this.iniciarSpinner();
     this.lancamentosService.desfazerPagamentoDespesa(despesas).toPromise().then(() => {
+      this.fecharSpinner();
       this.closeModal();
       this.carregarDespesas();
     },
       err => {
+        this.fecharSpinner();
         console.log(err);
       });
   }
@@ -486,11 +498,14 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   confirmQuitarDespesas() {
     let despesas = this.getDespesasCheckedSemLinhaSeparacao();
 
+    this.iniciarSpinner();
     this.lancamentosService.processarPagamentoDespesa(despesas).toPromise().then(() => {
+      this.fecharSpinner();
       this.closeModal();
       this.carregarDespesas();
     },
       err => {
+        this.fecharSpinner();
         console.log(err);
       });
   }
@@ -516,6 +531,64 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.gravarDespesa(request);
   }
 
+  onNovaDespesaConsolidacao() {
+    let despesas = this.getDespesasChecked();
+
+    if (despesas.length === 0) {
+      this.modalRef = this.modalService.show(this.modalConsolidacaoDespesasMensais);
+    } else {
+      // Realiza a associação das despesas marcadas a despesa de consolidacao (para agrupar)
+      let despesasConsolidacaoMarcadas = this.getDespesasConsolidacaoChecked();
+
+      if (despesasConsolidacaoMarcadas.length <= 0) {
+        this.mensagens.enviarMensagem("Necessário selecionar um grupo.", TipoMensagem.Alerta);
+        return;
+      }
+
+      if (despesasConsolidacaoMarcadas.length > 1) {
+        this.mensagens.enviarMensagem("Selecione somente uma despesa de agrupamento por vez.", TipoMensagem.Alerta);
+        return;
+      }
+
+      let despesasMarcadas = this.getDespesasCheckedSemConsolidacao();
+      if (despesasMarcadas.length <= 0) {
+        this.mensagens.enviarMensagem("Selecione uma ou mais despesas para agrupar.", TipoMensagem.Generica);
+        return;
+      } else {
+        this.processarConsolidarDespesas(despesasMarcadas.length);
+      }
+    }
+  }
+
+  processarConsolidarDespesas(qtdeItems: number) {
+    this.eventModalConfirmacao = "ConsolidarDespesas";
+    this.mensagemModalConfirmacao = "Deseja agrupar a(s) " + qtdeItems + " despesa(s) selecionada(s) ?";
+
+    this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
+  }
+
+  confirmExecutarConsolidacao() {
+    this.iniciarSpinner();
+
+    let despesaConsolidacaoId = this.getDespesasConsolidacaoChecked()[0].idConsolidacao;
+    let despesasElegiveis = this.getDespesasCheckedSemConsolidacao();
+
+    this.detalheService.associarDespesasConsolidacao(despesaConsolidacaoId, despesasElegiveis).toPromise().then(() => {
+      this.mensagens.enviarMensagem("Agrupamento concluido com sucesso!", TipoMensagem.Sucesso);
+    },
+      err => {
+        console.log(err);
+        return;
+      });
+    err => {
+      console.log(err);
+      return;
+    };
+
+    this.fecharSpinner();
+    this.carregarDespesas();
+  }
+
   onNovaDespesa() {
     if (null == this.despesaRef) {
       this.mensagens.enviarMensagem("Necessário primeiro criar uma nova receita.", TipoMensagem.Generica);
@@ -528,6 +601,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let novaDespesa: DespesaMensal = {
       idDespesa: this.despesaRef,
       idDetalheDespesa: idDetalheDespesa,
+      idConsolidacao: 0,
       dsTituloDespesa: "",
       dsNomeDespesa: "",
       dsExtratoDespesa: "Para salvar esta despesa, é necessário digitar a Descrição da Despesa e Limite Despesa.",
@@ -552,6 +626,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       tpReferenciaSaldoMesAnterior: 'N',
       tpVisualizacaoTemp: 'N',
       tpDespesaCompartilhada: 'N',
+      tpDespesaConsolidacao: 'N',
       isNovaDespesa: true
     }
 
@@ -575,6 +650,24 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     } else {
       this.modalRef = this.modalService.show(this.modalConfirmacaoExcluirDespesa);
     }
+  }
+
+  confirmCriarConsolidacao() {
+    let nome = this.modalConsolidacaoDespesasMensaisForm.get('nomeConsolidacao').value;
+
+    if (nome == null || nome == "") {
+      this.mensagens.enviarMensagem("Necessário digitar o nome do grupo.", TipoMensagem.Generica);
+      return;
+    }
+
+    // cria uma nova despesa de consolidação
+    let request = this.obterNovaDespesaObjeto(-1);
+    request.dsTituloDespesa = nome;
+    request.dsNomeDespesa = nome;
+    request.tpDespesaConsolidacao = 'S';
+
+    this.closeModal();
+    this.gravarDespesa(request);
   }
 
   confirmValidarAutenticidade() {
@@ -771,6 +864,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
         this.confirmExecutarBackup();
         break;
       }
+      case 'ConsolidarDespesas': {
+        this.confirmExecutarConsolidacao();
+        break;
+      }
       default: {
       }
     }
@@ -815,8 +912,16 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     return this._despesasCheckbox.getValue().filter((d) => d.checked === true);
   }
 
+  getDespesasConsolidacaoChecked() {
+    return this._despesasCheckbox.getValue().filter((d) => d.checked === true && d.tpDespesaConsolidacao === 'S');
+  }
+
   getDespesasCheckedSemLinhaSeparacao() {
     return this._despesasCheckbox.getValue().filter((d) => d.checked === true && d.tpLinhaSeparacao == 'N');
+  }
+
+  getDespesasCheckedSemConsolidacao() {
+    return this._despesasCheckbox.getValue().filter((d) => d.checked === true && d.tpLinhaSeparacao == 'N' && d.tpDespesaConsolidacao === 'N');
   }
 
   resetDespesasCheckbox() {

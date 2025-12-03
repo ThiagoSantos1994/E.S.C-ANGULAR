@@ -41,6 +41,11 @@ import { NgApexchartsModule } from "ng-apexcharts";
         CurrencyMaskModule,
         NgApexchartsModule
     ]
+    ,
+    entryComponents: [
+        DetalheDespesasFormComponent 
+    ]
+
 })
 
 export class ViewsModule { }

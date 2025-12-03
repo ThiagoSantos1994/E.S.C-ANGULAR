@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -197,25 +197,17 @@ export class LancamentosFinanceirosService {
   }
 
   processarPagamentoDespesa(despesas: LancamentosMensais[]) {
-    const params = {
-      idFuncionario: this.sessao.getIdLogin().toString()
-    };
+    const url = 'springboot-esc-backend/api/lancamentosFinanceiros/baixarPagamentoDespesa';
 
-    const url = 'springboot-esc-backend/api/v2/lancamentosFinanceiros/baixarPagamentoDespesa';
-
-    return this.http.post(url, despesas, { params }).pipe(
+    return this.http.post(url, despesas).pipe(
       catchError(error => this.handleError(error))
     );
   }
 
   desfazerPagamentoDespesa(despesas: LancamentosMensais[]) {
-    const params = {
-      idFuncionario: this.sessao.getIdLogin().toString()
-    };
-
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/desfazerPagamentoDespesa';
 
-    return this.http.post(url, despesas, { params }).pipe(
+    return this.http.post(url, despesas).pipe(
       catchError(error => this.handleError(error))
     );
   }
@@ -229,6 +221,16 @@ export class LancamentosFinanceirosService {
   gravarDespesaMensal(despesa: DespesaMensal) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/incluir`;
     return this.http.post(url, despesa).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  consolidarDespesasMensais(idConsolidacao: number, despesas: DespesaMensal[]) {
+    const params = new HttpParams().set('idConsolidacao', idConsolidacao.toString());
+
+    const url = 'springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/consolidacao/associar';
+
+    return this.http.post(url, despesas, { params }).pipe(
       catchError(error => this.handleError(error))
     );
   }

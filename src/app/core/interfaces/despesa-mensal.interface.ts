@@ -1,6 +1,7 @@
 export interface DespesaMensal {
     idDespesa: number;
     idDetalheDespesa: number;
+    idConsolidacao?: number;
     dsTituloDespesa?: string;
     dsNomeDespesa?: string;
     dsExtratoDespesa?: string;
@@ -22,6 +23,7 @@ export interface DespesaMensal {
     tpRelatorio?: string;
     tpDebitoCartao?: string;
     tpEmprestimoAPagar?: string;
+    tpDespesaConsolidacao?: string;
     tpReferenciaSaldoMesAnterior?: string;
     tpVisualizacaoTemp?: string;
     tpDespesaCompartilhada?: string;

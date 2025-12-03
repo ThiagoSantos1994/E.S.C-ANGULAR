@@ -133,7 +133,8 @@
 
                   <div class="col-auto">
                     <i class="fas fa-calendar fa-2x text-gray-300"
-                      title="Saldo inicial do Mês (Despesas): {{lancamentosFinanceiros$.vlSaldoInicialMes}} R$"></i>
+                      title="Saldo inicial do Mês (Despesas): {{lancamentosFinanceiros$?.vlSaldoInicialMes}} R$">
+                    </i>
                   </div>
                 </div>
 
@@ -376,6 +377,8 @@
                       (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)">
                       <span [style.color]="getTituloColor(despesa)">
                         {{ despesa.dsTituloDespesa }}
+                        <i *ngIf="despesa.tpDespesaConsolidacao === 'S'" class="fa fa-object-group ml-2"
+                          aria-hidden="true"></i>
                       </span>
                     </td>
 
@@ -394,7 +397,7 @@
 
                     <td class="text-left">
                       <button type="button" class="btn btn-link btn-sm px-0"
-                        [disabled]="despesa.tpLinhaSeparacao === 'S'"
+                        [disabled]="despesa.tpLinhaSeparacao === 'S' || despesa.tpDespesaConsolidacao === 'S'"
                         [attr.data-toggle]="despesa.tpLinhaSeparacao === 'N' ? 'modal' : null"
                         [attr.data-target]="despesa.tpLinhaSeparacao === 'N' ? '#modalDetalheDespesasMensais' : null"
                         (click)="despesa.tpLinhaSeparacao === 'N' && carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)"
@@ -434,21 +437,30 @@
                             (click)="onNovaDespesa()">
                             <i class="fas fa-plus" title="Adicionar uma nova despesa"></i>
                           </button>
+
                           <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569; padding-left: 6%;
     padding-right: 6%;" href="#!" role="button" (click)="onExcluirDespesa()">
                             <i class="fas fa-trash-alt" title="Excluir despesa(s) selecionada(s)"></i>
                           </button>
+
                           <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069; padding-left: 6%;
     padding-right: 6%;" href="#!" role="button" (click)="onQuitarDespesa()">
                             <i class="far fa-calendar-check" title="Quitar pagamento despesa(s) selecionada(s)"></i>
                           </button>
+
                           <button class="btn text-white" data-mdb-ripple-init style="background-color: #709977; padding-left: 6%;
     padding-right: 6%;" href="#!" role="button" (click)="onDesfazerQuitacaoDespesa()">
                             <i class="far fa-calendar-times" title="Desfazer pagamento despesa(s) selecionada(s)"></i>
                           </button>
-                          <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a; padding-left: 6%;
-    padding-right: 6%;" href="#!" role="button" (click)="onNovaLinhaSeparacao()">
+
+                          <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a; padding-left: 3%;
+    padding-right: 3%;" href="#!" role="button" (click)="onNovaLinhaSeparacao()">
                             <i class="fa fa-arrows-v" title="Adicionar nova linha em branco"></i>
+                          </button>
+
+                          <button class="btn text-white" data-mdb-ripple-init style="background-color: #2e0808; padding-left: 2%;
+    padding-right: 2%;" href="#!" role="button" (click)="onNovaDespesaConsolidacao()">
+                            <i class="fa fa-object-group" title="Agrupar despesas (consolidação)"></i>
                           </button>
                         </span>
                       </div>
@@ -637,7 +649,6 @@
           </div>
         </div>
       </div>
-
     </body>
 
     <!------------------------  Modal Autenticacao ------------------------>
@@ -678,6 +689,38 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal"
           (click)="confirmValidarAutenticidade()">Confirmar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Cancelar</button>
+      </div>
+    </ng-template>
+
+
+    <!------------------------  Modal Criar Grupo Consolidacao ------------------------>
+    <ng-template #modalConsolidacaoDespesasMensais>
+      <div class="modal-header">
+        <h6 class="modal-title">
+          <i class="fa fa-object-group" style="font-size: 130%;" aria-hidden="true"></i>
+          Criar novo grupo de despesas (consolidação)
+        </h6>
+        <br>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="modalConsolidacaoDespesasMensaisForm">
+          <div class="input-group form-group">
+            <input type="text" formControlName="nomeConsolidacao" class="form-control" placeholder="Ex: Cartões">
+          </div>
+        </form>
+        <small class="form-text" style="font-size: revert; color: #b90c0c!important">
+          <i class="fa fa-info-circle" aria-hidden="true"></i>
+          Não será permitido editar o nome do grupo após a criação.
+        </small>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal"
+          (click)="confirmCriarConsolidacao()">Criar</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Cancelar</button>
       </div>
     </ng-template>

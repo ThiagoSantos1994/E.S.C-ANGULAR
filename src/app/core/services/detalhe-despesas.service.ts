@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { DetalheDespesasMensaisDomain } from '../domain/detalhe-despesas-mensais.domain';
+import { TipoMensagem } from '../enums/tipo-mensagem-enums';
 import { ChaveKey } from '../interfaces/chave-key.interface';
 import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
 import { Parcelas } from '../interfaces/despesa-parcelada-response.interface';
@@ -12,10 +13,9 @@ import { ObservacoesDetalheDespesaRequest } from '../interfaces/observacoes-deta
 import { PagamentoDespesasRequest } from '../interfaces/pagamento-despesas-request.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
 import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
+import { MensagemService } from './mensagem.service';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { MensagemService } from './mensagem.service';
-import { TipoMensagem } from '../enums/tipo-mensagem-enums';
 
 @Injectable({
   providedIn: 'root'
@@ -123,11 +123,11 @@ export class DetalheDespesasService {
     exibirConsolidacao: Boolean
   ): Observable<DetalheLancamentosMensais> {
     const params = {
-      idDespesa: idDespesa.toString(),
-      idDetalheDespesa: idDetalheDespesa.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString(),
-      ordem: ordemExibicao.toString(),
-      visualizarConsolidacao: exibirConsolidacao.toString()
+      idDespesa: idDespesa ? idDespesa.toString() : '',
+      idDetalheDespesa: idDetalheDespesa ? idDetalheDespesa.toString() : '',
+      idFuncionario: this.sessao.getIdLogin() ? this.sessao.getIdLogin().toString() : '',
+      ordem: ordemExibicao ? ordemExibicao.toString() : '0',
+      visualizarConsolidacao: exibirConsolidacao ? exibirConsolidacao.toString() : 'false'
     };
 
     return this.http.get<DetalheLancamentosMensais>(
@@ -430,7 +430,7 @@ export class DetalheDespesasService {
       idConsolidacao: idConsolidacao.toString()
     };
 
-    const url = 'springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/consolidacao/associar';
+    const url = 'springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/consolidacao/associar';
 
     return this.http.post(url, despesas, { params }).pipe(
       catchError(error => this.handleError(error))

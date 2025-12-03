@@ -3,6 +3,8 @@ export interface LancamentosMensais{
     idDetalheDespesa: number;
     idOrdemExibicao: number;
     idEmprestimo: number;
+    idConsolidacao: number;
+    idFuncionario: number;
     dsTituloDespesa: string;
     dsNomeDespesa: string;
     vlLimite: string;
@@ -13,6 +15,7 @@ export interface LancamentosMensais{
     percentualReceita: string;
     statusPercentualReceita: string;
     tpEmprestimo: string;
+    tpEmprestimoAPagar: string;
     tpPoupanca: string;
     tpAnotacao: string;
     tpDebitoAutomatico: string;
@@ -23,5 +26,6 @@ export interface LancamentosMensais{
     tpRelatorio: string;
     tpReferenciaSaldoMesAnterior: string;
     tpDespesaCompartilhada: string;
+    tpDespesaConsolidacao: string;
     checked?: boolean;
 }
