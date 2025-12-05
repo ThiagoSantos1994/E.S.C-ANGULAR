@@ -354,9 +354,12 @@
                       </label>
                     </th>
 
-                    <td *ngIf="despesa.tpLinhaSeparacao === 'N'" data-toggle="modal"
-                      data-target="#modalDetalheDespesasMensais"
-                      (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)">
+                    <td *ngIf="despesa.tpLinhaSeparacao === 'N'"
+                      [attr.data-toggle]="despesa.tpLinhaSeparacao === 'N' && despesa.tpDespesaConsolidacao === 'N' ? 'modal' : null"
+                      [attr.data-target]="despesa.tpLinhaSeparacao === 'N' && despesa.tpDespesaConsolidacao === 'N' ? '#modalDetalheDespesasMensais' : null"
+                      (click)="despesa.tpDespesaConsolidacao === 'N' 
+              ? carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao) 
+              : carregarDespesasConsolidadas(despesa.idDespesa, despesa.idConsolidacao)">
                       <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
                         {{ despesa.svlTotalDespesa }}
                       </ng-container>
@@ -373,8 +376,12 @@
                       </span>
                     </td>
 
-                    <td class="font-weight-bold" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
-                      (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)">
+                    <td class="font-weight-bold"
+                      [attr.data-toggle]="despesa.tpLinhaSeparacao === 'N' && despesa.tpDespesaConsolidacao === 'N' ? 'modal' : null"
+                      [attr.data-target]="despesa.tpLinhaSeparacao === 'N' && despesa.tpDespesaConsolidacao === 'N' ? '#modalDetalheDespesasMensais' : null"
+                      (click)="despesa.tpDespesaConsolidacao === 'N' 
+              ? carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao) 
+              : carregarDespesasConsolidadas(despesa.idDespesa, despesa.idConsolidacao)">
                       <span [style.color]="getTituloColor(despesa)">
                         {{ despesa.dsTituloDespesa }}
                         <i *ngIf="despesa.tpDespesaConsolidacao === 'S'" class="fa fa-object-group ml-2"
@@ -693,6 +700,130 @@
       </div>
     </ng-template>
 
+    <!------------------------  Modal Exibir Despesas Consolidadas ------------------------>
+    <ng-template #modalExibirDespesasConsolidadas>
+      <div class="modal-content" style="width: 155%;margin: -1% -25%;font-family: 'Calibri', sans-serif !important;">
+        <div class="modal-header">
+          <h6 class="modal-title">
+            <i class="fa fa-object-group" style="font-size: 130%;" aria-hidden="true"></i>
+            Visualização Despesas Mensais (Agrupadas)
+          </h6>
+          <br>
+          <button type="button" class="close" (click)="fecharModalExibirDespesasConsolidadas()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="table-despesas-consolidadas-view">
+          <table class="table" id="tableDespesasMensais">
+            <thead class="thead-light">
+              <tr>
+                <th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label="" style="width: 19.8889px;">
+                  <form [formGroup]="checkDespesasForm" *ngIf="lancamentosMensaisConsolidados">
+                    <input type="checkbox" formControlName="checkMarcarTodasDespesas" name="despesa[]"
+                      onclick="marcarTodasDespesas(this)" (click)="onMarcarDesmarcarCheckBoxes()">
+                  </form>
+                </th>
+                <th scope="col">Total R$</th>
+                <th scope="col">%</th>
+                <th scope="col">Descrição Despesa</th>
+                <th scope="col">STATUS</th>
+                <th scope="col">PAGO R$</th>
+              </tr>
+            </thead>
+
+            <tbody *ngIf="lancamentosMensaisConsolidados">
+              <tr *ngFor="let despesa of lancamentosMensaisConsolidados">
+                <th>
+                  <label class="checkbox-wrap checkbox-primary">
+                    <input type="checkbox" name="despesa[]"
+                      (click)="onCheckDespesaChange($event.target.checked, despesa)">
+                    <span class="checkmark"></span>
+                  </label>
+                </th>
+
+                <td *ngIf="despesa.tpLinhaSeparacao === 'N'" data-toggle="modal"
+                  data-target="#modalDetalheDespesasMensais"
+                  (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)">
+                  <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
+                    {{ despesa.svlTotalDespesa }}
+                  </ng-container>
+                </td>
+
+                <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'"
+                  title="Referência (Mês Anterior\Limite): {{despesa.percentualUtilizacao}}">
+                  <span [ngClass]="getPercentualReceitaClass(despesa.statusPercentualReceita)">
+                    <i [ngClass]="getPercentualReceitaIcon(despesa.statusPercentualReceita)"></i>
+                    <span>{{ despesa.percentualReceita }}</span>
+                  </span>
+                  <span class="text-info" *ngIf="despesa.tpEmprestimo === 'S'">
+                    <i class="fa fa-minus"></i>
+                  </span>
+                </td>
+
+                <td class="font-weight-bold" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
+                  (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)">
+                  <span [style.color]="getTituloColor(despesa)">
+                    {{ despesa.dsTituloDespesa }}
+                  </span>
+                </td>
+
+                <td>
+                  <ng-container *ngFor="let badge of getBadges(despesa)">
+                    <span class="badge badge-info rounded-pill d-inline" [style.background-color]="badge.color">
+                      {{ badge.label }} <i *ngIf="badge.icon" [class]="badge.icon"></i>
+                    </span>
+                  </ng-container>
+                </td>
+
+                <td>{{ despesa.svlTotalDespesaPaga }}</td>
+                <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
+                <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
+              </tr>
+            </tbody>
+
+            <tr>
+              <th></th>
+              <td colspan="7">
+                <br>
+                <span *ngIf="lancamentosFinanceiros$">
+                  <div *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
+                    <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -1% 0% -6% -5%">
+                      <div class="alert alert-primary" style="margin: 0% 10% 1% 11%;" role="alert">
+                        <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                        Nenhuma despesa existente neste mês.
+                      </div>
+                    </div>
+                  </div>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn text-white mx-3" data-mdb-ripple-init style="background-color: #ee5569; padding-left: 6%;
+    padding-right: 6%;" href="#!" role="button" (click)="onExcluirDespesa()">
+            <i class="fas fa-trash-alt" title="Excluir despesa(s) selecionada(s)"></i>
+          </button>
+
+          <button class="btn text-white mx-3" data-mdb-ripple-init style="background-color: #58c069; padding-left: 6%;
+    padding-right: 6%;" href="#!" role="button" (click)="onQuitarDespesa()">
+            <i class="far fa-calendar-check" title="Quitar pagamento despesa(s) selecionada(s)"></i>
+          </button>
+
+          <button class="btn text-white mx-3" data-mdb-ripple-init style="background-color: #709977; padding-left: 6%;
+    padding-right: 6%;" href="#!" role="button" (click)="onDesfazerQuitacaoDespesa()">
+            <i class="far fa-calendar-times" title="Desfazer pagamento despesa(s) selecionada(s)"></i>
+          </button>
+
+          <!--<button class="btn text-white mx-3" data-mdb-ripple-init style="background-color: #2e0808; padding-left: 2%;
+    padding-right: 2%;" href="#!" role="button" (click)="onNovaDespesaConsolidacao()">
+            <i class="fa fa-object-group" title="Agrupar despesas (consolidação)"></i>
+          </button>-->
+        </div>
+      </div>
+    </ng-template>
 
     <!------------------------  Modal Criar Grupo Consolidacao ------------------------>
     <ng-template #modalConsolidacaoDespesasMensais>
@@ -710,7 +841,8 @@
       <div class="modal-body">
         <form [formGroup]="modalConsolidacaoDespesasMensaisForm">
           <div class="input-group form-group">
-            <input type="text" formControlName="nomeConsolidacao" class="form-control" placeholder="Ex: Cartões">
+            <input type="text" id="nomeConsolidacao" formControlName="nomeConsolidacao" class="form-control"
+              placeholder="Ex: Cartões" onkeyup="toUpper(this)">
           </div>
         </form>
         <small class="form-text" style="font-size: revert; color: #b90c0c!important">
@@ -721,7 +853,8 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal"
           (click)="confirmCriarConsolidacao()">Criar</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeModal()">Cancelar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+          (click)="closeModalConsolidacaoDespesasMensais()">Cancelar</button>
       </div>
     </ng-template>
 

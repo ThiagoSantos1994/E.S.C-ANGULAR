@@ -53,6 +53,7 @@ export type ChartOptions = {
 export class LancamentosFinanceirosFormComponent implements OnInit {
   private lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]>;
   private lancamentosMensais: LancamentosMensais[];
+  private lancamentosMensaisConsolidados: LancamentosMensais[];
   private relatorioLancamentos: RelatorioDespesasReceitas;
   private categoriaDespesa: CategoriaDespesasResponse;
   private _despesasCheckbox = new BehaviorSubject<LancamentosMensais[]>([]);
@@ -64,6 +65,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   private modalAutenticacaoForm: FormGroup;
   private modalConsolidacaoDespesasMensaisForm: FormGroup;
   private modalRef: BsModalRef;
+  private modalRefConsolidacaoDespesasMensais: BsModalRef;
+  private modalRefExibirDespesasConsolidadas: BsModalRef;
 
   private despesaRef: number;
   private despesaRefCategoria: number;
@@ -83,6 +86,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   @ViewChild('modalCategoriaDetalheDespesa', { static: false }) modalCategoriaDetalheDespesa;
   @ViewChild('modalAutenticacaoUsuario', { static: false }) modalAutenticacaoUsuario;
   @ViewChild('modalConsolidacaoDespesasMensais', { static: false }) modalConsolidacaoDespesasMensais;
+  @ViewChild('modalExibirDespesasConsolidadas', { static: false }) modalExibirDespesasConsolidadas;
   @ViewChild("chart", { static: false }) chart: ChartComponent;
 
   constructor(
@@ -140,6 +144,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   carregarDespesas() {
     this.receitaSelecionada = null;
     this.resetDespesasCheckbox();
+    if (this.modalRefExibirDespesasConsolidadas) {
+      this.fecharModalExibirDespesasConsolidadas();
+    }
+
     this.carregarLancamentosFinanceiros();
     this.sessaoService.validarSessao();
   }
@@ -151,6 +159,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.getLancamentosFinanceiros(mes, ano).subscribe((res: any) => {
       this.lancamentosFinanceiros$ = res;
       this.lancamentosMensais = res.lancamentosMensais;
+      this.lancamentosMensaisConsolidados = null;
       this.relatorioLancamentos = res.relatorioDespesasReceitas;
       this.despesaRef = res.idDespesa;
       this.carregarCategoriaDespesas(this.despesaRef);
@@ -238,9 +247,15 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     return valor.replace('%', '');
   }
 
-  teste() {
-    alert('chegou aqui')
+  carregarDespesasConsolidadas(idDespesa: string, idDespesaConsolidacao: string) {
+    this.modalRefExibirDespesasConsolidadas = undefined;
+
+    this.lancamentosService.getLancamentosMensaisConsolidados(idDespesa, idDespesaConsolidacao).subscribe((res: any) => {
+      this.lancamentosMensaisConsolidados = res;
+      this.modalRefExibirDespesasConsolidadas = this.modalService.show(this.modalExibirDespesasConsolidadas);
+    });
   }
+
   carregarCategoriaDespesas(idDespesa: number) {
     if (this.despesaRefCategoria == null) {
       this.despesaRefCategoria = idDespesa;
@@ -535,7 +550,9 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let despesas = this.getDespesasChecked();
 
     if (despesas.length === 0) {
-      this.modalRef = this.modalService.show(this.modalConsolidacaoDespesasMensais);
+      this.modalConsolidacaoDespesasMensaisForm.get('nomeConsolidacao').reset();
+      this.modalRefConsolidacaoDespesasMensais = this.modalService.show(this.modalConsolidacaoDespesasMensais);
+      setarFocoCampo("nomeConsolidacao");
     } else {
       // Realiza a associação das despesas marcadas a despesa de consolidacao (para agrupar)
       let despesasConsolidacaoMarcadas = this.getDespesasConsolidacaoChecked();
@@ -558,6 +575,11 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
         this.processarConsolidarDespesas(despesasMarcadas.length);
       }
     }
+  }
+
+  closeModalConsolidacaoDespesasMensais(): void {
+    this.modalRefConsolidacaoDespesasMensais.hide();
+    this.modalRefConsolidacaoDespesasMensais = undefined;
   }
 
   processarConsolidarDespesas(qtdeItems: number) {
@@ -666,7 +688,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     request.dsNomeDespesa = nome;
     request.tpDespesaConsolidacao = 'S';
 
-    this.closeModal();
+    this.closeModalConsolidacaoDespesasMensais();
     this.gravarDespesa(request);
   }
 
@@ -930,7 +952,16 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   /* -------------- Modal Detalhe Despesas Mensais -------------- */
   carregarDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
+    if (this.modalRefExibirDespesasConsolidadas) {
+      this.fecharModalExibirDespesasConsolidadas();
+    }
+
     this.detalheService.enviaMensagem(idDespesa, idDetalheDespesa, ordemExibicao, Number(this.sessaoService.getIdLogin()), this.pesquisaForm.get('cbMes').value, this.pesquisaForm.get('cbAno').value);
+  }
+
+  fecharModalExibirDespesasConsolidadas() {
+    this.modalRefExibirDespesasConsolidadas.hide();
+    this.modalRefExibirDespesasConsolidadas = undefined;
   }
 
   /* -------------- Metodos Gerais -------------- */

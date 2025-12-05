@@ -58,6 +58,21 @@ export class LancamentosFinanceirosService {
     );
   }
 
+  getLancamentosMensaisConsolidados(idDespesa: string, idConsolidacao: string): Observable<LancamentosMensais[]> {
+    const params = new HttpParams()
+      .set('idDespesa', idDespesa)
+      .set('idConsolidacao', idConsolidacao)
+      .set('idFuncionario', this.sessao.getIdLogin());
+
+    return this.http.get<LancamentosMensais[]>(
+      'springboot-esc-backend/api/lancamentosMensais/consolidados/consultar',
+      { params }
+    ).pipe(
+      map(response => response),
+      catchError(this.handleError)
+    );
+  }
+
   getConfiguracaoLancamentos(): Observable<ConfiguracaoLancamentos> {
     const params = {
       idFuncionario: this.sessao.getIdLogin()
