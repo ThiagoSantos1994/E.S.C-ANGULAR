@@ -430,7 +430,7 @@ export class DetalheDespesasService {
       idConsolidacao: idConsolidacao.toString()
     };
 
-    const url = 'springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/consolidacao/associar';
+    const url = 'springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/consolidacao/associar';
 
     return this.http.post(url, despesas, { params }).pipe(
       catchError(error => this.handleError(error))

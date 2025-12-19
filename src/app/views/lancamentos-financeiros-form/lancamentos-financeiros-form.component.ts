@@ -454,6 +454,28 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       });
   }
 
+  onRemoveDespesaConsolidada() {
+    let despesas = this.getDespesasChecked();
+
+    if (despesas.length === 0) {
+      this.mensagens.enviarMensagem("Necessário marcar alguma despesa para desassociar.", TipoMensagem.Generica);
+      return;
+    }
+
+    despesas.forEach((despesa) => {
+      this.lancamentosService.desassociarDespesasConsolidacao(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idConsolidacao).toPromise().then(() => {
+      },
+        err => {
+          console.log(err);
+          return;
+        });
+    })
+
+    this.closeModal();
+    this.carregarDespesas();
+    this.mensagens.enviarMensagem("Despesa(s) desassociadas com sucesso!", TipoMensagem.Generica);
+  }
+
   onDesfazerQuitacaoDespesa() {
     let despesas = this.getDespesasCheckedSemLinhaSeparacao();
 

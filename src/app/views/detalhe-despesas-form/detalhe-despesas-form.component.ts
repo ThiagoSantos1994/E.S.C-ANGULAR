@@ -1457,8 +1457,8 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   confirmAlterarTituloDespesa() {
     let nomeDespesa = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
-
-    this.lancamentosService.editarTituloDespesa(this.detalheRef, nomeDespesa).subscribe(res => {
+    
+    this.lancamentosService.editarTituloDespesa(this.detalheRef, nomeDespesa, this.anoRef).subscribe(res => {
       this.mensagem.enviarMensagem("Titulo alterado com sucesso!", TipoMensagem.Sucesso);
       this.recarregarDetalheDespesa();
     },

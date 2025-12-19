@@ -183,6 +183,21 @@ export class LancamentosFinanceirosService {
     );
   }
 
+  desassociarDespesasConsolidacao(idDespesa: number, idDetalheDespesa: number, idConsolidacao: number) {
+    const params = {
+      idDespesa: idDespesa.toString(),
+      idDetalheDespesa: idDetalheDespesa.toString(),
+      idConsolidacao: idConsolidacao.toString(),
+      idFuncionario: this.sessao.getIdLogin().toString()
+    };
+
+    const url = 'springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/consolidacao/desassociar';
+
+    return this.http.post(url, {}, { params }).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   processarImportacaoLancamentos(idDespesa: number, dsMes: number, dsAno: number) {
     const params = {
       idDespesa: idDespesa.toString(),
@@ -250,11 +265,12 @@ export class LancamentosFinanceirosService {
     );
   }
 
-  editarTituloDespesa(idDetalheDespesa: number, tituloDespesa: string) {
+  editarTituloDespesa(idDetalheDespesa: number, tituloDespesa: string, anoReferencia: string) {
     const params = {
       idDetalheDespesa: idDetalheDespesa.toString(),
       idFuncionario: this.sessao.getIdLogin().toString(),
-      novoTituloDespesa: tituloDespesa
+      novoTituloDespesa: tituloDespesa,
+      anoReferencia: anoReferencia
     };
 
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/alterarTituloDespesa';

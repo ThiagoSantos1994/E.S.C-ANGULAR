@@ -104,7 +104,7 @@ export class MensagensFormComponent implements OnInit {
 
     setTimeout(() => {
       this.closeModal();
-    }, 2500);
+    }, 1500);
   }
 
   showModalTransparente(mensagem: Mensagem) {
@@ -114,7 +114,7 @@ export class MensagensFormComponent implements OnInit {
 
     setTimeout(() => {
       this.closeModal();
-    }, 2500);
+    }, 1500);
   }
 
   showModalSpinner() {
