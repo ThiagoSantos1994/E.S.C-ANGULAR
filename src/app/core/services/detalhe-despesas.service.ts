@@ -282,12 +282,13 @@ export class DetalheDespesasService {
     );
   }
 
-  validarDuplicidadeTituloDespesa(idDespesa: number, idDetalheDespesa: number, tituloDespesa: string): Observable<StringResponse> {
+  validarDuplicidadeTituloDespesa(idDespesa: number, idDetalheDespesa: number, tituloDespesa: string, anoReferencia: number): Observable<StringResponse> {
     const params = {
       idDespesa: idDespesa.toString(),
       idDetalheDespesa: idDetalheDespesa.toString(),
       idFuncionario: this.sessao.getIdLogin().toString(),
-      tituloDespesa: tituloDespesa
+      tituloDespesa: tituloDespesa,
+      anoReferencia : anoReferencia.toString()
     };
 
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/validaTituloDespesaDuplicado';

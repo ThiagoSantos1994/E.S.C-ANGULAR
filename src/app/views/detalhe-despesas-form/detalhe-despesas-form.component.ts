@@ -850,7 +850,7 @@ export class DetalheDespesasFormComponent implements OnInit {
       despesa.vlLimite = valorLimiteDespesa;
     }
 
-    this.detalheService.validarDuplicidadeTituloDespesa(this.despesaRef, this.detalheRef, despesa.dsNomeDespesa).subscribe(res => {
+    this.detalheService.validarDuplicidadeTituloDespesa(this.despesaRef, this.detalheRef, despesa.dsNomeDespesa, Number(this.anoRef)).subscribe(res => {
       if (res.mensagem !== 'OK') {
         this.mensagem.enviarMensagem(res.mensagem, TipoMensagem.Erro);
         return;
@@ -953,7 +953,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   validarDuplicidadeTituloDespesa(nomeDespesa: string): Boolean {
-    this.detalheService.validarDuplicidadeTituloDespesa(this.despesaRef, this.detalheRef, nomeDespesa).subscribe(res => {
+    this.detalheService.validarDuplicidadeTituloDespesa(this.despesaRef, this.detalheRef, nomeDespesa, Number(this.anoRef)).subscribe(res => {
       if (res.mensagem !== 'OK') {
         this.mensagem.enviarMensagem(res.mensagem, TipoMensagem.Erro);
         return false;
@@ -1457,7 +1457,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   confirmAlterarTituloDespesa() {
     let nomeDespesa = this.modalDetalheDespesasMensaisForm.get('nomeDespesa').value;
-    
+
     this.lancamentosService.editarTituloDespesa(this.detalheRef, nomeDespesa, this.anoRef).subscribe(res => {
       this.mensagem.enviarMensagem("Titulo alterado com sucesso!", TipoMensagem.Sucesso);
       this.recarregarDetalheDespesa();

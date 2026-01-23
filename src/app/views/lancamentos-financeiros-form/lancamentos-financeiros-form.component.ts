@@ -261,8 +261,20 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.despesaRefCategoria = idDespesa;
     }
 
-    if (idDespesa != null) {
+    if (idDespesa != null && idDespesa > -1) {
       this.lancamentosService.getSubTotalCategoriaDespesas(idDespesa).subscribe((res: any) => {
+        res.mesAnoReferencia = "Mês Referência: ".concat(res.mesAnoReferencia); 
+        this.categoriaDespesa = res;
+      },
+        err => {
+          console.log(err);
+        });
+    } else {
+      //Caso retorne -1, indica que é para buscar os lançamentos totais do ano (23/12/2025)
+      let anoRef = this.pesquisaForm.get('cbAno').value;
+
+      this.lancamentosService.getSubTotalAnoCategoriaDespesas(anoRef).subscribe((res: any) => {
+        res.mesAnoReferencia = "ANO - ".concat(anoRef);
         this.categoriaDespesa = res;
       },
         err => {
@@ -277,6 +289,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   visualizarCategoriasMesSeguinte() {
     this.carregarCategoriaDespesas(++this.despesaRefCategoria);
+  }
+
+  onExibirSubTotalAno(checked: any) {
+    this.carregarCategoriaDespesas(checked ? -1 : this.despesaRefCategoria);
   }
 
   carregarConfiguracaoLancamentos() {
@@ -370,6 +386,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     setarFocoCampo('nomeReceita');
   }
+
 
   gravarReceita() {
     if (this.modalCriarEditarReceitaForm.get('tipoReceita').value == "< X >") {
@@ -617,7 +634,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     let despesaConsolidacaoId = this.getDespesasConsolidacaoChecked()[0].idConsolidacao;
     let despesasElegiveis = this.getDespesasCheckedSemConsolidacao();
 
-    this.detalheService.associarDespesasConsolidacao(despesaConsolidacaoId, despesasElegiveis).toPromise().then(() => {
+    this.lancamentosService.consolidarDespesasMensais(despesaConsolidacaoId, despesasElegiveis).toPromise().then(() => {
       this.mensagens.enviarMensagem("Agrupamento concluido com sucesso!", TipoMensagem.Sucesso);
     },
       err => {

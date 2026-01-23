@@ -102,6 +102,21 @@ export class LancamentosFinanceirosService {
     );
   }
 
+  getSubTotalAnoCategoriaDespesas(anoRef: number): Observable<CategoriaDespesasResponse> {
+    const params = {
+      dsAno: anoRef.toString(),
+      idFuncionario: this.sessao.getIdLogin()
+    };
+
+    return this.http.get<CategoriaDespesasResponse>(
+      'springboot-esc-backend/api/lancamentosFinanceiros/categoriaDespesa/subTotal/anual',
+      { params }
+    ).pipe(
+      map(response => response),
+      catchError(this.handleError)
+    );
+  }
+
   atualizarOrdemLinhaReceita(
     idDespesa: number,
     iOrdemAtual: number,
@@ -255,7 +270,7 @@ export class LancamentosFinanceirosService {
     );
   }
 
-  consolidarDespesasMensais(idConsolidacao: number, despesas: DespesaMensal[]) {
+  consolidarDespesasMensais(idConsolidacao: number, despesas: LancamentosMensais[]) {
     const params = new HttpParams().set('idConsolidacao', idConsolidacao.toString());
 
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/consolidacao/associar';
