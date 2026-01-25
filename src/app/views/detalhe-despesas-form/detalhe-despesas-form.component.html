@@ -112,7 +112,7 @@
                   </button>
                 </div>
                 <div class="text-left" style="padding-top: 1%;">
-                  <small class="form-text text-muted" style="font-size: initial;font-size: 87%;">
+                  <small class="form-text text-muted" style="font-size: initial;font-size: 95%;">
                     <i class="fa fa-info-circle" aria-hidden="true"></i>
                     <span *ngIf="detalheLancamentosMensais">
                       <span (click)="obterDetalhesLabelQuitacaoMes()">
@@ -261,7 +261,9 @@
                     </tr>
                   </thead>
                   <tbody *ngIf="detalheLancamentosMensais">
-                    <tr *ngFor="let detalheDespesa of detalheLancamentosMensais.detalheDespesaMensal">
+                    <tr *ngFor="let detalheDespesa of detalheLancamentosMensais.detalheDespesaMensal"
+                      class="linha-editavel"
+                      [ngClass]="{'linha-marcada': detalheDespesa.checked}">
                       <td>
                         <label class="checkbox-wrap checkbox-primary">
                           <input type="checkbox" name="item[]"
@@ -311,14 +313,16 @@
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.tpAnotacao == 'N'">
                           <div contenteditable="false" style="width: 70px" data-toggle="modal"
                             data-target="#modalEditarValores"
-                            (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)">
+                            (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)"
+                            class="linha-editavel">
                             {{ detalheDespesa.vlTotal}}
                           </div>
                         </span>
                         <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
                           <div contenteditable="false" style="width: 70px; color: #bdbdbd;" data-toggle="modal"
                             data-target="#modalEditarValores"
-                            (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)">
+                            (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)"
+                            class="linha-editavel">
                             {{ detalheDespesa.vlTotal}}
                           </div>
                         </span>
@@ -395,7 +399,8 @@
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.tpAnotacao == 'N'">
                           <div contenteditable="false" style="width: 70px" data-toggle="modal"
                             data-target="#modalEditarValores"
-                            (click)="setModalEditarValores(detalheDespesa.vlTotalPago, 'detalheDespColValorTotalPago', detalheDespesa)">
+                            (click)="setModalEditarValores(detalheDespesa.vlTotalPago, 'detalheDespColValorTotalPago', detalheDespesa)"
+                            class="linha-editavel">
                             {{ detalheDespesa.vlTotalPago}}
                           </div>
                         </span>
