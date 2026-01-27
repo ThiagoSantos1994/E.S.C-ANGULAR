@@ -51,6 +51,7 @@ export type ChartOptions = {
   styleUrls: ['./lancamentos-financeiros-form.component.css']
 })
 export class LancamentosFinanceirosFormComponent implements OnInit {
+  public carregando: boolean = false;
   private lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]>;
   private lancamentosMensais: LancamentosMensais[];
   private lancamentosMensaisConsolidados: LancamentosMensais[];
@@ -102,6 +103,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.carregando = true;
     this.carregarConfiguracaoLancamentos();
 
     this.modalCriarEditarReceitaForm = this.formBuilder.group({
@@ -142,6 +144,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   carregarDespesas() {
+    this.carregando = true;
     this.receitaSelecionada = null;
     this.resetDespesasCheckbox();
     if (this.modalRefExibirDespesasConsolidadas) {
@@ -164,6 +167,9 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.despesaRef = res.idDespesa;
       this.carregarCategoriaDespesas(this.despesaRef);
       this.carregarGrafico();
+      this.carregando = false;
+    }, () => {
+      this.carregando = false;
     });
   }
 

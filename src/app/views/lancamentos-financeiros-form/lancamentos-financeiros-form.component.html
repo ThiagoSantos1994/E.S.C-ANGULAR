@@ -1,4 +1,10 @@
 <div class="divContainer">
+  <div *ngIf="carregando" class="loading-overlay">
+    <div class="loading-message">
+      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      Carregando...
+    </div>
+  </div>
 
   <div class="conteudoFixo">
     <header class="header-system-ui">
@@ -691,6 +697,12 @@
     <!------------------------  Modal Exibir Despesas Consolidadas ------------------------>
     <ng-template #modalExibirDespesasConsolidadas>
       <div class="modal-content modal-content-custom">
+        <div *ngIf="carregandoDetalhe" class="loading-overlay">
+          <div class="loading-message">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Carregando...
+          </div>
+        </div>
         <div class="modal-header">
           <h6 class="modal-title">
             <i class="fa fa-object-group icon-object-group" aria-hidden="true"></i>
