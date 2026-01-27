@@ -1,3 +1,11 @@
+/* Aumentar a fonte do modal de alerta genérico do sistema */
+.form-group.modal-body {
+  font-size: 1.15rem !important;
+}
+/* Cursor pointer para linhas das tabelas de receita e despesas */
+.linha-cursor-pointer {
+  cursor: pointer;
+}
 /* Ícone de interrogação dos modais finais */
 .icon-modal-question {
   font-size: 130% !important;
@@ -81,10 +89,6 @@
 /* Margem customizada para grupo de botões de ação */
 .btn-group-margin-custom {
   margin: -1% 0% -6% -5% !important;
-}
-/* Label de quitação do mês com font-size 82% */
-.label-quitacao-mes-82 {
-  font-size: 82% !important;
 }
 /* Header do modal de categorias com padding-block-end: inherit */
 .modal-header-inherit {
@@ -284,11 +288,11 @@ label {
   margin: 0 5px;
 }
 
-.labelQuitacaoMes {
-  padding: 0px 0 1%;
-  font-family: system-ui;
-  font-size: smaller;
-  line-height: 0%;
+ .labelQuitacaoMes {
+   padding: 0px 0 1%;
+   font-family: system-ui;
+   font-size: 13px;
+   line-height: 0%;
 }
 
 .border-left-receita {
@@ -365,7 +369,7 @@ body {
   /* max-width: 100%; */
   margin-bottom: 1rem;
   background-color: #f8f9fa;
-  font-size: 93%;
+  font-size: 88%;
 }
 
 .table-despesas {
@@ -393,6 +397,23 @@ body {
   max-width: 100%;
   margin-bottom: 1rem;
   background-color: #f8f9fa;
+}
+
+/* Animação para piscar o texto do progress-bar quando danger */
+
+/* Piscar apenas o texto dentro do progress-bar quando danger */
+
+.blink-text {
+  animation: fade-text 1s infinite;
+}
+
+@keyframes fade-text {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
 }
 
 .scrollme-detalhe-despesas {

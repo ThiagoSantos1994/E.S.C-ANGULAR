@@ -15,12 +15,12 @@
         <hr>
         <div class="d-grid gap-2 d-md-block btn-group-sm">
           <div class="btn-group mr-2" role="group" aria-label="First group">
-            <button class="btn text-white btn-importacao" data-mdb-ripple-init href="#!"
-              role="button" title="Processar Importação" (click)="processarImportacao()">
+            <button class="btn text-white btn-importacao" data-mdb-ripple-init href="#!" role="button"
+              title="Processar Importação" (click)="processarImportacao()">
               <i class="fa fa-download" aria-hidden="true"></i>
             </button>
-            <button class="btn text-white btn-excluir-tudo" data-mdb-ripple-init href="#!"
-              role="button" title="Excluir Tudo" (click)="excluirTodosLancamentos()">
+            <button class="btn text-white btn-excluir-tudo" data-mdb-ripple-init href="#!" role="button"
+              title="Excluir Tudo" (click)="excluirTodosLancamentos()">
               <i class="fas fa-trash-alt"></i>
             </button>
           </div>
@@ -136,7 +136,9 @@
         'bg-warning': removerPorcentagem(lancamentosFinanceiros$.pcUtilizacaoDespesasMes) >= 50 && removerPorcentagem(lancamentosFinanceiros$.pcUtilizacaoDespesasMes) < 80,
         'bg-danger': removerPorcentagem(lancamentosFinanceiros$.pcUtilizacaoDespesasMes) >= 80
       }">
-                      {{ lancamentosFinanceiros$.pcUtilizacaoDespesasMes }}
+                      <span
+                        [ngClass]="{'blink-text': removerPorcentagem(lancamentosFinanceiros$.pcUtilizacaoDespesasMes) >= 80}">{{
+                        lancamentosFinanceiros$.pcUtilizacaoDespesasMes }}</span>
                     </div>
                   </ng-container>
                 </div>
@@ -240,7 +242,7 @@
                 </thead>
 
                 <tbody *ngIf="lancamentosFinanceiros$">
-                  <tr *ngFor="let item of lancamentosFinanceiros$.despesasFixasMensais">
+                  <tr *ngFor="let item of lancamentosFinanceiros$.despesasFixasMensais" class="linha-cursor-pointer">
                     <td class="text-left">
                       <ng-container *ngIf="receitaMap[item.tpStatus] as status">
                         <span [class]="status.textClass">
@@ -290,8 +292,8 @@
                     <td colspan="8">
                       <br>
                       <div class="d-grid gap-2 d-md-block">
-                        <button class="btn text-white btn-criar-receita" data-toggle="modal" (click)="resetModalCriarEditarReceita()"
-                          data-target="#modalCriarEditarReceita">
+                        <button class="btn text-white btn-criar-receita" data-toggle="modal"
+                          (click)="resetModalCriarEditarReceita()" data-target="#modalCriarEditarReceita">
                           <i class="fas fa-plus"></i>
                           <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes == '0,00'"> Criar Nova Receita
                           </span>
@@ -326,7 +328,7 @@
                 </thead>
 
                 <tbody *ngIf="lancamentosFinanceiros$">
-                  <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais">
+                  <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais" class="linha-cursor-pointer">
                     <th>
                       <label class="checkbox-wrap checkbox-primary">
                         <input type="checkbox" name="despesa[]"
@@ -420,28 +422,33 @@
 
                       <div class="d-grid gap-2 d-md-block btn-group-sm btn-group-margin-custom">
                         <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes !='0,00'">
-                          <button class="btn text-white btn-nova-despesa" data-mdb-ripple-init role="button" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
-                            (click)="onNovaDespesa()">
+                          <button class="btn text-white btn-nova-despesa" data-mdb-ripple-init role="button"
+                            data-toggle="modal" data-target="#modalDetalheDespesasMensais" (click)="onNovaDespesa()">
                             <i class="fas fa-plus" title="Adicionar uma nova despesa"></i>
                           </button>
 
-                          <button class="btn text-white btn-excluir-despesa" data-mdb-ripple-init href="#!" role="button" (click)="onExcluirDespesa()">
+                          <button class="btn text-white btn-excluir-despesa" data-mdb-ripple-init href="#!"
+                            role="button" (click)="onExcluirDespesa()">
                             <i class="fas fa-trash-alt" title="Excluir despesa(s) selecionada(s)"></i>
                           </button>
 
-                          <button class="btn text-white btn-quitar-despesa" data-mdb-ripple-init href="#!" role="button" (click)="onQuitarDespesa()">
+                          <button class="btn text-white btn-quitar-despesa" data-mdb-ripple-init href="#!" role="button"
+                            (click)="onQuitarDespesa()">
                             <i class="far fa-calendar-check" title="Quitar pagamento despesa(s) selecionada(s)"></i>
                           </button>
 
-                          <button class="btn text-white btn-desfazer-quitacao" data-mdb-ripple-init href="#!" role="button" (click)="onDesfazerQuitacaoDespesa()">
+                          <button class="btn text-white btn-desfazer-quitacao" data-mdb-ripple-init href="#!"
+                            role="button" (click)="onDesfazerQuitacaoDespesa()">
                             <i class="far fa-calendar-times" title="Desfazer pagamento despesa(s) selecionada(s)"></i>
                           </button>
 
-                          <button class="btn text-white btn-nova-linha" data-mdb-ripple-init href="#!" role="button" (click)="onNovaLinhaSeparacao()">
+                          <button class="btn text-white btn-nova-linha" data-mdb-ripple-init href="#!" role="button"
+                            (click)="onNovaLinhaSeparacao()">
                             <i class="fa fa-arrows-v" title="Adicionar nova linha em branco"></i>
                           </button>
 
-                          <button class="btn text-white btn-nova-consolidacao" data-mdb-ripple-init href="#!" role="button" (click)="onNovaDespesaConsolidacao()">
+                          <button class="btn text-white btn-nova-consolidacao" data-mdb-ripple-init href="#!"
+                            role="button" (click)="onNovaDespesaConsolidacao()">
                             <i class="fa fa-object-group" title="Agrupar despesas (consolidação)"></i>
                           </button>
                         </span>
@@ -504,7 +511,8 @@
               </div>
             </form>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary btn-modal-salvar" data-dismiss="modal" (click)="gravarReceita()">
+              <button type="button" class="btn btn-primary btn-modal-salvar" data-dismiss="modal"
+                (click)="gravarReceita()">
                 <i class="fa fa-floppy-o"></i> Salvar
               </button>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
@@ -541,15 +549,15 @@
                 <div class="modal-categorias-margin">
                   <input class="form-check-input" type="checkbox" formControlName="checkViradaAutomatica"
                     id="chkViradaAutomatica">
-                  <label class="form-check-label" for="chkViradaAutomatica"
-                    class="modal-categorias-label"
+                  <label class="form-check-label" for="chkViradaAutomatica" class="modal-categorias-label"
                     title="Habilita\Desabilita a virada do mês automaticamente na data selecionada de cada mês.">*Habilitar
                     virada
                     automatica.</label>
                 </div>
                 <hr>
                 <div>
-                  <button type="button" class="btn btn-primary btn-modal-backup" data-dismiss="modal" (click)="executarBackup()">
+                  <button type="button" class="btn btn-primary btn-modal-backup" data-dismiss="modal"
+                    (click)="executarBackup()">
                     <i class="fa fa-cloud"></i> Executar Backup
                   </button>
                 </div>
@@ -557,7 +565,8 @@
             </div>
 
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary btn-modal-aplicar" data-dismiss="modal" (click)="gravarParametrizacao()">
+              <button type="button" class="btn btn-primary btn-modal-aplicar" data-dismiss="modal"
+                (click)="gravarParametrizacao()">
                 <i class="fa fa-floppy-o"></i> Aplicar
               </button>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
@@ -612,8 +621,8 @@
             </div>
 
             <div class="font-size-95">
-              <input type="checkbox" formControlName="checkExibirTotalAnual" (click)="onExibirSubTotalAno($event.target.checked)"
-                id="checkExibirTotalAnual">
+              <input type="checkbox" formControlName="checkExibirTotalAnual"
+                (click)="onExibirSubTotalAno($event.target.checked)" id="checkExibirTotalAnual">
               <label class="form-check-label" for="checkExibirTotalAnual"
                 title="Exibir o total das categorias por ano">Exibir Subtotal (Ano)
               </label>
@@ -781,19 +790,23 @@
         </div>
 
         <div class="modal-footer">
-              <button class="btn text-white mx-3 btn-excluir-despesa-final" data-mdb-ripple-init href="#!" role="button" (click)="onExcluirDespesa()">
+          <button class="btn text-white mx-3 btn-excluir-despesa-final" data-mdb-ripple-init href="#!" role="button"
+            (click)="onExcluirDespesa()">
             <i class="fas fa-trash-alt" title="Excluir despesa(s) selecionada(s)"></i>
           </button>
 
-              <button class="btn text-white mx-3 btn-quitar-despesa-final" data-mdb-ripple-init href="#!" role="button" (click)="onQuitarDespesa()">
+          <button class="btn text-white mx-3 btn-quitar-despesa-final" data-mdb-ripple-init href="#!" role="button"
+            (click)="onQuitarDespesa()">
             <i class="far fa-calendar-check" title="Quitar pagamento despesa(s) selecionada(s)"></i>
           </button>
 
-              <button class="btn text-white mx-3 btn-desfazer-quitacao-final" data-mdb-ripple-init href="#!" role="button" (click)="onDesfazerQuitacaoDespesa()">
+          <button class="btn text-white mx-3 btn-desfazer-quitacao-final" data-mdb-ripple-init href="#!" role="button"
+            (click)="onDesfazerQuitacaoDespesa()">
             <i class="far fa-calendar-times" title="Desfazer pagamento despesa(s) selecionada(s)"></i>
           </button>
 
-              <button class="btn text-white mx-3 btn-remove-despesa-consolidada" data-mdb-ripple-init href="#!" role="button" (click)="onRemoveDespesaConsolidada()">
+          <button class="btn text-white mx-3 btn-remove-despesa-consolidada" data-mdb-ripple-init href="#!"
+            role="button" (click)="onRemoveDespesaConsolidada()">
             <i class="fa fa-object-group" title="Remover despesa(s) do grupo (consolidação)"></i>
           </button>
         </div>
