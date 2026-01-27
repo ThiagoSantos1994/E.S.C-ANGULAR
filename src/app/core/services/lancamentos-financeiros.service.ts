@@ -1,6 +1,6 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, throwError } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { LancamentosFinanceirosDomain } from '../domain/lancamentos-financeiros.domain';
 import { CategoriaDespesasResponse } from '../interfaces/categoria-despesa-response.interface';
@@ -10,10 +10,10 @@ import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.inter
 import { LancamentosFinanceiros } from '../interfaces/lancamentos-financeiros.interface';
 import { LancamentosMensais } from '../interfaces/lancamentos-mensais.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
+import { HttpErrorHandlerService } from './http-error-handler.service';
+import { MensagemService } from './mensagem.service';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { MensagemService } from './mensagem.service';
-import { TipoMensagem } from '../enums/tipo-mensagem-enums';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,8 @@ export class LancamentosFinanceirosService {
     private token: TokenService,
     private sessao: SessaoService,
     private mensagemService: MensagemService,
-    private lancamentosFinanceirosDomain: LancamentosFinanceirosDomain
+    private lancamentosFinanceirosDomain: LancamentosFinanceirosDomain,
+    private errorHandler: HttpErrorHandlerService
   ) { }
 
   private subject = new Subject<any>();
@@ -54,7 +55,7 @@ export class LancamentosFinanceirosService {
       tap(res => {
         this.lancamentosFinanceirosDomain.setLancamentos(res);
       }),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -69,7 +70,7 @@ export class LancamentosFinanceirosService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -83,7 +84,7 @@ export class LancamentosFinanceirosService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -98,7 +99,7 @@ export class LancamentosFinanceirosService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -113,7 +114,7 @@ export class LancamentosFinanceirosService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -132,7 +133,7 @@ export class LancamentosFinanceirosService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/alterarOrdemRegistroDespesasFixas';
 
     return this.http.post(url, {}, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -151,21 +152,21 @@ export class LancamentosFinanceirosService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/alterarOrdemRegistroDespesas';
 
     return this.http.post(url, {}, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
   gravarParametrizacao(parametros: ConfiguracaoLancamentos) {
     const url = `springboot-esc-backend/api/parametros/gravar`;
     return this.http.post(url, parametros).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
   gravarReceita(receita: DespesasFixasMensais) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/despesasFixasMensais/gravar`;
     return this.http.post(url, receita).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -179,7 +180,7 @@ export class LancamentosFinanceirosService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/despesasFixasMensais';
 
     return this.http.delete(url, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -194,7 +195,7 @@ export class LancamentosFinanceirosService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais';
 
     return this.http.delete(url, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -209,7 +210,7 @@ export class LancamentosFinanceirosService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/consolidacao/desassociar';
 
     return this.http.post(url, {}, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -224,7 +225,7 @@ export class LancamentosFinanceirosService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/importacao/processamento';
 
     return this.http.post(url, {}, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -237,7 +238,7 @@ export class LancamentosFinanceirosService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros';
 
     return this.http.delete(url, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -245,7 +246,7 @@ export class LancamentosFinanceirosService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/baixarPagamentoDespesa';
 
     return this.http.post(url, despesas).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -253,20 +254,20 @@ export class LancamentosFinanceirosService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/desfazerPagamentoDespesa';
 
     return this.http.post(url, despesas).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
   executarBackup(): Observable<StringResponse> {
     const url = `springboot-esc-backend/api/backup/processar`;
     return this.http.post<StringResponse>(url, {}).pipe(map((response) => { return response }),
-      catchError(this.handleError));
+      catchError(this.errorHandler.handleError));
   }
 
   gravarDespesaMensal(despesa: DespesaMensal) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/incluir`;
     return this.http.post(url, despesa).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -276,7 +277,7 @@ export class LancamentosFinanceirosService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/consolidacao/associar';
 
     return this.http.post(url, despesas, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -291,7 +292,7 @@ export class LancamentosFinanceirosService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/alterarTituloDespesa';
 
     return this.http.post(url, {}, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -306,7 +307,7 @@ export class LancamentosFinanceirosService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -318,30 +319,7 @@ export class LancamentosFinanceirosService {
     const url = 'springboot-esc-backend/api/login/limparDadosTemporarios';
 
     return this.http.delete(url, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    this.fecharSpinner();
-    if (error.error instanceof ErrorEvent) {
-      console.error('Ocorreu um erro:', error.error.message);
-    } else {
-      if (error.error.codigo == 204 || error.error.codigo == 400) {
-        this.mensagemService.enviarMensagem(error.error.mensagem, TipoMensagem.Alerta);
-      } else {
-        this.mensagemService.enviarMensagem("Ops!! Ocorreu um erro no servidor. Tente novamente mais tarde.", TipoMensagem.Erro);
-      }
-      console.error(
-        `Backend codigo de erro ${error.status}, ` +
-        `request foi: ${error.error}` +
-        `mensagem: ${error.error.mensagem}`);
-    }
-
-    return throwError(error);
-  }
-
-  fecharSpinner() {
-    this.mensagemService.enviarMensagem(null, null);
   }
 }

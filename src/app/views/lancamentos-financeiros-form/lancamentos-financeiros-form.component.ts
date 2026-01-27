@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
+import { handleApiError } from 'src/app/core/utils/error-handler.util';
 import { CategoriaDespesasResponse } from 'src/app/core/interfaces/categoria-despesa-response.interface';
 import { ConfiguracaoLancamentos } from 'src/app/core/interfaces/configuracao-lancamentos.interface';
 import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
@@ -168,8 +169,9 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.carregarCategoriaDespesas(this.despesaRef);
       this.carregarGrafico();
       this.carregando = false;
-    }, () => {
+    }, (error) => {
       this.carregando = false;
+      handleApiError(error, this.mensagens, 'Ocorreu um erro ao carregar as informações da despesa, tente novamente mais tarde.');
     });
   }
 
@@ -272,8 +274,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
         res.mesAnoReferencia = "Mês Referência: ".concat(res.mesAnoReferencia); 
         this.categoriaDespesa = res;
       },
-        err => {
-          console.log(err);
+        error => {
+          handleApiError(error, this.mensagens, 'Ocorreu um erro ao carregar o subtotal de categorias de despesas.');
         });
     } else {
       //Caso retorne -1, indica que é para buscar os lançamentos totais do ano (23/12/2025)
@@ -283,8 +285,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
         res.mesAnoReferencia = "ANO - ".concat(anoRef);
         this.categoriaDespesa = res;
       },
-        err => {
-          console.log(err);
+        error => {
+          handleApiError(error, this.mensagens, 'Ocorreu um erro ao carregar o subtotal do ano de categorias de despesas.');
         });
     }
   }
@@ -327,8 +329,9 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.lancamentosMensais = null;
       this.carregarLancamentosFinanceiros();
     },
-      err => {
-        console.log(err);
+      error => {
+        this.carregando = false;
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao carregar os lançamentos financeiros.');
       });
   }
 
@@ -423,8 +426,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.resetModalCriarEditarReceita();
       this.carregarDespesas();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao gravar a receita.');
       });
   }
 
@@ -443,8 +446,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.excluirReceita(receita.idDespesa, receita.idOrdem).toPromise().then(() => {
       this.carregarDespesas();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao excluir a receita.');
       });
   }
 
@@ -452,8 +455,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.atualizarOrdemLinhaReceita(idDespesa, iOrdemAtual, iNovaOrdem).toPromise().then(() => {
       this.carregarDespesas();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao atualizar a ordem da linha de receita.');
       });
   }
 
@@ -463,8 +466,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.carregarDespesas();
       this.mensagens.enviarMensagem("Lançamentos excluido com sucesso!", TipoMensagem.Sucesso);
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao excluir todos os lançamentos.');
       });
   }
 
@@ -472,8 +475,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.atualizarOrdemLinhaDespesa(idDespesa, iOrdemAtual, iNovaOrdem).toPromise().then(() => {
       this.carregarDespesas();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao atualizar a ordem da linha de despesa.');
       });
   }
 
@@ -488,8 +491,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     despesas.forEach((despesa) => {
       this.lancamentosService.desassociarDespesasConsolidacao(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idConsolidacao).toPromise().then(() => {
       },
-        err => {
-          console.log(err);
+        error => {
+          handleApiError(error, this.mensagens, 'Ocorreu um erro ao desassociar a despesa consolidada.');
           return;
         });
     })
@@ -521,9 +524,9 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.closeModal();
       this.carregarDespesas();
     },
-      err => {
+      error => {
         this.fecharSpinner();
-        console.log(err);
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao desfazer o pagamento da despesa.');
       });
   }
 
@@ -535,10 +538,9 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       //TODO - Melhorar modal para mensagens grandes.
       //this.mensagens.enviarMensagem(res.mensagem, TipoMensagem.Generica);
     },
-      err => {
+      error => {
         this.fecharSpinner();
-        console.log(err);
-        this.mensagens.enviarMensagem("Ocorreu um erro ao realizar o Backup, contate o desenvolvedor do sistema.", TipoMensagem.Erro);
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao realizar o Backup, contate o desenvolvedor do sistema.');
       });
   }
 
@@ -564,9 +566,9 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.closeModal();
       this.carregarDespesas();
     },
-      err => {
+      error => {
         this.fecharSpinner();
-        console.log(err);
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao processar o pagamento da despesa.');
       });
   }
 
@@ -643,14 +645,10 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.consolidarDespesasMensais(despesaConsolidacaoId, despesasElegiveis).toPromise().then(() => {
       this.mensagens.enviarMensagem("Agrupamento concluido com sucesso!", TipoMensagem.Sucesso);
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao consolidar as despesas mensais.');
         return;
       });
-    err => {
-      console.log(err);
-      return;
-    };
 
     this.fecharSpinner();
     this.carregarDespesas();
@@ -704,8 +702,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.gravarDespesaMensal(despesa).toPromise().then(() => {
       this.carregarDespesas();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao gravar a despesa mensal.');
       });
   }
 
@@ -766,8 +764,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     despesas.forEach((despesa) => {
       this.lancamentosService.excluirDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao).toPromise().then(() => {
         this.detalheService.excluirDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, -1).toPromise().then(() => { },
-          err => {
-            console.log(err);
+          error => {
+            handleApiError(error, this.mensagens, 'Ocorreu um erro ao excluir o detalhe da despesa.');
             return;
           });
       },
@@ -802,8 +800,9 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
       this.carregarDespesas();
       this.mensagens.enviarMensagem("Processamento concluido com sucesso!", TipoMensagem.Sucesso);
     },
-      err => {
-        console.log(err);
+      error => {
+        this.fecharSpinner();
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao processar a importação de lançamentos.');
       });
   }
 
@@ -817,8 +816,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.gravarParametrizacao(request).toPromise().then(() => {
       this.mensagens.enviarMensagem("Parametros gravados com sucesso!", TipoMensagem.Sucesso);
     },
-      err => {
-        this.mensagens.enviarMensagem("Ocorreu um erro ao gravar as parametrizações, tente novamente mais tarde.", TipoMensagem.Erro);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao gravar as parametrizações, tente novamente mais tarde.');
       });
   }
 
@@ -856,8 +855,8 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.lancamentosService.obterExtratoDespesaQuitacaoMes(this.despesaRef).toPromise().then((res) => {
       alert('CONSULTA DE DESPESAS Á QUITAR: \r\n \r\nValor R$   -   DESCRIÇÃO \r\n \r\n' + res.relatorioDespesas)
     },
-      err => {
-        this.mensagens.enviarMensagem("Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.", TipoMensagem.Erro);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.');
       });
   }
 

@@ -1,15 +1,15 @@
 import { formatDate } from '@angular/common';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, throwError } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ConsolidacaoDespesas } from '../interfaces/consolidacao-despesas.interface';
 import { Consolidacao } from '../interfaces/consolidacao.interface';
 import { TituloConsolidacaoResponse } from '../interfaces/titulo-consolidacao-response.interface';
+import { HttpErrorHandlerService } from './http-error-handler.service';
+import { MensagemService } from './mensagem.service';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { MensagemService } from './mensagem.service';
-import { TipoMensagem } from '../enums/tipo-mensagem-enums';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,8 @@ export class ConsolidacaoService {
     private http: HttpClient,
     private token: TokenService,
     private mensagemService: MensagemService,
-    private sessao: SessaoService
+    private sessao: SessaoService,
+    private errorHandler: HttpErrorHandlerService
   ) { }
 
   private subject = new Subject<any>();
@@ -44,7 +45,7 @@ export class ConsolidacaoService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -59,55 +60,32 @@ export class ConsolidacaoService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
   gravarConsolidacao(request: Consolidacao) {
     return this.http.post(`springboot-esc-backend/api/consolidacao/gravar`, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
   excluirConsolidacao(request: Consolidacao) {
     return this.http.post(`springboot-esc-backend/api/consolidacao/excluir`, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
   associarDespesa(request: ConsolidacaoDespesas) {
     return this.http.post(`springboot-esc-backend/api/consolidacao/despesas/associar`, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
   desassociarDespesa(request: ConsolidacaoDespesas[]) {
     return this.http.post(`springboot-esc-backend/api/consolidacao/despesas/desassociar`, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    this.fecharSpinner();
-    if (error.error instanceof ErrorEvent) {
-      console.error('Ocorreu um erro:', error.error.message);
-    } else {
-      if (error.error.codigo == 204 || error.error.codigo == 400) {
-        this.mensagemService.enviarMensagem(error.error.mensagem, TipoMensagem.Alerta);
-      } else {
-        this.mensagemService.enviarMensagem("Ops!! Ocorreu um erro no servidor. Tente novamente mais tarde.", TipoMensagem.Erro);
-      }
-      console.error(
-        `Backend codigo de erro ${error.status}, ` +
-        `request foi: ${error.error}` +
-        `mensagem: ${error.error.mensagem}`);
-    }
-
-    return throwError(error);
-  }
-
-  fecharSpinner() {
-    this.mensagemService.enviarMensagem(null, null);
   }
 
   getMesAtual() {

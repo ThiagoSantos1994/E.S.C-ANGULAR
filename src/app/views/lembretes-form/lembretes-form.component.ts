@@ -3,7 +3,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { delay } from 'rxjs/operators';
 import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
 import { DetalheLembrete } from 'src/app/core/interfaces/detalhe-lembrete.interface';
 import { TituloLembretes } from 'src/app/core/interfaces/titulo-lembretes.interface';
@@ -11,6 +10,7 @@ import { HomeService } from 'src/app/core/services/home.service';
 import { LembretesService } from 'src/app/core/services/lembretes.service';
 import { MensagemService } from 'src/app/core/services/mensagem.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
+import { handleApiError } from 'src/app/core/utils/error-handler.util';
 
 @Component({
   selector: 'app-lembretes-form',
@@ -559,9 +559,8 @@ export class LembretesFormComponent implements OnInit {
       this.resetCampos();
       this.atualizaStatusLembreteHome();
     },
-      err => {
-        this.mensagens.enviarMensagem("Ocorreu um erro ao excluir o lembrete, tente novamente mais tarde.", TipoMensagem.Erro);
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao excluir o lembrete, tente novamente mais tarde.');
       });
 
     this.closeModal();
@@ -576,9 +575,8 @@ export class LembretesFormComponent implements OnInit {
       this.carregarListaLembretes(false);
       this.atualizaStatusLembreteHome();
     },
-      err => {
-        this.mensagens.enviarMensagem("Ocorreu um erro ao gravar o lembrete, tente novamente mais tarde.", TipoMensagem.Erro);
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao gravar o lembrete, tente novamente mais tarde.');
       });
 
     this.closeModal();

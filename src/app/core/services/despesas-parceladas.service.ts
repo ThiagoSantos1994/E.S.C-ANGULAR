@@ -1,15 +1,15 @@
 import { formatDate } from '@angular/common';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, throwError } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Despesa, DespesaParceladaResponse, Parcelas } from '../interfaces/despesa-parcelada-response.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
 import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
+import { HttpErrorHandlerService } from './http-error-handler.service';
+import { MensagemService } from './mensagem.service';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { MensagemService } from './mensagem.service';
-import { TipoMensagem } from '../enums/tipo-mensagem-enums';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,8 @@ export class DespesasParceladasService {
     private http: HttpClient,
     private token: TokenService,
     private mensagemService: MensagemService,
-    private sessao: SessaoService
+    private sessao: SessaoService,
+    private errorHandler: HttpErrorHandlerService
   ) { }
 
   private subject = new Subject<any>();
@@ -44,7 +45,7 @@ export class DespesasParceladasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -60,7 +61,7 @@ export class DespesasParceladasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -83,19 +84,19 @@ export class DespesasParceladasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
   gravarDespesa(request: Despesa) {
     return this.http.post(`springboot-esc-backend/api/despesasParceladas/gravar`, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
   gravarParcelas(request: Parcelas[]) {
     return this.http.post(`springboot-esc-backend/api/despesasParceladas/parcelas/gravar`, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -108,7 +109,7 @@ export class DespesasParceladasService {
     const url = 'springboot-esc-backend/api/despesasParceladas/excluir';
 
     return this.http.delete(url, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -122,13 +123,13 @@ export class DespesasParceladasService {
     const url = 'springboot-esc-backend/api/despesasParceladas/quitar';
 
     return this.http.post(url, {}, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
   excluirParcela(request: Parcelas[]) {
     return this.http.post(`springboot-esc-backend/api/despesasParceladas/parcelas/excluir/`, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -142,7 +143,7 @@ export class DespesasParceladasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -157,31 +158,8 @@ export class DespesasParceladasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    this.fecharSpinner();
-    if (error.error instanceof ErrorEvent) {
-      console.error('Ocorreu um erro:', error.error.message);
-    } else {
-      if (error.error.codigo == 204 || error.error.codigo == 400) {
-        this.mensagemService.enviarMensagem(error.error.mensagem, TipoMensagem.Alerta);
-      } else {
-        this.mensagemService.enviarMensagem("Ops!! Ocorreu um erro no servidor. Tente novamente mais tarde.", TipoMensagem.Erro);
-      }
-      console.error(
-        `Backend codigo de erro ${error.status}, ` +
-        `request foi: ${error.error}` +
-        `mensagem: ${error.error.mensagem}`);
-    }
-
-    return throwError(error);
-  }
-
-  fecharSpinner() {
-    this.mensagemService.enviarMensagem(null, null);
   }
 
   getMesAtual() {

@@ -1,10 +1,9 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { StringResponse } from '../interfaces/string-response.interface.';
-import { MensagemService } from './mensagem.service';
-import { TipoMensagem } from '../enums/tipo-mensagem-enums';
+import { HttpErrorHandlerService } from './http-error-handler.service';
 
 const KEY_TOKEN = 'tokenID';
 const KEY_ID = 'idLogin';
@@ -16,7 +15,7 @@ export class TokenService {
 
     constructor(
         private http: HttpClient,
-        private mensagemService: MensagemService
+        private errorHandler: HttpErrorHandlerService
     ) { }
 
     hasToken() {
@@ -40,7 +39,7 @@ export class TokenService {
             { params }
         ).pipe(
             map(response => response),
-            catchError(this.handleError)
+            catchError(this.errorHandler.handleError)
         );
     }
 
@@ -65,28 +64,5 @@ export class TokenService {
         window.localStorage.removeItem(KEY_ID);
         window.localStorage.getItem(KEY_USER);
         window.localStorage.getItem(KEY_VALIDAR_SESSAO);
-    }
-
-    private handleError(error: HttpErrorResponse) {
-        this.fecharSpinner();
-        if (error.error instanceof ErrorEvent) {
-            console.error('Ocorreu um erro:', error.error.message);
-        } else {
-            if (error.error.codigo == 204 || error.error.codigo == 400) {
-                this.mensagemService.enviarMensagem(error.error.mensagem, TipoMensagem.Alerta);
-            } else {
-                this.mensagemService.enviarMensagem("Ops!! Ocorreu um erro no servidor. Tente novamente mais tarde.", TipoMensagem.Erro);
-            }
-            console.error(
-                `Backend codigo de erro ${error.status}, ` +
-                `request foi: ${error.error}` +
-                `mensagem: ${error.error.mensagem}`);
-        }
-
-        return throwError(error);
-    }
-
-    fecharSpinner() {
-        this.mensagemService.enviarMensagem(null, null);
     }
 }

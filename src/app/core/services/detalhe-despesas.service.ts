@@ -1,9 +1,8 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, throwError } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { DetalheDespesasMensaisDomain } from '../domain/detalhe-despesas-mensais.domain';
-import { TipoMensagem } from '../enums/tipo-mensagem-enums';
 import { ChaveKey } from '../interfaces/chave-key.interface';
 import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
 import { Parcelas } from '../interfaces/despesa-parcelada-response.interface';
@@ -13,6 +12,7 @@ import { ObservacoesDetalheDespesaRequest } from '../interfaces/observacoes-deta
 import { PagamentoDespesasRequest } from '../interfaces/pagamento-despesas-request.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
 import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
+import { HttpErrorHandlerService } from './http-error-handler.service';
 import { MensagemService } from './mensagem.service';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
@@ -27,7 +27,8 @@ export class DetalheDespesasService {
     private token: TokenService,
     private sessao: SessaoService,
     private mensagemService: MensagemService,
-    private detalheDespesaDomain: DetalheDespesasMensaisDomain
+    private detalheDespesaDomain: DetalheDespesasMensaisDomain,
+    private errorHandler: HttpErrorHandlerService
   ) { }
 
   private subject = new Subject<DespesaMensal>();
@@ -53,7 +54,7 @@ export class DetalheDespesasService {
   processarPagamentoDetalheDespesa(request: PagamentoDespesasRequest[]) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/baixarPagamentoDespesa`;
     return this.http.post(url, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -67,7 +68,7 @@ export class DetalheDespesasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -84,7 +85,7 @@ export class DetalheDespesasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -105,14 +106,14 @@ export class DetalheDespesasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
   gravarObservacoesDetalheDespesa(request: ObservacoesDetalheDespesaRequest) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/observacoes/gravar`;
     return this.http.post(url, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -135,7 +136,7 @@ export class DetalheDespesasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -150,7 +151,7 @@ export class DetalheDespesasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -171,7 +172,7 @@ export class DetalheDespesasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -187,7 +188,7 @@ export class DetalheDespesasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -202,7 +203,7 @@ export class DetalheDespesasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -223,7 +224,7 @@ export class DetalheDespesasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -242,7 +243,7 @@ export class DetalheDespesasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -257,28 +258,28 @@ export class DetalheDespesasService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais';
 
     return this.http.delete(url, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
   gravarDespesaMensal(request: DespesaMensal) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/incluir`;
     return this.http.post(url, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
   gravarDetalheDespesa(request: DetalheDespesasMensais[]) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/incluir`;
     return this.http.post(url, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
   excluritemDetalheDespesa(request: DetalheDespesasMensais[]) {
     const url = `springboot-esc-backend/api/v2/lancamentosFinanceiros/detalheDespesasMensais/excluir`;
     return this.http.post(url, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -295,7 +296,7 @@ export class DetalheDespesasService {
 
     return this.http.post<StringResponse>(url, {}, { params }).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -310,7 +311,7 @@ export class DetalheDespesasService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/ordenarListaDespesas';
 
     return this.http.post(url, {}, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -331,7 +332,7 @@ export class DetalheDespesasService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/alterarOrdemRegistroDetalheDespesas';
 
     return this.http.post(url, {}, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -352,7 +353,7 @@ export class DetalheDespesasService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/importacao/despesaParcelada';
 
     return this.http.post(url, {}, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -375,7 +376,7 @@ export class DetalheDespesasService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/importacao/detalheDespesasMensais';
 
     return this.http.post(url, {}, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -393,7 +394,7 @@ export class DetalheDespesasService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/importacao/despesaParceladaAmortizada';
 
     return this.http.post(url, parcelasAmortizada, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -410,19 +411,19 @@ export class DetalheDespesasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
   adiarFluxoParcelas(despesas: DetalheDespesasMensais[]) {
     return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/parcelas/adiarFluxoParcelas`, despesas).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
   desfazerAdiamentoFluxoParcelas(despesas: DetalheDespesasMensais[]) {
     return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/parcelas/desfazerAdiamentoFluxoParcelas`, despesas).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -434,7 +435,7 @@ export class DetalheDespesasService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/consolidacao/associar';
 
     return this.http.post(url, despesas, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -449,7 +450,7 @@ export class DetalheDespesasService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/alterarReferenciaDespesa';
 
     return this.http.post(url, null, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -464,7 +465,7 @@ export class DetalheDespesasService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -478,30 +479,7 @@ export class DetalheDespesasService {
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/gerarDespesasFuturas';
 
     return this.http.post(url, {}, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    this.fecharSpinner();
-    if (error.error instanceof ErrorEvent) {
-      console.error('Ocorreu um erro:', error.error.message);
-    } else {
-      if (error.error.codigo == 204 || error.error.codigo == 400) {
-        this.mensagemService.enviarMensagem(error.error.mensagem, TipoMensagem.Alerta);
-      } else {
-        this.mensagemService.enviarMensagem("Ops!! Ocorreu um erro no servidor. Tente novamente mais tarde.", TipoMensagem.Erro);
-      }
-      console.error(
-        `Backend codigo de erro ${error.status}, ` +
-        `request foi: ${error.error}` +
-        `mensagem: ${error.error.mensagem}`);
-    }
-
-    return throwError(error);
-  }
-
-  fecharSpinner() {
-    this.mensagemService.enviarMensagem(null, null);
   }
 }
