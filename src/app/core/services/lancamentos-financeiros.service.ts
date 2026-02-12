@@ -10,7 +10,7 @@ import { DespesasFixasMensais } from '../interfaces/despesas-fixas-mensais.inter
 import { LancamentosFinanceiros } from '../interfaces/lancamentos-financeiros.interface';
 import { LancamentosMensais } from '../interfaces/lancamentos-mensais.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
-import { HttpErrorHandlerService } from './http-error-handler.service';
+import { HttpErrorHandlerService } from '../utils/http-error-handler.service';
 import { MensagemService } from './mensagem.service';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
@@ -29,13 +29,13 @@ export class LancamentosFinanceirosService {
     private errorHandler: HttpErrorHandlerService
   ) { }
 
-  private subject = new Subject<any>();
+  private readonly subject = new Subject<string>();
 
-  public enviaMensagem(tipoMensagem: String) {
+  enviaMensagem(tipoMensagem: string): void {
     this.subject.next(tipoMensagem);
   }
 
-  public recebeMensagem(): Observable<any> {
+  recebeMensagem(): Observable<string> {
     return this.subject.asObservable();
   }
 

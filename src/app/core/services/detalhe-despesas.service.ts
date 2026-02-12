@@ -12,7 +12,7 @@ import { ObservacoesDetalheDespesaRequest } from '../interfaces/observacoes-deta
 import { PagamentoDespesasRequest } from '../interfaces/pagamento-despesas-request.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
 import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
-import { HttpErrorHandlerService } from './http-error-handler.service';
+import { HttpErrorHandlerService } from '../utils/http-error-handler.service';
 import { MensagemService } from './mensagem.service';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
@@ -31,9 +31,16 @@ export class DetalheDespesasService {
     private errorHandler: HttpErrorHandlerService
   ) { }
 
-  private subject = new Subject<DespesaMensal>();
+  private readonly subject = new Subject<DespesaMensal>();
 
-  public enviaMensagem(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number, idFuncionario: number, mesRef: string, anoRef: string) {
+  enviaMensagem(
+    idDespesa: number,
+    idDetalheDespesa: number,
+    ordemExibicao: number,
+    idFuncionario: number,
+    mesRef: string,
+    anoRef: string
+  ): void {
     const despesaMensal: DespesaMensal = {
       idDespesa: idDespesa,
       idDetalheDespesa: idDetalheDespesa,
@@ -47,11 +54,11 @@ export class DetalheDespesasService {
     this.subject.next(despesaMensal);
   }
 
-  public recebeMensagem(): Observable<DespesaMensal> {
+  recebeMensagem(): Observable<DespesaMensal> {
     return this.subject.asObservable();
   }
 
-  processarPagamentoDetalheDespesa(request: PagamentoDespesasRequest[]) {
+  processarPagamentoDetalheDespesa(request: PagamentoDespesasRequest[]): Observable<any> {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/baixarPagamentoDespesa`;
     return this.http.post(url, request).pipe(
       catchError(this.errorHandler.handleError)
@@ -403,7 +410,7 @@ export class DetalheDespesasService {
       idDespesa: idDespesa.toString(),
       idDetalheDespesa: idDetalheDespesa.toString(),
       idFuncionario: this.sessao.getIdLogin().toString(),
-      tipoConsulta: 'detalheDespesas'
+      tipo: 'detalheDespesas'
     };
 
     return this.http.get<StringResponse>(

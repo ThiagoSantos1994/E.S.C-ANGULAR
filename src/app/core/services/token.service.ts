@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { StringResponse } from '../interfaces/string-response.interface.';
-import { HttpErrorHandlerService } from './http-error-handler.service';
+import { HttpErrorHandlerService } from '../utils/http-error-handler.service';
 
 const KEY_TOKEN = 'tokenID';
 const KEY_ID = 'idLogin';
@@ -18,14 +18,14 @@ export class TokenService {
         private errorHandler: HttpErrorHandlerService
     ) { }
 
-    hasToken() {
+    hasToken(): boolean {
         return !!this.getToken();
     }
 
-    setToken(token: string, idLogin: number, usuario: string, isIgnorarSessao: boolean) {
+    setToken(token: string, idLogin: number, usuario: string, isIgnorarSessao: boolean): void {
         window.localStorage.setItem(KEY_TOKEN, token);
         window.localStorage.setItem(KEY_ID, idLogin.toString());
-        window.localStorage.setItem(KEY_USER, usuario.toString());
+        window.localStorage.setItem(KEY_USER, usuario);
         window.localStorage.setItem(KEY_VALIDAR_SESSAO, isIgnorarSessao.toString());
     }
 
@@ -43,26 +43,26 @@ export class TokenService {
         );
     }
 
-    getToken() {
+    getToken(): string | null {
         return window.localStorage.getItem(KEY_TOKEN);
     }
 
-    getIdLogin() {
+    getIdLogin(): string | null {
         return window.localStorage.getItem(KEY_ID);
     }
 
-    getUserNameLogin() {
+    getUserNameLogin(): string | null {
         return window.localStorage.getItem(KEY_USER);
     }
 
-    getValidarSessao() {
+    getValidarSessao(): string | null {
         return window.localStorage.getItem(KEY_VALIDAR_SESSAO);
     }
 
-    removeToken() {
+    removeToken(): void {
         window.localStorage.removeItem(KEY_TOKEN);
         window.localStorage.removeItem(KEY_ID);
-        window.localStorage.getItem(KEY_USER);
-        window.localStorage.getItem(KEY_VALIDAR_SESSAO);
+        window.localStorage.removeItem(KEY_USER);
+        window.localStorage.removeItem(KEY_VALIDAR_SESSAO);
     }
 }

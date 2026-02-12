@@ -5,7 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { DetalheLembrete } from '../interfaces/detalhe-lembrete.interface';
 import { TituloLembretes } from '../interfaces/titulo-lembretes.interface';
-import { HttpErrorHandlerService } from './http-error-handler.service';
+import { HttpErrorHandlerService } from '../utils/http-error-handler.service';
 import { MensagemService } from './mensagem.service';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
@@ -23,13 +23,13 @@ export class LembretesService {
     private errorHandler: HttpErrorHandlerService
   ) { }
 
-  private subject = new Subject<String>();
+  private readonly subject = new Subject<string>();
 
-  public enviaMensagem(tipoMensagem: String) {
+  enviaMensagem(tipoMensagem: string): void {
     this.subject.next(tipoMensagem);
   }
 
-  public recebeMensagem(): Observable<String> {
+  recebeMensagem(): Observable<string> {
     return this.subject.asObservable();
   }
 
@@ -77,7 +77,7 @@ export class LembretesService {
     );
   }
 
-  baixarLembreteMonitor(tipoBaixa: string, request: TituloLembretes[]) {
+  baixarLembreteMonitor(tipoBaixa: string, request: TituloLembretes[]): Observable<any> {
     const params = {
       tipoBaixa: tipoBaixa
     };
@@ -89,23 +89,23 @@ export class LembretesService {
     );
   }
 
-  gravarDetalhesLembrete(request: DetalheLembrete) {
+  gravarDetalhesLembrete(request: DetalheLembrete): Observable<any> {
     return this.http.post(`springboot-esc-backend/api/lembretes/detalhe/gravar`, request).pipe(
       catchError(this.errorHandler.handleError)
     );
   }
 
-  excluirDetalhesLembrete(request: DetalheLembrete) {
+  excluirDetalhesLembrete(request: DetalheLembrete): Observable<any> {
     return this.http.post(`springboot-esc-backend/api/lembretes/detalhe/excluir`, request).pipe(
       catchError(this.errorHandler.handleError)
     );
   }
 
-  getMesAtual() {
+  getMesAtual(): string {
     return formatDate(Date.now(), 'MM', 'en-US');
   }
 
-  getAnoAtual() {
+  getAnoAtual(): string {
     return formatDate(Date.now(), 'yyyy', 'en-US');
   }
 

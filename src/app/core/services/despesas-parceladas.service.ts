@@ -6,7 +6,7 @@ import { catchError, map } from 'rxjs/operators';
 import { Despesa, DespesaParceladaResponse, Parcelas } from '../interfaces/despesa-parcelada-response.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
 import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
-import { HttpErrorHandlerService } from './http-error-handler.service';
+import { HttpErrorHandlerService } from '../utils/http-error-handler.service';
 import { MensagemService } from './mensagem.service';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
@@ -24,13 +24,13 @@ export class DespesasParceladasService {
     private errorHandler: HttpErrorHandlerService
   ) { }
 
-  private subject = new Subject<any>();
+  private readonly subject = new Subject<any>();
 
-  public enviaMensagem(despesa) {
+  enviaMensagem(despesa: any): void {
     this.subject.next(despesa);
   }
 
-  public recebeMensagem(): Observable<any> {
+  recebeMensagem(): Observable<any> {
     return this.subject.asObservable();
   }
 

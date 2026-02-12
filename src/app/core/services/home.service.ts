@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 //import { DadosUsuario } from '../interfaces/dados-usuario.interface';
-import { HttpErrorHandlerService } from './http-error-handler.service';
+import { HttpErrorHandlerService } from '../utils/http-error-handler.service';
 import { MensagemService } from './mensagem.service';
 import { TokenService } from './token.service';
 
@@ -21,13 +21,13 @@ export class HomeService {
     private errorHandler: HttpErrorHandlerService
   ) { }
 
-  private subject = new Subject<String>();
+  private readonly subject = new Subject<string>();
 
-  public enviaMensagem(tipoMensagem: String) {
+  enviaMensagem(tipoMensagem: string): void {
     this.subject.next(tipoMensagem);
   }
 
-  public recebeMensagem(): Observable<String> {
+  recebeMensagem(): Observable<string> {
     return this.subject.asObservable();
   }
 

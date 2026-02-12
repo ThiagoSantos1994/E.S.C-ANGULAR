@@ -6,7 +6,7 @@ import { catchError, map } from 'rxjs/operators';
 import { ConsolidacaoDespesas } from '../interfaces/consolidacao-despesas.interface';
 import { Consolidacao } from '../interfaces/consolidacao.interface';
 import { TituloConsolidacaoResponse } from '../interfaces/titulo-consolidacao-response.interface';
-import { HttpErrorHandlerService } from './http-error-handler.service';
+import { HttpErrorHandlerService } from '../utils/http-error-handler.service';
 import { MensagemService } from './mensagem.service';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
@@ -24,13 +24,13 @@ export class ConsolidacaoService {
     private errorHandler: HttpErrorHandlerService
   ) { }
 
-  private subject = new Subject<any>();
+  private readonly subject = new Subject<any>();
 
-  public enviaMensagem(despesa) {
+  enviaMensagem(despesa: any): void {
     this.subject.next(despesa);
   }
 
-  public recebeMensagem(): Observable<any> {
+  recebeMensagem(): Observable<any> {
     return this.subject.asObservable();
   }
 
@@ -64,19 +64,19 @@ export class ConsolidacaoService {
     );
   }
 
-  gravarConsolidacao(request: Consolidacao) {
+  gravarConsolidacao(request: Consolidacao): Observable<any> {
     return this.http.post(`springboot-esc-backend/api/consolidacao/gravar`, request).pipe(
       catchError(this.errorHandler.handleError)
     );
   }
 
-  excluirConsolidacao(request: Consolidacao) {
+  excluirConsolidacao(request: Consolidacao): Observable<any> {
     return this.http.post(`springboot-esc-backend/api/consolidacao/excluir`, request).pipe(
       catchError(this.errorHandler.handleError)
     );
   }
 
-  associarDespesa(request: ConsolidacaoDespesas) {
+  associarDespesa(request: ConsolidacaoDespesas): Observable<any> {
     return this.http.post(`springboot-esc-backend/api/consolidacao/despesas/associar`, request).pipe(
       catchError(this.errorHandler.handleError)
     );

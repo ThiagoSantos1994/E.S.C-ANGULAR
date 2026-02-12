@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
-import { MensagemService } from './mensagem.service';
+import { MensagemService } from '../services/mensagem.service';
 import { TipoMensagem } from '../enums/tipo-mensagem-enums';
 
 /**
