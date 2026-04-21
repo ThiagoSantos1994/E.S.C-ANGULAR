@@ -290,10 +290,10 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.checkVisualizarParcelasConsolidadas = false;
 
     this.detalheService.obterMesAnoPorID(idDespesa).subscribe((res) => {
-      if ("ERRO" == res.mesAno) {
+      if ("ERRO" == res.data) {
         this.detalheService.obterMesAnoPorID(idDespesa - 1).subscribe((res) => {
           //Só permite visualizacao antecipada das despesas dentro do mesmo ano referencia.
-          var mesReferencia = res.mesAno.substring(2, 0).replace('/', '');
+          var mesReferencia = res.data.substring(2, 0).replace('/', '');
           mesReferencia = parserToInt(mesReferencia) + 1 > 12 ? '12' : mesReferencia;
 
           this.detalheService.gerarDespesaFuturaVisualizacao(mesReferencia, this.getAnoAtual()).toPromise().then(() => {
@@ -301,13 +301,13 @@ export class DetalheDespesasFormComponent implements OnInit {
           });
 
           this.detalheService.obterMesAnoPorID(idDespesa).subscribe((res) => {
-            this.mesAnoVisualizacaoTemp = res.mesAno;
+            this.mesAnoVisualizacaoTemp = res.data;
           });
           return;
         });
       }
 
-      this.mesAnoVisualizacaoTemp = res.mesAno;
+      this.mesAnoVisualizacaoTemp = res.data;
       this.carregarDetalheDespesa(idDespesa, idDetalheDespesa, null);
     });
   }
@@ -384,7 +384,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
       if (ordemExibicao == null) {
         this.detalheService.getExtratoDetalheDespesa(idDespesa, idDetalheDespesa).subscribe((res) => {
-          if (res.qtDespesas == null) {
+          if (res.data == null) {
             this.detalheLancamentosMensais.despesaMensal.dsExtratoDespesa = "Visualização temporaria de lançamentos - Mês Referência: ".concat(this.mesAnoVisualizacaoTemp);
           }
         });
@@ -852,8 +852,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     }
 
     this.detalheService.validarDuplicidadeTituloDespesa(this.despesaRef, this.detalheRef, despesa.dsNomeDespesa, Number(this.anoRef)).subscribe(res => {
-      if (res.mensagem !== 'OK') {
-        this.mensagem.enviarMensagem(res.mensagem, TipoMensagem.Erro);
+      if (res.data !== 'OK') {
+        this.mensagem.enviarMensagem(res.data, TipoMensagem.Erro);
         return;
       } else {
         this.eventModalConfirmacao = "GravarDetalheDespesas";
@@ -905,7 +905,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   obterDetalhesLabelQuitacaoMes() {
     this.detalheService.obterExtratoDetalheDespesaQuitacaoMes(this.despesaRef, this.detalheRef).toPromise().then((res) => {
-      alert('CONSULTA DE DESPESAS Á QUITAR: \r\n \r\nValor R$   -   DESCRIÇÃO \r\n \r\n' + res.relatorioDespesas);
+      alert('CONSULTA DE DESPESAS Á QUITAR: \r\n \r\nValor R$   -   DESCRIÇÃO \r\n \r\n' + res.data);
     },
       err => {
         this.mensagem.enviarMensagem("Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.", TipoMensagem.Erro);
@@ -954,8 +954,8 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   validarDuplicidadeTituloDespesa(nomeDespesa: string): Boolean {
     this.detalheService.validarDuplicidadeTituloDespesa(this.despesaRef, this.detalheRef, nomeDespesa, Number(this.anoRef)).subscribe(res => {
-      if (res.mensagem !== 'OK') {
-        this.mensagem.enviarMensagem(res.mensagem, TipoMensagem.Erro);
+      if (res.data !== 'OK') {
+        this.mensagem.enviarMensagem(res.data, TipoMensagem.Erro);
         return false;
       }
     },
@@ -1052,7 +1052,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.objectModalObservacoes = objeto;
 
     this.detalheService.getObservacoesDetalheDespesa(this.despesaRef, objeto.idDetalheDespesa, objeto.idObservacao).subscribe(res => {
-      (<HTMLInputElement>document.getElementById("observacoesDetalhe")).value = res.observacoes;
+      (<HTMLInputElement>document.getElementById("observacoesDetalhe")).value = res.data;
     },
       error => {
         handleApiError(error, this.mensagem, 'Ocorreu um erro ao carregar as observações do detalhe da despesa.');
@@ -1064,7 +1064,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.objectModalHistorico = objeto;
 
     this.detalheService.getHistoricoDetalheDespesa(objeto.idDetalheDespesaLog, this.despesaRef, objeto.idDetalheDespesa).subscribe(res => {
-      (<HTMLInputElement>document.getElementById("historicoDetalhe")).value = res.historico;
+      (<HTMLInputElement>document.getElementById("historicoDetalhe")).value = res.data;
     },
       error => {
         handleApiError(error, this.mensagem, 'Ocorreu um erro ao carregar o histórico do detalhe da despesa.');
@@ -1355,7 +1355,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   obterExtratoDespesaConsolidada(despesa) {
     this.detalheService.obterExtratoDespesasParceladasConsolidadas(this.despesaRef, this.detalheRef, despesa.idConsolidacao).toPromise().then((res) => {
-      alert('* VISUALIZAÇÃO DESPESAS PARCELADAS CONSOLIDADAS * \r\n \r\n' + res.nomeDespesaParcelada);
+      alert('* VISUALIZAÇÃO DESPESAS PARCELADAS CONSOLIDADAS * \r\n \r\n' + res.data);
     },
       error => {
         handleApiError(error, this.mensagem, 'Ocorreu um erro ao obter os dados do extrato de despesas consolidadas.');

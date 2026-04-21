@@ -87,7 +87,7 @@ export class DespesasParceladasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("valorTotalDespesaComDesconto")).value = "";
 
     this.service.obterSubTotalDespesasEmAberto().subscribe((res) => {
-      this.subTotalDespesasEmAberto = formatRealNumber(res.vlCalculo);
+      this.subTotalDespesasEmAberto = formatRealNumber(res.data);
     });
 
     this.carregarListaDespesasParceladas(true);

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { StringResponse } from '../interfaces/string-response.interface.';
 import { HttpErrorHandlerService } from '../utils/http-error-handler.service';
+import { BooleanResponse } from '../interfaces/boolean-response.interface';
 
 const KEY_TOKEN = 'tokenID';
 const KEY_ID = 'idLogin';
@@ -29,12 +30,12 @@ export class TokenService {
         window.localStorage.setItem(KEY_VALIDAR_SESSAO, isIgnorarSessao.toString());
     }
 
-    validarSessao(): Observable<StringResponse> {
+    validarSessao(): Observable<BooleanResponse> {
         const params = {
             idFuncionario: this.getIdLogin().toString()
         };
 
-        return this.http.get<StringResponse>(
+        return this.http.get<BooleanResponse>(
             'springboot-esc-backend/api/sessao/validar',
             { params }
         ).pipe(

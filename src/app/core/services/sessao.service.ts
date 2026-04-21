@@ -28,7 +28,7 @@ export class SessaoService {
         if (this.tokenService.getValidarSessao() === 'true') {
             try {
                 const res = await this.tokenService.validarSessao().pipe(take(1)).toPromise();
-                if (res.isSessaoValida === false) {
+                if (res.isValid === false) {
                     alert('Tempo de sessão expirado, redirecionando para o login.');
                     this.router.navigate(['login']);
                     this.logout();

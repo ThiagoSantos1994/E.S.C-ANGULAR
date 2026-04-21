@@ -534,7 +534,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     this.iniciarSpinner();
     this.lancamentosService.executarBackup().subscribe(res => {
       this.fecharSpinner();
-      alert(res.mensagem);
+      alert(res.data);
       //TODO - Melhorar modal para mensagens grandes.
       //this.mensagens.enviarMensagem(res.mensagem, TipoMensagem.Generica);
     },
@@ -853,7 +853,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   obterDetalhesLabelQuitacaoMes() {
     this.lancamentosService.obterExtratoDespesaQuitacaoMes(this.despesaRef).toPromise().then((res) => {
-      alert('CONSULTA DE DESPESAS Á QUITAR: \r\n \r\nValor R$   -   DESCRIÇÃO \r\n \r\n' + res.relatorioDespesas)
+      alert('CONSULTA DE DESPESAS Á QUITAR: \r\n \r\nValor R$   -   DESCRIÇÃO \r\n \r\n' + res.data)
     },
       error => {
         handleApiError(error, this.mensagens, 'Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.');
