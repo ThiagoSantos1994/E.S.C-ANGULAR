@@ -1,3 +1,302 @@
+/* Overlay de carregamento para a página de lançamentos-financeiros */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255,255,255,0.7);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-message {
+  font-size: 1.3rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+/* Aumentar a fonte do modal de alerta genérico do sistema */
+.form-group.modal-body {
+  font-size: 1.15rem !important;
+}
+/* Cursor pointer para linhas das tabelas de receita e despesas */
+.linha-cursor-pointer {
+  cursor: pointer;
+}
+/* Ícone de interrogação dos modais finais */
+.icon-modal-question {
+  font-size: 130% !important;
+}
+
+/* Small de alerta de aviso nos modais finais */
+.small-warning-alert {
+  font-size: revert !important;
+  color: #a7444e !important;
+}
+/* Botão excluir despesa final */
+.btn-excluir-despesa-final {
+  background-color: #ee5569 !important;
+  padding-left: 6% !important;
+  padding-right: 6% !important;
+}
+
+/* Botão quitar despesa final */
+.btn-quitar-despesa-final {
+  background-color: #58c069 !important;
+  padding-left: 6% !important;
+  padding-right: 6% !important;
+}
+
+/* Botão desfazer quitação final */
+.btn-desfazer-quitacao-final {
+  background-color: #709977 !important;
+  padding-left: 6% !important;
+  padding-right: 6% !important;
+}
+
+/* Botão remover despesa consolidada */
+.btn-remove-despesa-consolidada {
+  background-color: #e91b25 !important;
+  padding-left: 2% !important;
+  padding-right: 2% !important;
+}
+/* Largura customizada para th */
+.th-width-20 {
+  width: 19.8889px !important;
+}
+
+/* Margem customizada para alertas finais */
+.alert-margin-custom {
+  margin: 0% 10% 1% 11% !important;
+}
+
+/* Botão limpar filtros: cor e padding */
+.btn-limpar-filtros {
+  background-color: #ee5569 !important;
+  padding-left: 6% !important;
+  padding-right: 6% !important;
+}
+/* Ícone fa-object-group com font-size 130% */
+.icon-object-group {
+  font-size: 130% !important;
+}
+/* Modal content customizado: largura, margem e fonte Calibri */
+.modal-content-custom {
+  width: 155% !important;
+  margin: -1% -25% !important;
+  font-family: 'Calibri', sans-serif !important;
+}
+/* Small de alerta informativo com font-size revert e cor #b90c0c */
+.small-info-alert {
+  font-size: revert !important;
+  color: #b90c0c !important;
+}
+/* Ícone de autenticação do usuário com font-size 130% */
+.icon-auth-user {
+  font-size: 130% !important;
+}
+/* Font-size 95% para divs específicas */
+.font-size-95 {
+  font-size: 95% !important;
+}
+/* Margem superior customizada para alertas */
+.alert-margin-block-start {
+  margin-block-start: -4% !important;
+}
+/* Margem customizada para grupo de botões de ação */
+.btn-group-margin-custom {
+  margin: -1% 0% -6% -5% !important;
+}
+/* Header do modal de categorias com padding-block-end: inherit */
+.modal-header-inherit {
+  padding-block-end: inherit !important;
+}
+
+/* Alerta do modal de categorias com padding-block-start: 4% e cor brown */
+.modal-categorias-alert {
+  padding-block-start: 4%;
+  color: brown;
+}
+
+/* Body do modal de categorias sem padding */
+.modal-body-no-padding {
+  padding-block-end: 0% !important;
+  padding-block-start: 0% !important;
+}
+
+/* Margin customizada para div do modal de categorias */
+.modal-categorias-margin {
+  margin-block-start: -8%;
+}
+
+/* Label do modal de categorias: font-size smaller, cor #a7444e */
+.modal-categorias-label {
+  font-size: smaller !important;
+  color: #a7444e !important;
+}
+/* Botão executar backup do modal */
+.btn-modal-backup {
+  background-color: #317943 !important;
+  padding: 0% 22% 0% !important;
+}
+/* Botão aplicar do modal de parametrização */
+.btn-modal-aplicar {
+  background-color: #3b6bd3 !important;
+}
+/* Botão salvar do modal de receita */
+.btn-modal-salvar {
+  background-color: #3b6bd3 !important;
+}
+/* Refatoração: label despesa obrigatória */
+.label-despesa-obrigatoria {
+  font-size: smaller;
+  color: #a7444e!important;
+}
+/* Refatoração: largura 20px para th da tabela de despesas */
+.th-width-20 {
+  width: 19.8889px;
+}
+/* Refatoração: font-size 91% para alerta de quitação de mês */
+.label-quitacao-mes-custom {
+  font-size: 91%;
+}
+/* Refatoração: altura do progress bar */
+.progress-height-12 {
+  height: 12px;
+}
+/* Refatoração: select mês largura 103% */
+.select-mes-width {
+  width: 103%;
+}
+/* Refatoração: botão Nova Consolidação */
+.btn-nova-consolidacao {
+  background-color: #2e0808;
+  padding-left: 2%;
+  padding-right: 2%;
+}
+/* Refatoração: botão Nova Linha */
+.btn-nova-linha {
+  background-color: #d38a8a;
+  padding-left: 3%;
+  padding-right: 3%;
+}
+/* Refatoração: botão Desfazer Quitação */
+.btn-desfazer-quitacao {
+  background-color: #709977;
+  padding-left: 6%;
+  padding-right: 6%;
+}
+/* Refatoração: botão Quitar Despesa */
+.btn-quitar-despesa {
+  background-color: #58c069;
+  padding-left: 6%;
+  padding-right: 6%;
+}
+/* Refatoração: botão Excluir Despesa */
+.btn-excluir-despesa {
+  background-color: #ee5569;
+  padding-left: 6%;
+  padding-right: 6%;
+}
+/* Refatoração: botão Nova Despesa */
+.btn-nova-despesa {
+  background-color: #3b6bd3;
+  padding-left: 6%;
+  padding-right: 6%;
+}
+/* Refatoração: alertas das tabelas */
+.alert-margin {
+  margin: -1% 0% -6% -5%;
+}
+.alert-inner-margin {
+  margin: 0% 10% 1% 11%;
+}
+/* Refatoração: botão Criar Nova Receita */
+.btn-criar-receita {
+  background-color: #3b6bd3;
+  width: 45%;
+}
+/* Refatoração: classes customizadas para saldo negativo e positivo */
+.saldo-negativo-valor {
+  font-size: 22px;
+  font-family: sans-serif;
+  padding: 2% 0%;
+}
+
+.saldo-positivo-valor {
+  color: #17a2b8!important;
+  font-size: 22px;
+  font-family: sans-serif;
+  padding: 2% 0%;
+}
+/* Refatoração: classes customizadas para o card 'À Pagar' */
+.text-warning-custom {
+  color: #c99806!important;
+}
+
+.pagar-valor {
+  color: #c99806!important;
+  font-size: 22px;
+  font-family: sans-serif;
+  padding: 2% 0%;
+}
+/* Refatoração: classe customizada para valores de despesas */
+.despesas-valor {
+  color: #dc3545 !important;
+  margin-right: 5%;
+  padding: 0% 0% 2% 0%;
+}
+/* Refatoração: classes customizadas para valores de saldo e cursor-pointer */
+.receita-valor {
+  color: #28a745 !important;
+  font-size: 22px;
+  font-family: sans-serif;
+  padding: 2% 0%;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+/* Refatoração: classes customizadas para header e botões principais */
+.header-system-ui {
+  font-family: system-ui;
+}
+
+.icon-24 {
+  font-size: 24px;
+}
+
+.admin-label {
+  font-size: smaller;
+  font-family: cursive;
+  color: #db191996 !important;
+  padding: 0% 2%;
+  margin: -2%;
+}
+
+.btn-importacao {
+  background-color: #00683d;
+}
+
+.btn-excluir-tudo {
+  background-color: #690303;
+}
+
+.btn-mes-anterior {
+  background-color: #0c1a36;
+}
+
+.btn-mes-atual {
+  background-color: #59768a;
+}
+
+.btn-mes-posterior {
+  background-color: #0c1a36;
+}
 header {
   padding: 5px 0 0;
 }
@@ -10,11 +309,11 @@ label {
   margin: 0 5px;
 }
 
-.labelQuitacaoMes {
-  padding: 0px 0 1%;
-  font-family: system-ui;
-  font-size: smaller;
-  line-height: 0%;
+ .labelQuitacaoMes {
+   padding: 0px 0 1%;
+   font-family: system-ui;
+   font-size: 13px;
+   line-height: 0%;
 }
 
 .border-left-receita {
@@ -91,7 +390,7 @@ body {
   /* max-width: 100%; */
   margin-bottom: 1rem;
   background-color: #f8f9fa;
-  font-size: 93%;
+  font-size: 88%;
 }
 
 .table-despesas {
@@ -119,6 +418,23 @@ body {
   max-width: 100%;
   margin-bottom: 1rem;
   background-color: #f8f9fa;
+}
+
+/* Animação para piscar o texto do progress-bar quando danger */
+
+/* Piscar apenas o texto dentro do progress-bar quando danger */
+
+.blink-text {
+  animation: fade-text 1s infinite;
+}
+
+@keyframes fade-text {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
 }
 
 .scrollme-detalhe-despesas {

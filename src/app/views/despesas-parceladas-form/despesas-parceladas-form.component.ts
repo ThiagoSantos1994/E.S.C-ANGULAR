@@ -7,6 +7,7 @@ import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despes
 import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
 import { DespesaParceladaResponse, Parcelas } from 'src/app/core/interfaces/despesa-parcelada-response.interface';
 import { TituloDespesaResponse } from 'src/app/core/interfaces/titulo-despesa-response.interface';
+import { handleApiError } from 'src/app/core/utils/error-handler.util';
 import { DespesasParceladasService } from 'src/app/core/services/despesas-parceladas.service';
 import { MensagemService } from 'src/app/core/services/mensagem.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
@@ -86,7 +87,7 @@ export class DespesasParceladasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("valorTotalDespesaComDesconto")).value = "";
 
     this.service.obterSubTotalDespesasEmAberto().subscribe((res) => {
-      this.subTotalDespesasEmAberto = formatRealNumber(res.vlCalculo);
+      this.subTotalDespesasEmAberto = formatRealNumber(res.data);
     });
 
     this.carregarListaDespesasParceladas(true);
@@ -348,8 +349,8 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.service.excluirParcela(parcelas).toPromise().then(() => {
       this.recarregarDetalheDespesa();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao excluir a parcela.');
       });
 
     this.closeModal();
@@ -401,10 +402,9 @@ export class DespesasParceladasFormComponent implements OnInit {
       this.setParcelasObservable(res.parcelas, true);
       this.fecharSpinner();
     },
-      err => {
-        console.log(err);
+      error => {
         this.fecharSpinner();
-        this.mensagem.enviarMensagem("Ocorreu um erro ao gerar o fluxo de parcelas, tente novamente mais tarde.", TipoMensagem.Erro);
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao gerar o fluxo de parcelas, tente novamente mais tarde.');
       });
   }
 
@@ -523,9 +523,8 @@ export class DespesasParceladasFormComponent implements OnInit {
     this.iniciarSpinner();
     this.service.gravarDespesa(despesa).toPromise().then(() => {
       this.service.gravarParcelas(parcelas).toPromise().then(() => { },
-        err => {
-          this.mensagem.enviarMensagem("Ocorreu um erro ao gravar as parcelas, tente novamente mais tarde.", TipoMensagem.Erro);
-          console.log(err);
+        error => {
+          handleApiError(error, this.mensagem, 'Ocorreu um erro ao gravar as parcelas, tente novamente mais tarde.');
         });
 
       this.fecharSpinner();
@@ -541,9 +540,8 @@ export class DespesasParceladasFormComponent implements OnInit {
       this.loadFormDespesaParcelada(null);
       this.mensagem.enviarMensagem("Despesa excluida com sucesso!", TipoMensagem.Sucesso);
     },
-      err => {
-        this.mensagem.enviarMensagem("Ocorreu um erro ao excluir esta despesa, tente novamente mais tarde.", TipoMensagem.Erro);
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao excluir esta despesa, tente novamente mais tarde.');
       });
 
     this.closeModal();

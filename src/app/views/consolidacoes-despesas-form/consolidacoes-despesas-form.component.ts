@@ -7,6 +7,7 @@ import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
 import { ConsolidacaoDespesas } from 'src/app/core/interfaces/consolidacao-despesas.interface';
 import { Consolidacao } from 'src/app/core/interfaces/consolidacao.interface';
 import { TituloConsolidacaoResponse } from 'src/app/core/interfaces/titulo-consolidacao-response.interface';
+import { handleApiError } from 'src/app/core/utils/error-handler.util';
 import { ConsolidacaoService } from 'src/app/core/services/consolidacao.service';
 import { MensagemService } from 'src/app/core/services/mensagem.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
@@ -200,8 +201,8 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
     this.service.desassociarDespesa(despesas).toPromise().then(() => {
       this.recarregarDetalheConsolidacao();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao desassociar a despesa.');
       });
 
     this.closeModal();
@@ -339,7 +340,9 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
   confirmGravarConsolidacao() {
     this.service.gravarConsolidacao(this.consolidacao).toPromise().then(() => {
       this.mensagem.enviarMensagem("Gravação realizada com sucesso!", TipoMensagem.Sucesso);
-      this.recarregarDetalheConsolidacao();
+      //this.recarregarDetalheConsolidacao();
+      //TODO - Rever porque o ID não esta seno setado na consolidação apos a gravação.
+      this.loadFormConsolidacoes(null);
     });
 
     this.closeModal();
@@ -350,9 +353,8 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
       this.loadFormConsolidacoes(null);
       this.mensagem.enviarMensagem("Consolidação excluida com sucesso!", TipoMensagem.Sucesso);
     },
-      err => {
-        this.mensagem.enviarMensagem("Ocorreu um erro ao excluir esta consolidacao, tente novamente mais tarde.", TipoMensagem.Erro);
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao excluir esta consolidação, tente novamente mais tarde.');
       });
 
     this.closeModal();

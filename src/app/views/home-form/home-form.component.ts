@@ -9,7 +9,9 @@ import { DespesasParceladasService } from 'src/app/core/services/despesas-parcel
 import { HomeService } from 'src/app/core/services/home.service';
 import { LancamentosFinanceirosService } from 'src/app/core/services/lancamentos-financeiros.service';
 import { LembretesService } from 'src/app/core/services/lembretes.service';
+import { MensagemService } from 'src/app/core/services/mensagem.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
+import { handleApiError } from 'src/app/core/utils/error-handler.util';
 //import { DadosUsuario } from 'src/app/core/interfaces/dados-usuario.interface';
 
 
@@ -32,7 +34,8 @@ export class HomeFormComponent implements OnInit {
     private despesasParceladasService: DespesasParceladasService,
     private consolidacaoService: ConsolidacaoService,
     private lembreteService: LembretesService,
-    private router: Router
+    private router: Router,
+    private mensagens: MensagemService
   ) { }
 
   ngOnInit() {
@@ -41,8 +44,8 @@ export class HomeFormComponent implements OnInit {
 
     this.homeService.recebeMensagem().subscribe(() => {
       this.carregarConfiguracaoLancamentos();
-    }, () => {
-      alert('Ocorreu um erro ao carregar as informações da configuracao da home, tente novamente mais tarde.')
+    }, error => {
+      handleApiError(error, this.mensagens, 'Ocorreu um erro ao carregar as informações da configuração da home, tente novamente mais tarde.', true);
     });
   }
 
@@ -53,8 +56,8 @@ export class HomeFormComponent implements OnInit {
       this.configuracoesLancamentos = res;
       this.usuarioLogado = this.sessaoService.getUserName();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao carregar as configurações de lançamentos.');
       });
   }
 

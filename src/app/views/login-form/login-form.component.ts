@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { LoginService } from 'src/app/core/services/login.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { handleApiError } from 'src/app/core/utils/error-handler.util';
+import { MensagemService } from 'src/app/core/services/mensagem.service';
 
 @Component({
   templateUrl: './login-form.component.html',
@@ -25,7 +27,8 @@ export class LoginFormComponent implements OnInit {
     private loginService: LoginService,
     private sessaoService: SessaoService,
     private router: Router,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private mensagens: MensagemService
   ) { }
 
   ngOnInit(): void {
@@ -47,12 +50,12 @@ export class LoginFormComponent implements OnInit {
       this.sessaoService.setTokenAutenticador(res.autenticacao, res.idLogin, res.nomeUsuario, isIgnorarValidacaoSessao);
       this.router.navigate(['dashboard']);
     },
-      err => {
-        if (err.status == 401) {
+      error => {
+        if (error.status == 401) {
           this.validacaoLogin = false;
           //this.open(this.modalUsuarioInvalido);
         }
-        console.log(err);
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao autenticar o usuário.');
         this.reloadForm();
       });
   }

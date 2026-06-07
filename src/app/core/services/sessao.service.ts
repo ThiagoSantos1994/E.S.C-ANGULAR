@@ -1,56 +1,62 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { TokenService } from "./token.service";
+import { take } from 'rxjs/operators';
+import { TokenService } from './token.service';
 
 @Injectable({ providedIn: 'root' })
 export class SessaoService {
 
     constructor(
         private tokenService: TokenService,
-        private sessaoService: SessaoService,
         private router: Router
     ) {
-        this.tokenService.hasToken() && this.decodeAndNotify()
+        if (this.tokenService.hasToken()) {
+            this.decodeAndNotify();
+        }
     }
 
-    setTokenAutenticador(token: string, idLogin: number, usuario: string, isIgnorarSessao: boolean) {
+    setTokenAutenticador(token: string, idLogin: number, usuario: string, isIgnorarSessao: boolean): void {
         this.tokenService.setToken(token, idLogin, usuario, isIgnorarSessao);
         this.decodeAndNotify();
     }
 
-    logout() {
+    logout(): void {
         this.tokenService.removeToken();
     }
 
-    validarSessao() {
-        if (this.tokenService.getValidarSessao() == 'true') {
-            this.tokenService.validarSessao().toPromise().then((res) => {
-                if (res.isSessaoValida.valueOf() == false) {
+    async validarSessao(): Promise<void> {
+        if (this.tokenService.getValidarSessao() === 'true') {
+            try {
+                const res = await this.tokenService.validarSessao().pipe(take(1)).toPromise();
+                if (res.isValid === false) {
                     alert('Tempo de sessão expirado, redirecionando para o login.');
                     this.router.navigate(['login']);
                     this.logout();
                 }
-            });
+            } catch (error) {
+                console.error('Erro ao validar sessão:', error);
+            }
         }
     }
 
-    isLogged() {
+    isLogged(): boolean {
         return this.tokenService.hasToken();
     }
 
-    getToken() {
+    getToken(): string | null {
         return this.tokenService.getToken();
     }
 
-    getIdLogin() {
+    getIdLogin(): string | null {
         return this.tokenService.getIdLogin();
     }
 
-    getUserName() {
+    getUserName(): string | null {
         return this.tokenService.getUserNameLogin();
     }
 
-    private decodeAndNotify() {
+    private decodeAndNotify(): void {
         const token = this.tokenService.getToken();
+        // Decode token logic can be added here if needed
     }
 }

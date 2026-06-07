@@ -1,0 +1,6 @@
+.alert-centralizado {
+	position: absolute;
+	width: 100%;
+	text-align: center;
+ 	font-size: 1.15rem; /* Aumenta o tamanho da fonte */
+}

@@ -1,14 +1,14 @@
 import { formatDate } from '@angular/common';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, throwError } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { DetalheLembrete } from '../interfaces/detalhe-lembrete.interface';
 import { TituloLembretes } from '../interfaces/titulo-lembretes.interface';
+import { HttpErrorHandlerService } from '../utils/http-error-handler.service';
+import { MensagemService } from './mensagem.service';
 import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
-import { MensagemService } from './mensagem.service';
-import { TipoMensagem } from '../enums/tipo-mensagem-enums';
 
 @Injectable({
   providedIn: 'root'
@@ -19,16 +19,17 @@ export class LembretesService {
     private http: HttpClient,
     private token: TokenService,
     private mensagemService: MensagemService,
-    private sessao: SessaoService
+    private sessao: SessaoService,
+    private errorHandler: HttpErrorHandlerService
   ) { }
 
-  private subject = new Subject<String>();
+  private readonly subject = new Subject<string>();
 
-  public enviaMensagem(tipoMensagem: String) {
+  enviaMensagem(tipoMensagem: string): void {
     this.subject.next(tipoMensagem);
   }
 
-  public recebeMensagem(): Observable<String> {
+  recebeMensagem(): Observable<string> {
     return this.subject.asObservable();
   }
 
@@ -43,7 +44,7 @@ export class LembretesService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -57,7 +58,7 @@ export class LembretesService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -72,11 +73,11 @@ export class LembretesService {
       { params }
     ).pipe(
       map(response => response),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
-  baixarLembreteMonitor(tipoBaixa: string, request: TituloLembretes[]) {
+  baixarLembreteMonitor(tipoBaixa: string, request: TituloLembretes[]): Observable<any> {
     const params = {
       tipoBaixa: tipoBaixa
     };
@@ -84,50 +85,27 @@ export class LembretesService {
     const url = 'springboot-esc-backend/api/lembretes/monitor/baixar';
 
     return this.http.post(url, request, { params }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
-  gravarDetalhesLembrete(request: DetalheLembrete) {
+  gravarDetalhesLembrete(request: DetalheLembrete): Observable<any> {
     return this.http.post(`springboot-esc-backend/api/lembretes/detalhe/gravar`, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
-  excluirDetalhesLembrete(request: DetalheLembrete) {
+  excluirDetalhesLembrete(request: DetalheLembrete): Observable<any> {
     return this.http.post(`springboot-esc-backend/api/lembretes/detalhe/excluir`, request).pipe(
-      catchError(error => this.handleError(error))
+      catchError(this.errorHandler.handleError)
     );
   }
 
-  private handleError(error: HttpErrorResponse) {
-    this.fecharSpinner();
-    if (error.error instanceof ErrorEvent) {
-      console.error('Ocorreu um erro:', error.error.message);
-    } else {
-      if (error.error.codigo == 204 || error.error.codigo == 400) {
-        this.mensagemService.enviarMensagem(error.error.mensagem, TipoMensagem.Alerta);
-      } else {
-        this.mensagemService.enviarMensagem("Ops!! Ocorreu um erro no servidor. Tente novamente mais tarde.", TipoMensagem.Erro);
-      }
-      console.error(
-        `Backend codigo de erro ${error.status}, ` +
-        `request foi: ${error.error}` +
-        `mensagem: ${error.error.mensagem}`);
-    }
-
-    return throwError(error);
-  }
-
-  fecharSpinner() {
-    this.mensagemService.enviarMensagem(null, null);
-  }
-
-  getMesAtual() {
+  getMesAtual(): string {
     return formatDate(Date.now(), 'MM', 'en-US');
   }
 
-  getAnoAtual() {
+  getAnoAtual(): string {
     return formatDate(Date.now(), 'yyyy', 'en-US');
   }
 

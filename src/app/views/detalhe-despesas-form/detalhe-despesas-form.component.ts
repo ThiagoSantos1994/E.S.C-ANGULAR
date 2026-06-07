@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { DetalheDespesasMensaisDomain } from 'src/app/core/domain/detalhe-despesas-mensais.domain';
 import { CategoriaDespesaEnum, StatusPagamentoEnum } from 'src/app/core/enums/detalhe-despesas-enums';
 import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
+import { handleApiError } from 'src/app/core/utils/error-handler.util';
 import { DespesaMensal } from 'src/app/core/interfaces/despesa-mensal.interface';
 import { Parcelas } from 'src/app/core/interfaces/despesa-parcelada-response.interface';
 import { DetalheDespesasMensais } from 'src/app/core/interfaces/detalhe-despesas-mensais.interface';
@@ -209,8 +210,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.detalheService.processarPagamentoDetalheDespesa(despesasRequest).toPromise().then(() => {
       this.recarregarDetalheDespesa();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao processar o pagamento das despesas.');
       });
 
     this.closeModal();
@@ -289,10 +290,10 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.checkVisualizarParcelasConsolidadas = false;
 
     this.detalheService.obterMesAnoPorID(idDespesa).subscribe((res) => {
-      if ("ERRO" == res.mesAno) {
+      if ("ERRO" == res.data) {
         this.detalheService.obterMesAnoPorID(idDespesa - 1).subscribe((res) => {
           //Só permite visualizacao antecipada das despesas dentro do mesmo ano referencia.
-          var mesReferencia = res.mesAno.substring(2, 0).replace('/', '');
+          var mesReferencia = res.data.substring(2, 0).replace('/', '');
           mesReferencia = parserToInt(mesReferencia) + 1 > 12 ? '12' : mesReferencia;
 
           this.detalheService.gerarDespesaFuturaVisualizacao(mesReferencia, this.getAnoAtual()).toPromise().then(() => {
@@ -300,13 +301,13 @@ export class DetalheDespesasFormComponent implements OnInit {
           });
 
           this.detalheService.obterMesAnoPorID(idDespesa).subscribe((res) => {
-            this.mesAnoVisualizacaoTemp = res.mesAno;
+            this.mesAnoVisualizacaoTemp = res.data;
           });
           return;
         });
       }
 
-      this.mesAnoVisualizacaoTemp = res.mesAno;
+      this.mesAnoVisualizacaoTemp = res.data;
       this.carregarDetalheDespesa(idDespesa, idDetalheDespesa, null);
     });
   }
@@ -383,7 +384,7 @@ export class DetalheDespesasFormComponent implements OnInit {
 
       if (ordemExibicao == null) {
         this.detalheService.getExtratoDetalheDespesa(idDespesa, idDetalheDespesa).subscribe((res) => {
-          if (res.qtDespesas == null) {
+          if (res.data == null) {
             this.detalheLancamentosMensais.despesaMensal.dsExtratoDespesa = "Visualização temporaria de lançamentos - Mês Referência: ".concat(this.mesAnoVisualizacaoTemp);
           }
         });
@@ -528,8 +529,8 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.resetParcelasAmortizacaoChange();
       this.recarregarDetalheDespesa();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao incluir a despesa parcelada de amortização.');
       });
   }
 
@@ -851,8 +852,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     }
 
     this.detalheService.validarDuplicidadeTituloDespesa(this.despesaRef, this.detalheRef, despesa.dsNomeDespesa, Number(this.anoRef)).subscribe(res => {
-      if (res.mensagem !== 'OK') {
-        this.mensagem.enviarMensagem(res.mensagem, TipoMensagem.Erro);
+      if (res.data !== 'OK') {
+        this.mensagem.enviarMensagem(res.data, TipoMensagem.Erro);
         return;
       } else {
         this.eventModalConfirmacao = "GravarDetalheDespesas";
@@ -863,9 +864,8 @@ export class DetalheDespesasFormComponent implements OnInit {
         this.modalRef = this.modalService.show(this.modalConfirmacaoEventos);
       }
     },
-      err => {
-        this.mensagem.enviarMensagem("Ocorreu um erro ao validar o titulo da despesa, tente novamente mais tarde.", TipoMensagem.Erro);
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao validar o titulo da despesa, tente novamente mais tarde.');
       }
     );
   }
@@ -898,14 +898,14 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.recarregarDetalheDespesa();
       this.mensagem.enviarMensagem("Dados gravados com sucesso!", TipoMensagem.Sucesso);
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao gravar a despesa mensal.');
       });
   }
 
   obterDetalhesLabelQuitacaoMes() {
     this.detalheService.obterExtratoDetalheDespesaQuitacaoMes(this.despesaRef, this.detalheRef).toPromise().then((res) => {
-      alert('CONSULTA DE DESPESAS Á QUITAR: \r\n \r\nValor R$   -   DESCRIÇÃO \r\n \r\n' + res.relatorioDespesas);
+      alert('CONSULTA DE DESPESAS Á QUITAR: \r\n \r\nValor R$   -   DESCRIÇÃO \r\n \r\n' + res.data);
     },
       err => {
         this.mensagem.enviarMensagem("Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.", TipoMensagem.Erro);
@@ -944,8 +944,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.detalheService.gravarDetalheDespesa(detalhesRequest).toPromise().then(() => {
       this.gravarDespesa(this.detalheLancamentosMensais.despesaMensal);
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao gravar o detalhe da despesa.');
       }
     );
 
@@ -954,13 +954,13 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   validarDuplicidadeTituloDespesa(nomeDespesa: string): Boolean {
     this.detalheService.validarDuplicidadeTituloDespesa(this.despesaRef, this.detalheRef, nomeDespesa, Number(this.anoRef)).subscribe(res => {
-      if (res.mensagem !== 'OK') {
-        this.mensagem.enviarMensagem(res.mensagem, TipoMensagem.Erro);
+      if (res.data !== 'OK') {
+        this.mensagem.enviarMensagem(res.data, TipoMensagem.Erro);
         return false;
       }
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao validar a duplicidade do titulo da despesa.');
       }
     );
 
@@ -1003,8 +1003,8 @@ export class DetalheDespesasFormComponent implements OnInit {
         this.mensagem.enviarMensagem("Lista de despesas ordenada com sucesso.", TipoMensagem.Sucesso);
       }
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao organizar a lista de itens de detalhe despesa.');
       });
   }
 
@@ -1023,8 +1023,8 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.carregarListaDespesasParceladasImportacao(false);
       this.confirmOrganizarRegistrosDetalheDespesa(false);
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao processar a importação de despesas parceladas.');
       });
   }
 
@@ -1041,8 +1041,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.detalheService.gravarDetalheDespesa(detalhesRequest).toPromise().then(() => {
       this.recarregarDetalheDespesa();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao desfazer o pagamento da despesa.');
       });
 
     this.closeModal();
@@ -1052,10 +1052,10 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.objectModalObservacoes = objeto;
 
     this.detalheService.getObservacoesDetalheDespesa(this.despesaRef, objeto.idDetalheDespesa, objeto.idObservacao).subscribe(res => {
-      (<HTMLInputElement>document.getElementById("observacoesDetalhe")).value = res.observacoes;
+      (<HTMLInputElement>document.getElementById("observacoesDetalhe")).value = res.data;
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao carregar as observações do detalhe da despesa.');
       }
     );
   }
@@ -1064,10 +1064,10 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.objectModalHistorico = objeto;
 
     this.detalheService.getHistoricoDetalheDespesa(objeto.idDetalheDespesaLog, this.despesaRef, objeto.idDetalheDespesa).subscribe(res => {
-      (<HTMLInputElement>document.getElementById("historicoDetalhe")).value = res.historico;
+      (<HTMLInputElement>document.getElementById("historicoDetalhe")).value = res.data;
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao carregar o histórico do detalhe da despesa.');
       }
     );
   }
@@ -1087,8 +1087,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.detalheService.gravarObservacoesDetalheDespesa(observacaoRequest).toPromise().then(() => {
       this.mensagem.enviarMensagem("Observações gravadas com sucesso!", TipoMensagem.Sucesso);
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao gravar as observações do detalhe da despesa.');
       });
   }
 
@@ -1108,8 +1108,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.detalheService.atualizarOrdemLinhaDetalheDespesa(objeto.idDespesa, objeto.idDetalheDespesa, ordemAtual, novaOrdem).toPromise().then(() => {
       this.recarregarDetalheDespesa();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao atualizar a ordem da linha de detalhe da despesa.');
       });
   }
 
@@ -1214,8 +1214,8 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.confirmOrganizarRegistrosDetalheDespesa(false);
       this.mensagem.enviarMensagem("Atualização realizada com sucesso!", TipoMensagem.Sucesso);
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao reprocessar a importação do detalhe da despesa.');
       });
   }
 
@@ -1232,8 +1232,8 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.recarregarDetalheDespesa();
       this.mensagem.enviarMensagem("Parcela(s) adiada(s) com sucesso! \n \n *ATENÇÃO* Não esquecer de reprocessar as despesas no mês seguinte!", TipoMensagem.Sucesso);
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao adiar o fluxo de parcelas.');
       });
   }
 
@@ -1249,8 +1249,8 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.closeModal();
       this.recarregarDetalheDespesa();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao desfazer o adiamento do fluxo de parcelas.');
       });
   }
 
@@ -1290,8 +1290,8 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.detalheService.gravarDetalheDespesa(novaLinha).toPromise().then(() => {
       this.confirmOrganizarRegistrosDetalheDespesa(false);
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao adicionar uma nova linha de detalhe da despesa.');
       });
   }
 
@@ -1355,10 +1355,10 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   obterExtratoDespesaConsolidada(despesa) {
     this.detalheService.obterExtratoDespesasParceladasConsolidadas(this.despesaRef, this.detalheRef, despesa.idConsolidacao).toPromise().then((res) => {
-      alert('* VISUALIZAÇÃO DESPESAS PARCELADAS CONSOLIDADAS * \r\n \r\n' + res.nomeDespesaParcelada);
+      alert('* VISUALIZAÇÃO DESPESAS PARCELADAS CONSOLIDADAS * \r\n \r\n' + res.data);
     },
-      err => {
-        this.mensagem.enviarMensagem("Ocorreu um erro ao obter os dados do extrato de quitação, tente novamente mais tarde.", TipoMensagem.Erro);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao obter os dados do extrato de despesas consolidadas.');
       });
   }
 
@@ -1436,8 +1436,8 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.recarregarDetalheDespesa();
       this.mensagem.enviarMensagem("Despesa(s) associada(s) com sucesso!", TipoMensagem.Sucesso);
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao associar despesas à consolidação.');
       });
   }
 
@@ -1450,8 +1450,8 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.detalheDomain.getDespesaMensal().idDetalheDespesa = idDetalheDespesaAssociada;
       this.recarregarDetalheDespesa();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao alterar a referência da despesa mensal.');
       });
   }
 
@@ -1462,8 +1462,8 @@ export class DetalheDespesasFormComponent implements OnInit {
       this.mensagem.enviarMensagem("Titulo alterado com sucesso!", TipoMensagem.Sucesso);
       this.recarregarDetalheDespesa();
     },
-      err => {
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagem, 'Ocorreu um erro ao editar o título da despesa.');
       });
   }
 
@@ -1494,8 +1494,8 @@ export class DetalheDespesasFormComponent implements OnInit {
         this.parcelasAmortizacao = res;
         this.setParcelasAmortizacaoObservable(res)
       },
-        err => {
-          console.log(err);
+        error => {
+          handleApiError(error, this.mensagem, 'Ocorreu um erro ao carregar as parcelas para amortização.');
         });
     });
   }

@@ -1,52 +1,48 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-  <title>Font Awesome Icons</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-</head>
-
 <div class="divContainer">
+  <div *ngIf="carregando" class="loading-overlay">
+    <div class="loading-message">
+      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      Carregando...
+    </div>
+  </div>
 
   <div class="conteudoFixo">
-    <header style="font-family: system-ui;">
+    <header class="header-system-ui">
       <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
         <div class="col-auto">
-          <i class="fa fa-line-chart" style="font-size:24px"></i>
+          <i class="fa fa-line-chart icon-24"></i>
         </div>
 
         <div>
           <h5>Minhas Despesas Mensais</h5>
-          <h5 style="font-size: smaller;font-family: cursive;color: #db191996 !important;padding: 0% 2%;margin: -2%;">
-            Administrador</h5>
+          <h5 class="admin-label">Administrador</h5>
         </div>
 
         <hr>
         <div class="d-grid gap-2 d-md-block btn-group-sm">
           <div class="btn-group mr-2" role="group" aria-label="First group">
-            <button class="btn text-white" data-mdb-ripple-init style="background-color: #00683d;" href="#!"
-              role="button" title="Processar Importação" (click)="processarImportacao()">
+            <button class="btn text-white btn-importacao" data-mdb-ripple-init href="#!" role="button"
+              title="Processar Importação" (click)="processarImportacao()">
               <i class="fa fa-download" aria-hidden="true"></i>
             </button>
-            <button class="btn text-white" data-mdb-ripple-init style="background-color: #690303;" href="#!"
-              role="button" title="Excluir Tudo" (click)="excluirTodosLancamentos()">
+            <button class="btn text-white btn-excluir-tudo" data-mdb-ripple-init href="#!" role="button"
+              title="Excluir Tudo" (click)="excluirTodosLancamentos()">
               <i class="fas fa-trash-alt"></i>
             </button>
           </div>
 
           <div class="btn-group mr-2" role="group" aria-label="First group">
-            <button class="btn text-white" data-mdb-ripple-init style="background-color: #0c1a36;" role="button"
+            <button class="btn text-white btn-mes-anterior" data-mdb-ripple-init role="button"
               (click)="visualizarDespesasMesAnterior()" title="Visualizar despesas mês anterior">
               <i class="fa fa-angle-double-left" aria-hidden="true"></i>
             </button>
 
-            <button class="btn text-white" data-mdb-ripple-init style="background-color: #59768a;" role="button"
+            <button class="btn text-white btn-mes-atual" data-mdb-ripple-init role="button"
               (click)="visualizarDespesasMesAtual()" title="Visualizar despesas mês atual">
               <i class="fa fa-flag-checkered" aria-hidden="true"></i>
             </button>
 
-            <button class="btn text-white" data-mdb-ripple-init style="background-color: #0c1a36;" role="button"
+            <button class="btn text-white btn-mes-posterior" data-mdb-ripple-init role="button"
               (click)="visualizarDespesasMesPosterior()" title="Visualizar despesas mês seguinte">
               <i class="fa fa-angle-double-right" aria-hidden="true"></i>
             </button>
@@ -55,7 +51,7 @@
 
         <div class="row" [formGroup]="pesquisaForm">
           <div class="col-lg-6 col-md-3 col-sm-12 p-0.3">
-            <select class="form-control search-slt" formControlName="cbMes" style="width: 103%;">
+            <select class="form-control search-slt select-mes-width" formControlName="cbMes">
               <option value="01">Janeiro</option>
               <option value="02">Fevereiro</option>
               <option value="03">Março</option>
@@ -95,12 +91,11 @@
             <div class="card border-left-receita shadow h-100 py-0">
               <div class="card-body">
                 <div class="row no-gutters align-items-center">
-                  <div class="col mr-4" (click)="ocultarExibirValores()" style="cursor: pointer;"
+                  <div class="col mr-4 cursor-pointer" (click)="ocultarExibirValores()"
                     title="Clique para Ocultar\Exibir os valores">
                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                       Receita</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800"
-                      style="color: #28a745 !important;font-size: 22px;font-family: sans-serif;padding: 2% 0%;">
+                    <div class="h5 mb-0 font-weight-bold text-gray-800 receita-valor">
                       <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
                         R$ {{ lancamentosFinanceiros$.vlSaldoPositivo }}
                       </ng-container>
@@ -119,12 +114,11 @@
             <div class="card border-left-despesas shadow h-100 py-0">
               <div class="card-body">
                 <div class="row no-gutters align-items-center">
-                  <div class="col mr-1" (click)="ocultarExibirValores()" style="cursor: pointer;"
+                  <div class="col mr-1 cursor-pointer" (click)="ocultarExibirValores()"
                     title="Clique para Ocultar\Exibir os valores">
                     <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                       Despesas</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800"
-                      style="color: #dc3545 !important; margin-right: 5%; padding: 0% 0% 2% 0%;">
+                    <div class="h5 mb-0 font-weight-bold text-gray-800 despesas-valor">
                       <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
                         R$ {{ lancamentosFinanceiros$.vlTotalDespesas }}
                       </ng-container>
@@ -132,13 +126,14 @@
                   </div>
 
                   <div class="col-auto">
-                    <i class="fas fa-calendar fa-2x text-gray-300"
-                      title="Saldo inicial do Mês (Despesas): {{lancamentosFinanceiros$?.vlSaldoInicialMes}} R$">
+                    <i class="fas fa-calendar fa-2x text-gray-300" title="Saldo inicial do Mês (Despesas): {{lancamentosFinanceiros$?.vlSaldoInicialMes}} R$ 
+     TOtal utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                     </i>
                   </div>
+
                 </div>
 
-                <div class="progress" style="height: 12px;">
+                <div class="progress progress-height-12">
                   <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
                     <div class="progress-bar bg-danger" role="progressbar"
                       [style.width]="lancamentosFinanceiros$.pcUtilizacaoDespesasMes"
@@ -148,7 +143,9 @@
         'bg-warning': removerPorcentagem(lancamentosFinanceiros$.pcUtilizacaoDespesasMes) >= 50 && removerPorcentagem(lancamentosFinanceiros$.pcUtilizacaoDespesasMes) < 80,
         'bg-danger': removerPorcentagem(lancamentosFinanceiros$.pcUtilizacaoDespesasMes) >= 80
       }">
-                      {{ lancamentosFinanceiros$.pcUtilizacaoDespesasMes }}
+                      <span
+                        [ngClass]="{'blink-text': removerPorcentagem(lancamentosFinanceiros$.pcUtilizacaoDespesasMes) >= 80}">{{
+                        lancamentosFinanceiros$.pcUtilizacaoDespesasMes }}</span>
                     </div>
                   </ng-container>
                 </div>
@@ -161,13 +158,11 @@
             <div class="card border-left-pendente shadow h-100 py-0">
               <div class="card-body">
                 <div class="row no-gutters align-items-center">
-                  <div class="col mr-1" (click)="ocultarExibirValores()" style="cursor: pointer;"
+                  <div class="col mr-1 cursor-pointer" (click)="ocultarExibirValores()"
                     title="Clique para Ocultar\Exibir os valores">
-                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1"
-                      style="color: #c99806!important;">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1 text-warning-custom">
                       Á Pagar</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800"
-                      style="color: #c99806!important;font-size: 22px;font-family: sans-serif;padding: 2% 0%;">
+                    <div class="h5 mb-0 font-weight-bold text-gray-800 pagar-valor">
                       <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
                         R$ {{ lancamentosFinanceiros$.vlTotalPendentePagamento }}
                       </ng-container>
@@ -186,24 +181,20 @@
             <div class="card border-left-disponivel shadow h-100 py-0">
               <div class="card-body">
                 <div class="row no-gutters align-items-center">
-                  <div class="col mr-1" (click)="ocultarExibirValores()" style="cursor: pointer;"
+                  <div class="col mr-1 cursor-pointer" (click)="ocultarExibirValores()"
                     title="Clique para Ocultar\Exibir os valores">
                     <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Saldo Disponível
                     </div>
                     <span *ngIf="lancamentosFinanceiros$">
                       <div *ngIf="lancamentosFinanceiros$.statusSaldoMes == 'Negativo'"
-                        class="h5 mb-0 font-weight-bold text-danger pisca" style="
-    font-size: 22px;
-    font-family: sans-serif;
-    padding: 2% 0%;">
+                        class="h5 mb-0 font-weight-bold text-danger pisca saldo-negativo-valor">
                         <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
                           R$ {{ lancamentosFinanceiros$.vlSaldoDisponivelMes }}
                         </ng-container>
                       </div>
 
                       <div *ngIf="lancamentosFinanceiros$.statusSaldoMes == 'Positivo'"
-                        class="h5 mb-0 font-weight-bold text-gray-800"
-                        style="color: #17a2b8!important;font-size: 22px;font-family: sans-serif;padding: 2% 0%;">
+                        class="h5 mb-0 font-weight-bold text-gray-800 saldo-positivo-valor">
                         <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
                           R$ {{ lancamentosFinanceiros$.vlSaldoDisponivelMes }}
                         </ng-container>
@@ -226,7 +217,8 @@
           </ng-template>
         </div>
 
-        <div class="form-text text-muted labelQuitacaoMes" style="font-size: initial;font-size: 91%;">
+        <div class="form-text text-muted labelQuitacaoMes label-quitacao-mes-custom"
+          title="{{lancamentosFinanceiros$.labelNovasParcelasMes}}">
           <span class="badge badge-info d-inline">
             <i class="fas fa-bullhorn"></i>
           </span>
@@ -258,7 +250,7 @@
                 </thead>
 
                 <tbody *ngIf="lancamentosFinanceiros$">
-                  <tr *ngFor="let item of lancamentosFinanceiros$.despesasFixasMensais">
+                  <tr *ngFor="let item of lancamentosFinanceiros$.despesasFixasMensais" class="linha-cursor-pointer">
                     <td class="text-left">
                       <ng-container *ngIf="receitaMap[item.tpStatus] as status">
                         <span [class]="status.textClass">
@@ -308,9 +300,8 @@
                     <td colspan="8">
                       <br>
                       <div class="d-grid gap-2 d-md-block">
-                        <button class="btn text-white" style="background-color: #3b6bd3; width: 45%;"
-                          data-toggle="modal" (click)="resetModalCriarEditarReceita()"
-                          data-target="#modalCriarEditarReceita">
+                        <button class="btn text-white btn-criar-receita" data-toggle="modal"
+                          (click)="resetModalCriarEditarReceita()" data-target="#modalCriarEditarReceita">
                           <i class="fas fa-plus"></i>
                           <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes == '0,00'"> Criar Nova Receita
                           </span>
@@ -329,7 +320,7 @@
               <table class="table table-despesas" id="tableDespesasMensais">
                 <thead class="thead-light">
                   <tr>
-                    <th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label="" style="width: 19.8889px;">
+                    <th class="text-center sorting_asc th-width-20" rowspan="1" colspan="1" aria-label="">
                       <form [formGroup]="checkDespesasForm" *ngIf="lancamentosFinanceiros$">
                         <input type="checkbox" formControlName="checkMarcarTodasDespesas" name="despesa[]"
                           onclick="marcarTodasDespesas(this)" (click)="onMarcarDesmarcarCheckBoxes()">
@@ -345,7 +336,7 @@
                 </thead>
 
                 <tbody *ngIf="lancamentosFinanceiros$">
-                  <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais">
+                  <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais" class="linha-cursor-pointer">
                     <th>
                       <label class="checkbox-wrap checkbox-primary">
                         <input type="checkbox" name="despesa[]"
@@ -365,8 +356,9 @@
                       </ng-container>
                     </td>
 
-                    <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'"
-                      title="Referência (Mês Anterior\Limite): {{despesa.percentualUtilizacao}}">
+                    <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'" title="Referência (Mês Anterior\Limite): {{despesa.percentualUtilizacao}}
+--------------------------------------------
+⌨ Média Gasto (Ano): {{despesa.savgDespesa}} R$">
                       <span [ngClass]="getPercentualReceitaClass(despesa.statusPercentualReceita)">
                         <i [ngClass]="getPercentualReceitaIcon(despesa.statusPercentualReceita)"></i>
                         <span>{{ despesa.percentualReceita }}</span>
@@ -429,44 +421,43 @@
                     <br>
                     <span *ngIf="lancamentosFinanceiros$">
                       <div *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
-                        <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -1% 0% -6% -5%">
-                          <div class="alert alert-primary" style="margin: 0% 10% 1% 11%;" role="alert">
+                        <div class="d-grid gap-2 d-md-block btn-group-sm alert-margin">
+                          <div class="alert alert-primary alert-inner-margin" role="alert">
                             <i class="fa fa-calendar-o" aria-hidden="true"></i>
                             Nenhuma despesa existente neste mês.
                           </div>
                         </div>
                       </div>
 
-                      <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -1% 0% -6% -5%;">
+                      <div class="d-grid gap-2 d-md-block btn-group-sm btn-group-margin-custom">
                         <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes !='0,00'">
-                          <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3; padding-left: 6%;
-    padding-right: 6%;" role="button" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
-                            (click)="onNovaDespesa()">
+                          <button class="btn text-white btn-nova-despesa" data-mdb-ripple-init role="button"
+                            data-toggle="modal" data-target="#modalDetalheDespesasMensais" (click)="onNovaDespesa()">
                             <i class="fas fa-plus" title="Adicionar uma nova despesa"></i>
                           </button>
 
-                          <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569; padding-left: 6%;
-    padding-right: 6%;" href="#!" role="button" (click)="onExcluirDespesa()">
+                          <button class="btn text-white btn-excluir-despesa" data-mdb-ripple-init href="#!"
+                            role="button" (click)="onExcluirDespesa()">
                             <i class="fas fa-trash-alt" title="Excluir despesa(s) selecionada(s)"></i>
                           </button>
 
-                          <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069; padding-left: 6%;
-    padding-right: 6%;" href="#!" role="button" (click)="onQuitarDespesa()">
+                          <button class="btn text-white btn-quitar-despesa" data-mdb-ripple-init href="#!" role="button"
+                            (click)="onQuitarDespesa()">
                             <i class="far fa-calendar-check" title="Quitar pagamento despesa(s) selecionada(s)"></i>
                           </button>
 
-                          <button class="btn text-white" data-mdb-ripple-init style="background-color: #709977; padding-left: 6%;
-    padding-right: 6%;" href="#!" role="button" (click)="onDesfazerQuitacaoDespesa()">
+                          <button class="btn text-white btn-desfazer-quitacao" data-mdb-ripple-init href="#!"
+                            role="button" (click)="onDesfazerQuitacaoDespesa()">
                             <i class="far fa-calendar-times" title="Desfazer pagamento despesa(s) selecionada(s)"></i>
                           </button>
 
-                          <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a; padding-left: 3%;
-    padding-right: 3%;" href="#!" role="button" (click)="onNovaLinhaSeparacao()">
+                          <button class="btn text-white btn-nova-linha" data-mdb-ripple-init href="#!" role="button"
+                            (click)="onNovaLinhaSeparacao()">
                             <i class="fa fa-arrows-v" title="Adicionar nova linha em branco"></i>
                           </button>
 
-                          <button class="btn text-white" data-mdb-ripple-init style="background-color: #2e0808; padding-left: 2%;
-    padding-right: 2%;" href="#!" role="button" (click)="onNovaDespesaConsolidacao()">
+                          <button class="btn text-white btn-nova-consolidacao" data-mdb-ripple-init href="#!"
+                            role="button" (click)="onNovaDespesaConsolidacao()">
                             <i class="fa fa-object-group" title="Agrupar despesas (consolidação)"></i>
                           </button>
                         </span>
@@ -521,8 +512,7 @@
                   <div class="form-check-inline checkDespesaObrigatoria">
                     <input class="form-check-input" type="checkbox" formControlName="checkDespesaObrigatoria"
                       id="chkDespesaObrigatoria">
-                    <label class="form-check-label" for="chkDespesaObrigatoria"
-                      style="font-size: smaller; color: #a7444e!important"
+                    <label class="form-check-label label-despesa-obrigatoria" for="chkDespesaObrigatoria"
                       title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">*Despesa\Receita
                       obrigatória.</label>
                   </div>
@@ -530,7 +520,7 @@
               </div>
             </form>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
+              <button type="button" class="btn btn-primary btn-modal-salvar" data-dismiss="modal"
                 (click)="gravarReceita()">
                 <i class="fa fa-floppy-o"></i> Salvar
               </button>
@@ -544,20 +534,21 @@
       <div class="modal fade" id="modalParametrizacao" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content modalParametrizacao">
-            <div class="form-group modal-header" style="padding-block-end: inherit;">
+            <div class="form-group modal-header modal-header-inherit">
               <div>
                 <i class="fa fa-cogs" aria-hidden="true"></i>
                 Parametrizações
-                <p style="padding-block-start: 4%; color: brown;"></p>
+                <p class="modal-categorias-alert"></p>
               </div>
             </div>
 
-            <div class="form-group modal-body" style=" padding-block-end: 0%; padding-block-start: 0%;">
+            <div class="form-group modal-body modal-body-no-padding">
               <form [formGroup]="modalParametrizacaoForm" *ngIf="lancamentosFinanceiros$">
                 <label>Virada do mês deve ocorrer no dia:</label>
                 <select class="form-control form-control-sm" formControlName="dataVirada">
                   <option value="1">01</option>
                   <option value="5">05</option>
+                  <option value="8">08</option>
                   <option value="10">10</option>
                   <option value="15">15</option>
                   <option value="20">20</option>
@@ -565,19 +556,18 @@
                   <option value="30">30</option>
                 </select>
                 <br>
-                <div style="margin-block-start: -8%;">
+                <div class="modal-categorias-margin">
                   <input class="form-check-input" type="checkbox" formControlName="checkViradaAutomatica"
                     id="chkViradaAutomatica">
-                  <label class="form-check-label" for="chkViradaAutomatica"
-                    style="font-size: smaller; color: #a7444e!important"
+                  <label class="form-check-label" for="chkViradaAutomatica" class="modal-categorias-label"
                     title="Habilita\Desabilita a virada do mês automaticamente na data selecionada de cada mês.">*Habilitar
                     virada
                     automatica.</label>
                 </div>
                 <hr>
                 <div>
-                  <button type="button" class="btn btn-primary" data-dismiss="modal"
-                    style="background-color: #317943; padding: 0% 22% 0%" (click)="executarBackup()">
+                  <button type="button" class="btn btn-primary btn-modal-backup" data-dismiss="modal"
+                    (click)="executarBackup()">
                     <i class="fa fa-cloud"></i> Executar Backup
                   </button>
                 </div>
@@ -585,7 +575,7 @@
             </div>
 
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
+              <button type="button" class="btn btn-primary btn-modal-aplicar" data-dismiss="modal"
                 (click)="gravarParametrizacao()">
                 <i class="fa fa-floppy-o"></i> Aplicar
               </button>
@@ -606,9 +596,9 @@
               </div>
             </div>
 
-            <div class="form-group modal-body" style=" padding-block-end: 0%; padding-block-start: 0%;">
+            <div class="form-group modal-body modal-body-no-padding">
               <div *ngIf="categoriaDespesa !== null">
-                <div class="form-text text-muted labelQuitacaoMes" style="font-size: initial;font-size: 82%;">
+                <div class="form-text text-muted labelQuitacaoMes label-quitacao-mes-82">
                   <p>{{categoriaDespesa.mesAnoReferencia}}</p>
                 </div>
                 <table class="table table-categorias">
@@ -635,14 +625,13 @@
             </div>
 
             <div *ngIf="categoriaDespesa == null">
-              <div class="alert alert-primary" style="margin-block-start: -4%;" role="alert">
+              <div class="alert alert-primary alert-margin-block-start" role="alert">
                 Não há categorias disponiveis!
               </div>
             </div>
 
-            <div style="font-size: initial;font-size: 95%;">
-              <input type="checkbox" formControlName="checkExibirTotalAnual" (click)="onExibirSubTotalAno($event.target.checked)"
-                id="checkExibirTotalAnual">
+            <div class="font-size-95">
+              <input type="checkbox" (click)="onExibirSubTotalAno($event.target.checked)" id="checkExibirTotalAnual">
               <label class="form-check-label" for="checkExibirTotalAnual"
                 title="Exibir o total das categorias por ano">Exibir Subtotal (Ano)
               </label>
@@ -670,7 +659,7 @@
     <ng-template #modalAutenticacaoUsuario>
       <div class="modal-header">
         <h6 class="modal-title">
-          <i class="fa fa-user-circle-o" style="font-size: 130%;" aria-hidden="true"></i>
+          <i class="fa fa-user-circle-o icon-auth-user" aria-hidden="true"></i>
           Autenticação do usuario
         </h6>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -681,7 +670,7 @@
 
       <div class="modal-body">
         <form [formGroup]="modalAutenticacaoForm">
-          <small class="form-text" style="font-size: revert; color: #b90c0c!important">
+          <small class="form-text small-info-alert">
             <i class="fa fa-info-circle" aria-hidden="true"></i>
             Esta ação exige que o usuario logado valide sua identidade.
           </small>
@@ -710,10 +699,16 @@
 
     <!------------------------  Modal Exibir Despesas Consolidadas ------------------------>
     <ng-template #modalExibirDespesasConsolidadas>
-      <div class="modal-content" style="width: 155%;margin: -1% -25%;font-family: 'Calibri', sans-serif !important;">
+      <div class="modal-content modal-content-custom">
+        <div *ngIf="carregandoDetalhe" class="loading-overlay">
+          <div class="loading-message">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Carregando...
+          </div>
+        </div>
         <div class="modal-header">
           <h6 class="modal-title">
-            <i class="fa fa-object-group" style="font-size: 130%;" aria-hidden="true"></i>
+            <i class="fa fa-object-group icon-object-group" aria-hidden="true"></i>
             Visualização Despesas Mensais (Agrupadas)
           </h6>
           <br>
@@ -726,7 +721,7 @@
           <table class="table" id="tableDespesasMensais">
             <thead class="thead-light">
               <tr>
-                <th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label="" style="width: 19.8889px;">
+                <th class="text-center sorting_asc th-width-20" rowspan="1" colspan="1" aria-label="">
                   <form [formGroup]="checkDespesasForm" *ngIf="lancamentosMensaisConsolidados">
                     <input type="checkbox" formControlName="checkMarcarTodasDespesas" name="despesa[]"
                       onclick="marcarTodasDespesas(this)" (click)="onMarcarDesmarcarCheckBoxes()">
@@ -758,8 +753,9 @@
                   </ng-container>
                 </td>
 
-                <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'"
-                  title="Referência (Mês Anterior\Limite): {{despesa.percentualUtilizacao}}">
+                <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'" title="Referência (Mês Anterior\Limite): {{despesa.percentualUtilizacao}}
+--------------------------------------------
+⌨ Média Gasto (Ano): {{despesa.savgDespesa}} R$">
                   <span [ngClass]="getPercentualReceitaClass(despesa.statusPercentualReceita)">
                     <i [ngClass]="getPercentualReceitaIcon(despesa.statusPercentualReceita)"></i>
                     <span>{{ despesa.percentualReceita }}</span>
@@ -796,8 +792,8 @@
                 <br>
                 <span *ngIf="lancamentosFinanceiros$">
                   <div *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes =='0,00'">
-                    <div class="d-grid gap-2 d-md-block btn-group-sm" style="margin: -1% 0% -6% -5%">
-                      <div class="alert alert-primary" style="margin: 0% 10% 1% 11%;" role="alert">
+                    <div class="d-grid gap-2 d-md-block btn-group-sm btn-group-margin-custom">
+                      <div class="alert alert-primary alert-margin-custom" role="alert">
                         <i class="fa fa-calendar-o" aria-hidden="true"></i>
                         Nenhuma despesa existente neste mês.
                       </div>
@@ -810,23 +806,23 @@
         </div>
 
         <div class="modal-footer">
-          <button class="btn text-white mx-3" data-mdb-ripple-init style="background-color: #ee5569; padding-left: 6%;
-    padding-right: 6%;" href="#!" role="button" (click)="onExcluirDespesa()">
+          <button class="btn text-white mx-3 btn-excluir-despesa-final" data-mdb-ripple-init href="#!" role="button"
+            (click)="onExcluirDespesa()">
             <i class="fas fa-trash-alt" title="Excluir despesa(s) selecionada(s)"></i>
           </button>
 
-          <button class="btn text-white mx-3" data-mdb-ripple-init style="background-color: #58c069; padding-left: 6%;
-    padding-right: 6%;" href="#!" role="button" (click)="onQuitarDespesa()">
+          <button class="btn text-white mx-3 btn-quitar-despesa-final" data-mdb-ripple-init href="#!" role="button"
+            (click)="onQuitarDespesa()">
             <i class="far fa-calendar-check" title="Quitar pagamento despesa(s) selecionada(s)"></i>
           </button>
 
-          <button class="btn text-white mx-3" data-mdb-ripple-init style="background-color: #709977; padding-left: 6%;
-    padding-right: 6%;" href="#!" role="button" (click)="onDesfazerQuitacaoDespesa()">
+          <button class="btn text-white mx-3 btn-desfazer-quitacao-final" data-mdb-ripple-init href="#!" role="button"
+            (click)="onDesfazerQuitacaoDespesa()">
             <i class="far fa-calendar-times" title="Desfazer pagamento despesa(s) selecionada(s)"></i>
           </button>
 
-          <button class="btn text-white mx-3" data-mdb-ripple-init style="background-color: #e91b25; padding-left: 2%;
-    padding-right: 2%;" href="#!" role="button" (click)="onRemoveDespesaConsolidada()">
+          <button class="btn text-white mx-3 btn-remove-despesa-consolidada" data-mdb-ripple-init href="#!"
+            role="button" (click)="onRemoveDespesaConsolidada()">
             <i class="fa fa-object-group" title="Remover despesa(s) do grupo (consolidação)"></i>
           </button>
         </div>
@@ -853,7 +849,7 @@
               placeholder="Ex: Cartões" onkeyup="toUpper(this)">
           </div>
         </form>
-        <small class="form-text" style="font-size: revert; color: #b90c0c!important">
+        <small class="form-text small-info-alert">
           <i class="fa fa-info-circle" aria-hidden="true"></i>
           Não será permitido editar o nome do grupo após a criação.
         </small>
@@ -870,7 +866,7 @@
     <ng-template #modalConfirmacaoExcluirDespesa>
       <div class="modal-header">
         <h6 class="modal-title">
-          <i class="fa fa-question-circle-o" style="font-size: 130%;" aria-hidden="true"></i>
+          <i class="fa fa-question-circle-o icon-modal-question" aria-hidden="true"></i>
           Confirmação
         </h6>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -879,7 +875,7 @@
       </div>
       <div class="modal-body">
         Deseja realmente excluir a(s) despesa(s) selecionada(s)?
-        <small class="form-text" style="font-size: revert; color: #a7444e!important">
+        <small class="form-text small-warning-alert">
           <i class="fa fa-info-circle" aria-hidden="true"></i>
           Atenção: Esta ação não podera ser desfeita.
         </small>
@@ -897,7 +893,7 @@
       <ng-template #modalConfirmacaoEventos>
         <div class="modal-header">
           <h6 class="modal-title">
-            <i class="fa fa-question-circle" style="font-size: 130%;" aria-hidden="true"></i> Confirmação
+            <i class="fa fa-question-circle icon-modal-question" aria-hidden="true"></i> Confirmação
           </h6>
         </div>
         <div class="form-group modal-body">

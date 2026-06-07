@@ -3,7 +3,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { delay } from 'rxjs/operators';
 import { TipoMensagem } from 'src/app/core/enums/tipo-mensagem-enums';
 import { DetalheLembrete } from 'src/app/core/interfaces/detalhe-lembrete.interface';
 import { TituloLembretes } from 'src/app/core/interfaces/titulo-lembretes.interface';
@@ -11,6 +10,7 @@ import { HomeService } from 'src/app/core/services/home.service';
 import { LembretesService } from 'src/app/core/services/lembretes.service';
 import { MensagemService } from 'src/app/core/services/mensagem.service';
 import { SessaoService } from 'src/app/core/services/sessao.service';
+import { handleApiError } from 'src/app/core/utils/error-handler.util';
 
 @Component({
   selector: 'app-lembretes-form',
@@ -102,6 +102,8 @@ export class LembretesFormComponent implements OnInit {
       checkDom: [false],
       checkNotificarDatasProgramadas: [false]
     });
+
+    setarFocoCampo("nomeLembrete");
   }
 
   desabilitarCampos() {
@@ -403,14 +405,14 @@ export class LembretesFormComponent implements OnInit {
       tpDomingo: this.convertBooleanToChar(checkDom),
       tpContagemRegressiva: this.convertBooleanToChar(checkContagemRegressiva),
       tpRenovarAuto: this.convertBooleanToChar(checkRenovaAUTO),
-      dataInicial: parseDate(this.dataInicialReferencia).toString(),
+      dataInicial: this.dataInicialReferencia,
       dsObservacoes: observacoes,
       tpLembreteDatado: this.convertBooleanToChar(checkNotificarDatas),
-      data1: parseDate(this.dataReferencia1).toString(),
-      data2: parseDate(this.dataReferencia2).toString(),
-      data3: parseDate(this.dataReferencia3).toString(),
-      data4: parseDate(this.dataReferencia4).toString(),
-      data5: parseDate(this.dataReferencia5).toString()
+      data1: this.dataReferencia1,
+      data2: this.dataReferencia2,
+      data3: this.dataReferencia3,
+      data4: this.dataReferencia4,
+      data5: this.dataReferencia5
     }
 
     return true;
@@ -510,7 +512,8 @@ export class LembretesFormComponent implements OnInit {
       checked: false,
       changeValues: false
     }
-
+    
+    this.idLembreteReferencia = idLembrete;
     return novoLembrete;
   }
 
@@ -559,9 +562,8 @@ export class LembretesFormComponent implements OnInit {
       this.resetCampos();
       this.atualizaStatusLembreteHome();
     },
-      err => {
-        this.mensagens.enviarMensagem("Ocorreu um erro ao excluir o lembrete, tente novamente mais tarde.", TipoMensagem.Erro);
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao excluir o lembrete, tente novamente mais tarde.');
       });
 
     this.closeModal();
@@ -572,13 +574,14 @@ export class LembretesFormComponent implements OnInit {
 
     this.service.gravarDetalhesLembrete(request).toPromise().then(() => {
       this.mensagens.enviarMensagem("Lembrete gravado com sucesso.", TipoMensagem.Sucesso);
-      this.carregarDetalheLembrete();
+      //this.carregarDetalheLembrete(); TODO - Ajustar a API para retornar o id do lembrete para recarregar os detalhes após a gravação
       this.carregarListaLembretes(false);
       this.atualizaStatusLembreteHome();
+      // bloqueia os controles e limpa o form 
+      this.loadFormLembretes();
     },
-      err => {
-        this.mensagens.enviarMensagem("Ocorreu um erro ao gravar o lembrete, tente novamente mais tarde.", TipoMensagem.Erro);
-        console.log(err);
+      error => {
+        handleApiError(error, this.mensagens, 'Ocorreu um erro ao gravar o lembrete, tente novamente mais tarde.');
       });
 
     this.closeModal();
@@ -644,24 +647,14 @@ function formatRealNumber(str) {
   return tmp;
 }
 
-function parseDate(texto) {
-  if (texto == "" || texto == null) {
-    return "";
-  }
+async function setarFocoCampo(inputName: string) {
+  await aguardarTempo(500); // Aguarda 1/2 segundo
+  const campoInput = document.getElementById(inputName) as HTMLInputElement;
 
-  let dataDigitadaSplit = texto.split("/");
+  // Define o foco no campo
+  campoInput.focus();
+}
 
-  let dia = dataDigitadaSplit[0];
-  let mes = dataDigitadaSplit[1];
-  let ano = dataDigitadaSplit[2];
-
-  if (ano.length < 4 && parseInt(ano) < 50) {
-    ano = "20" + ano;
-  } else if (ano.length < 4 && parseInt(ano) >= 50) {
-    ano = "19" + ano;
-  }
-  ano = parseInt(ano);
-  mes = mes - 1;
-
-  return new Date(ano, mes, dia);
+async function aguardarTempo(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

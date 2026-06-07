@@ -166,16 +166,11 @@
                     <div class="input-valor-despesa" disabled>
                       <input type="text" class="text-center form-control input-valor-despesa" id="valorParcela"
                         currencyMask maxlength="16" autocomplete="off"
-                        [options]="{ prefix: '', thousands: '.', decimal: ',' }" disabled>
+                        [options]="{ prefix: '', thousands: '.', decimal: ',' }" disabled
+                        title="{{ despesaParceladaDetalhe ? 'Total pendente para quitação: ' + despesaParceladaDetalhe.valorTotalDespesaPendente + ' R$' : '' }}">
                     </div>
                   </div>
                 </div>
-
-                <!--<button class="btn text-white button-gerar-fluxo" data-mdb-ripple-init href="#!" role="button"
-                  title="Importar despesas parceladas" data-toggle="modal"
-                  data-target="#modalImportacaoDespesaParcelada" (click)="carregarListaDespesasParceladasImportacao()">
-                  <i class="fa fa-retweet" aria-hidden="true"></i> Gerar Fluxo de Parcelas
-                </button>-->
               </form>
             </div>
           </div>

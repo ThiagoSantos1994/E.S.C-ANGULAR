@@ -11,10 +11,9 @@ export class MensagemService {
   constructor(
   ) { }
 
-  private subject = new Subject<any>();
+  private readonly subject = new Subject<Mensagem>();
 
-  public enviarMensagem(msg: string, tipo: TipoMensagem) {
-
+  enviarMensagem(msg: string | null, tipo: TipoMensagem | null): void {
     const mensagem: Mensagem = {
       mensagem: msg,
       tipo: tipo
@@ -23,7 +22,7 @@ export class MensagemService {
     this.subject.next(mensagem);
   }
 
-  public recebeMensagem(): Observable<Mensagem> {
+  recebeMensagem(): Observable<Mensagem> {
     return this.subject.asObservable();
   }
 }

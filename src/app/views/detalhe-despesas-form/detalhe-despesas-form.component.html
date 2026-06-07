@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-  <title>Font Awesome Icons</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-</head>
-
-<body class="body">
+<!-- Template Angular: detalhe-despesas-form.component.html -->
   <div class="container d-flex justify-content-center">
     <div id="modalDetalheDespesasMensais" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-content modalDetalheDespesasMensais modal-dialog-centered justify-content-center"
@@ -121,7 +112,7 @@
                   </button>
                 </div>
                 <div class="text-left" style="padding-top: 1%;">
-                  <small class="form-text text-muted" style="font-size: initial;font-size: 87%;">
+                  <small class="form-text text-muted" style="font-size: initial;font-size: 95%;">
                     <i class="fa fa-info-circle" aria-hidden="true"></i>
                     <span *ngIf="detalheLancamentosMensais">
                       <span (click)="obterDetalhesLabelQuitacaoMes()">
@@ -270,7 +261,9 @@
                     </tr>
                   </thead>
                   <tbody *ngIf="detalheLancamentosMensais">
-                    <tr *ngFor="let detalheDespesa of detalheLancamentosMensais.detalheDespesaMensal">
+                    <tr *ngFor="let detalheDespesa of detalheLancamentosMensais.detalheDespesaMensal"
+                      class="linha-editavel"
+                      [ngClass]="{'linha-marcada': detalheDespesa.checked}">
                       <td>
                         <label class="checkbox-wrap checkbox-primary">
                           <input type="checkbox" name="item[]"
@@ -320,14 +313,16 @@
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.tpAnotacao == 'N'">
                           <div contenteditable="false" style="width: 70px" data-toggle="modal"
                             data-target="#modalEditarValores"
-                            (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)">
+                            (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)"
+                            class="linha-editavel">
                             {{ detalheDespesa.vlTotal}}
                           </div>
                         </span>
                         <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
                           <div contenteditable="false" style="width: 70px; color: #bdbdbd;" data-toggle="modal"
                             data-target="#modalEditarValores"
-                            (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)">
+                            (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)"
+                            class="linha-editavel">
                             {{ detalheDespesa.vlTotal}}
                           </div>
                         </span>
@@ -404,7 +399,8 @@
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.tpAnotacao == 'N'">
                           <div contenteditable="false" style="width: 70px" data-toggle="modal"
                             data-target="#modalEditarValores"
-                            (click)="setModalEditarValores(detalheDespesa.vlTotalPago, 'detalheDespColValorTotalPago', detalheDespesa)">
+                            (click)="setModalEditarValores(detalheDespesa.vlTotalPago, 'detalheDespColValorTotalPago', detalheDespesa)"
+                            class="linha-editavel">
                             {{ detalheDespesa.vlTotalPago}}
                           </div>
                         </span>
@@ -927,7 +923,6 @@
       </div>
     </div>
   </div>
-</body>
 
 <!------------------------  Modal Observacoes ------------------------>
 <div class="modal fade" id="modalObservacoes" tabindex="-1" role="dialog" aria-hidden="true">
