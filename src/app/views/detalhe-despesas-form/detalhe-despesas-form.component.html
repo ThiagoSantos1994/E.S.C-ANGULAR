@@ -1,928 +1,919 @@
 <!-- Template Angular: detalhe-despesas-form.component.html -->
-  <div class="container d-flex justify-content-center">
-    <div id="modalDetalheDespesasMensais" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-content modalDetalheDespesasMensais modal-dialog-centered justify-content-center"
-        role="document">
-        <div class="form-group modalDetalheDespesasMensais-body">
-          <h6 class="text-left mt-0 font-weight-bold mb-0">
-            <span>
-              <button type="button" class="close text-left my-auto" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </span>
-            Nome da Despesa:
-          </h6>
+<div class="container d-flex justify-content-center">
+  <div id="modalDetalheDespesasMensais" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-content modalDetalheDespesasMensais modal-dialog-centered justify-content-center"
+      role="document">
+      <div class="form-group modalDetalheDespesasMensais-body">
+        <h6 class="text-left mt-0 font-weight-bold mb-0">
+          <span>
+            <button type="button" class="close text-left my-auto" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </span>
+          Nome da Despesa:
+        </h6>
 
-          <form [formGroup]="modalDetalheDespesasMensaisForm">
-            <div class="row-header-detalhe-despesas-mensais">
-              <div class="col-xl-10 col-md-6 mb-1" style="height: min-content;">
-                <div class="input-group-header-titulo">
-                  <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa"
-                    onkeyup="toUpper(this)" placeholder="Ex: Fatura cartão crédito">
-                  <button class="btn text-white " data-mdb-ripple-init style="background-color: #666572;" role="button"
-                    data-toggle="modal" data-target="#modalAssociarDespesaMensalExistente"
-                    id="buttonAssociarDespesaExistente" (click)="carregarListaDespesasAlteracao()">
-                    <i class="fa fa-pencil-square-o"></i>
-                  </button>
-                </div>
-                <br>
-                <div class="input-group-categorias">
-                  <div class="card-categorias">
-                    <div>
-                      <div *ngIf="detalheLancamentosMensais" class="form-check form-check-inline">
-
-                        <div *ngIf="detalheLancamentosMensais.despesaMensal.isNovaDespesa"
-                          class="form-check form-check-inline checkDetalheDespesas">
-                          <span class="badge checkDetalheDespesasNova d-inline">
-                            <i class="fa fa-star"> Nova Despesa</i>
-                          </span>
-                        </div>
-
-                        <div
-                          *ngIf="!detalheLancamentosMensais.despesaMensal.isNovaDespesa && detalheLancamentosMensais.despesaMensal.tpRelatorio == 'N'"
-                          class="form-check form-check-inline checkDetalheDespesas">
-                          <span class="badge checkDetalheDespesasComum d-inline">
-                            <i class="fa fa-check-circle"> Despesa Comum</i>
-                          </span>
-                        </div>
-
-                        <div *ngIf="detalheLancamentosMensais.despesaMensal.tpRelatorio == 'S'"
-                          class="form-check form-check-inline checkDetalheDespesas">
-                          <span class="badge checkDetalheDespesasColor d-inline">
-                            <i class="fa fa-bar-chart"> Despesa Relatório</i>
-                          </span>
-                        </div>
-
-                        <div *ngIf="detalheLancamentosMensais.despesaMensal.tpAnotacao == 'S'"
-                          class="form-check form-check-inline checkDetalheDespesas">
-                          <span class="badge checkDetalheDespesasColor d-inline">
-                            <i class="fa fa-check-circle"> Despesa Rascunho</i>
-                          </span>
-                        </div>
-
-                        <div *ngIf="detalheLancamentosMensais.despesaMensal.tpEmprestimoAPagar == 'S'"
-                          class="form-check form-check-inline checkDetalheDespesas">
-                          <span class="badge checkDetalheDespesasColor d-inline">
-                            <i class="fa fa-check-circle"> Empréstimo a Pagar</i>
-                          </span>
-                        </div>
-
-                        <div *ngIf="detalheLancamentosMensais.despesaMensal.tpEmprestimo == 'S'"
-                          class="form-check form-check-inline checkDetalheDespesas">
-                          <span class="badge checkDetalheDespesasColor d-inline">
-                            <i class="fa fa-check-circle"> Empréstimo a Receber</i>
-                          </span>
-                        </div>
-
-                        <div *ngIf="detalheLancamentosMensais.despesaMensal.tpPoupanca == 'S'"
-                          class="form-check form-check-inline checkDetalheDespesas">
-                          <span class="badge checkDetalheDespesasColor d-inline">
-                            <i class="fa fa-check-circle"> Poupança +</i>
-                          </span>
-                        </div>
-
-                        <div *ngIf="detalheLancamentosMensais.despesaMensal.tpPoupancaNegativa == 'S'"
-                          class="form-check form-check-inline checkDetalheDespesas">
-                          <span class="badge checkDetalheDespesasColor d-inline">
-                            <i class="fa fa-check-circle"> Poupança -</i>
-                          </span>
-                        </div>
-
-                        <div *ngIf="detalheLancamentosMensais.despesaMensal.tpDebitoAutomatico == 'S'"
-                          class="form-check form-check-inline checkDetalheDespesas">
-                          <span class="badge checkDetalheDespesasColor d-inline">
-                            <i class="fa fa-check-circle"> Débito Automatico</i>
-                          </span>
-                        </div>
-
-                        <div *ngIf="detalheLancamentosMensais.despesaMensal.tpDebitoCartao == 'S'"
-                          class="form-check form-check-inline checkDetalheDespesas">
-                          <span class="badge checkDetalheDespesasColor d-inline">
-                            <i class="fa fa-check-circle"> Débito Cartão</i>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <button class="btn text-white " data-mdb-ripple-init style="background-color: #414f8d;" role="button"
-                    data-toggle="modal" data-target="#modalCategoriaDetalheDespesa"
-                    (click)="carregarCategoriaDetalheDespesa()">
-                    <i class="fa fa-star-half-o"></i> Categorias
-                  </button>
-                </div>
-                <div class="text-left" style="padding-top: 1%;">
-                  <small class="form-text text-muted" style="font-size: initial;font-size: 95%;">
-                    <i class="fa fa-info-circle" aria-hidden="true"></i>
-                    <span *ngIf="detalheLancamentosMensais">
-                      <span (click)="obterDetalhesLabelQuitacaoMes()">
-                        {{detalheLancamentosMensais.despesaMensal.dsExtratoDespesa}}</span>
-                    </span>
-                  </small>
-                </div>
+        <form [formGroup]="modalDetalheDespesasMensaisForm">
+          <div class="row-header-detalhe-despesas-mensais">
+            <div class="col-xl-10 col-md-6 mb-1" style="height: min-content;">
+              <div class="input-group-header-titulo">
+                <input class="form-control form-control-sm" type="text" formControlName="nomeDespesa"
+                  onkeyup="toUpper(this)" placeholder="Ex: Fatura cartão crédito">
+                <button class="btn text-white " data-mdb-ripple-init style="background-color: #666572;" role="button"
+                  data-toggle="modal" data-target="#modalAssociarDespesaMensalExistente"
+                  id="buttonAssociarDespesaExistente" (click)="carregarListaDespesasAlteracao()">
+                  <i class="fa fa-pencil-square-o"></i>
+                </button>
               </div>
+              <br>
+              <div class="input-group-categorias">
+                <div class="card-categorias">
+                  <div>
+                    <div *ngIf="detalheLancamentosMensais" class="form-check form-check-inline">
 
-              <div class="col-xl-2 col-md-6 mb-1">
-                <div class="card border-saldo-detalhe-despesa shadow h-100 py-0">
-                  <div class="card-body-saldo-detalhe-despesa">
-                    <div class="row no-gutters">
-                      <div class="text-center">
-                        Limite Referencia
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          <input type="text" class="text-center form-control" id="valorLimiteDespesa" currencyMask
-                            maxlength="16" autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',' }">
-                        </div>
+                      <div *ngIf="detalheLancamentosMensais.despesaMensal.isNovaDespesa"
+                        class="form-check form-check-inline checkDetalheDespesas">
+                        <span class="badge checkDetalheDespesasNova d-inline">
+                          <i class="fa fa-star"> Nova Despesa</i>
+                        </span>
+                      </div>
 
-                        <small class="form-text text-muted" style="padding-top: 5%;">
-                          <span *ngIf="detalheLancamentosMensais">
-                            {{detalheLancamentosMensais.despesaMensal.vlTotalDespesa}} Gasto Mês
-                          </span>
-                        </small>
+                      <div
+                        *ngIf="!detalheLancamentosMensais.despesaMensal.isNovaDespesa && detalheLancamentosMensais.despesaMensal.tpRelatorio == 'N'"
+                        class="form-check form-check-inline checkDetalheDespesas">
+                        <span class="badge checkDetalheDespesasComum d-inline">
+                          <i class="fa fa-check-circle"> Despesa Comum</i>
+                        </span>
+                      </div>
 
-                        <small class="form-text text-muted" style="padding-left: 11%;">
-                          <input class="form-check-input" type="checkbox" formControlName="checkLimiteMesAnterior"
-                            id="checkLimiteMesAnterior" (click)="onCheckLimiteMesAnteriorChange($event.target.checked)">
-                          <label class="form-check-label" for="checkLimiteMesAnterior"
-                            title="Utiliza como referencia de limite o valor total da despesa do mês anterior.">Ref.
-                            Saldo Anterior
-                          </label>
-                        </small>
+                      <div *ngIf="detalheLancamentosMensais.despesaMensal.tpRelatorio == 'S'"
+                        class="form-check form-check-inline checkDetalheDespesas">
+                        <span class="badge checkDetalheDespesasColor d-inline">
+                          <i class="fa fa-bar-chart"> Despesa Relatório</i>
+                        </span>
+                      </div>
+
+                      <div *ngIf="detalheLancamentosMensais.despesaMensal.tpAnotacao == 'S'"
+                        class="form-check form-check-inline checkDetalheDespesas">
+                        <span class="badge checkDetalheDespesasColor d-inline">
+                          <i class="fa fa-check-circle"> Despesa Rascunho</i>
+                        </span>
+                      </div>
+
+                      <div *ngIf="detalheLancamentosMensais.despesaMensal.tpEmprestimoAPagar == 'S'"
+                        class="form-check form-check-inline checkDetalheDespesas">
+                        <span class="badge checkDetalheDespesasColor d-inline">
+                          <i class="fa fa-check-circle"> Empréstimo a Pagar</i>
+                        </span>
+                      </div>
+
+                      <div *ngIf="detalheLancamentosMensais.despesaMensal.tpEmprestimo == 'S'"
+                        class="form-check form-check-inline checkDetalheDespesas">
+                        <span class="badge checkDetalheDespesasColor d-inline">
+                          <i class="fa fa-check-circle"> Empréstimo a Receber</i>
+                        </span>
+                      </div>
+
+                      <div *ngIf="detalheLancamentosMensais.despesaMensal.tpPoupanca == 'S'"
+                        class="form-check form-check-inline checkDetalheDespesas">
+                        <span class="badge checkDetalheDespesasColor d-inline">
+                          <i class="fa fa-check-circle"> Poupança +</i>
+                        </span>
+                      </div>
+
+                      <div *ngIf="detalheLancamentosMensais.despesaMensal.tpPoupancaNegativa == 'S'"
+                        class="form-check form-check-inline checkDetalheDespesas">
+                        <span class="badge checkDetalheDespesasColor d-inline">
+                          <i class="fa fa-check-circle"> Poupança -</i>
+                        </span>
+                      </div>
+
+                      <div *ngIf="detalheLancamentosMensais.despesaMensal.tpDebitoAutomatico == 'S'"
+                        class="form-check form-check-inline checkDetalheDespesas">
+                        <span class="badge checkDetalheDespesasColor d-inline">
+                          <i class="fa fa-check-circle"> Débito Automatico</i>
+                        </span>
+                      </div>
+
+                      <div *ngIf="detalheLancamentosMensais.despesaMensal.tpDebitoCartao == 'S'"
+                        class="form-check form-check-inline checkDetalheDespesas">
+                        <span class="badge checkDetalheDespesasColor d-inline">
+                          <i class="fa fa-check-circle"> Débito Cartão</i>
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
+
+                <button class="btn text-white " data-mdb-ripple-init style="background-color: #414f8d;" role="button"
+                  data-toggle="modal" data-target="#modalCategoriaDetalheDespesa"
+                  (click)="carregarCategoriaDetalheDespesa()">
+                  <i class="fa fa-star-half-o"></i> Categorias
+                </button>
+              </div>
+              <div class="text-left" style="padding-top: 1%;">
+                <small class="form-text text-muted" style="font-size: initial;font-size: 95%;">
+                  <i class="fa fa-info-circle" aria-hidden="true"></i>
+                  <span *ngIf="detalheLancamentosMensais">
+                    <span (click)="obterDetalhesLabelQuitacaoMes()">
+                      {{detalheLancamentosMensais.despesaMensal.dsExtratoDespesa}}</span>
+                  </span>
+                </small>
               </div>
             </div>
-          </form>
 
-          <hr style="border-top: 1px solid rgba(0,0,0,.1); margin-block: auto;">
+            <div class="col-xl-2 col-md-6 mb-1">
+              <div class="card border-saldo-detalhe-despesa shadow h-100 py-0">
+                <div class="card-body-saldo-detalhe-despesa">
+                  <div class="row no-gutters">
+                    <div class="text-center">
+                      Limite Referencia
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">
+                        <input type="text" class="text-center form-control" id="valorLimiteDespesa" currencyMask
+                          maxlength="16" autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',' }">
+                      </div>
 
-          <div [formGroup]="modalDetalheDespesasMensaisForm">
-            <div class="row-header-detalhe-despesas-mensais">
-              <div style="padding-left: 3.5%">
-                <small class="form-text text-muted">
-                  <input class="form-check-input" type="checkbox" formControlName="checkVisualizarParcelasConsolidadas"
-                    id="checkVisualizarParcelasConsolidadas"
-                    (click)="onCheckVisualizarParcelasConsolidadas($event.target.checked)">
-                  <label class="form-check-label" for="checkVisualizarParcelasConsolidadas"
-                    title="Exibe as despesas parceladas que estão consolidadas."> Exibir despesas
-                    consolidadas</label>
-                </small>
-              </div>
-              <div style="padding-left: 62%;">
-                <small class="form-text text-muted">
-                  <input class="form-check-input" type="checkbox"
-                    formControlName="checkReprocessarDespesasNaoParceladas" id="checkReprocessarDespesasNaoParceladas"
-                    (click)="onCheckReprocessarDespesasNaoParceladas($event.target.checked)">
-                  <label class="form-check-label" for="checkReprocessarDespesasNaoParceladas"
-                    title="Fixa os valores das despesas NÃO PARCELAS do mês anterior."> Fixar valor despesas p/ proximo
-                    mês</label>
-                </small>
+                      <small class="form-text text-muted" style="padding-top: 5%;">
+                        <span *ngIf="detalheLancamentosMensais">
+                          {{detalheLancamentosMensais.despesaMensal.vlTotalDespesa}} Gasto Mês
+                        </span>
+                      </small>
+
+                      <small class="form-text text-muted" style="padding-left: 11%;">
+                        <input class="form-check-input" type="checkbox" formControlName="checkLimiteMesAnterior"
+                          id="checkLimiteMesAnterior" (click)="onCheckLimiteMesAnteriorChange($event.target.checked)">
+                        <label class="form-check-label" for="checkLimiteMesAnterior"
+                          title="Utiliza como referencia de limite o valor total da despesa do mês anterior.">Ref.
+                          Saldo Anterior
+                        </label>
+                      </small>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+        </form>
 
-          <div class="p-2 text-center bg-light">
-            <div class="center-modal-detalhes">
-              <div class="col-sm-1">
-                <div class="d-grid gap-2 col-0 mx-auto">
-                  <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #666572; padding-left: 24%; padding-right: 24%; margin-block-end: 20%;"
-                    href="#!" role="button" title="Importar despesas parceladas" data-toggle="modal"
-                    data-target="#modalImportacaoDespesaParcelada" (click)="carregarListaDespesasParceladasImportacao()"
-                    id="buttonImportar">
-                    <i class="fas fa-download"></i>
-                  </button>
-                  <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #08575a; padding-left: 27%; padding-right: 27%; margin-block-end: 20%;"
-                    href="#!" role="button" title="Atualizar Detalhe Despesas"
-                    (click)="atualizarDetalheDespesasMensais()" id="buttonAtualizar">
-                    <i class="fa fa-refresh"></i>
-                  </button>
-                  <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #3b056e; margin-block-end: 20%;" href="#!" role="button"
-                    title="Consolidar despesas selecionadas" data-toggle="modal"
-                    data-target="#modalAssociarDespesaParceladaConsolidacao"
-                    (click)="carregarListaConsolidacoesParaAssociacao()" id="buttonAssociarDespesaAConsolidacao">
-                    <i class="fa fa-object-group"></i>
-                  </button>
-                  <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #6e0505; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
-                    href="#!" role="button" title="Amortizar Parcelas" data-toggle="modal"
-                    data-target="#modalAmortizacaoParcelas" (click)="carregarParcelasAmortizacao()"
-                    id="buttonAmortizarParcelas">
-                    <i class="fa fa-calendar" aria-hidden="true"></i>
-                  </button>
-                  <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #3b056e; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
-                    href="#!" role="button" title="Adiar parcelas" (click)="adiarFluxoParcelas()"
-                    id="buttonAdiarParcelas">
-                    <i class="far fa-calendar-plus" aria-hidden="true"></i>
-                  </button>
-                  <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #3b056e; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
-                    href="#!" role="button" title="Desfazer adiamento de parcelas"
-                    (click)="desfazerAdiamentoFluxoParcelas()" id="buttonDesfazerAdiamentoFluxoParcelas">
-                    <i class="fas fa-calendar-times" aria-hidden="true"></i>
-                  </button>
-                  <button class="btn text-white" data-mdb-ripple-init
-                    style="background-color: #0f030a; padding-left: 24%; padding-right: 24%; margin-block-end: 20%;"
-                    href="#!" role="button" title="Ordenar registros" (click)="onOrdenarRegistrosDetalheDespesas()"
-                    id="buttonOrdenarRegistros">
-                    <i class=" fa fa-sort-amount-desc" aria-hidden="true"></i>
-                  </button>
-                </div>
+        <hr style="border-top: 1px solid rgba(0,0,0,.1); margin-block: auto;">
+
+        <div [formGroup]="modalDetalheDespesasMensaisForm">
+          <div class="row-header-detalhe-despesas-mensais">
+            <div style="padding-left: 3.5%">
+              <small class="form-text text-muted">
+                <input class="form-check-input" type="checkbox" formControlName="checkVisualizarParcelasConsolidadas"
+                  id="checkVisualizarParcelasConsolidadas"
+                  (click)="onCheckVisualizarParcelasConsolidadas($event.target.checked)">
+                <label class="form-check-label" for="checkVisualizarParcelasConsolidadas"
+                  title="Exibe as despesas parceladas que estão consolidadas."> Exibir despesas
+                  consolidadas</label>
+              </small>
+            </div>
+            <!--<div style="padding-left: 62%;">
+              <small class="form-text text-muted">
+                <input class="form-check-input" type="checkbox" formControlName="checkReprocessarDespesasNaoParceladas"
+                  id="checkReprocessarDespesasNaoParceladas"
+                  (click)="onCheckReprocessarDespesasNaoParceladas($event.target.checked)">
+                <label class="form-check-label" for="checkReprocessarDespesasNaoParceladas"
+                  title="Fixa os valores das despesas NÃO PARCELAS do mês anterior."> Fixar valor despesas p/ proximo
+                  mês</label>
+              </small>
+            </div> -->
+          </div>
+        </div>
+
+        <div class="p-2 text-center bg-light">
+          <div class="center-modal-detalhes">
+            <div class="col-sm-1">
+              <div class="d-grid gap-2 col-0 mx-auto">
+                <button class="btn text-white" data-mdb-ripple-init
+                  style="background-color: #666572; padding-left: 24%; padding-right: 24%; margin-block-end: 20%;"
+                  href="#!" role="button" title="Importar despesas parceladas" data-toggle="modal"
+                  data-target="#modalImportacaoDespesaParcelada" (click)="carregarListaDespesasParceladasImportacao()"
+                  id="buttonImportar">
+                  <i class="fas fa-download"></i>
+                </button>
+                <button class="btn text-white" data-mdb-ripple-init
+                  style="background-color: #08575a; padding-left: 27%; padding-right: 27%; margin-block-end: 20%;"
+                  href="#!" role="button" title="Atualizar Detalhe Despesas" (click)="atualizarDetalheDespesasMensais()"
+                  id="buttonAtualizar">
+                  <i class="fa fa-refresh"></i>
+                </button>
+                <button class="btn text-white" data-mdb-ripple-init
+                  style="background-color: #3b056e;margin-block-end: 20%; padding-left: 23%; padding-right: 23%;"
+                  href="#!" role="button" title="Consolidar despesas selecionadas" data-toggle="modal"
+                  data-target="#modalAssociarDespesaParceladaConsolidacao"
+                  (click)="carregarListaConsolidacoesParaAssociacao()" id="buttonAssociarDespesaAConsolidacao">
+                  <i class="fa fa-object-group"></i>
+                </button>
+                <button class="btn text-white" data-mdb-ripple-init
+                  style="background-color: #6e0505; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
+                  href="#!" role="button" title="Amortizar Parcelas" data-toggle="modal"
+                  data-target="#modalAmortizacaoParcelas" (click)="carregarParcelasAmortizacao()"
+                  id="buttonAmortizarParcelas">
+                  <i class="fa fa-calendar" aria-hidden="true"></i>
+                </button>
+                <button class="btn text-white" data-mdb-ripple-init
+                  style="background-color: #3b056e; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
+                  href="#!" role="button" title="Adiar parcelas" (click)="adiarFluxoParcelas()"
+                  id="buttonAdiarParcelas">
+                  <i class="far fa-calendar-plus" aria-hidden="true"></i>
+                </button>
+                <button class="btn text-white" data-mdb-ripple-init
+                  style="background-color: #3b056e; padding-left: 26%;padding-right: 26%; margin-block-end: 20%;"
+                  href="#!" role="button" title="Desfazer adiamento de parcelas"
+                  (click)="desfazerAdiamentoFluxoParcelas()" id="buttonDesfazerAdiamentoFluxoParcelas">
+                  <i class="fas fa-calendar-times" aria-hidden="true"></i>
+                </button>
+                <button class="btn text-white" data-mdb-ripple-init
+                  style="background-color: #0f030a; padding-left: 24%; padding-right: 24%; margin-block-end: 20%;"
+                  href="#!" role="button" title="Ordenar registros" (click)="onOrdenarRegistrosDetalheDespesas()"
+                  id="buttonOrdenarRegistros">
+                  <i class=" fa fa-sort-amount-desc" aria-hidden="true"></i>
+                </button>
               </div>
+            </div>
 
-              <div class="col-sm-8-detalhe-despesas scrollme-detalhe-despesas">
-                <table class="table table-detalhe-despesas table-bordered">
-                  <thead class="thead-light">
-                    <tr>
-                      <th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label=""
-                        style="width: 19.8889px;">
-                        <form [formGroup]="checkDespesasForm">
-                          <input type="checkbox" formControlName="checkMarcarTodasDespesas" name="item[]"
-                            onclick="marcarTodos(this)" (click)="onMarcarDesmarcarCheckBoxes()">
-                        </form>
-                      </th>
-                      <th scope="col">Ações</th>
-                      <th scope="col">Total R$</th>
-                      <th scope="col">Descrição</th>
-                      <th scope="col">Pago R$</th>
-                      <th scope="col">Status</th>
-                      <th scope="col">Observações</th>
-                      <th scope="col">Observações Complementares</th>
-                      <th scope="col">Categorias</th>
-                      <th scope="col">Rep.</th>
-                      <th scope="col">Anot.</th>
-                      <th scope="col">Sep\Lin</th>
-                      <th scope="col">Rel*</th>
-                      <th scope="col">Despesa Relatorio Associada*</th>
-                    </tr>
-                  </thead>
-                  <tbody *ngIf="detalheLancamentosMensais">
-                    <tr *ngFor="let detalheDespesa of detalheLancamentosMensais.detalheDespesaMensal"
-                      class="linha-editavel"
-                      [ngClass]="{'linha-marcada': detalheDespesa.checked}">
-                      <td>
-                        <label class="checkbox-wrap checkbox-primary">
-                          <input type="checkbox" name="item[]"
-                            (click)="onCheckDetalheDespesaChange($event.target.checked, detalheDespesa)">
-                          <span class="checkmark"></span>
-                        </label>
-                      </td>
-                      <td>
-                        <div style="width: 70px;">
-                          <button type="button" class="btn btn-link btn-sm px-0" title="Subir item"
-                            (click)="atualizarOrdemLinhaDetalheDespesa('UP', detalheDespesa)">
-                            <i class="fa fa-chevron-up"></i>
-                          </button>
+            <div class="col-sm-8-detalhe-despesas scrollme-detalhe-despesas">
+              <table class="table table-detalhe-despesas table-bordered">
+                <thead class="thead-light">
+                  <tr>
+                    <th class="text-center sorting_asc" rowspan="1" colspan="1" aria-label="" style="width: 19.8889px;">
+                      <form [formGroup]="checkDespesasForm">
+                        <input type="checkbox" formControlName="checkMarcarTodasDespesas" name="item[]"
+                          onclick="marcarTodos(this)" (click)="onMarcarDesmarcarCheckBoxes()">
+                      </form>
+                    </th>
+                    <th scope="col">Ações</th>
+                    <th scope="col">Total R$</th>
+                    <th scope="col">Descrição</th>
+                    <th scope="col">Pago R$</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Observações</th>
+                    <th scope="col">Observações Complementares</th>
+                    <th scope="col">Categorias</th>
+                    <th scope="col">Rep.</th>
+                    <th scope="col">Anot.</th>
+                    <th scope="col">Sep\Lin</th>
+                    <th scope="col">Rel*</th>
+                    <th scope="col">Despesa Relatorio Associada*</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="detalheLancamentosMensais">
+                  <tr *ngFor="let detalheDespesa of detalheLancamentosMensais.detalheDespesaMensal"
+                    class="linha-editavel" [ngClass]="{'linha-marcada': detalheDespesa.checked}">
+                    <td>
+                      <label class="checkbox-wrap checkbox-primary">
+                        <input type="checkbox" name="item[]"
+                          (click)="onCheckDetalheDespesaChange($event.target.checked, detalheDespesa)">
+                        <span class="checkmark"></span>
+                      </label>
+                    </td>
+                    <td>
+                      <div style="width: 70px;">
+                        <button type="button" class="btn btn-link btn-sm px-0" title="Subir item"
+                          (click)="atualizarOrdemLinhaDetalheDespesa('UP', detalheDespesa)">
+                          <i class="fa fa-chevron-up"></i>
+                        </button>
 
-                          <button type="button" class="btn btn-link btn-sm px-0" title="Descer item"
-                            (click)="atualizarOrdemLinhaDetalheDespesa('DOWN', detalheDespesa)">
-                            <i class="fa fa-chevron-down"></i>
-                          </button>
+                        <button type="button" class="btn btn-link btn-sm px-0" title="Descer item"
+                          (click)="atualizarOrdemLinhaDetalheDespesa('DOWN', detalheDespesa)">
+                          <i class="fa fa-chevron-down"></i>
+                        </button>
 
-                          <span
-                            *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao == 0">
-                            <button type="button" class="btn btn-link btn-sm px-0" title="Histórico de Alterações"
-                              data-toggle="modal" data-target="#modalHistorico"
-                              (click)="carregarHistorico(detalheDespesa)">
-                              <i class="fa fa-history"></i>
-                            </button>
-
-                            <button type="button" class="btn btn-link btn-sm px-0" title="Adicionar observações"
-                              data-toggle="modal" data-target="#modalObservacoes"
-                              (click)="carregarObservacoes(detalheDespesa)">
-                              <i class="fa fa-commenting"></i>
-                            </button>
-                          </span>
-
-                          <span
-                            *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao !== 0">
-                            <button type="button" class="btn btn-link btn-sm px-0" title="Detalhes Consolidacao"
-                              data-toggle="modal" data-target="#modalConsolidacoes"
-                              (click)="abrirModalCadastroConsolidacoes(detalheDespesa)">
-                              <i class="fa fa-eye"></i>
-                            </button>
-                          </span>
-                        </div>
-                      </td>
-
-                      <td>
-                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.tpAnotacao == 'N'">
-                          <div contenteditable="false" style="width: 70px" data-toggle="modal"
-                            data-target="#modalEditarValores"
-                            (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)"
-                            class="linha-editavel">
-                            {{ detalheDespesa.vlTotal}}
-                          </div>
-                        </span>
-                        <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
-                          <div contenteditable="false" style="width: 70px; color: #bdbdbd;" data-toggle="modal"
-                            data-target="#modalEditarValores"
-                            (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)"
-                            class="linha-editavel">
-                            {{ detalheDespesa.vlTotal}}
-                          </div>
-                        </span>
-                      </td>
-
-                      <td>
                         <span
                           *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao == 0">
-                          <div style="width: 570px">
-                            <span *ngIf="detalheDespesa.tpReprocessar !== 'S' && detalheDespesa.tpAnotacao !== 'S'">
-                              <input type="text" class="form-control form-control-sm text-center"
-                                (input)="onChangeDescricaoDespesa($event.target.value, detalheDespesa)"
-                                value={{detalheDespesa.dsTituloDespesa}} onkeyup="toUpper(this)"
-                                style="color: #000000;">
-                            </span>
-                            <span *ngIf="detalheDespesa.tpReprocessar == 'S' && detalheDespesa.tpAnotacao !== 'S'">
-                              <input type="text" class="form-control form-control-sm text-center"
-                                (input)="onChangeDescricaoDespesa($event.target.value, detalheDespesa)"
-                                value={{detalheDespesa.dsTituloDespesa}} onkeyup="toUpper(this)"
-                                style="color: #137759;">
-                            </span>
-                            <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
-                              <input type="text" class="form-control form-control-sm text-center"
-                                (input)="onChangeDescricaoDespesa($event.target.value, detalheDespesa)"
-                                value={{detalheDespesa.dsTituloDespesa}} onkeyup="toUpper(this)"
-                                style="color: #bdbdbd;">
-                            </span>
-                          </div>
-                        </span>
+                          <button type="button" class="btn btn-link btn-sm px-0" title="Histórico de Alterações"
+                            data-toggle="modal" data-target="#modalHistorico"
+                            (click)="carregarHistorico(detalheDespesa)">
+                            <i class="fa fa-history"></i>
+                          </button>
 
-                        <span
-                          *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada !== 0 && detalheDespesa.idConsolidacao == 0">
-                          <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
-                            <div style="width: 570px; color: #040c6bab" data-toggle="modal"
-                              data-target="#modalDespesasParceladas"
-                              (click)="abrirModalCadastroDespesasParceladas(detalheDespesa)">
-                              <b title="Despesa Parcelada">{{detalheDespesa.dsTituloDespesa}}</b>
-                            </div>
-                          </span>
-                          <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
-                            <div style="width: 570px; color: #bdbdbd">
-                              {{detalheDespesa.dsTituloDespesa}}
-                            </div>
-                          </span>
+                          <button type="button" class="btn btn-link btn-sm px-0" title="Adicionar observações"
+                            data-toggle="modal" data-target="#modalObservacoes"
+                            (click)="carregarObservacoes(detalheDespesa)">
+                            <i class="fa fa-commenting"></i>
+                          </button>
                         </span>
 
                         <span
                           *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao !== 0">
-                          <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
-                            <!--<div style="width: 590px; color: #055551ab" data-toggle="modal"
+                          <button type="button" class="btn btn-link btn-sm px-0" title="Detalhes Consolidacao"
+                            data-toggle="modal" data-target="#modalConsolidacoes"
+                            (click)="abrirModalCadastroConsolidacoes(detalheDespesa)">
+                            <i class="fa fa-eye"></i>
+                          </button>
+                        </span>
+                      </div>
+                    </td>
+
+                    <td>
+                      <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.tpAnotacao == 'N'">
+                        <div contenteditable="false" style="width: 70px" data-toggle="modal"
+                          data-target="#modalEditarValores"
+                          (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)"
+                          class="linha-editavel">
+                          {{ detalheDespesa.vlTotal}}
+                        </div>
+                      </span>
+                      <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
+                        <div contenteditable="false" style="width: 70px; color: #bdbdbd;" data-toggle="modal"
+                          data-target="#modalEditarValores"
+                          (click)="setModalEditarValores(detalheDespesa.vlTotal, 'detalheDespColValorTotal', detalheDespesa)"
+                          class="linha-editavel">
+                          {{ detalheDespesa.vlTotal}}
+                        </div>
+                      </span>
+                    </td>
+
+                    <td>
+                      <span
+                        *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao == 0">
+                        <div style="width: 570px">
+                          <span *ngIf="detalheDespesa.tpReprocessar !== 'S' && detalheDespesa.tpAnotacao !== 'S'">
+                            <input type="text" class="form-control form-control-sm text-center"
+                              (input)="onChangeDescricaoDespesa($event.target.value, detalheDespesa)"
+                              value={{detalheDespesa.dsTituloDespesa}} onkeyup="toUpper(this)" style="color: #000000;">
+                          </span>
+                          <span *ngIf="detalheDespesa.tpReprocessar == 'S' && detalheDespesa.tpAnotacao !== 'S'">
+                            <input type="text" class="form-control form-control-sm text-center"
+                              (input)="onChangeDescricaoDespesa($event.target.value, detalheDespesa)"
+                              value={{detalheDespesa.dsTituloDespesa}} onkeyup="toUpper(this)" style="color: #137759;">
+                          </span>
+                          <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
+                            <input type="text" class="form-control form-control-sm text-center"
+                              (input)="onChangeDescricaoDespesa($event.target.value, detalheDespesa)"
+                              value={{detalheDespesa.dsTituloDespesa}} onkeyup="toUpper(this)" style="color: #bdbdbd;">
+                          </span>
+                        </div>
+                      </span>
+
+                      <span
+                        *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada !== 0 && detalheDespesa.idConsolidacao == 0">
+                        <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
+                          <div style="width: 570px; color: #040c6bab" data-toggle="modal"
+                            data-target="#modalDespesasParceladas"
+                            (click)="abrirModalCadastroDespesasParceladas(detalheDespesa)">
+                            <b title="Despesa Parcelada">{{detalheDespesa.dsTituloDespesa}}</b>
+                          </div>
+                        </span>
+                        <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
+                          <div style="width: 570px; color: #bdbdbd">
+                            {{detalheDespesa.dsTituloDespesa}}
+                          </div>
+                        </span>
+                      </span>
+
+                      <span
+                        *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.idDespesaParcelada == 0 && detalheDespesa.idConsolidacao !== 0">
+                        <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
+                          <!--<div style="width: 590px; color: #055551ab" data-toggle="modal"
                               data-target="#modalConsolidacoes"
                               (click)="abrirModalCadastroConsolidacoes(detalheDespesa)">
                               <b title="Despesa Consolidada"> <i class="fa fa-object-group" aria-hidden="true"
                                   style="padding: 0% 1%;"></i>
                                 {{detalheDespesa.dsTituloDespesa}}</b>
                             </div>-->
-                            <div style="width: 570px; color: #055551ab"
-                              (click)="obterExtratoDespesaConsolidada(detalheDespesa)">
-                              <b title="Despesa Consolidada"> <i class="fa fa-object-group" aria-hidden="true"
-                                  style="padding: 0% 1%;"></i>
-                                {{detalheDespesa.dsTituloDespesa}}</b>
-                            </div>
-                          </span>
-                          <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
-                            <div style="width: 570px; color: #bdbdbd"
-                              (click)="obterExtratoDespesaConsolidada(detalheDespesa)">
-                              <i class="fa fa-object-group" aria-hidden="true"></i> {{detalheDespesa.dsTituloDespesa}}
-                            </div>
-                          </span>
-                        </span>
-                      </td>
-
-                      <td>
-                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.tpAnotacao == 'N'">
-                          <div contenteditable="false" style="width: 70px" data-toggle="modal"
-                            data-target="#modalEditarValores"
-                            (click)="setModalEditarValores(detalheDespesa.vlTotalPago, 'detalheDespColValorTotalPago', detalheDespesa)"
-                            class="linha-editavel">
-                            {{ detalheDespesa.vlTotalPago}}
+                          <div style="width: 570px; color: #055551ab"
+                            (click)="obterExtratoDespesaConsolidada(detalheDespesa)">
+                            <b title="Despesa Consolidada"> <i class="fa fa-object-group" aria-hidden="true"
+                                style="padding: 0% 1%;"></i>
+                              {{detalheDespesa.dsTituloDespesa}}</b>
                           </div>
                         </span>
                         <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
-                          <div contenteditable="false" style="width: 70px; color: #bdbdbd;" data-toggle="modal"
-                            data-target="#modalEditarValores"
-                            (click)="setModalEditarValores(detalheDespesa.vlTotalPago, 'detalheDespColValorTotalPago', detalheDespesa)">
-                            {{ detalheDespesa.vlTotalPago}}
+                          <div style="width: 570px; color: #bdbdbd"
+                            (click)="obterExtratoDespesaConsolidada(detalheDespesa)">
+                            <i class="fa fa-object-group" aria-hidden="true"></i> {{detalheDespesa.dsTituloDespesa}}
                           </div>
                         </span>
-                      </td>
+                      </span>
+                    </td>
 
-                      <td>
-                        <div style="width: 92px">
-                          <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
-                            <select class="form-control form-control-sm"
-                              (change)="onChangeStatusPagamentoDetalhe($event.target.value, detalheDespesa)"
-                              [value]="detalheDespesa.tpStatus !== 'Pago' ? 0 : 1">
-                              <option value="0">Pendente</option>
-                              <option value="1">Pago</option>
-                            </select>
-                          </span>
+                    <td>
+                      <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N' && detalheDespesa.tpAnotacao == 'N'">
+                        <div contenteditable="false" style="width: 70px" data-toggle="modal"
+                          data-target="#modalEditarValores"
+                          (click)="setModalEditarValores(detalheDespesa.vlTotalPago, 'detalheDespColValorTotalPago', detalheDespesa)"
+                          class="linha-editavel">
+                          {{ detalheDespesa.vlTotalPago}}
                         </div>
-                      </td>
+                      </span>
+                      <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
+                        <div contenteditable="false" style="width: 70px; color: #bdbdbd;" data-toggle="modal"
+                          data-target="#modalEditarValores"
+                          (click)="setModalEditarValores(detalheDespesa.vlTotalPago, 'detalheDespColValorTotalPago', detalheDespesa)">
+                          {{ detalheDespesa.vlTotalPago}}
+                        </div>
+                      </span>
+                    </td>
 
-                      <td>
+                    <td>
+                      <div style="width: 92px">
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
-                          <input type="text" class="form-control form-control-sm"
-                            (input)="onChangeObservacoesDespesa($event.target.value, detalheDespesa)"
-                            value={{detalheDespesa.dsObservacao}} onkeyup="toUpper(this)" style="width: 400px">
+                          <select class="form-control form-control-sm"
+                            (change)="onChangeStatusPagamentoDetalhe($event.target.value, detalheDespesa)"
+                            [value]="detalheDespesa.tpStatus !== 'Pago' ? 0 : 1">
+                            <option value="0">Pendente</option>
+                            <option value="1">Pago</option>
+                          </select>
                         </span>
-                      </td>
+                      </div>
+                    </td>
 
-                      <td>
-                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
-                          <input type="text" class="form-control form-control-sm"
-                            (input)="onChangeObservacoesComplDespesa($event.target.value, detalheDespesa)"
-                            value={{detalheDespesa.dsObservacao2}} onkeyup="toUpper(this)" style="width: 400px">
-                        </span>
-                      </td>
+                    <td>
+                      <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                        <input type="text" class="form-control form-control-sm"
+                          (input)="onChangeObservacoesDespesa($event.target.value, detalheDespesa)"
+                          value={{detalheDespesa.dsObservacao}} onkeyup="toUpper(this)" style="width: 400px">
+                      </span>
+                    </td>
 
-                      <td>
-                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
-                          <div style="width: 125px">
-                            <select class="form-control form-control-sm"
-                              (change)="onChangeCategoriaDetalhe($event.target.value, detalheDespesa)" [value]="detalheDespesa.tpCategoriaDespesa === 'Supermercado' ? 1 : 
+                    <td>
+                      <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                        <input type="text" class="form-control form-control-sm"
+                          (input)="onChangeObservacoesComplDespesa($event.target.value, detalheDespesa)"
+                          value={{detalheDespesa.dsObservacao2}} onkeyup="toUpper(this)" style="width: 400px">
+                      </span>
+                    </td>
+
+                    <td>
+                      <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                        <div style="width: 125px">
+                          <select class="form-control form-control-sm"
+                            (change)="onChangeCategoriaDetalhe($event.target.value, detalheDespesa)" [value]="detalheDespesa.tpCategoriaDespesa === 'Supermercado' ? 1 : 
                                 detalheDespesa.tpCategoriaDespesa === 'Combustível' ? 2 :
                                 detalheDespesa.tpCategoriaDespesa === 'Farmácia' ? 3 :
                                 detalheDespesa.tpCategoriaDespesa === 'Fixas\\Mês' ? 4 :
                                 detalheDespesa.tpCategoriaDespesa === 'Empréstimo' ? 5 :
                                 detalheDespesa.tpCategoriaDespesa === 'Outros' ? 6 : 0 ">
-                              <option value="0"></option>
-                              <option value="1">Supermercado</option>
-                              <option value="2">Combustível</option>
-                              <option value="3">Farmácia</option>
-                              <option value="4">Fixas_Mês</option>
-                              <option value="5">Empréstimos</option>
-                              <option value="6">Outros</option>
-                            </select>
-                          </div>
+                            <option value="0"></option>
+                            <option value="1">Supermercado</option>
+                            <option value="2">Combustível</option>
+                            <option value="3">Farmácia</option>
+                            <option value="4">Fixas_Mês</option>
+                            <option value="5">Empréstimos</option>
+                            <option value="6">Outros</option>
+                          </select>
+                        </div>
+                      </span>
+                    </td>
+
+                    <td>
+                      <label class="checkbox-wrap checkbox-primary">
+                        <span *ngIf="detalheDespesa.tpReprocessar == 'S'">
+                          <input type="checkbox"
+                            (click)="onCheckDespesaReprocessarChange($event.target.checked, detalheDespesa)" checked>
                         </span>
-                      </td>
+                        <span *ngIf="detalheDespesa.tpReprocessar == 'N'">
+                          <input type="checkbox"
+                            (click)="onCheckDespesaReprocessarChange($event.target.checked, detalheDespesa)">
+                        </span>
+                        <span class="checkmark"></span>
+                      </label>
+                    </td>
 
-                      <td>
-                        <label class="checkbox-wrap checkbox-primary">
-                          <span *ngIf="detalheDespesa.tpReprocessar == 'S'">
-                            <input type="checkbox"
-                              (click)="onCheckDespesaReprocessarChange($event.target.checked, detalheDespesa)" checked>
-                          </span>
-                          <span *ngIf="detalheDespesa.tpReprocessar == 'N'">
-                            <input type="checkbox"
-                              (click)="onCheckDespesaReprocessarChange($event.target.checked, detalheDespesa)">
-                          </span>
-                          <span class="checkmark"></span>
-                        </label>
-                      </td>
+                    <td>
+                      <label class="checkbox-wrap checkbox-primary">
+                        <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
+                          <input type="checkbox" (click)="onCheckDespesaAnotacao($event.target.checked, detalheDespesa)"
+                            checked>
+                        </span>
+                        <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
+                          <input type="checkbox"
+                            (click)="onCheckDespesaAnotacao($event.target.checked, detalheDespesa)">
+                        </span>
+                        <span class="checkmark"></span>
+                      </label>
+                    </td>
 
-                      <td>
-                        <label class="checkbox-wrap checkbox-primary">
-                          <span *ngIf="detalheDespesa.tpAnotacao == 'S'">
-                            <input type="checkbox"
-                              (click)="onCheckDespesaAnotacao($event.target.checked, detalheDespesa)" checked>
-                          </span>
-                          <span *ngIf="detalheDespesa.tpAnotacao == 'N'">
-                            <input type="checkbox"
-                              (click)="onCheckDespesaAnotacao($event.target.checked, detalheDespesa)">
-                          </span>
-                          <span class="checkmark"></span>
-                        </label>
-                      </td>
-
-                      <td>
-                        <label class="checkbox-wrap checkbox-primary">
-                          <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'S'">
-                            <input type="checkbox"
-                              (click)="onCheckDespesaLinhaSeparacaoChange($event.target.checked, detalheDespesa)"
-                              checked>
-                          </span>
-                          <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
-                            <input type="checkbox"
-                              (click)="onCheckDespesaLinhaSeparacaoChange($event.target.checked, detalheDespesa)">
-                          </span>
-                          <span class="checkmark"></span>
-                        </label>
-                      </td>
-
-                      <td>
-                        <label class="checkbox-wrap checkbox-primary">
-                          <span *ngIf="detalheDespesa.tpRelatorio == 'S'">
-                            <input type="checkbox"
-                              (click)="onCheckDespesaRelatorioChange($event.target.checked, detalheDespesa)" checked>
-                          </span>
-                          <span *ngIf="detalheDespesa.tpRelatorio == 'N'">
-                            <input type="checkbox"
-                              (click)="onCheckDespesaRelatorioChange($event.target.checked, detalheDespesa)">
-                          </span>
-                          <span class="checkmark"></span>
-                        </label>
-                      </td>
-
-                      <td>
+                    <td>
+                      <label class="checkbox-wrap checkbox-primary">
+                        <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'S'">
+                          <input type="checkbox"
+                            (click)="onCheckDespesaLinhaSeparacaoChange($event.target.checked, detalheDespesa)" checked>
+                        </span>
                         <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
-                          <div style="width: 300px">
-                            <select class="form-control form-control-sm" id="comboTituloDespesaRelatorio"
-                              (change)="onChangeDespesaRelatorioAssociada($event.target.value, detalheDespesa)"
-                              [value]="detalheDespesa.idDespesaLinkRelatorio">
-                              <option value="0"></option>
-                              <option *ngFor="let despesa of tituloDespesasRelatorio.despesas"
-                                value={{despesa.idDespesa}}>
-                                {{despesa.tituloDespesa}}
-                              </option>
-                            </select>
-                          </div>
+                          <input type="checkbox"
+                            (click)="onCheckDespesaLinhaSeparacaoChange($event.target.checked, detalheDespesa)">
                         </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                        <span class="checkmark"></span>
+                      </label>
+                    </td>
+
+                    <td>
+                      <label class="checkbox-wrap checkbox-primary">
+                        <span *ngIf="detalheDespesa.tpRelatorio == 'S'">
+                          <input type="checkbox"
+                            (click)="onCheckDespesaRelatorioChange($event.target.checked, detalheDespesa)" checked>
+                        </span>
+                        <span *ngIf="detalheDespesa.tpRelatorio == 'N'">
+                          <input type="checkbox"
+                            (click)="onCheckDespesaRelatorioChange($event.target.checked, detalheDespesa)">
+                        </span>
+                        <span class="checkmark"></span>
+                      </label>
+                    </td>
+
+                    <td>
+                      <span *ngIf="detalheDespesa.tpLinhaSeparacao == 'N'">
+                        <div style="width: 300px">
+                          <select class="form-control form-control-sm" id="comboTituloDespesaRelatorio"
+                            (change)="onChangeDespesaRelatorioAssociada($event.target.value, detalheDespesa)"
+                            [value]="detalheDespesa.idDespesaLinkRelatorio">
+                            <option value="0"></option>
+                            <option *ngFor="let despesa of tituloDespesasRelatorio.despesas"
+                              value={{despesa.idDespesa}}>
+                              {{despesa.tituloDespesa}}
+                            </option>
+                          </select>
+                        </div>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
+        </div>
 
-          <div class="modal-footer-botoes-detalhe-despesas">
+        <div class="modal-footer-botoes-detalhe-despesas">
+          <span *ngIf="detalheLancamentosMensais">
+            <span *ngIf="!detalheLancamentosMensais.despesaMensal.isNovaDespesa">
+              <div>
+                <button class="btn text-white" data-mdb-ripple-init style="background-color: #0c1a36;" role="button"
+                  (click)="visualizarDespesaMesAnterior()" title="Visualizar despesa mês anterior">
+                  <i class="fa fa-angle-double-left" aria-hidden="true"></i>
+                </button>
+                <button class="btn text-white" data-mdb-ripple-init style="background-color: #0c1a36;" role="button"
+                  (click)="visualizarDespesaMesPosterior()" title="Visualizar despesa mês seguinte">
+                  <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                </button>
+              </div>
+            </span>
+          </span>
+          <div class="modal-footer-detalhe-right" style="margin: 0% 14%;">
             <span *ngIf="detalheLancamentosMensais">
-              <span *ngIf="!detalheLancamentosMensais.despesaMensal.isNovaDespesa">
-                <div>
-                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #0c1a36;" role="button"
-                    (click)="visualizarDespesaMesAnterior()" title="Visualizar despesa mês anterior">
-                    <i class="fa fa-angle-double-left" aria-hidden="true"></i>
-                  </button>
-                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #0c1a36;" role="button"
-                    (click)="visualizarDespesaMesPosterior()" title="Visualizar despesa mês seguinte">
-                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+              <span *ngIf="detalheLancamentosMensais.despesaMensal.isNovaDespesa">
+                <div class="modal-footer-detalhe-right" style="margin: 0% 250px;">
+                  <button class="btn text-white" data-mdb-ripple-init style="margin: 0% 42%; background-color: #3b6bd3;"
+                    role="button" (click)="gravarDetalheDespesas()">
+                    <i class="fa fa-floppy-o"></i> Salvar Despesa
                   </button>
                 </div>
               </span>
-            </span>
-            <div class="modal-footer-detalhe-right" style="margin: 0% 11%;">
-              <span *ngIf="detalheLancamentosMensais">
-                <span *ngIf="detalheLancamentosMensais.despesaMensal.isNovaDespesa">
-                  <div class="modal-footer-detalhe-right" style="margin: 0% 250px;">
-                    <button class="btn text-white" data-mdb-ripple-init
-                      style="margin: 0% 42%; background-color: #3b6bd3;" role="button"
-                      (click)="gravarDetalheDespesas()">
-                      <i class="fa fa-floppy-o"></i> Salvar Despesa
-                    </button>
-                  </div>
-                </span>
 
-                <span *ngIf="!detalheLancamentosMensais.despesaMensal.isNovaDespesa">
-                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
-                    (click)="gravarDetalheDespesas()" id="buttonSalvar">
-                    <i class="fa fa-floppy-o"></i> Salvar
-                  </button>
-                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
-                    role="button" (click)="excluirItemDetalheDespesa()" id="buttonExcluir">
-                    <i class="fas fa-trash-alt"></i> Excluir
-                  </button>
-                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
-                    role="button" (click)="onQuitarDespesa()" id="buttonQuitar">
-                    <i class="far fa-calendar-check"></i> Pagar
-                  </button>
-                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #709977;" href="#!"
-                    role="button" (click)="desfazerPagamentoDespesa()" id="buttonDesfazerPagamento">
-                    <i class="far fa-calendar-times"></i> Desfazer
-                  </button>
+              <span *ngIf="!detalheLancamentosMensais.despesaMensal.isNovaDespesa">
+                <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
+                  (click)="gravarDetalheDespesas()" id="buttonSalvar">
+                  <i class="fa fa-floppy-o"></i> Salvar
+                </button>
+                <button class="btn text-white" data-mdb-ripple-init style="background-color: #ee5569;" href="#!"
+                  role="button" (click)="excluirItemDetalheDespesa()" id="buttonExcluir">
+                  <i class="fas fa-trash-alt"></i> Excluir
+                </button>
+                <button class="btn text-white" data-mdb-ripple-init style="background-color: #58c069;" href="#!"
+                  role="button" (click)="onQuitarDespesa()" id="buttonQuitar">
+                  <i class="far fa-calendar-check"></i> Pagar
+                </button>
+                <button class="btn text-white" data-mdb-ripple-init style="background-color: #709977;" href="#!"
+                  role="button" (click)="desfazerPagamentoDespesa()" id="buttonDesfazerPagamento">
+                  <i class="far fa-calendar-times"></i> Desfazer
+                </button>
 
-                  <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
-                    role="button" (click)="addNovaLinhaDetalheDespesa()" id="buttonNovaLinha">
-                    <i class="fa fa-arrows-v"></i> Nova Linha
-                  </button>
-                </span>
+                <button class="btn text-white" data-mdb-ripple-init style="background-color: #d38a8a;" href="#!"
+                  role="button" (click)="addNovaLinhaDetalheDespesa()" id="buttonNovaLinha">
+                  <i class="fa fa-arrows-v"></i> Nova Linha
+                </button>
               </span>
-            </div>
+            </span>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!------------------------  Modal Importacao Despesa Parcelada ------------------------>
-  <div class="modal fade" id="modalImportacaoDespesaParcelada" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content modalImportacaoDespesaParcelada">
-        <div class="form-group modal-header">
-          <div>
-            <i class="fa fa-download" aria-hidden="true"></i>
-            Importar Despesas & Consolidações
-            <small class="form-text text-muted">
-              <i class="fa fa-info-circle" aria-hidden="true"></i>
-              Selecione abaixo um item para importação:
-            </small>
-          </div>
-        </div>
-        <form [formGroup]="modalImportacaoDespesaParceladaForm">
-          <div class="modalImportacaoDespesaParcelada-body form-group">
-            <select class="form-control form-control-sm" id="comboTituloDespesaParcelada">
-              <option *ngFor="let despesa of tituloDespesasParcelada.despesas" value={{despesa.idDespesa}}>
-                {{despesa.tituloDespesa}}
-              </option>
-            </select>
-            <div class="row">
-              <br>
-              <div class="form-check-inline checkCarregarTodasDespParceladas">
-                <input class="form-check-input" type="checkbox" formControlName="checkCarregarTodasDespesasParceladas"
-                  id="checkCarregarTodasDespesasParceladas"
-                  (click)="onCheckCarregarTodasDespParceladas($event.target.checked)">
-                <label class="form-check-label" for="checkCarregarTodasDespesasParceladas"
-                  style="font-size: smaller; color: #a7444e!important">
-                  Carregar todas as despesas parceladas e consolidações.
-                </label>
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" style="background-color: #3b6bd3;"
-            (click)="onImportarDespesaParcelada()">
-            <i class="fa fa-download"></i> Importar Despesa
-          </button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!------------------------  Modal Associar Despesa Parcelada A Consolidacao------------------------>
-  <div class="modal fade" id="modalAssociarDespesaParceladaConsolidacao" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content modalAssociarDespesaParceladaConsolidacao">
-        <div class="form-group modal-header">
-          <div>
-            <i class="fa fa-object-group" aria-hidden="true"></i>
-            Consolidar Despesas Parceladas
-            <small class="form-text text-muted">
-              <i class="fa fa-info-circle" aria-hidden="true"></i>
-              Selecione abaixo uma consolidação:
-            </small>
-          </div>
-        </div>
-        <form [formGroup]="modalAssociarDespesaParceladaConsolidacaoForm">
-          <div class="modalAssociarDespesaParceladaConsolidacao-body form-group">
-            <select class="form-control form-control-sm" id="comboTituloConsolidacao">
-              <option *ngFor="let despesa of tituloDespesasConsolidacao.despesas" value={{despesa.idConsolidacao}}>
-                {{despesa.tituloDespesa}}
-              </option>
-            </select>
-            <div class="row">
-              <br>
-              <div class="form-check-inline checkCarregarTodasDespParceladas">
-                <input class="form-check-input" type="checkbox" formControlName="checkCarregarTodasConsolidacoes"
-                  id="checkCarregarTodasConsolidacoes"
-                  (click)="onCheckCarregarTodasConsolidacoes($event.target.checked)">
-                <label class="form-check-label" for="checkCarregarTodasConsolidacoes"
-                  style="font-size: smaller; color: #a7444e!important">
-                  Carregar todas as consolidações cadastradas.
-                </label>
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" style="background-color: #3b6bd3;"
-            (click)="onAssociarDespesaParceladaConsolidacao()">
-            <i class="fa fa-check"></i> Associar Despesa(s)
-          </button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!------------------------  Modal Categorias - Detalhe Despesas ------------------------>
-  <div class="modal fade" id="modalCategoriaDetalheDespesa" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content modalCategoriaDespesa">
-        <div class="form-group modal-header">
-          <div>
-            <i class="fa fa-star-half-o" aria-hidden="true"></i>
-            Categorias
-            <small class="form-text text-muted">
-              <i class="fa fa-info-circle" aria-hidden="true"></i>
-              Selecione a(s) categoria(s) da despesa.
-            </small>
-          </div>
-        </div>
-
-        <form [formGroup]="modalCategoriaDetalheDespesaForm">
-          <div class="modalCategoriaDetalheDespesa-body form-group"
-            style="font-size: medium; color: #a7444e!important;">
-            <input class="form-check-input" type="checkbox" formControlName="checkDespesaRascunho"
-              id="checkDespesaRascunho" (click)="onCategoriaRascunho($event.target.checked)">
-            <label class="form-check-label" for="checkDespesaRascunho"
-              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Despesa Rascunho
-            </label>
-            <br>
-            <input class="form-check-input" type="checkbox" formControlName="checkDespesaRelatorio"
-              id="checkDespesaRelatorio" (click)="onCategoriaRelatorio($event.target.checked)">
-            <label class="form-check-label" for="checkDespesaRelatorio"
-              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Despesa Relatório
-            </label>
-            <br>
-            <input class="form-check-input" type="checkbox" formControlName="checkDespesaDebitoAutomatico"
-              id="checkDespesaDebitoAutomatico" (click)="onCategoriaDebitoAuto($event.target.checked)">
-            <label class="form-check-label" for="checkDespesaDebitoAutomatico"
-              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Débito Automatico
-            </label>
-            <br>
-            <input class="form-check-input" type="checkbox" formControlName="checkDespesaDebitoCartao"
-              id="checkDespesaDebitoCartao" (click)="onCategoriaDebitoCartao($event.target.checked)">
-            <label class="form-check-label" for="checkDespesaDebitoCartao"
-              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Débito Cartão
-            </label>
-            <br>
-            <hr>
-            <input class="form-check-input" type="checkbox" formControlName="checkDespesaEmprestimoAPagar"
-              id="checkDespesaEmprestimoAPagar" (click)="onCategoriaEmpAPagar($event.target.checked)">
-            <label class="form-check-label" for="checkDespesaEmprestimoAPagar"
-              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Empréstimo a Pagar
-            </label>
-            <br>
-            <input class="form-check-input" type="checkbox" formControlName="checkDespesaEmprestimoAReceber"
-              id="checkDespesaEmprestimoAReceber" (click)="onCategoriaEmpAReceber($event.target.checked)">
-            <label class="form-check-label" for="checkDespesaEmprestimoAReceber"
-              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Empréstimo a Receber
-            </label>
-            <br>
-            <hr>
-            <input class="form-check-input" type="checkbox" formControlName="checkDespesaPoupancaPositiva"
-              id="checkDespesaPoupancaPositiva" (click)="onCategoriaPoupancaPositiva($event.target.checked)">
-            <label class="form-check-label" for="checkDespesaPoupancaPositiva"
-              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Poupança Positiva
-            </label>
-            <br>
-            <input class="form-check-input" type="checkbox" formControlName="checkDespesaPoupancaNegativa"
-              id="checkDespesaPoupancaNegativa" (click)="onCategoriaPoupancaNegativa($event.target.checked)">
-            <label class="form-check-label" for="checkDespesaPoupancaNegativa"
-              title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Poupança Negativa
-            </label>
-            <br>
-          </div>
-        </form>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
-            (click)="aplicarCategoriaDespesa()">
-            <i class="fa fa-floppy-o"></i> Aplicar
-          </button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!------------------------  Modal Alterar Despesa Mensal Existente ------------------------>
-  <div class="modal fade" id="modalAssociarDespesaMensalExistente" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content modalAssociarDespesaMensalExistente">
-        <div class="form-group modal-header">
-          <div>
-            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-            Alteração de Despesa Mensal
-            <br>
-            <br>
-            <small class="form-text text-muted">
-              <i class="fa fa-info-circle" aria-hidden="true"></i>
-              ATENÇÃO: Este procedimento altera o titulo e todas as referencias desta despesa pela que for selecionada.
-            </small>
-          </div>
-        </div>
-        <form [formGroup]="modalAssociarDespesaMensalExistenteForm">
-          <div class="modalAssociarDespesaMensalExistente-body form-group">
-            <select class="form-control form-control-sm" id="comboTituloDespesaExistente">
-              <option *ngFor="let despesa of tituloDespesasAlteracao.despesas" value={{despesa.idDetalheDespesa}}>
-                {{despesa.tituloDespesa}}
-              </option>
-            </select>
-          </div>
-        </form>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" style="background-color: #b1291f;"
-            (click)="onAssociarDespesaMensalExistente()">
-            <i class="fa fa-check"></i> Alterar Despesa
-          </button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!------------------------  Modal Editar Valores ------------------------>
-  <div class="modal fade" id="modalEditarValores" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content modalEditorValores">
-        <div class="form-group modal-header">
-          <label>
-            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-            Editor de Valores
-          </label>
-        </div>
-
-        <div class="modalEditorValores-body">
-          <div class="input-group mb-3">
-
-            <span class="input-group-text">Novo Valor:</span>
-
-            <input type="text" class="inputNovoValorEditorValores form-control" (click)="onEditarValores()"
-              id="inputNovoValor">
-
-            <div>
-              <small class="form-text text-muted">
-                <i class="fa fa-info-circle" aria-hidden="true"></i>
-                Após digitar o <u>Novo Valor</u>, pressione a tecla ENTER.
-              </small>
-            </div>
-          </div>
-          <input type="text" readonly class="inputSubTotalEditorValores form-control" id="subTotalValores" currencyMask
-            maxlength="16" autocomplete="off"
-            [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', allowNegative: true }">
-        </div>
-
-        <input type="text" #myInput class="form-control" id="inputObservacoesEditorValores" hidden>
-        <input type="text" #myInput class="form-control" id="observacoes" hidden>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal" #fechaModalEditorValores
-            (click)="confirmGravarEditarValores()" style="background-color: #3b6bd3;">
-            <i class="fa fa-check"></i> Aplicar
-          </button>
-          <button type="button" class="btn btn-primary" (click)="setModalEditarValores('0', 'reset')"
-            style="background-color: #137759;">Limpar</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!------------------------  Modal Amortizacao Parcelas - Detalhe Despesas ------------------------>
-  <div class="modal fade" id="modalAmortizacaoParcelas" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content modalAmortizacaoParcelas">
-        <div class="form-group modal-header" style="padding-block-end: inherit;">
-          <div>
-            <i class="fa fa-credit-card-alt" aria-hidden="true"></i> Amortização de Parcelas
-            <p style="padding-block-start: 4%; color: brown;"> {{tituloDespesaParceladaAmortizacao}}</p>
-          </div>
-        </div>
-
-        <div class="col-sm-8-amortizacao-parcelas scrollme-amortizacao-parcelas">
-          <table class="table table-amortizacao-parcelas table-bordered" style="text-align: center;">
-            <thead class="thead-light">
-              <tr>
-                <th scope="col">X</th>
-                <th scope="col">Parcela</th>
-                <th scope="col">Data Vencimento</th>
-                <th scope="col">Valor Parcela R$</th>
-              </tr>
-            </thead>
-            <tbody *ngIf="parcelasAmortizacao">
-              <tr *ngFor="let parcela of parcelasAmortizacao">
-                <td>
-                  <label class="checkbox-wrap checkbox-primary">
-                    <input type="checkbox" name="item[]"
-                      (click)="onCheckParcelaAmortizacaoChange($event.target.checked, parcela)">
-                    <span class="checkmark"></span>
-                  </label>
-                </td>
-                <td>
-                  {{parcela.nrParcela}}
-                </td>
-
-                <td>
-                  {{parcela.dsDataVencimento}}
-                </td>
-
-                <td>
-                  {{parcela.vlParcela}}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="modal-footer">
-          <small class="form-text text-muted" style="padding-block-end: 3%;">
+<!------------------------  Modal Importacao Despesa Parcelada ------------------------>
+<div class="modal fade" id="modalImportacaoDespesaParcelada" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content modalImportacaoDespesaParcelada">
+      <div class="form-group modal-header">
+        <div>
+          <i class="fa fa-download" aria-hidden="true"></i>
+          Importar Despesas & Consolidações
+          <small class="form-text text-muted">
             <i class="fa fa-info-circle" aria-hidden="true"></i>
-            As parcelas selecionadas serão adicionadas automaticamente na despesa <b
-              style="color: #0bb121;">{{nomeDespesa}}</b>
+            Selecione abaixo um item para importação:
           </small>
-          <br>
-          <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
-            (click)="confirmGravarDespesaParceladaAmortizacao()">
-            <i class="fa fa-floppy-o"></i> Aplicar
-          </button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
         </div>
+      </div>
+      <form [formGroup]="modalImportacaoDespesaParceladaForm">
+        <div class="modalImportacaoDespesaParcelada-body form-group">
+          <select class="form-control form-control-sm" id="comboTituloDespesaParcelada">
+            <option *ngFor="let despesa of tituloDespesasParcelada.despesas" value={{despesa.idDespesa}}>
+              {{despesa.tituloDespesa}}
+            </option>
+          </select>
+          <div class="row">
+            <br>
+            <div class="form-check-inline checkCarregarTodasDespParceladas">
+              <input class="form-check-input" type="checkbox" formControlName="checkCarregarTodasDespesasParceladas"
+                id="checkCarregarTodasDespesasParceladas"
+                (click)="onCheckCarregarTodasDespParceladas($event.target.checked)">
+              <label class="form-check-label" for="checkCarregarTodasDespesasParceladas"
+                style="font-size: smaller; color: #a7444e!important">
+                Carregar todas as despesas parceladas e consolidações.
+              </label>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" style="background-color: #3b6bd3;"
+          (click)="onImportarDespesaParcelada()">
+          <i class="fa fa-download"></i> Importar Despesa
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
       </div>
     </div>
   </div>
+</div>
+
+<!------------------------  Modal Associar Despesa Parcelada A Consolidacao------------------------>
+<div class="modal fade" id="modalAssociarDespesaParceladaConsolidacao" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content modalAssociarDespesaParceladaConsolidacao">
+      <div class="form-group modal-header">
+        <div>
+          <i class="fa fa-object-group" aria-hidden="true"></i>
+          Consolidar Despesas Parceladas
+          <small class="form-text text-muted">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            Selecione abaixo uma consolidação:
+          </small>
+        </div>
+      </div>
+      <form [formGroup]="modalAssociarDespesaParceladaConsolidacaoForm">
+        <div class="modalAssociarDespesaParceladaConsolidacao-body form-group">
+          <select class="form-control form-control-sm" id="comboTituloConsolidacao">
+            <option *ngFor="let despesa of tituloDespesasConsolidacao.despesas" value={{despesa.idConsolidacao}}>
+              {{despesa.tituloDespesa}}
+            </option>
+          </select>
+          <div class="row">
+            <br>
+            <div class="form-check-inline checkCarregarTodasDespParceladas">
+              <input class="form-check-input" type="checkbox" formControlName="checkCarregarTodasConsolidacoes"
+                id="checkCarregarTodasConsolidacoes" (click)="onCheckCarregarTodasConsolidacoes($event.target.checked)">
+              <label class="form-check-label" for="checkCarregarTodasConsolidacoes"
+                style="font-size: smaller; color: #a7444e!important">
+                Carregar todas as consolidações cadastradas.
+              </label>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" style="background-color: #3b6bd3;"
+          (click)="onAssociarDespesaParceladaConsolidacao()">
+          <i class="fa fa-check"></i> Associar Despesa(s)
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!------------------------  Modal Categorias - Detalhe Despesas ------------------------>
+<div class="modal fade" id="modalCategoriaDetalheDespesa" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content modalCategoriaDespesa">
+      <div class="form-group modal-header">
+        <div>
+          <i class="fa fa-star-half-o" aria-hidden="true"></i>
+          Categorias
+          <small class="form-text text-muted">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            Selecione a(s) categoria(s) da despesa.
+          </small>
+        </div>
+      </div>
+
+      <form [formGroup]="modalCategoriaDetalheDespesaForm">
+        <div class="modalCategoriaDetalheDespesa-body form-group" style="font-size: medium; color: #a7444e!important;">
+          <input class="form-check-input" type="checkbox" formControlName="checkDespesaRascunho"
+            id="checkDespesaRascunho" (click)="onCategoriaRascunho($event.target.checked)">
+          <label class="form-check-label" for="checkDespesaRascunho"
+            title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Despesa Rascunho
+          </label>
+          <br>
+          <input class="form-check-input" type="checkbox" formControlName="checkDespesaRelatorio"
+            id="checkDespesaRelatorio" (click)="onCategoriaRelatorio($event.target.checked)">
+          <label class="form-check-label" for="checkDespesaRelatorio"
+            title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Despesa Relatório
+          </label>
+          <br>
+          <input class="form-check-input" type="checkbox" formControlName="checkDespesaDebitoAutomatico"
+            id="checkDespesaDebitoAutomatico" (click)="onCategoriaDebitoAuto($event.target.checked)">
+          <label class="form-check-label" for="checkDespesaDebitoAutomatico"
+            title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Débito Automatico
+          </label>
+          <br>
+          <input class="form-check-input" type="checkbox" formControlName="checkDespesaDebitoCartao"
+            id="checkDespesaDebitoCartao" (click)="onCategoriaDebitoCartao($event.target.checked)">
+          <label class="form-check-label" for="checkDespesaDebitoCartao"
+            title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Débito Cartão
+          </label>
+          <br>
+          <hr>
+          <input class="form-check-input" type="checkbox" formControlName="checkDespesaEmprestimoAPagar"
+            id="checkDespesaEmprestimoAPagar" (click)="onCategoriaEmpAPagar($event.target.checked)">
+          <label class="form-check-label" for="checkDespesaEmprestimoAPagar"
+            title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Empréstimo a Pagar
+          </label>
+          <br>
+          <input class="form-check-input" type="checkbox" formControlName="checkDespesaEmprestimoAReceber"
+            id="checkDespesaEmprestimoAReceber" (click)="onCategoriaEmpAReceber($event.target.checked)">
+          <label class="form-check-label" for="checkDespesaEmprestimoAReceber"
+            title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Empréstimo a Receber
+          </label>
+          <br>
+          <hr>
+          <input class="form-check-input" type="checkbox" formControlName="checkDespesaPoupancaPositiva"
+            id="checkDespesaPoupancaPositiva" (click)="onCategoriaPoupancaPositiva($event.target.checked)">
+          <label class="form-check-label" for="checkDespesaPoupancaPositiva"
+            title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Poupança Positiva
+          </label>
+          <br>
+          <input class="form-check-input" type="checkbox" formControlName="checkDespesaPoupancaNegativa"
+            id="checkDespesaPoupancaNegativa" (click)="onCategoriaPoupancaNegativa($event.target.checked)">
+          <label class="form-check-label" for="checkDespesaPoupancaNegativa"
+            title="Classifica o item como obrigatório para contabilizar na Despesa\Receita.">Poupança Negativa
+          </label>
+          <br>
+        </div>
+      </form>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
+          (click)="aplicarCategoriaDespesa()">
+          <i class="fa fa-floppy-o"></i> Aplicar
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!------------------------  Modal Alterar Despesa Mensal Existente ------------------------>
+<div class="modal fade" id="modalAssociarDespesaMensalExistente" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content modalAssociarDespesaMensalExistente">
+      <div class="form-group modal-header">
+        <div>
+          <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+          Alteração de Despesa Mensal
+          <br>
+          <br>
+          <small class="form-text text-muted">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            ATENÇÃO: Este procedimento altera o titulo e todas as referencias desta despesa pela que for selecionada.
+          </small>
+        </div>
+      </div>
+      <form [formGroup]="modalAssociarDespesaMensalExistenteForm">
+        <div class="modalAssociarDespesaMensalExistente-body form-group">
+          <select class="form-control form-control-sm" id="comboTituloDespesaExistente">
+            <option *ngFor="let despesa of tituloDespesasAlteracao.despesas" value={{despesa.idDetalheDespesa}}>
+              {{despesa.tituloDespesa}}
+            </option>
+          </select>
+        </div>
+      </form>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" style="background-color: #b1291f;"
+          (click)="onAssociarDespesaMensalExistente()">
+          <i class="fa fa-check"></i> Alterar Despesa
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!------------------------  Modal Editar Valores ------------------------>
+<div class="modal fade" id="modalEditarValores" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content modalEditorValores">
+      <div class="form-group modal-header">
+        <label>
+          <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+          Editor de Valores
+        </label>
+      </div>
+
+      <div class="modalEditorValores-body">
+        <div class="input-group mb-3">
+
+          <span class="input-group-text">Novo Valor:</span>
+
+          <input type="text" class="inputNovoValorEditorValores form-control" (click)="onEditarValores()"
+            id="inputNovoValor">
+
+          <div>
+            <small class="form-text text-muted">
+              <i class="fa fa-info-circle" aria-hidden="true"></i>
+              Após digitar o <u>Novo Valor</u>, pressione a tecla ENTER.
+            </small>
+          </div>
+        </div>
+        <input type="text" readonly class="inputSubTotalEditorValores form-control" id="subTotalValores" currencyMask
+          maxlength="16" autocomplete="off"
+          [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', allowNegative: true }">
+      </div>
+
+      <input type="text" #myInput class="form-control" id="inputObservacoesEditorValores" hidden>
+      <input type="text" #myInput class="form-control" id="observacoes" hidden>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" #fechaModalEditorValores
+          (click)="confirmGravarEditarValores()" style="background-color: #3b6bd3;">
+          <i class="fa fa-check"></i> Aplicar
+        </button>
+        <button type="button" class="btn btn-primary" (click)="setModalEditarValores('0', 'reset')"
+          style="background-color: #137759;">Limpar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!------------------------  Modal Amortizacao Parcelas - Detalhe Despesas ------------------------>
+<div class="modal fade" id="modalAmortizacaoParcelas" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content modalAmortizacaoParcelas">
+      <div class="form-group modal-header" style="padding-block-end: inherit;">
+        <div>
+          <i class="fa fa-credit-card-alt" aria-hidden="true"></i> Amortização de Parcelas
+          <p style="padding-block-start: 4%; color: brown;"> {{tituloDespesaParceladaAmortizacao}}</p>
+        </div>
+      </div>
+
+      <div class="col-sm-8-amortizacao-parcelas scrollme-amortizacao-parcelas">
+        <table class="table table-amortizacao-parcelas table-bordered" style="text-align: center;">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">X</th>
+              <th scope="col">Parcela</th>
+              <th scope="col">Data Vencimento</th>
+              <th scope="col">Valor Parcela R$</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="parcelasAmortizacao">
+            <tr *ngFor="let parcela of parcelasAmortizacao">
+              <td>
+                <label class="checkbox-wrap checkbox-primary">
+                  <input type="checkbox" name="item[]"
+                    (click)="onCheckParcelaAmortizacaoChange($event.target.checked, parcela)">
+                  <span class="checkmark"></span>
+                </label>
+              </td>
+              <td>
+                {{parcela.nrParcela}}
+              </td>
+
+              <td>
+                {{parcela.dsDataVencimento}}
+              </td>
+
+              <td>
+                {{parcela.vlParcela}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <small class="form-text text-muted" style="padding-block-end: 3%;">
+          <i class="fa fa-info-circle" aria-hidden="true"></i>
+          As parcelas selecionadas serão adicionadas automaticamente na despesa <b
+            style="color: #0bb121;">{{nomeDespesa}}</b>
+        </small>
+        <br>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #3b6bd3;"
+          (click)="confirmGravarDespesaParceladaAmortizacao()">
+          <i class="fa fa-floppy-o"></i> Aplicar
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!------------------------  Modal Observacoes ------------------------>
 <div class="modal fade" id="modalObservacoes" tabindex="-1" role="dialog" aria-hidden="true">

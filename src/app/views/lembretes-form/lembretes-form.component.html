@@ -42,7 +42,7 @@
 
                 <button class="btn text-white " data-mdb-ripple-init
                   style="background-color: #c90d0d; width: 5%; margin-left: 0%;" role="button" id="buttonExcluir"
-                  (click)="excluirLembrete()">
+                  (click)="excluirLembrete()" [disabled]="bloquearElementos" [disabled]="!habilitarButtonExcluir">
                   <i class="fa fa-trash-o" aria-hidden="true" title="Excluir lembrete"></i>
                 </button>
               </div>
@@ -61,7 +61,8 @@
                   Nome do Lembrete
                 </small>
                 <div class="row row-card-titulo-lembrete">
-                  <input class="form-control form-control-sm" type="text" id="nomeLembrete" onkeyup="toUpper(this)">
+                  <input class="form-control form-control-sm" type="text" id="nomeLembrete" onkeyup="toUpper(this)"
+                    style="width: 100%;" [disabled]="bloquearElementos">
                 </div>
               </div>
 
@@ -173,7 +174,7 @@
                 <button class="btn text-white" data-mdb-ripple-init
                   style="background-color: #74335f; height: 0%; margin: 1%;" href="#!" role="button"
                   title="Programa o agendamento da notificação" data-toggle="modal" data-target="#modalAgendarLembrete"
-                  id="buttonAgendar" (click)="carregarModalAgendamentoLembretes()">
+                  id="buttonAgendar" (click)="carregarModalAgendamentoLembretes()" [disabled]="bloquearElementos">
                   <i class="fa fa-clock-o" aria-hidden="true"></i> Agendar
                 </button>
               </div>
@@ -189,7 +190,8 @@
                   <small class="form-text text-muted" style="font-size: small;">
                     Observações do lembrete
                   </small>
-                  <textarea class="form-control" id="observacoesLembrete" rows="7"></textarea>
+                  <textarea class="form-control" id="observacoesLembrete" rows="7"
+                    [disabled]="bloquearElementos"></textarea>
                 </div>
               </div>
             </div>
@@ -197,15 +199,17 @@
 
           <div class="modal-footer">
             <button class="btn text-white" data-mdb-ripple-init style="background-color: #3b6bd3;" role="button"
-              (click)="gravarDetalhesLembrete()" id="buttonGravar">
+              (click)="gravarDetalhesLembrete()" id="buttonGravar" [disabled]="bloquearElementos">
               <i class="fa fa-floppy-o"></i> Salvar
             </button>
-            <button class="btn text-white" data-mdb-ripple-init style="background-color: #087768;" role="button"
-              (click)="baixarLembrete()" id="buttonBaixar">
-              <i class="fa fa-calendar-check-o"></i> Baixar
+            <button *ngIf="exibirElementos" class="btn text-white" data-mdb-ripple-init
+              style="background-color: #087768;" role="button" (click)="baixarLembrete()" id="buttonBaixar"
+              [disabled]="bloquearElementos" [hidden]="habilitarButtonBaixar">
+              <i class="fa fa-calendar-check-o"></i> Baixar Lembrete
             </button>
-            <button class="btn text-white" data-mdb-ripple-init style="background-color: #d3733b;" role="button"
-              (click)="reativarLembrete()" id="buttonReativar">
+            <button *ngIf="exibirElementos" class="btn text-white" data-mdb-ripple-init
+              style="background-color: #d3733b;" role="button" (click)="reativarLembrete()" id="buttonReativar"
+              [disabled]="bloquearElementos" [hidden]="habilitarButtonReativar">
               <i class="fa fa-clock-o"></i> Reativar Lembrete
             </button>
           </div>
@@ -264,13 +268,13 @@
       </div>
 
       <div class="form-group modal-body" style="padding-block-start: 0%; padding-block-end: 0%; margin: -1%;">
-        <form [formGroup]="modalAgendarLembretesForm">
+        <form [formGroup]="modalAgendarLembretesForm" *ngIf="modalAgendarLembretesForm">
           <div class="form-group">
             <div class="card-grupo-itens">
               <div class="form-check form-check-inline">
                 <label for="">Exibir lembrete apartir do dia :</label>
                 <input class="form-control text-left form-control-sm" id="dataLembrete" mask="00/00/0000"
-                  [(ngModel)]="number" style="width: 23%; margin: 1% 1% 1% 1%;">
+                  style="width: 23%; margin: 1% 1% 1% 1%;">
               </div>
 
               <div class="form-check form-check-inline">
@@ -290,8 +294,8 @@
                 <label class="form-check-label" for="" style="margin-inline: inherit;">Exibir o alerta de
                   contagem
                   a partir de: </label>
-                <input class="form-control text-left form-control-sm" formControlName="qtdeDiasContagem"
-                  id="qtdeDiasContagem" mask="00" [(ngModel)]="number" style="width: 8%; margin: 0% -2% 1%;">
+                <input type="text" class="form-control text-left form-control-sm" formControlName="qtdeDiasContagem"
+                  id="qtdeDiasContagem" mask="00" style="width: 8%; margin: 0% -2% 1%;">
                 <label class="form-check-label" for="" style="margin: 1% 3%;"> Dias. </label>
               </div>
             </div>
@@ -343,15 +347,15 @@
               </div>
 
               <div class="form-check form-check-inline" style="margin-inline: -0.5%;">
-                <input class="form-control text-left form-control-sm" id="data1" mask="00/00/0000" [(ngModel)]="number">
+                <input type="text" class="form-control text-left form-control-sm" id="data1" mask="d0/M0/0000">
 
-                <input class="form-control text-left form-control-sm" id="data2" mask="00/00/0000" [(ngModel)]="number">
+                <input type="text" class="form-control text-left form-control-sm" id="data2" mask="d0/M0/0000">
 
-                <input class="form-control text-left form-control-sm" id="data3" mask="00/00/0000" [(ngModel)]="number">
+                <input type="text" class="form-control text-left form-control-sm" id="data3" mask="d0/M0/0000">
 
-                <input class="form-control text-left form-control-sm" id="data4" mask="00/00/0000" [(ngModel)]="number">
+                <input type="text" class="form-control text-left form-control-sm" id="data4" mask="d0/M0/0000">
 
-                <input class="form-control text-left form-control-sm" id="data5" mask="00/00/0000" [(ngModel)]="number">
+                <input type="text" class="form-control text-left form-control-sm" id="data5" mask="d0/M0/0000">
               </div>
             </div>
           </div>

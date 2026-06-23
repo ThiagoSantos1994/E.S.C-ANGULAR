@@ -45,6 +45,13 @@ export class LembretesFormComponent implements OnInit {
   @ViewChild('modalBaixarLembretesMonitor', { static: false }) modalBaixarLembretesMonitor;
   @ViewChild('modalConfirmacaoEventos', { static: false }) modalConfirmacaoEventos;
 
+  // Variáveis de controle de exibição e bloqueio de elementos
+  bloquearElementos = false;
+  exibirElementos = false;
+  habilitarButtonReativar = false;
+  habilitarButtonBaixar = false;
+  habilitarButtonExcluir = false; 
+
   constructor(
     private formBuilder: FormBuilder,
     private sessao: SessaoService,
@@ -103,39 +110,35 @@ export class LembretesFormComponent implements OnInit {
       checkNotificarDatasProgramadas: [false]
     });
 
-    setarFocoCampo("nomeLembrete");
+    this.exibirElementos = false;
   }
 
   desabilitarCampos() {
-    (<HTMLInputElement>document.getElementById("buttonExcluir")).disabled = true;
-    (<HTMLInputElement>document.getElementById("buttonAgendar")).disabled = true;
-    (<HTMLInputElement>document.getElementById("buttonGravar")).disabled = true;
-    (<HTMLInputElement>document.getElementById("buttonReativar")).disabled = true;
-    (<HTMLInputElement>document.getElementById("buttonBaixar")).disabled = true;
-    (<HTMLInputElement>document.getElementById("nomeLembrete")).disabled = true;
-    (<HTMLInputElement>document.getElementById("observacoesLembrete")).disabled = true;
+    this.bloquearElementos = true;
+    this.exibirElementos = false;
   }
 
   habilitarCampos(isNovoLembrete) {
-    (<HTMLInputElement>document.getElementById("buttonExcluir")).disabled = false;
-    (<HTMLInputElement>document.getElementById("buttonAgendar")).disabled = false;
-    (<HTMLInputElement>document.getElementById("buttonGravar")).disabled = false;
-    (<HTMLInputElement>document.getElementById("nomeLembrete")).disabled = false;
-    (<HTMLInputElement>document.getElementById("observacoesLembrete")).disabled = false;
+    this.bloquearElementos = false;
 
     if (isNovoLembrete) {
       this.carregarListaLembretes(false);
       this.detalheLembrete = this.obterNovoLembreteObjeto(-1);
       this.resetCampos();
+      this.habilitarButtonExcluir = false;
     } else {
+      this.exibirElementos = true;
+      this.habilitarButtonExcluir = true;
       if (this.detalheLembrete.tpBaixado == "S") {
-        (<HTMLInputElement>document.getElementById("buttonReativar")).disabled = false;
-        (<HTMLInputElement>document.getElementById("buttonBaixar")).disabled = true;
+        this.habilitarButtonReativar = false;
+        this.habilitarButtonBaixar = true;
       } else {
-        (<HTMLInputElement>document.getElementById("buttonReativar")).disabled = true;
-        (<HTMLInputElement>document.getElementById("buttonBaixar")).disabled = false;
+        this.habilitarButtonReativar = true;
+        this.habilitarButtonBaixar = false;
       }
     }
+    
+    setarFocoCampo("nomeLembrete");
   }
 
   onCheckNotificarDatasProgramadas(checked) {
@@ -512,7 +515,7 @@ export class LembretesFormComponent implements OnInit {
       checked: false,
       changeValues: false
     }
-    
+
     this.idLembreteReferencia = idLembrete;
     return novoLembrete;
   }

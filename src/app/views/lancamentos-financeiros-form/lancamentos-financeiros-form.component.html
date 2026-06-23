@@ -68,7 +68,7 @@
           </div>
           <div class="col-lg-4 col-md-3 col-sm-12 p-0">
             <select class="form-control search-slt" formControlName="cbAno">
-              <option *ngFor="let ano of parametrizacoes.anosReferenciaFiltro" value={{ano}}>
+              <option *ngFor="let ano of parametrizacoes.anosReferenciaFiltro" [value]="ano">
                 {{ano}}
               </option>
             </select>
@@ -125,12 +125,12 @@
                     </div>
                   </div>
 
-                  <div class="col-auto">
+                  <div class="col-auto" *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
                     <i class="fas fa-calendar fa-2x text-gray-300" title="Saldo inicial do Mês (Despesas): {{lancamentosFinanceiros$?.vlSaldoInicialMes}} R$ 
-     TOtal utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
+     
+Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                     </i>
                   </div>
-
                 </div>
 
                 <div class="progress progress-height-12">
@@ -218,7 +218,7 @@
         </div>
 
         <div class="form-text text-muted labelQuitacaoMes label-quitacao-mes-custom"
-          title="{{lancamentosFinanceiros$.labelNovasParcelasMes}}">
+          title="{{lancamentosFinanceiros$?.labelNovasParcelasMes}}">
           <span class="badge badge-info d-inline">
             <i class="fas fa-bullhorn"></i>
           </span>
@@ -356,8 +356,9 @@
                       </ng-container>
                     </td>
 
-                    <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'" title="Referência (Mês Anterior\Limite): {{despesa.percentualUtilizacao}}
---------------------------------------------
+                    <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'" title="> Gasto no Mês: {{despesa.svlTotalGastoMes}} R$
+> Referência (Mês Anterior\Limite): {{despesa.percentualUtilizacao}}
+------------------------------------------------
 ⌨ Média Gasto (Ano): {{despesa.savgDespesa}} R$">
                       <span [ngClass]="getPercentualReceitaClass(despesa.statusPercentualReceita)">
                         <i [ngClass]="getPercentualReceitaIcon(despesa.statusPercentualReceita)"></i>
@@ -753,8 +754,9 @@
                   </ng-container>
                 </td>
 
-                <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'" title="Referência (Mês Anterior\Limite): {{despesa.percentualUtilizacao}}
---------------------------------------------
+                 <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'" title="> Gasto no Mês: {{despesa.svlTotalGastoMes}} R$
+> Referência (Mês Anterior\Limite): {{despesa.percentualUtilizacao}}
+------------------------------------------------
 ⌨ Média Gasto (Ano): {{despesa.savgDespesa}} R$">
                   <span [ngClass]="getPercentualReceitaClass(despesa.statusPercentualReceita)">
                     <i [ngClass]="getPercentualReceitaIcon(despesa.statusPercentualReceita)"></i>

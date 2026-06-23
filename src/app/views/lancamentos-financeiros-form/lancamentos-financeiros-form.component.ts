@@ -271,7 +271,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
     if (idDespesa != null && idDespesa > -1) {
       this.lancamentosService.getSubTotalCategoriaDespesas(idDespesa).subscribe((res: any) => {
-        res.mesAnoReferencia = "Mês Referência: ".concat(res.mesAnoReferencia); 
+        res.mesAnoReferencia = "Mês Referência: ".concat(res.mesAnoReferencia);
         this.categoriaDespesa = res;
       },
         error => {
@@ -292,15 +292,24 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   }
 
   visualizarCategoriasMesAnterior() {
+    this.desmarcarCheckBox();
     this.carregarCategoriaDespesas(--this.despesaRefCategoria);
   }
 
   visualizarCategoriasMesSeguinte() {
+    this.desmarcarCheckBox();
     this.carregarCategoriaDespesas(++this.despesaRefCategoria);
   }
 
   onExibirSubTotalAno(checked: any) {
     this.carregarCategoriaDespesas(checked ? -1 : this.despesaRefCategoria);
+  }
+
+  desmarcarCheckBox() {
+    const checkbox = document.getElementById("checkExibirTotalAnual") as HTMLInputElement;
+    if (checkbox) {
+      checkbox.checked = false; // desmarca o checkbox
+    }
   }
 
   carregarConfiguracaoLancamentos() {

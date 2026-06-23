@@ -111,7 +111,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.modalDetalheDespesasMensaisForm = this.formBuilder.group({
       nomeDespesa: [''],
       checkLimiteMesAnterior: [''],
-      checkReprocessarDespesasNaoParceladas: [''],
+      //checkReprocessarDespesasNaoParceladas: [''],
       checkVisualizarParcelasConsolidadas: ['']
     });
 
@@ -410,7 +410,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("buttonAdiarParcelas")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("buttonDesfazerAdiamentoFluxoParcelas")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("checkVisualizarParcelasConsolidadas")).disabled = isBloqueado;
-    (<HTMLInputElement>document.getElementById("checkReprocessarDespesasNaoParceladas")).disabled = true;
+    //(<HTMLInputElement>document.getElementById("checkReprocessarDespesasNaoParceladas")).disabled = true;
   }
 
   bloquearControlesNovaDespesa(isBloqueado: boolean) {
@@ -422,7 +422,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("buttonDesfazerAdiamentoFluxoParcelas")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("buttonOrdenarRegistros")).disabled = isBloqueado;
     (<HTMLInputElement>document.getElementById("checkVisualizarParcelasConsolidadas")).disabled = isBloqueado;
-    (<HTMLInputElement>document.getElementById("checkReprocessarDespesasNaoParceladas")).disabled = true;
+    //(<HTMLInputElement>document.getElementById("checkReprocessarDespesasNaoParceladas")).disabled = true;
     (<HTMLInputElement>document.getElementById("buttonAssociarDespesaExistente")).disabled = isBloqueado;
   }
 
@@ -461,7 +461,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.modalDetalheDespesasMensaisForm.setValue({
       nomeDespesa: (despesa.dsNomeDespesa),
       checkLimiteMesAnterior: (despesa.tpReferenciaSaldoMesAnterior == "S"),
-      checkReprocessarDespesasNaoParceladas: (despesa.tpReprocessar == "S"),
+      //checkReprocessarDespesasNaoParceladas: (despesa.tpReprocessar == "S"),
       checkVisualizarParcelasConsolidadas: this.checkVisualizarParcelasConsolidadas
     });
 
@@ -691,9 +691,9 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.detalheLancamentosMensais.despesaMensal.tpReferenciaSaldoMesAnterior = (checked ? 'S' : 'N');
   }
 
-  onCheckReprocessarDespesasNaoParceladas(checked) {
+  /*onCheckReprocessarDespesasNaoParceladas(checked) {
     this.detalheLancamentosMensais.despesaMensal.tpReprocessar = (checked ? 'S' : 'N');
-  }
+  }*/
 
   onCheckVisualizarParcelasConsolidadas(checked) {
     this.checkVisualizarParcelasConsolidadas = checked;
@@ -1482,6 +1482,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     let despesas = this.getDetalheDespesasParceladasChecked();
     if (despesas.length == 0) {
       this.mensagem.enviarMensagem("Selecione uma despesa por vez para realizar a amortização.", TipoMensagem.Alerta);
+      this.bloquearAberturaModal();
       return;
     } else if (despesas.length > 1) {
       this.mensagem.enviarMensagem("Necessário selecionar alguma despesa PARCELADA para realizar a amortização.", TipoMensagem.Alerta);
@@ -1500,6 +1501,11 @@ export class DetalheDespesasFormComponent implements OnInit {
     });
   }
 
+  bloquearAberturaModal() {
+    event.preventDefault(); // cancela abertura do modal
+    event.stopPropagation(); // evita propagação do evento de clique
+  }
+  
   /* -------------- Metodos Gerais -------------- */
   closeModal(): void {
     this.modalRef.hide();

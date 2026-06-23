@@ -280,7 +280,7 @@
   /*MODAL*/
 
   .modal-dialog-centered {
-    min-height: calc(100% - (1.75rem * 2));
+    min-height: calc(0% - (1.75rem * 4));
   }
 
   .modal-dialog {
@@ -343,8 +343,8 @@
 
   .modalDetalheDespesasMensais {
     text-align: center;
-    width: 75%;
-    margin: 0.75rem auto;
+    width: 80%;
+    margin: 2.75rem auto;
   }
 
   .modalCategoriaDetalheDespesa-body {

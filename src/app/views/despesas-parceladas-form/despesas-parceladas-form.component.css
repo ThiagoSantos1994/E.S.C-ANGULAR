@@ -186,7 +186,7 @@ th {
 /*MODAL*/
 
 .modal-dialog-centered {
-  min-height: calc(100% - (1.75rem * 2));
+  min-height: calc(0% - (1.75rem * 4));
 }
 
 .modal-dialog {
@@ -428,7 +428,7 @@ element.style {
 }
 
 .checkbox-despesas-em-aberto {
-  margin: -1.2% 11% -2% -47%;
+  margin: -1% 12.5% -2% -47%;
 }
 
 .badge-adiantada {

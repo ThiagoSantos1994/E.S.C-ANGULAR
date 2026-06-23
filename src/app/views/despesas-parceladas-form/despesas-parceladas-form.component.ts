@@ -403,8 +403,8 @@ export class DespesasParceladasFormComponent implements OnInit {
       this.fecharSpinner();
     },
       error => {
-        this.fecharSpinner();
-        handleApiError(error, this.mensagem, 'Ocorreu um erro ao gerar o fluxo de parcelas, tente novamente mais tarde.');
+        let mensagemErro = (error.error && error.error.mensagem) ? error.error.mensagem : 'Ocorreu um erro ao gerar o fluxo de parcelas, tente novamente mais tarde.';
+        handleApiError(error, this.mensagem, mensagemErro);
       });
   }
 

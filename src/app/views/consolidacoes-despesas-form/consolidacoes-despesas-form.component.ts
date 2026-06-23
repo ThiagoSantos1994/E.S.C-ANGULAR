@@ -234,9 +234,9 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
 
   excluirConsolidacao() {
     this.eventModalConfirmacao = "ExcluirConsolidacao";
-    this.mensagemModalConfirmacao_header = "Deseja excluir esta despesa parcelada?";
+    this.mensagemModalConfirmacao_header = "Deseja excluir esta consolidação?";
     this.mensagemModalConfirmacao_body = "";
-    this.mensagemModalConfirmacao_footer = "Este processo exclui a consolidação as despesas associadas são desassociadas e exibidas nas despesas mensais importadas.";
+    this.mensagemModalConfirmacao_footer = "Atenção: a(s) despesas(s) serão automaticamente desassociadas da consolidação na despesa mensal.";
 
     if (null == this.consolidacao) {
       this.mensagem.enviarMensagem("Necessário selecionar uma consolidação.", TipoMensagem.Alerta);
