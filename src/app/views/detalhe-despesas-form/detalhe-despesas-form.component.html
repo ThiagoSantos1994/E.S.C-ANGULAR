@@ -197,7 +197,7 @@
                   style="background-color: #08575a; padding-left: 27%; padding-right: 27%; margin-block-end: 20%;"
                   href="#!" role="button" title="Atualizar Detalhe Despesas" (click)="atualizarDetalheDespesasMensais()"
                   id="buttonAtualizar">
-                  <i class="fa fa-refresh"></i>
+                  <i class="fa fa-repeat"></i>
                 </button>
                 <button class="btn text-white" data-mdb-ripple-init
                   style="background-color: #3b056e;margin-block-end: 20%; padding-left: 23%; padding-right: 23%;"
@@ -552,7 +552,7 @@
               </div>
             </span>
           </span>
-          <div class="modal-footer-detalhe-right" style="margin: 0% 14%;">
+          <div class="modal-footer-detalhe-right" style="margin: 0% 15%;">
             <span *ngIf="detalheLancamentosMensais">
               <span *ngIf="detalheLancamentosMensais.despesaMensal.isNovaDespesa">
                 <div class="modal-footer-detalhe-right" style="margin: 0% 250px;">
@@ -588,6 +588,16 @@
               </span>
             </span>
           </div>
+          <span *ngIf="detalheLancamentosMensais">
+            <span *ngIf="!detalheLancamentosMensais.despesaMensal.isNovaDespesa">
+              <div>
+                <button class="btn text-white" data-mdb-ripple-init style="background-color: #0c1a36;" role="button"
+                  (click)="atualizarVisualizacaoDetalheDespesa()" title="Atualizar página">
+                  <i class="fa fa-refresh" aria-hidden="true"></i>
+                </button>
+              </div>
+            </span>
+          </span>
         </div>
       </div>
     </div>

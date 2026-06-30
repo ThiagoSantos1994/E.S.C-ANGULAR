@@ -42,7 +42,7 @@
 
                 <button class="btn text-white " data-mdb-ripple-init
                   style="background-color: #c90d0d; width: 5%; margin-left: 0%;" role="button" id="buttonExcluir"
-                  (click)="excluirLembrete()" [disabled]="bloquearElementos" [disabled]="!habilitarButtonExcluir">
+                  (click)="excluirLembrete()" [disabled]="!habilitarButtonExcluir">
                   <i class="fa fa-trash-o" aria-hidden="true" title="Excluir lembrete"></i>
                 </button>
               </div>
@@ -62,7 +62,7 @@
                 </small>
                 <div class="row row-card-titulo-lembrete">
                   <input class="form-control form-control-sm" type="text" id="nomeLembrete" onkeyup="toUpper(this)"
-                    style="width: 100%;" [disabled]="bloquearElementos">
+                    style="width: 100%;" placeholder="Digite o nome do lembrete" [disabled]="bloquearElementos">
                 </div>
               </div>
 
@@ -204,12 +204,12 @@
             </button>
             <button *ngIf="exibirElementos" class="btn text-white" data-mdb-ripple-init
               style="background-color: #087768;" role="button" (click)="baixarLembrete()" id="buttonBaixar"
-              [disabled]="bloquearElementos" [hidden]="habilitarButtonBaixar">
+              [disabled]="bloquearElementos" [hidden]="!habilitarButtonBaixar">
               <i class="fa fa-calendar-check-o"></i> Baixar Lembrete
             </button>
             <button *ngIf="exibirElementos" class="btn text-white" data-mdb-ripple-init
               style="background-color: #d3733b;" role="button" (click)="reativarLembrete()" id="buttonReativar"
-              [disabled]="bloquearElementos" [hidden]="habilitarButtonReativar">
+              [disabled]="bloquearElementos" [hidden]="!habilitarButtonReativar">
               <i class="fa fa-clock-o"></i> Reativar Lembrete
             </button>
           </div>

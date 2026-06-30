@@ -50,7 +50,7 @@ export class LembretesFormComponent implements OnInit {
   exibirElementos = false;
   habilitarButtonReativar = false;
   habilitarButtonBaixar = false;
-  habilitarButtonExcluir = false; 
+  habilitarButtonExcluir = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -63,6 +63,7 @@ export class LembretesFormComponent implements OnInit {
 
   ngOnInit() {
     this.loadFormLembretes();
+
     this.service.recebeMensagem().subscribe(tipo => {
       if (tipo == "cadastro") {
         this.modalAgendarLembretesForm.reset;
@@ -116,11 +117,12 @@ export class LembretesFormComponent implements OnInit {
   desabilitarCampos() {
     this.bloquearElementos = true;
     this.exibirElementos = false;
+    this.habilitarButtonReativar = false;
+    this.habilitarButtonBaixar = false;
+    this.habilitarButtonExcluir = false;
   }
 
   habilitarCampos(isNovoLembrete) {
-    this.bloquearElementos = false;
-
     if (isNovoLembrete) {
       this.carregarListaLembretes(false);
       this.detalheLembrete = this.obterNovoLembreteObjeto(-1);
@@ -130,14 +132,15 @@ export class LembretesFormComponent implements OnInit {
       this.exibirElementos = true;
       this.habilitarButtonExcluir = true;
       if (this.detalheLembrete.tpBaixado == "S") {
-        this.habilitarButtonReativar = false;
-        this.habilitarButtonBaixar = true;
-      } else {
         this.habilitarButtonReativar = true;
         this.habilitarButtonBaixar = false;
+      } else {
+        this.habilitarButtonReativar = false;
+        this.habilitarButtonBaixar = true;
       }
     }
-    
+
+    this.bloquearElementos = false;
     setarFocoCampo("nomeLembrete");
   }
 

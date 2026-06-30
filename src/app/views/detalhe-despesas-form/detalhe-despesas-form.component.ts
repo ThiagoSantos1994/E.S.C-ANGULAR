@@ -286,15 +286,24 @@ export class DetalheDespesasFormComponent implements OnInit {
     this.validarAcaoVisualizacao((this.despesaRef + 1), this.detalheRef);
   }
 
+  atualizarVisualizacaoDetalheDespesa() {
+    this.recarregarDetalheDespesa();
+  }
+
   validarAcaoVisualizacao(idDespesa: number, idDetalheDespesa: number) {
+    this.iniciarSpinner();
+
     this.checkVisualizarParcelasConsolidadas = false;
 
     this.detalheService.obterMesAnoPorID(idDespesa).subscribe((res) => {
       if ("ERRO" == res.data) {
         this.detalheService.obterMesAnoPorID(idDespesa - 1).subscribe((res) => {
-          //Só permite visualizacao antecipada das despesas dentro do mesmo ano referencia.
           var mesReferencia = res.data.substring(2, 0).replace('/', '');
-          mesReferencia = parserToInt(mesReferencia) + 1 > 12 ? '12' : mesReferencia;
+
+          //Só permite visualizacao antecipada das despesas dentro do mesmo ano referencia.
+          if ((parserToInt(mesReferencia) + 1) > 12) {
+            return;
+          }
 
           this.detalheService.gerarDespesaFuturaVisualizacao(mesReferencia, this.getAnoAtual()).toPromise().then(() => {
             this.carregarDetalheDespesa(idDespesa, idDetalheDespesa, null);
@@ -303,11 +312,14 @@ export class DetalheDespesasFormComponent implements OnInit {
           this.detalheService.obterMesAnoPorID(idDespesa).subscribe((res) => {
             this.mesAnoVisualizacaoTemp = res.data;
           });
+
+          this.fecharSpinner();
           return;
         });
       }
 
       this.mesAnoVisualizacaoTemp = res.data;
+      this.fecharSpinner();
       this.carregarDetalheDespesa(idDespesa, idDetalheDespesa, null);
     });
   }
@@ -1505,7 +1517,7 @@ export class DetalheDespesasFormComponent implements OnInit {
     event.preventDefault(); // cancela abertura do modal
     event.stopPropagation(); // evita propagação do evento de clique
   }
-  
+
   /* -------------- Metodos Gerais -------------- */
   closeModal(): void {
     this.modalRef.hide();
@@ -1521,6 +1533,15 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   getAnoAtual() {
     return formatDate(Date.now(), 'yyyy', 'en-US');
+  }
+
+  /* -------------- Spinner --------------- */
+  iniciarSpinner() {
+    this.mensagem.enviarMensagem(null, TipoMensagem.Spinner);
+  }
+
+  fecharSpinner() {
+    this.mensagem.enviarMensagem(null, null);
   }
 }
 

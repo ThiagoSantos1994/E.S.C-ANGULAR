@@ -36,6 +36,13 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
   @ViewChild('modalConsolidacoes', { static: false }) modalConsolidacoes;
   @ViewChild('modalConfirmacaoEventos', { static: false }) modalConfirmacaoEventos;
 
+  bloquearElementos = false;
+  exibirElementos = false;
+  habilitarButtonReativar = false;
+  habilitarButtonBaixar = false;
+  habilitarButtonExcluir = false;
+  habilitarButtonDesassociar = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private sessao: SessaoService,
@@ -45,52 +52,83 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loadFormConsolidacoes(null);
+    this.loadFormConsolidacoes();
 
     this.service.recebeMensagem().subscribe(consolidacao => {
-      this.loadFormConsolidacoes(consolidacao);
+      this.loadFormConsolidacoes();
+      this.carregarListaConsolidacoes(false);
+
+      if (consolidacao !== null) {
+        this.onChangeTituloConsolidacao(consolidacao.idConsolidacao);
+      }
     }, () => {
       this.mensagem.enviarMensagem("Ocorreu um erro ao carregar os dados da consolidação, tente novamente mais tarde.", TipoMensagem.Erro);
     })
   }
 
-  loadFormConsolidacoes(objConsolidacao) {
+  loadFormConsolidacoes() {
     this.idConsolidacaoRef = -1;
-    this.consolidacao = null;
+    this.consolidacao = this.obterNovaConsolidacaoObjeto(-1);
     this.tituloConsolidacoes = null;
     this.checkboxesMarcadas = false;
 
-    this.resetDetalhesObservable();
+    this.resetCampos()
     this.desabilitarCampos();
+  }
 
+  resetCampos() {
     this.modalConsolidacoesForm = this.formBuilder.group({
       checkCarregarNomeConsolidacoes: [true],
-      checkMarcarTodasParcelas: [false],
       nomeConsolidacao: ['']
     });
+  }
 
-    this.carregarListaConsolidacoes(false);
-
-    if (null != objConsolidacao) {
-      this.onChangeTituloConsolidacao(objConsolidacao.idConsolidacao);
-    }
-
-    setarFocoCampo("nomeConsolidacao");
+  obterNovaConsolidacaoObjeto(idConsolidacao: number): Consolidacao {
+    return {
+      idConsolidacao: idConsolidacao,
+      dsTituloConsolidacao: '',
+      tpBaixado: 'N',
+      idFuncionario: parserToInt(this.sessao.getIdLogin()),
+      despesasConsolidadas: []
+    };
   }
 
   desabilitarCampos() {
-    (<HTMLInputElement>document.getElementById("buttonBaixar")).disabled = true;
-    (<HTMLInputElement>document.getElementById("buttonReativar")).disabled = true;
+    this.bloquearElementos = true;
+    this.exibirElementos = false;
+    this.habilitarButtonBaixar = false;
+    this.habilitarButtonReativar = false;
+    this.habilitarButtonExcluir = false;
+    this.habilitarButtonDesassociar = false;
   }
 
-  habilitarCampos(consolidacao: Consolidacao) {
-    if (consolidacao.tpBaixado == "S") {
-      (<HTMLInputElement>document.getElementById("buttonBaixar")).disabled = true;
-      (<HTMLInputElement>document.getElementById("buttonReativar")).disabled = false;
-    } else {
-      (<HTMLInputElement>document.getElementById("buttonBaixar")).disabled = false;
-      (<HTMLInputElement>document.getElementById("buttonReativar")).disabled = true;
+  habilitarCampos(consolidacao: Consolidacao, isNovaConsolidacao: boolean) {
+    if (this.consolidacao !== null && isNovaConsolidacao === true) {
+      this.loadFormConsolidacoes();
+      this.carregarListaConsolidacoes(false);
     }
+
+    if (isNovaConsolidacao) {
+      this.habilitarButtonBaixar = false;
+      this.habilitarButtonReativar = false;
+      this.habilitarButtonExcluir = false;
+      this.habilitarButtonDesassociar = false;
+    } else if (consolidacao.tpBaixado == "S") {
+      this.habilitarButtonBaixar = false;
+      this.habilitarButtonReativar = true;
+      this.habilitarButtonExcluir = true;
+      this.habilitarButtonDesassociar = true;
+    } else {
+      this.habilitarButtonBaixar = true;
+      this.habilitarButtonReativar = false;
+      this.habilitarButtonExcluir = true;
+      this.habilitarButtonDesassociar = true;
+    }
+
+    this.bloquearElementos = false;
+    this.exibirElementos = true;
+
+    setarFocoCampo("nomeConsolidacao");
   }
 
   changeDetalhesConsolidacao(despesa: ConsolidacaoDespesas) {
@@ -157,8 +195,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
       this.consolidacao = res;
 
       this.modalConsolidacoesForm.get('nomeConsolidacao').setValue(res.dsTituloConsolidacao);
-      //(<HTMLInputElement>document.getElementById("nomeConsolidacao")).value = res.dsTituloConsolidacao.toString();
-      this.habilitarCampos(res);
+      this.habilitarCampos(res, false);
       this.resetDetalhesObservable();
       this.setDetalhesObservable(res.despesasConsolidadas, false);
     });
@@ -248,7 +285,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
 
   baixarConsolidacao() {
     this.eventModalConfirmacao = "BaixarConsolidacao";
-    this.mensagemModalConfirmacao_header = "Deseja baixar esta consolidacao?";
+    this.mensagemModalConfirmacao_header = "Deseja realizar a Baixa desta consolidacao?";
     this.mensagemModalConfirmacao_body = "";
     this.mensagemModalConfirmacao_footer = "Após confirmação, a despesa consolidada não será mais exibida para importação nos lançamentos mensais.";
 
@@ -340,9 +377,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
   confirmGravarConsolidacao() {
     this.service.gravarConsolidacao(this.consolidacao).toPromise().then(() => {
       this.mensagem.enviarMensagem("Gravação realizada com sucesso!", TipoMensagem.Sucesso);
-      //this.recarregarDetalheConsolidacao();
-      //TODO - Rever porque o ID não esta seno setado na consolidação apos a gravação.
-      this.loadFormConsolidacoes(null);
+      this.habilitarCampos(null, true);
     });
 
     this.closeModal();
@@ -350,7 +385,7 @@ export class ConsolidacoesDespesasFormComponent implements OnInit {
 
   confirmExcluirConsolidacao() {
     this.service.excluirConsolidacao(this.consolidacao).toPromise().then(() => {
-      this.loadFormConsolidacoes(null);
+      this.habilitarCampos(null, true);
       this.mensagem.enviarMensagem("Consolidação excluida com sucesso!", TipoMensagem.Sucesso);
     },
       error => {
