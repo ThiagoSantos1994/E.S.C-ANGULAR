@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { DetalheDespesasMensaisDomain } from '../domain/detalhe-despesas-mensais.domain';
 import { ChaveKey } from '../interfaces/chave-key.interface';
 import { DespesaMensal } from '../interfaces/despesa-mensal.interface';
@@ -12,9 +12,6 @@ import { ObservacoesDetalheDespesaRequest } from '../interfaces/observacoes-deta
 import { PagamentoDespesasRequest } from '../interfaces/pagamento-despesas-request.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
 import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
-import { HttpErrorHandlerService } from '../utils/http-error-handler.service';
-import { MensagemService } from './mensagem.service';
-import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
 
 @Injectable({
@@ -25,10 +22,7 @@ export class DetalheDespesasService {
   constructor(
     private http: HttpClient,
     private token: TokenService,
-    private sessao: SessaoService,
-    private mensagemService: MensagemService,
-    private detalheDespesaDomain: DetalheDespesasMensaisDomain,
-    private errorHandler: HttpErrorHandlerService
+    private detalheDespesaDomain: DetalheDespesasMensaisDomain
   ) { }
 
   private readonly subject = new Subject<DespesaMensal>();
@@ -58,11 +52,17 @@ export class DetalheDespesasService {
     return this.subject.asObservable();
   }
 
+  getHeaders(): HttpHeaders {
+    const token = this.token.getToken();
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
   processarPagamentoDetalheDespesa(request: PagamentoDespesasRequest[]): Observable<any> {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/baixarPagamentoDespesa`;
-    return this.http.post(url, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, request, { headers: this.getHeaders() });
   }
 
   getChaveKey(tipoChave: string): Observable<ChaveKey> {
@@ -72,10 +72,9 @@ export class DetalheDespesasService {
 
     return this.http.get<ChaveKey>(
       'springboot-esc-backend/api/lancamentosFinanceiros/obterNovaChaveKey',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
@@ -83,16 +82,14 @@ export class DetalheDespesasService {
     const params = {
       idDespesa: idDespesa.toString(),
       idDetalheDespesa: idDetalheDespesa.toString(),
-      idObservacao: idObservacao.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idObservacao: idObservacao.toString()
     };
 
     return this.http.get<StringResponse>(
       'springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/observacoes/consultar',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
@@ -104,24 +101,20 @@ export class DetalheDespesasService {
     const params = {
       idDetalheDespesaLog: idDetalheDespesaLog.toString(),
       idDespesa: idDespesa.toString(),
-      idDetalheDespesa: idDetalheDespesa.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idDetalheDespesa: idDetalheDespesa.toString()
     };
 
     return this.http.get<StringResponse>(
       'springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/historico/consultar',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
   gravarObservacoesDetalheDespesa(request: ObservacoesDetalheDespesaRequest) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/observacoes/gravar`;
-    return this.http.post(url, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, request, { headers: this.getHeaders() });
   }
 
   getDetalheDespesasMensais(
@@ -133,32 +126,28 @@ export class DetalheDespesasService {
     const params = {
       idDespesa: idDespesa ? idDespesa.toString() : '',
       idDetalheDespesa: idDetalheDespesa ? idDetalheDespesa.toString() : '',
-      idFuncionario: this.sessao.getIdLogin() ? this.sessao.getIdLogin().toString() : '',
       ordem: ordemExibicao ? ordemExibicao.toString() : '0',
       visualizarConsolidacao: exibirConsolidacao ? exibirConsolidacao.toString() : 'false'
     };
 
     return this.http.get<DetalheLancamentosMensais>(
       'springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/consultar',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
   getTituloDespesasParceladas(tpListarTodasDespesas: boolean): Observable<TituloDespesaResponse> {
     const params = {
-      idFuncionario: this.sessao.getIdLogin().toString(),
       tipo: tpListarTodasDespesas ? 'default' : 'ativas'
     };
 
     return this.http.get<TituloDespesaResponse>(
       'springboot-esc-backend/api/despesasParceladas/importacao/consultarDespesasParceladas',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
@@ -168,7 +157,6 @@ export class DetalheDespesasService {
     tpListarTodasDespesas: boolean
   ): Observable<TituloDespesaResponse> {
     const params = {
-      idFuncionario: this.sessao.getIdLogin().toString(),
       idDespesa: idDespesa.toString(),
       idDetalheDespesa: idDetalheDespesa.toString(),
       tipo: tpListarTodasDespesas ? 'default' : 'ativas'
@@ -176,41 +164,36 @@ export class DetalheDespesasService {
 
     return this.http.get<TituloDespesaResponse>(
       'springboot-esc-backend/api/consolidacao/importacao/consultarConsolidacoes',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
   getTituloDespesaAlteracao(idDespesa: number, anoReferencia: number): Observable<TituloDespesaResponse> {
     const params = {
       idDespesa: idDespesa.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString(),
       anoReferencia: anoReferencia.toString()
     };
 
     return this.http.get<TituloDespesaResponse>(
       'springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/obterDespesasMensaisParaAssociacao',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
   getTituloDespesasRelatorio(idDespesa: number): Observable<TituloDespesaResponse> {
     const params = {
-      idDespesa: idDespesa.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idDespesa: idDespesa.toString()
     };
 
     return this.http.get<TituloDespesaResponse>(
       'springboot-esc-backend/api/lancamentosFinanceiros/obterTitulosDespesasRelatorio',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
@@ -222,16 +205,14 @@ export class DetalheDespesasService {
     const params = {
       idDespesa: idDespesa.toString(),
       idDetalheDespesa: idDetalheDespesa.toString(),
-      idConsolidacao: idConsolidacao.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idConsolidacao: idConsolidacao.toString()
     };
 
     return this.http.get<StringResponse>(
       'springboot-esc-backend/api/detalheDespesas/consolidacao/obterRelatorioDespesasParceladas',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
@@ -241,16 +222,14 @@ export class DetalheDespesasService {
   ): Observable<StringResponse> {
     const params = {
       idDespesa: idDespesa.toString(),
-      idDetalheDespesa: idDetalheDespesa.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idDetalheDespesa: idDetalheDespesa.toString()
     };
 
     return this.http.get<StringResponse>(
       'springboot-esc-backend/api/detalheDespesas/despesasParceladas/obterRelatorioDespesasParceladasQuitacao',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
@@ -258,52 +237,41 @@ export class DetalheDespesasService {
     const params = {
       idDespesa: idDespesa.toString(),
       idDetalheDespesa: idDetalheDespesa.toString(),
-      idOrdem: idOrdem.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idOrdem: idOrdem.toString()
     };
 
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais';
 
-    return this.http.delete(url, { params }).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.delete(url, { params, headers: this.getHeaders() });
   }
 
   gravarDespesaMensal(request: DespesaMensal) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/incluir`;
-    return this.http.post(url, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, request, { headers: this.getHeaders() });
   }
 
   gravarDetalheDespesa(request: DetalheDespesasMensais[]) {
     const url = `springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/incluir`;
-    return this.http.post(url, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, request, { headers: this.getHeaders() });
   }
 
   excluritemDetalheDespesa(request: DetalheDespesasMensais[]) {
     const url = `springboot-esc-backend/api/v2/lancamentosFinanceiros/detalheDespesasMensais/excluir`;
-    return this.http.post(url, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, request, { headers: this.getHeaders() });
   }
 
   validarDuplicidadeTituloDespesa(idDespesa: number, idDetalheDespesa: number, tituloDespesa: string, anoReferencia: number): Observable<StringResponse> {
     const params = {
       idDespesa: idDespesa.toString(),
       idDetalheDespesa: idDetalheDespesa.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString(),
       tituloDespesa: tituloDespesa,
-      anoReferencia : anoReferencia.toString()
+      anoReferencia: anoReferencia.toString()
     };
 
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/validaTituloDespesaDuplicado';
 
-    return this.http.post<StringResponse>(url, {}, { params }).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+    return this.http.post<StringResponse>(url, {}, { params, headers: this.getHeaders() }).pipe(
+      map(response => response)
     );
   }
 
@@ -311,15 +279,12 @@ export class DetalheDespesasService {
     const params = {
       idDespesa: idDespesa.toString(),
       idDetalheDespesa: idDetalheDespesa.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString(),
       ordem: 'prazo'
     };
 
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/ordenarListaDespesas';
 
-    return this.http.post(url, {}, { params }).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, {}, { params, headers: this.getHeaders() });
   }
 
   atualizarOrdemLinhaDetalheDespesa(
@@ -332,15 +297,12 @@ export class DetalheDespesasService {
       idDespesa: idDespesa.toString(),
       idDetalheDespesa: idDetalheDespesa.toString(),
       iOrdemAtual: iOrdemAtual.toString(),
-      iOrdemNova: iNovaOrdem.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      iOrdemNova: iNovaOrdem.toString()
     };
 
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/alterarOrdemRegistroDetalheDespesas';
 
-    return this.http.post(url, {}, { params }).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, {}, { params, headers: this.getHeaders() });
   }
 
   processarImportacaoDespesasParceladas(
@@ -353,15 +315,12 @@ export class DetalheDespesasService {
       idDespesa: idDespesa.toString(),
       idDetalheDespesa: idDetalheDespesa.toString(),
       idDespesaParcelada: idDespesaParcelada.toString(),
-      idConsolidacao: idConsolidacao.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idConsolidacao: idConsolidacao.toString()
     };
 
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/importacao/despesaParcelada';
 
-    return this.http.post(url, {}, { params }).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, {}, { params, headers: this.getHeaders() });
   }
 
   reprocessarImportacaoDetalheDespesa(
@@ -374,7 +333,6 @@ export class DetalheDespesasService {
     const params = {
       idDespesa: idDespesa.toString(),
       idDetalheDespesa: idDetalheDespesa.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString(),
       dsMes: mesReferencia,
       dsAno: anoReferencia,
       bReprocessarTodosValores: repDespNaoParceladas.toString()
@@ -382,9 +340,7 @@ export class DetalheDespesasService {
 
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/importacao/detalheDespesasMensais';
 
-    return this.http.post(url, {}, { params }).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, {}, { params, headers: this.getHeaders() });
   }
 
   incluirDespesaParceladaAmortizacao(
@@ -394,44 +350,37 @@ export class DetalheDespesasService {
   ) {
     const params = {
       idDespesa: idDespesa.toString(),
-      idDetalheDespesa: idDetalheDespesa.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idDetalheDespesa: idDetalheDespesa.toString()
     };
 
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/importacao/despesaParceladaAmortizada';
 
-    return this.http.post(url, parcelasAmortizada, { params }).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, parcelasAmortizada, { params, headers: this.getHeaders() });
   }
 
   getExtratoDetalheDespesa(idDespesa: number, idDetalheDespesa: number): Observable<StringResponse> {
     const params = {
       idDespesa: idDespesa.toString(),
       idDetalheDespesa: idDetalheDespesa.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString(),
       tipo: 'detalheDespesas'
     };
 
     return this.http.get<StringResponse>(
       'springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/obterExtratoDespesasMes',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
   adiarFluxoParcelas(despesas: DetalheDespesasMensais[]) {
-    return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/parcelas/adiarFluxoParcelas`, despesas).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/parcelas/adiarFluxoParcelas`,
+      despesas, { headers: this.getHeaders() });
   }
 
   desfazerAdiamentoFluxoParcelas(despesas: DetalheDespesasMensais[]) {
-    return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/parcelas/desfazerAdiamentoFluxoParcelas`, despesas).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(`springboot-esc-backend/api/lancamentosFinanceiros/parcelas/desfazerAdiamentoFluxoParcelas`,
+      despesas, { headers: this.getHeaders() });
   }
 
   associarDespesasConsolidacao(idConsolidacao: number, despesas: DetalheDespesasMensais[]) {
@@ -441,52 +390,42 @@ export class DetalheDespesasService {
 
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/detalheDespesasMensais/consolidacao/associar';
 
-    return this.http.post(url, despesas, { params }).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, despesas, { params, headers: this.getHeaders() });
   }
 
   alterarReferenciaDespesaMensal(idDespesa: number, idDetalheDespesa: number, idDetalheDespesaNova: number) {
     const params = {
       idDespesa: idDespesa.toString(),
       idDetalheDespesa: idDetalheDespesa.toString(),
-      idDetalheDespesaNova: idDetalheDespesaNova.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idDetalheDespesaNova: idDetalheDespesaNova.toString()
     };
 
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/despesasMensais/alterarReferenciaDespesa';
 
-    return this.http.post(url, null, { params }).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, null, { params, headers: this.getHeaders() });
   }
 
   obterMesAnoPorID(idDespesa: number): Observable<StringResponse> {
     const params = {
-      idDespesa: idDespesa.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idDespesa: idDespesa.toString()
     };
 
     return this.http.get<StringResponse>(
       'springboot-esc-backend/api/lancamentosFinanceiros/obterMesAnoPorID',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
   gerarDespesaFuturaVisualizacao(mesRef: string, anoRef: string) {
     const params = {
       dsMes: mesRef,
-      dsAno: anoRef,
-      idFuncionario: this.sessao.getIdLogin().toString()
+      dsAno: anoRef
     };
 
     const url = 'springboot-esc-backend/api/lancamentosFinanceiros/gerarDespesasFuturas';
 
-    return this.http.post(url, {}, { params }).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, {}, { params, headers: this.getHeaders() });
   }
 }

@@ -125,21 +125,22 @@
             <div class="col-xl-2 col-md-6 mb-1">
               <div class="card border-saldo-detalhe-despesa shadow h-100 py-0">
                 <div class="card-body-saldo-detalhe-despesa">
-                  <div class="row no-gutters">
-                    <div class="text-center">
+                  <div class=" row no-gutters">
+                    <div class="text-center" style="
+    padding: 3%;">
                       Limite Referencia
                       <div class="h5 mb-0 font-weight-bold text-gray-800">
                         <input type="text" class="text-center form-control" id="valorLimiteDespesa" currencyMask
                           maxlength="16" autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',' }">
                       </div>
 
-                      <small class="form-text text-muted" style="padding-top: 5%;">
+                      <small class="form-text text-muted" style="padding-top: 5%;font-size: 95%;">
                         <span *ngIf="detalheLancamentosMensais">
                           {{detalheLancamentosMensais.despesaMensal.vlTotalDespesa}} Gasto Mês
                         </span>
                       </small>
 
-                      <small class="form-text text-muted" style="padding-left: 11%;">
+                      <small class="form-text text-muted" style="padding-left: 11%;font-size: 90%;">
                         <input class="form-check-input" type="checkbox" formControlName="checkLimiteMesAnterior"
                           id="checkLimiteMesAnterior" (click)="onCheckLimiteMesAnteriorChange($event.target.checked)">
                         <label class="form-check-label" for="checkLimiteMesAnterior"
@@ -194,7 +195,7 @@
                   <i class="fas fa-download"></i>
                 </button>
                 <button class="btn text-white" data-mdb-ripple-init
-                  style="background-color: #08575a; padding-left: 27%; padding-right: 27%; margin-block-end: 20%;"
+                  style="background-color: #08575a; padding-left: 26%; padding-right: 26%; margin-block-end: 20%;"
                   href="#!" role="button" title="Atualizar Detalhe Despesas" (click)="atualizarDetalheDespesasMensais()"
                   id="buttonAtualizar">
                   <i class="fa fa-repeat"></i>
@@ -552,7 +553,7 @@
               </div>
             </span>
           </span>
-          <div class="modal-footer-detalhe-right" style="margin: 0% 15%;">
+          <div class="modal-footer-detalhe-right" style="margin: 0% 7%;">
             <span *ngIf="detalheLancamentosMensais">
               <span *ngIf="detalheLancamentosMensais.despesaMensal.isNovaDespesa">
                 <div class="modal-footer-detalhe-right" style="margin: 0% 250px;">

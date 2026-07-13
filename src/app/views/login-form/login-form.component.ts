@@ -47,7 +47,7 @@ export class LoginFormComponent implements OnInit {
     let isIgnorarValidacaoSessao = !this.loginForm.get('checkMantenhaMeConectado').value;
 
     this.loginService.autenticar(userName, password).toPromise().then(res => {
-      this.sessaoService.setTokenAutenticador(res.autenticacao, res.idLogin, res.nomeUsuario, isIgnorarValidacaoSessao);
+      this.sessaoService.setTokenAutenticador(res.accessToken, isIgnorarValidacaoSessao);
       this.router.navigate(['dashboard']);
     },
       error => {

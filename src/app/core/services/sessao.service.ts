@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { take } from 'rxjs/operators';
 import { TokenService } from './token.service';
 
 @Injectable({ providedIn: 'root' })
@@ -15,8 +14,8 @@ export class SessaoService {
         }
     }
 
-    setTokenAutenticador(token: string, idLogin: number, usuario: string, isIgnorarSessao: boolean): void {
-        this.tokenService.setToken(token, idLogin, usuario, isIgnorarSessao);
+    setTokenAutenticador(accessToken: string, isIgnorarSessao: boolean): void {
+        this.tokenService.setToken(accessToken, isIgnorarSessao);
         this.decodeAndNotify();
     }
 
@@ -25,7 +24,7 @@ export class SessaoService {
     }
 
     async validarSessao(): Promise<void> {
-        if (this.tokenService.getValidarSessao() === 'true') {
+        /*if (this.tokenService.getValidarSessao() === 'true') {
             try {
                 const res = await this.tokenService.validarSessao().pipe(take(1)).toPromise();
                 if (res.isValid === false) {
@@ -36,7 +35,7 @@ export class SessaoService {
             } catch (error) {
                 console.error('Erro ao validar sessão:', error);
             }
-        }
+        }*/
     }
 
     isLogged(): boolean {

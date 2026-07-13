@@ -1,13 +1,10 @@
 import { formatDate } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { DetalheLembrete } from '../interfaces/detalhe-lembrete.interface';
 import { TituloLembretes } from '../interfaces/titulo-lembretes.interface';
-import { HttpErrorHandlerService } from '../utils/http-error-handler.service';
-import { MensagemService } from './mensagem.service';
-import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
 
 @Injectable({
@@ -17,10 +14,7 @@ export class LembretesService {
 
   constructor(
     private http: HttpClient,
-    private token: TokenService,
-    private mensagemService: MensagemService,
-    private sessao: SessaoService,
-    private errorHandler: HttpErrorHandlerService
+    private token: TokenService
   ) { }
 
   private readonly subject = new Subject<string>();
@@ -33,47 +27,46 @@ export class LembretesService {
     return this.subject.asObservable();
   }
 
+  getHeaders(): HttpHeaders {
+    const token = this.token.getToken();
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
   getDetalheLembrete(idLembrete: number): Observable<DetalheLembrete> {
     const params = {
-      idLembrete: idLembrete.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idLembrete: idLembrete.toString()
     };
 
     return this.http.get<DetalheLembrete>(
       'springboot-esc-backend/api/lembretes/detalhe',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
   getMonitorLembretes(): Observable<TituloLembretes> {
-    const params = {
-      idFuncionario: this.sessao.getIdLogin().toString()
-    };
-
     return this.http.get<TituloLembretes>(
       'springboot-esc-backend/api/lembretes/monitor',
-      { params }
+      { headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
   getTituloLembretes(isLembreteEmAberto: boolean): Observable<TituloLembretes> {
     const params = {
-      idFuncionario: this.sessao.getIdLogin().toString(),
       tpBaixado: isLembreteEmAberto.toString()
     };
 
     return this.http.get<TituloLembretes>(
       'springboot-esc-backend/api/lembretes/obterTituloLembretes',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
@@ -84,21 +77,15 @@ export class LembretesService {
 
     const url = 'springboot-esc-backend/api/lembretes/monitor/baixar';
 
-    return this.http.post(url, request, { params }).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, request, { params, headers: this.getHeaders() });
   }
 
   gravarDetalhesLembrete(request: DetalheLembrete): Observable<any> {
-    return this.http.post(`springboot-esc-backend/api/lembretes/detalhe/gravar`, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(`springboot-esc-backend/api/lembretes/detalhe/gravar`, request, { headers: this.getHeaders() });
   }
 
   excluirDetalhesLembrete(request: DetalheLembrete): Observable<any> {
-    return this.http.post(`springboot-esc-backend/api/lembretes/detalhe/excluir`, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(`springboot-esc-backend/api/lembretes/detalhe/excluir`, request, { headers: this.getHeaders() });
   }
 
   getMesAtual(): string {

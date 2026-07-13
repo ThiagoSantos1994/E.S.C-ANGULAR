@@ -84,7 +84,7 @@ export class MensagensFormComponent implements OnInit {
 
     setTimeout(() => {
       this.closeModal();
-    }, 2500);
+    }, 3000);
   }
 
   showModalErro(mensagem: Mensagem) {
@@ -94,7 +94,7 @@ export class MensagensFormComponent implements OnInit {
 
     setTimeout(() => {
       this.closeModal();
-    }, 2500);
+    }, 3000);
   }
 
   showModalGenerica(mensagem: Mensagem) {

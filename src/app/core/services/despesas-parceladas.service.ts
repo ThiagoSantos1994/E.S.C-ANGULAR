@@ -1,14 +1,11 @@
 import { formatDate } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Despesa, DespesaParceladaResponse, Parcelas } from '../interfaces/despesa-parcelada-response.interface';
 import { StringResponse } from '../interfaces/string-response.interface.';
 import { TituloDespesaResponse } from '../interfaces/titulo-despesa-response.interface';
-import { HttpErrorHandlerService } from '../utils/http-error-handler.service';
-import { MensagemService } from './mensagem.service';
-import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
 
 @Injectable({
@@ -18,10 +15,7 @@ export class DespesasParceladasService {
 
   constructor(
     private http: HttpClient,
-    private token: TokenService,
-    private mensagemService: MensagemService,
-    private sessao: SessaoService,
-    private errorHandler: HttpErrorHandlerService
+    private token: TokenService
   ) { }
 
   private readonly subject = new Subject<any>();
@@ -34,34 +28,38 @@ export class DespesasParceladasService {
     return this.subject.asObservable();
   }
 
+  getHeaders(): HttpHeaders {
+    const token = this.token.getToken();
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
   getNomeDespesasParceladas(isDespesasEmAberto: boolean): Observable<TituloDespesaResponse> {
     const params = {
-      idFuncionario: this.sessao.getIdLogin().toString(),
       status: isDespesasEmAberto ? 'default' : 'fechado'
     };
 
     return this.http.get<TituloDespesaResponse>(
       'springboot-esc-backend/api/despesasParceladas/obterListaDespesas',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
   getDetalhesDespesaParcelada(idDespesaParcelada: number): Observable<DespesaParceladaResponse> {
     const params = {
       idDespesaParcelada: idDespesaParcelada.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString(),
       isPendentes: 'false'
     };
 
     return this.http.get<DespesaParceladaResponse>(
       'springboot-esc-backend/api/v2/despesasParceladas/consultar',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
@@ -75,90 +73,69 @@ export class DespesasParceladasService {
       idDespesaParcelada: idDespesaParcelada.toString(),
       valorParcela: valorParcela,
       qtdeParcelas: qtdeParcelas.toString(),
-      dataReferencia: dataReferencia,
-      idFuncionario: this.sessao.getIdLogin().toString()
+      dataReferencia: dataReferencia
     };
 
     return this.http.get<DespesaParceladaResponse>(
       'springboot-esc-backend/api/v2/despesasParceladas/gerarFluxoParcelas',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
   gravarDespesa(request: Despesa) {
-    return this.http.post(`springboot-esc-backend/api/despesasParceladas/gravar`, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(`springboot-esc-backend/api/despesasParceladas/gravar`, request, { headers: this.getHeaders() });
   }
 
   gravarParcelas(request: Parcelas[]) {
-    return this.http.post(`springboot-esc-backend/api/despesasParceladas/parcelas/gravar`, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(`springboot-esc-backend/api/despesasParceladas/parcelas/gravar`, request, { headers: this.getHeaders() });
   }
 
   excluirDespesa(idDespesaParcelada: number) {
     const params = {
-      idDespesaParcelada: idDespesaParcelada.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idDespesaParcelada: idDespesaParcelada.toString()
     };
 
     const url = 'springboot-esc-backend/api/despesasParceladas/excluir';
 
-    return this.http.delete(url, { params }).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.delete(url, { params, headers: this.getHeaders() });
   }
 
   quitarDespesa(idDespesaParcelada: number, valorQuitacao: string) {
     const params = {
       idDespesaParcelada: idDespesaParcelada.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString(),
       valorQuitacao: valorQuitacao
     };
 
     const url = 'springboot-esc-backend/api/despesasParceladas/quitar';
 
-    return this.http.post(url, {}, { params }).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(url, {}, { params, headers: this.getHeaders() });
   }
 
   excluirParcela(request: Parcelas[]) {
-    return this.http.post(`springboot-esc-backend/api/despesasParceladas/parcelas/excluir/`, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(`springboot-esc-backend/api/despesasParceladas/parcelas/excluir/`, request, { headers: this.getHeaders() });
   }
 
   obterSubTotalDespesasEmAberto(): Observable<StringResponse> {
-    const params = {
-      idFuncionario: this.sessao.getIdLogin().toString()
-    };
-
     return this.http.get<StringResponse>(
       'springboot-esc-backend/api/despesasParceladas/obterCalculoValorTotalPendente',
-      { params }
+      { headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
   getParcelasParaAmortizacao(idDespesaParcelada: number): Observable<Parcelas[]> {
     const params = {
-      idDespesaParcelada: idDespesaParcelada.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idDespesaParcelada: idDespesaParcelada.toString()
     };
 
     return this.http.get<Parcelas[]>(
       'springboot-esc-backend/api/despesasParceladas/obterParcelasParaAmortizacao',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 

@@ -1,14 +1,11 @@
 import { formatDate } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ConsolidacaoDespesas } from '../interfaces/consolidacao-despesas.interface';
 import { Consolidacao } from '../interfaces/consolidacao.interface';
 import { TituloConsolidacaoResponse } from '../interfaces/titulo-consolidacao-response.interface';
-import { HttpErrorHandlerService } from '../utils/http-error-handler.service';
-import { MensagemService } from './mensagem.service';
-import { SessaoService } from './sessao.service';
 import { TokenService } from './token.service';
 
 @Injectable({
@@ -18,10 +15,7 @@ export class ConsolidacaoService {
 
   constructor(
     private http: HttpClient,
-    private token: TokenService,
-    private mensagemService: MensagemService,
-    private sessao: SessaoService,
-    private errorHandler: HttpErrorHandlerService
+    private token: TokenService
   ) { }
 
   private readonly subject = new Subject<any>();
@@ -34,58 +28,54 @@ export class ConsolidacaoService {
     return this.subject.asObservable();
   }
 
+  getHeaders(): HttpHeaders {
+    const token = this.token.getToken();
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
   getTitulosConsolidacao(isBaixado: boolean): Observable<TituloConsolidacaoResponse[]> {
     const params = {
-      idFuncionario: this.sessao.getIdLogin().toString(),
       tpBaixado: isBaixado.toString()
     };
 
     return this.http.get<TituloConsolidacaoResponse[]>(
       'springboot-esc-backend/api/consolidacao/obterTituloConsolidacoes',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
   getDetalhesConsolidacao(idConsolidacao: number): Observable<Consolidacao> {
     const params = {
-      idConsolidacao: idConsolidacao.toString(),
-      idFuncionario: this.sessao.getIdLogin().toString()
+      idConsolidacao: idConsolidacao.toString()
     };
 
     return this.http.get<Consolidacao>(
       'springboot-esc-backend/api/consolidacao/consultar',
-      { params }
+      { params, headers: this.getHeaders() }
     ).pipe(
-      map(response => response),
-      catchError(this.errorHandler.handleError)
+      map(response => response)
     );
   }
 
   gravarConsolidacao(request: Consolidacao): Observable<any> {
-    return this.http.post(`springboot-esc-backend/api/consolidacao/gravar`, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(`springboot-esc-backend/api/consolidacao/gravar`, request, { headers: this.getHeaders() });
   }
 
   excluirConsolidacao(request: Consolidacao): Observable<any> {
-    return this.http.post(`springboot-esc-backend/api/consolidacao/excluir`, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(`springboot-esc-backend/api/consolidacao/excluir`, request, { headers: this.getHeaders() });
   }
 
   associarDespesa(request: ConsolidacaoDespesas): Observable<any> {
-    return this.http.post(`springboot-esc-backend/api/consolidacao/despesas/associar`, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(`springboot-esc-backend/api/consolidacao/despesas/associar`, request, { headers: this.getHeaders() });
   }
 
   desassociarDespesa(request: ConsolidacaoDespesas[]) {
-    return this.http.post(`springboot-esc-backend/api/consolidacao/despesas/desassociar`, request).pipe(
-      catchError(this.errorHandler.handleError)
-    );
+    return this.http.post(`springboot-esc-backend/api/consolidacao/despesas/desassociar`, request, { headers: this.getHeaders() });
   }
 
   getMesAtual() {

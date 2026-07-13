@@ -9,6 +9,8 @@ import { NgxMaskModule } from 'ngx-mask';
 import { FormsModule } from '@angular/forms';
 import { CurrencyMaskModule } from 'ng2-currency-mask';
 import { NgApexchartsModule } from "ng-apexcharts";
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthExpiredInterceptor } from './core/interceptors/auth-expired.interceptor';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,13 @@ import { NgApexchartsModule } from "ng-apexcharts";
     CurrencyMaskModule,
     NgApexchartsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthExpiredInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
