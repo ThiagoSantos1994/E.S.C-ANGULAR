@@ -360,14 +360,19 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
 > Referência (Mês Anterior\Limite): {{despesa.percentualUtilizacao}}
 ------------------------------------------------
 ⌨ Média Gasto (Ano): {{despesa.savgDespesa}} R$">
-                      <span [ngClass]="getPercentualReceitaClass(despesa.statusPercentualReceita)">
-                        <i [ngClass]="getPercentualReceitaIcon(despesa.statusPercentualReceita)"></i>
-                        <span>{{ despesa.percentualReceita }}</span>
-                      </span>
-                      <span class="text-info" *ngIf="despesa.tpEmprestimo === 'S'">
-                        <i class="fa fa-minus"></i>
-                      </span>
+                      <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
+                        <span [ngClass]="getPercentualReceitaClass(despesa.statusPercentualReceita)">
+                          <i [ngClass]="getPercentualReceitaIcon(despesa.statusPercentualReceita)"></i>
+                          <span>{{ despesa.percentualReceita }}</span>
+                        </span>
+                        <span class="text-info" *ngIf="despesa.tpEmprestimo === 'S'">
+                          <i class="fa fa-minus"></i>
+                        </span>
+                      </ng-container>
                     </td>
+
+                    <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
+                    <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
 
                     <td class="font-weight-bold"
                       [attr.data-toggle]="despesa.tpLinhaSeparacao === 'N' && despesa.tpDespesaConsolidacao === 'N' ? 'modal' : null"
@@ -390,10 +395,11 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                       </ng-container>
                     </td>
 
-                    <td>{{ despesa.svlTotalDespesaPaga }}</td>
-
-                    <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
-                    <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
+                    <td>
+                      <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
+                        {{ despesa.svlTotalDespesaPaga }}
+                      </ng-container>
+                    </td>
 
                     <td class="text-left">
                       <button type="button" class="btn btn-link btn-sm px-0"
@@ -754,7 +760,7 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                   </ng-container>
                 </td>
 
-                 <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'" title="> Gasto no Mês: {{despesa.svlTotalGastoMes}} R$
+                <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'" title="> Gasto no Mês: {{despesa.svlTotalGastoMes}} R$
 > Referência (Mês Anterior\Limite): {{despesa.percentualUtilizacao}}
 ------------------------------------------------
 ⌨ Média Gasto (Ano): {{despesa.savgDespesa}} R$">
@@ -766,6 +772,9 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                     <i class="fa fa-minus"></i>
                   </span>
                 </td>
+
+                <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
+                <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
 
                 <td class="font-weight-bold" data-toggle="modal" data-target="#modalDetalheDespesasMensais"
                   (click)="carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)">
@@ -783,8 +792,6 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                 </td>
 
                 <td>{{ despesa.svlTotalDespesaPaga }}</td>
-                <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
-                <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
               </tr>
             </tbody>
 

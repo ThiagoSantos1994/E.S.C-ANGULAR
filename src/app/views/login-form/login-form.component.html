@@ -10,7 +10,8 @@
                 <form [formGroup]="loginForm" (submit)="login()">
                     <div class="right-content">
                         <h3 class="form-title" style="color: azure;">Olá, seja bem-vindo!</h3>
-                        <h6 class="form-title" style="color: rgb(255, 255, 255);">Digite seu usuario e senha para fazer login.</h6>
+                        <h6 class="form-title" style="color: rgb(255, 255, 255);">Digite seu usuario e senha para fazer
+                            login.</h6>
                     </div>
 
                     <div data-mdb-input-init class="form-group form-outline mb-4">
@@ -21,7 +22,9 @@
                             <input type="email" formControlName="userName" id="userName"
                                 class="form-control form-control-lg" placeholder="Digite o usuario" />
                         </div>
-                        <app-vmessage *ngIf="loginForm.get('userName').errors?.required" text='Usuario é obrigatório!'>
+                        <app-vmessage
+                            *ngIf="(submitted || loginForm.get('userName').dirty) && loginForm.get('userName').errors?.required"
+                            text='Usuario é obrigatório!'>
                         </app-vmessage>
                     </div>
 
@@ -33,7 +36,9 @@
                             <input type="password" formControlName="password" id="password"
                                 class="form-control form-control-lg" placeholder="Digite a senha" />
                         </div>
-                        <app-vmessage *ngIf="loginForm.get('password').errors?.required" text='Senha é obrigatório!'>
+                        <app-vmessage
+                            *ngIf="(submitted || loginForm.get('password').dirty) && loginForm.get('password').errors?.required"
+                            text='Senha é obrigatório!'>
                         </app-vmessage>
                     </div>
 
@@ -52,8 +57,7 @@
                         </div>-->
 
                     <div class="text-center text-lg-start mt-4 pt-2">
-                        <button [disabled]="loginForm.invalid" type="submit" data-mdb-button-init data-mdb-ripple-init
-                            class="btn btn-primary btn-lg"
+                        <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
                             style="padding-left: 2.5rem; padding-right: 2.5rem;">Entrar</button>
                     </div>
 

@@ -16,6 +16,7 @@ export class LoginFormComponent implements OnInit {
   loginForm: FormGroup;
   modalReference: any;
   validacaoLogin: boolean;
+  submitted: boolean = false;
 
   @ViewChild('modalLoginInvalido', { static: false }) modalUsuarioInvalido: any;
 
@@ -42,6 +43,12 @@ export class LoginFormComponent implements OnInit {
   }
 
   login() {
+    this.submitted = true;
+
+    if (this.loginForm.invalid) {
+      return;
+    }
+
     let userName = this.loginForm.get('userName').value;
     let password = this.loginForm.get('password').value;
     let isIgnorarValidacaoSessao = !this.loginForm.get('checkMantenhaMeConectado').value;
@@ -63,6 +70,7 @@ export class LoginFormComponent implements OnInit {
   reloadForm() {
     this.loginForm.reset();
     this.userNameInput.nativeElement.focus();
+    this.submitted = false;
   }
 
   open(content) {
