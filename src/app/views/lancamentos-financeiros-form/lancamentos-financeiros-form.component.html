@@ -19,8 +19,16 @@
         </div>
 
         <hr>
-        <div class="d-grid gap-2 d-md-block btn-group-sm">
-          <div class="btn-group mr-2" role="group" aria-label="First group">
+        <div class="d-grid gap-2 d-md-block btn-group-sm toolbar-acoes"
+          [class.acoes-expandidas]="acoesCabecalhoExpandidas">
+          <button *ngIf="isMobile" type="button" class="btn btn-sm btn-outline-secondary toolbar-expander"
+            (click)="alternarAcoesCabecalho()" [attr.aria-expanded]="acoesCabecalhoExpandidas">
+            <i class="fa" [ngClass]="acoesCabecalhoExpandidas ? 'fa-angle-up' : 'fa-ellipsis-h'"
+              aria-hidden="true"></i>
+            <span>{{ acoesCabecalhoExpandidas ? 'Ocultar ações' : '5 ações ocultas' }}</span>
+          </button>
+          <div *ngIf="!isMobile || acoesCabecalhoExpandidas" class="btn-group mr-2" role="group"
+            aria-label="First group">
             <button class="btn text-white btn-importacao" data-mdb-ripple-init href="#!" role="button"
               title="Processar Importação" (click)="processarImportacao()">
               <i class="fa fa-download" aria-hidden="true"></i>
@@ -31,7 +39,8 @@
             </button>
           </div>
 
-          <div class="btn-group mr-2" role="group" aria-label="First group">
+          <div *ngIf="!isMobile || acoesCabecalhoExpandidas" class="btn-group mr-2" role="group"
+            aria-label="First group">
             <button class="btn text-white btn-mes-anterior" data-mdb-ripple-init role="button"
               (click)="visualizarDespesasMesAnterior()" title="Visualizar despesas mês anterior">
               <i class="fa fa-angle-double-left" aria-hidden="true"></i>
@@ -49,7 +58,7 @@
           </div>
         </div>
 
-        <div class="row" [formGroup]="pesquisaForm">
+        <div class="row filtro-mes-ano" [formGroup]="pesquisaForm">
           <div class="col-lg-6 col-md-3 col-sm-12 p-0.3">
             <select class="form-control search-slt select-mes-width" formControlName="cbMes">
               <option value="01">Janeiro</option>
@@ -240,7 +249,13 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
 
             <!-- Tabela Lancamentos Fixos Mensais -->
             <div class="col-sm-4">
-              <table class="table table-receita">
+              <button *ngIf="isMobile" type="button" class="btn btn-outline-secondary receitas-mobile-toggle"
+                (click)="alternarReceitasMobile()" [attr.aria-expanded]="receitasMobileExpandidas">
+                <i class="fa" [ngClass]="receitasMobileExpandidas ? 'fa-angle-up' : 'fa-angle-down'"
+                  aria-hidden="true"></i>
+                <span>{{receitasMobileExpandidas ? 'Ocultar receitas' : 'Mostrar receitas'}}</span>
+              </button>
+              <table *ngIf="!isMobile || receitasMobileExpandidas" class="table table-receita table-mobile-list">
                 <thead class="thead-light">
                   <tr>
                     <th scope="col">Descrição Receita</th>
@@ -250,8 +265,8 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                 </thead>
 
                 <tbody *ngIf="lancamentosFinanceiros$">
-                  <tr *ngFor="let item of lancamentosFinanceiros$.despesasFixasMensais" class="linha-cursor-pointer">
-                    <td class="text-left">
+                  <tr *ngFor="let item of lancamentosFinanceiros$.despesasFixasMensais" class="linha-cursor-pointer item-list-row">
+                    <td class="text-left" data-label="Descrição">
                       <ng-container *ngIf="receitaMap[item.tpStatus] as status">
                         <span [class]="status.textClass">
                           <span *ngIf="status.icon" class="badge d-inline" [ngClass]="status.badgeClass"
@@ -263,7 +278,7 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                       </ng-container>
                     </td>
 
-                    <td>
+                    <td data-label="Valor R$">
                       <span *ngIf="receitaMap[item.tpStatus]" [class]="receitaMap[item.tpStatus].textClass">
                         <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
                           {{ item.vlTotal }}
@@ -271,36 +286,42 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                       </span>
                     </td>
 
-                    <td class="text-left">
-                      <button *ngIf="item.tpStatus == '< X >' || item.tpDespesaDebitoCartao == 'S'" type="button"
-                        disabled class="btn btn-link btn-sm px-0">
-                        <i class="fas fa-edit"></i>
-                      </button>
-                      <button *ngIf="item.tpStatus != '< X >' && item.tpDespesaDebitoCartao == 'N'" type="button"
-                        class="btn btn-link btn-sm px-0" data-toggle="modal" data-target="#modalCriarEditarReceita"
-                        (click)="editarReceitaSelecionada(item)" title="Editar receita">
-                        <i class="fas fa-edit"></i>
-                      </button>
-                      <button type="button" class="btn btn-link btn-sm px-0" title="Excluir receita"
-                        (click)="onReceitaSelecionada(item)">
-                        <i class="far fa-calendar-times"></i>
-                      </button>
-                      <button type="button" class="btn btn-link btn-sm px-0" title="Subir item"
-                        (click)="subirLinhaReceita(item)">
-                        <i class="fa fa-chevron-up"></i>
-                      </button>
-                      <button type="button" class="btn btn-link btn-sm px-0" title="Descer item"
-                        (click)="descerLinhaReceita(item)">
-                        <i class="fa fa-chevron-down"></i>
-                      </button>
+                    <td class="text-left acoes-item" data-label="Ações">
+                      <details class="acoes-expansiveis" [open]="!isMobile">
+                        <summary>Ações</summary>
+                        <div class="acoes-expansiveis-conteudo">
+                          <button *ngIf="item.tpStatus == '< X >' || item.tpDespesaDebitoCartao == 'S'" type="button"
+                            disabled class="btn btn-link btn-sm px-0" title="Edição indisponível">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button *ngIf="item.tpStatus != '< X >' && item.tpDespesaDebitoCartao == 'N'" type="button"
+                            class="btn btn-link btn-sm px-0" data-toggle="modal" data-target="#modalCriarEditarReceita"
+                            (click)="editarReceitaSelecionada(item)" title="Editar receita">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button type="button" class="btn btn-link btn-sm px-0" title="Excluir receita"
+                            (click)="onReceitaSelecionada(item)">
+                            <i class="far fa-calendar-times"></i>
+                          </button>
+                          <button type="button" class="btn btn-link btn-sm px-0" title="Subir item"
+                            (click)="subirLinhaReceita(item)">
+                            <i class="fa fa-chevron-up"></i>
+                          </button>
+                          <button type="button" class="btn btn-link btn-sm px-0" title="Descer item"
+                            (click)="descerLinhaReceita(item)">
+                            <i class="fa fa-chevron-down"></i>
+                          </button>
+                        </div>
+                      </details>
                     </td>
                   </tr>
 
-                  <tr>
+                  <tr class="linha-rodape-acoes">
                     <td colspan="8">
                       <br>
                       <div class="d-grid gap-2 d-md-block">
                         <button class="btn text-white btn-criar-receita" data-toggle="modal"
+                          title="Criar nova receita"
                           (click)="resetModalCriarEditarReceita()" data-target="#modalCriarEditarReceita">
                           <i class="fas fa-plus"></i>
                           <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes == '0,00'"> Criar Nova Receita
@@ -317,7 +338,7 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
 
             <!-- Tabela Despesas Mensais -->
             <div class="col-sm-8">
-              <table class="table table-despesas" id="tableDespesasMensais">
+              <table #tabelaDespesasMobile class="table table-despesas table-mobile-list" id="tableDespesasMensais">
                 <thead class="thead-light">
                   <tr>
                     <th class="text-center sorting_asc th-width-20" rowspan="1" colspan="1" aria-label="">
@@ -336,8 +357,10 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                 </thead>
 
                 <tbody *ngIf="lancamentosFinanceiros$">
-                  <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais" class="linha-cursor-pointer">
-                    <th>
+                  <tr *ngFor="let despesa of lancamentosFinanceiros$.lancamentosMensais"
+                    class="linha-cursor-pointer item-list-row"
+                    [class.linha-separacao-mobile-hidden]="despesa.tpLinhaSeparacao === 'S'">
+                    <th data-label="Selecionar">
                       <label class="checkbox-wrap checkbox-primary">
                         <input type="checkbox" name="despesa[]"
                           (click)="onCheckDespesaChange($event.target.checked, despesa)">
@@ -345,18 +368,21 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                       </label>
                     </th>
 
-                    <td *ngIf="despesa.tpLinhaSeparacao === 'N'"
-                      [attr.data-toggle]="despesa.tpLinhaSeparacao === 'N' && despesa.tpDespesaConsolidacao === 'N' ? 'modal' : null"
-                      [attr.data-target]="despesa.tpLinhaSeparacao === 'N' && despesa.tpDespesaConsolidacao === 'N' ? '#modalDetalheDespesasMensais' : null"
-                      (click)="despesa.tpDespesaConsolidacao === 'N' 
+                    <td *ngIf="despesa.tpLinhaSeparacao === 'N'" data-label="Total R$"
+                                [attr.data-toggle]="despesa.tpLinhaSeparacao === 'N' && despesa.tpDespesaConsolidacao === 'N' ? 'modal' : null"
+                                [attr.data-target]="despesa.tpLinhaSeparacao === 'N' && despesa.tpDespesaConsolidacao === 'N' ? '#modalDetalheDespesasMensais' : null"
+                                (click)="despesa.tpDespesaConsolidacao === 'N' 
               ? carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao) 
-              : carregarDespesasConsolidadas(despesa.idDespesa, despesa.idConsolidacao)">
-                      <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
-                        {{ despesa.svlTotalDespesa }}
-                      </ng-container>
+                              : carregarDespesasConsolidadas(despesa.idDespesa, despesa.idConsolidacao)">
+                      <span class="valor-despesa-mobile">
+                        <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
+                          {{ despesa.svlTotalDespesa }}
+                        </ng-container>
+                      </span>
                     </td>
 
-                    <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'" title="> Gasto no Mês: {{despesa.svlTotalGastoMes}} R$
+                    <td class="text-right" *ngIf="despesa.tpLinhaSeparacao === 'N'" data-label="Utilização"
+                      title="> Gasto no Mês: {{despesa.svlTotalGastoMes}} R$
 > Referência (Mês Anterior\Limite): {{despesa.percentualUtilizacao}}
 ------------------------------------------------
 ⌨ Média Gasto (Ano): {{despesa.savgDespesa}} R$">
@@ -371,15 +397,15 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                       </ng-container>
                     </td>
 
-                    <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
-                    <td *ngIf="despesa.tpLinhaSeparacao === 'S'"></td>
+                    <td *ngIf="despesa.tpLinhaSeparacao === 'S'" data-label="Total R$"></td>
+                    <td *ngIf="despesa.tpLinhaSeparacao === 'S'" data-label="Utilização"></td>
 
-                    <td class="font-weight-bold"
-                      [attr.data-toggle]="despesa.tpLinhaSeparacao === 'N' && despesa.tpDespesaConsolidacao === 'N' ? 'modal' : null"
-                      [attr.data-target]="despesa.tpLinhaSeparacao === 'N' && despesa.tpDespesaConsolidacao === 'N' ? '#modalDetalheDespesasMensais' : null"
-                      (click)="despesa.tpDespesaConsolidacao === 'N' 
+                    <td class="font-weight-bold" data-label="Descrição"
+                                [attr.data-toggle]="despesa.tpLinhaSeparacao === 'N' && despesa.tpDespesaConsolidacao === 'N' ? 'modal' : null"
+                                [attr.data-target]="despesa.tpLinhaSeparacao === 'N' && despesa.tpDespesaConsolidacao === 'N' ? '#modalDetalheDespesasMensais' : null"
+                                (click)="despesa.tpDespesaConsolidacao === 'N' 
               ? carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao) 
-              : carregarDespesasConsolidadas(despesa.idDespesa, despesa.idConsolidacao)">
+                              : carregarDespesasConsolidadas(despesa.idDespesa, despesa.idConsolidacao)">
                       <span [style.color]="getTituloColor(despesa)">
                         {{ despesa.dsTituloDespesa }}
                         <i *ngIf="despesa.tpDespesaConsolidacao === 'S'" class="fa fa-object-group ml-2"
@@ -387,7 +413,7 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                       </span>
                     </td>
 
-                    <td>
+                    <td data-label="Status">
                       <ng-container *ngFor="let badge of getBadges(despesa)">
                         <span class="badge badge-info rounded-pill d-inline" [style.background-color]="badge.color">
                           {{ badge.label }} <i *ngIf="badge.icon" [class]="badge.icon"></i>
@@ -395,34 +421,41 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                       </ng-container>
                     </td>
 
-                    <td>
-                      <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
-                        {{ despesa.svlTotalDespesaPaga }}
-                      </ng-container>
+                    <td data-label="Pago R$">
+                      <span class="valor-despesa-mobile">
+                        <ng-container *ngIf="exibirValores && lancamentosFinanceiros$; else oculto">
+                          {{ despesa.svlTotalDespesaPaga }}
+                        </ng-container>
+                      </span>
                     </td>
 
-                    <td class="text-left">
-                      <button type="button" class="btn btn-link btn-sm px-0"
-                        [disabled]="despesa.tpLinhaSeparacao === 'S' || despesa.tpDespesaConsolidacao === 'S'"
-                        [attr.data-toggle]="despesa.tpLinhaSeparacao === 'N' ? 'modal' : null"
-                        [attr.data-target]="despesa.tpLinhaSeparacao === 'N' ? '#modalDetalheDespesasMensais' : null"
-                        (click)="despesa.tpLinhaSeparacao === 'N' && carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)"
-                        title="Editar despesa">
-                        <i class="fas fa-edit"></i>
-                      </button>
-                      <button type="button" class="btn btn-link btn-sm px-0" title="Subir item"
-                        (click)="subirLinhaDespesa(despesa)">
-                        <i class="fa fa-chevron-up"></i>
-                      </button>
-                      <button type="button" class="btn btn-link btn-sm px-0" title="Descer item"
-                        (click)="descerLinhaDespesa(despesa)">
-                        <i class="fa fa-chevron-down"></i>
-                      </button>
+                    <td class="text-left acoes-item" data-label="Ações">
+                      <details class="acoes-expansiveis" [open]="!isMobile">
+                        <summary>Ações</summary>
+                        <div class="acoes-expansiveis-conteudo">
+                          <button type="button" class="btn btn-link btn-sm px-0"
+                            [disabled]="despesa.tpLinhaSeparacao === 'S' || despesa.tpDespesaConsolidacao === 'S'"
+                            [attr.data-toggle]="despesa.tpLinhaSeparacao === 'N' ? 'modal' : null"
+                            [attr.data-target]="despesa.tpLinhaSeparacao === 'N' ? '#modalDetalheDespesasMensais' : null"
+                            (click)="despesa.tpLinhaSeparacao === 'N' && carregarDetalheDespesa(despesa.idDespesa, despesa.idDetalheDespesa, despesa.idOrdemExibicao)"
+                            title="Editar despesa">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button type="button" class="btn btn-link btn-sm px-0" title="Subir item"
+                            (click)="subirLinhaDespesa(despesa)">
+                            <i class="fa fa-chevron-up"></i>
+                          </button>
+                          <button type="button" class="btn btn-link btn-sm px-0" title="Descer item"
+                            (click)="descerLinhaDespesa(despesa)">
+                            <i class="fa fa-chevron-down"></i>
+                          </button>
+                        </div>
+                      </details>
                     </td>
                   </tr>
                 </tbody>
 
-                <tr>
+                <tr #finalTabelaDespesasMobile class="linha-rodape-acoes">
                   <th></th>
                   <td colspan="7">
                     <br>
@@ -436,7 +469,8 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
                         </div>
                       </div>
 
-                      <div class="d-grid gap-2 d-md-block btn-group-sm btn-group-margin-custom">
+                      <div class="d-grid gap-2 d-md-block btn-group-sm btn-group-margin-custom barra-acoes-despesas"
+                        aria-label="Ações de despesas" [class.acoes-visiveis]="mostrarBarraAcoesDespesas">
                         <span *ngIf="lancamentosFinanceiros$.vlSaldoDisponivelMes !='0,00'">
                           <button class="btn text-white btn-nova-despesa" data-mdb-ripple-init role="button"
                             data-toggle="modal" data-target="#modalDetalheDespesasMensais" (click)="onNovaDespesa()">
@@ -706,7 +740,7 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
 
     <!------------------------  Modal Exibir Despesas Consolidadas ------------------------>
     <ng-template #modalExibirDespesasConsolidadas>
-      <div class="modal-content modal-content-custom">
+      <div class="modal-content modal-content-custom modal-consolidacao-despesas">
         <div *ngIf="carregandoDetalhe" class="loading-overlay">
           <div class="loading-message">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -724,8 +758,13 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
           </button>
         </div>
 
+        <div *ngIf="isMobile && !isMobileLandscape" class="alert alert-info aviso-rotacionar-mobile" role="note">
+          <i class="fa fa-mobile" aria-hidden="true"></i>
+          Para visualizar melhor as colunas, gire o celular para a horizontal.
+        </div>
+
         <div class="table-despesas-consolidadas-view">
-          <table class="table" id="tableDespesasMensais">
+          <table class="table tabela-consolidacao-despesas" id="tableDespesasMensais">
             <thead class="thead-light">
               <tr>
                 <th class="text-center sorting_asc th-width-20" rowspan="1" colspan="1" aria-label="">
@@ -814,26 +853,41 @@ Total utilizado no Mês: {{lancamentosFinanceiros$?.vlSaldoUtilizadoMes}} R$">
           </table>
         </div>
 
-        <div class="modal-footer">
-          <button class="btn text-white mx-3 btn-excluir-despesa-final" data-mdb-ripple-init href="#!" role="button"
-            (click)="onExcluirDespesa()">
-            <i class="fas fa-trash-alt" title="Excluir despesa(s) selecionada(s)"></i>
+        <div class="modal-footer modal-footer-consolidacao">
+          <button *ngIf="isMobile || isMobileLandscape" type="button" class="btn btn-outline-secondary toggle-acoes-consolidacao"
+            (click)="alternarAcoesModalConsolidacao()"
+            [attr.aria-expanded]="acoesModalConsolidacaoExpandidas">
+            <i class="fa" [ngClass]="acoesModalConsolidacaoExpandidas ? 'fa-eye-slash' : 'fa-eye'"
+              aria-hidden="true"></i>
+            <span>{{acoesModalConsolidacaoExpandidas ? 'Ocultar ações' : 'Exibir ações'}}</span>
           </button>
 
-          <button class="btn text-white mx-3 btn-quitar-despesa-final" data-mdb-ripple-init href="#!" role="button"
-            (click)="onQuitarDespesa()">
-            <i class="far fa-calendar-check" title="Quitar pagamento despesa(s) selecionada(s)"></i>
-          </button>
+          <div *ngIf="(!isMobile && !isMobileLandscape) || acoesModalConsolidacaoExpandidas"
+            class="acoes-modal-consolidacao">
+            <button class="btn text-white btn-excluir-despesa-final" data-mdb-ripple-init href="#!" role="button"
+              (click)="onExcluirDespesa()">
+              <i class="fas fa-trash-alt" aria-hidden="true"></i>
+              <span class="acao-modal-legenda">Excluir despesas selecionadas</span>
+            </button>
 
-          <button class="btn text-white mx-3 btn-desfazer-quitacao-final" data-mdb-ripple-init href="#!" role="button"
-            (click)="onDesfazerQuitacaoDespesa()">
-            <i class="far fa-calendar-times" title="Desfazer pagamento despesa(s) selecionada(s)"></i>
-          </button>
+            <button class="btn text-white btn-quitar-despesa-final" data-mdb-ripple-init href="#!" role="button"
+              (click)="onQuitarDespesa()">
+              <i class="far fa-calendar-check" aria-hidden="true"></i>
+              <span class="acao-modal-legenda">Quitar despesas selecionadas</span>
+            </button>
 
-          <button class="btn text-white mx-3 btn-remove-despesa-consolidada" data-mdb-ripple-init href="#!"
-            role="button" (click)="onRemoveDespesaConsolidada()">
-            <i class="fa fa-object-group" title="Remover despesa(s) do grupo (consolidação)"></i>
-          </button>
+            <button class="btn text-white btn-desfazer-quitacao-final" data-mdb-ripple-init href="#!" role="button"
+              (click)="onDesfazerQuitacaoDespesa()">
+              <i class="far fa-calendar-times" aria-hidden="true"></i>
+              <span class="acao-modal-legenda">Desfazer quitação</span>
+            </button>
+
+            <button class="btn text-white btn-remove-despesa-consolidada" data-mdb-ripple-init href="#!"
+              role="button" (click)="onRemoveDespesaConsolidada()">
+              <i class="fa fa-object-group" aria-hidden="true"></i>
+              <span class="acao-modal-legenda">Remover despesas do grupo</span>
+            </button>
+          </div>
         </div>
       </div>
     </ng-template>

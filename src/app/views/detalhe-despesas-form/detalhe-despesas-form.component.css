@@ -256,15 +256,7 @@
 
 
   .row {
-    margin-right: -8px;
-  }
-
-  .col-sm-8 {
-    -webkit-box-flex: 0;
-    flex: 0 0 66.666667%;
-    max-width: 66.666667%;
-    padding-right: 0.6%;
-    padding-left: 3%;
+    margin-right: -15px;
   }
 
   .checkmark[_ngcontent-c2] {
@@ -541,3 +533,643 @@
     margin-bottom: 1rem;
     background-color: transparent;
   }
+
+  .controles-detalhe-expansiveis > summary,
+  .acoes-laterais-expansiveis > summary,
+  .acoes-footer-detalhe > summary {
+    display: none;
+  }
+
+  .controles-detalhe-expansiveis-conteudo {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .controles-detalhe-expansiveis-conteudo .input-group-categorias {
+    flex: 1 1 auto;
+    width: auto;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .controles-detalhe-expansiveis-conteudo > .card {
+    flex: 0 0 15rem;
+    margin: 0;
+  }
+
+  .acoes-laterais-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .acoes-laterais-lista > .btn > span {
+    display: none;
+  }
+
+  .acoes-footer-detalhe {
+    width: 100%;
+  }
+
+  .acoes-footer-detalhe-conteudo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .acao-footer-detalhe-label {
+    display: inline;
+  }
+
+@media (min-width: 768px) {
+  .acao-footer-detalhe-label {
+    margin-left: 0.35rem;
+  }
+
+  .navegacao-meses-detalhe .acao-footer-detalhe-label,
+  .acao-footer-atualizar .acao-footer-detalhe-label {
+    display: none;
+  }
+
+  .row-header-detalhe-despesas-mensais > .col-xl-2 .border-saldo-detalhe-despesa {
+    height: auto !important;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .row-header-detalhe-despesas-mensais > .col-xl-2 .card-body-saldo-detalhe-despesa {
+    padding: 0.75rem;
+  }
+
+  .row-header-detalhe-despesas-mensais > .col-xl-2 .card-body-saldo-detalhe-despesa > .row.no-gutters {
+    width: 100%;
+    margin: 0;
+  }
+
+  .row-header-detalhe-despesas-mensais > .col-xl-2 .limite-detalhe-despesa,
+  .row-header-detalhe-despesas-mensais > .col-xl-2 #valorLimiteDespesa {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 767.98px) {
+  #modalEditarValores .modal-dialog-centered {
+    display: flex;
+    align-items: flex-start;
+    min-height: 0;
+    margin: 0.5rem auto !important;
+  }
+
+  #modalEditarValores .modalEditorValores {
+    width: 100% !important;
+    max-width: 100%;
+    max-height: calc(100vh - 1rem);
+    margin: 0 auto;
+  }
+
+  #modalEditarValores .modalEditorValores-body {
+    padding: 1rem;
+  }
+
+  #modalEditarValores .modal-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  #modalEditarValores .modal-footer > button {
+    width: 100%;
+    margin: 0 !important;
+  }
+
+  .modal-dialog.modalDetalheDespesasMensais {
+    display: block !important;
+    width: calc(100vw - 1rem) !important;
+    max-width: calc(100vw - 1rem) !important;
+    max-height: calc(100vh - 1rem);
+    margin: 0.5rem auto !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #modalDetalheDespesasMensais .botao-salvar-detalhe-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    width: 100%;
+    min-height: 2.8rem;
+    margin: 0 0 0.65rem !important;
+  }
+
+  .modalDetalheDespesasMensais-body {
+    width: 100% !important;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0.65rem;
+  }
+
+  .titulo-detalhe-despesa {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.5rem;
+    margin-bottom: 0.5rem !important;
+    padding-right: 2rem;
+  }
+
+  .titulo-detalhe-despesa .close {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    float: none;
+    margin: 0;
+    transform: translateY(-50%);
+  }
+
+  .row-header-detalhe-despesas-mensais {
+    display: flex;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    gap: 0.5rem;
+  }
+
+  .row-header-detalhe-despesas-mensais > [class*="col-"] {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 0;
+  }
+
+  .check-visualizar-consolidadas {
+    padding-left: 1.5rem !important;
+  }
+
+  .controles-detalhe-expansiveis,
+  .acoes-laterais-expansiveis,
+  .acoes-footer-detalhe {
+    width: 100%;
+  }
+
+  .controles-detalhe-expansiveis {
+    margin-top: 0.4rem;
+  }
+
+  .controles-detalhe-expansiveis > summary,
+  .acoes-laterais-expansiveis > summary,
+  .acoes-footer-detalhe > summary {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 2.7rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #cbd5df;
+    border-radius: 4px;
+    background-color: #f4f7f9;
+    color: #253746;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .controles-detalhe-expansiveis > summary::-webkit-details-marker,
+  .acoes-laterais-expansiveis > summary::-webkit-details-marker,
+  .acoes-footer-detalhe > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .controles-detalhe-expansiveis > summary::after,
+  .acoes-laterais-expansiveis > summary::after,
+  .acoes-footer-detalhe > summary::after {
+    content: "+";
+    margin-left: auto;
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .controles-detalhe-expansiveis[open] > summary::after,
+  .acoes-laterais-expansiveis[open] > summary::after,
+  .acoes-footer-detalhe[open] > summary::after {
+    content: "-";
+  }
+
+  .controles-detalhe-expansiveis-conteudo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.65rem 0 0;
+  }
+
+  .input-group-header-titulo,
+  .input-group-categorias {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0;
+  }
+
+  .input-group-header-titulo {
+    display: flex;
+    align-items: stretch;
+    gap: 0.45rem;
+  }
+
+  .input-group-header-titulo > input {
+    flex: 1 1 auto;
+    width: 0;
+    min-width: 0;
+    height: 2rem;
+  }
+
+  .input-group-header-titulo > .btn {
+    display: flex;
+    flex: 0 0 2.5rem;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem !important;
+    height: 2rem;
+    min-height: 2rem;
+    margin: 0 !important;
+    padding: 0.25rem;
+  }
+
+  .input-group-categorias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: stretch;
+  }
+
+  .card-categorias {
+    display: flex;
+    flex: 1 1 100%;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 3.25rem;
+    padding: 0.5rem;
+  }
+
+  .card-categorias > div,
+  .card-categorias > div > .form-check-inline {
+    width: 100%;
+  }
+
+  .card-categorias .form-check-inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    padding-left: 0;
+    margin: 0;
+    text-align: center;
+  }
+
+  .checkDetalheDespesas {
+    padding: 0.25rem;
+    margin: 0;
+  }
+
+  .card-categorias .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .input-group-categorias > .btn {
+    flex: 1 1 100%;
+    min-height: 2.5rem;
+    margin: 0;
+  }
+
+  .controles-detalhe-expansiveis-conteudo > .card {
+    flex: 0 0 auto;
+    width: 100%;
+    height: auto !important;
+    min-height: 0;
+    margin: 0;
+  }
+
+  .limite-detalhe-despesa {
+    width: 100%;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .card-body-saldo-detalhe-despesa {
+    flex: 0 0 auto;
+    padding: 0.65rem;
+  }
+
+  #valorLimiteDespesa {
+    height: 2.5rem;
+  }
+
+  .gasto-mes-detalhe-despesa,
+  .saldo-anterior-detalhe-despesa {
+    display: block;
+    padding: 0.35rem 0 0;
+  }
+
+
+  .card-body-saldo-detalhe-despesa {
+    padding: 0.5rem;
+  }
+
+  .center-modal-detalhes {
+    display: block;
+    width: 100%;
+    margin: 0 !important;
+  }
+
+  .center-modal-detalhes > .col-sm-1 {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .acoes-laterais-detalhe {
+    margin-bottom: 0.5rem;
+  }
+
+  .acoes-laterais-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.5rem 0 0;
+  }
+
+  .acoes-laterais-lista > .btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.7rem;
+    width: 100%;
+    min-height: 2.65rem;
+    margin: 0 !important;
+    padding: 0.55rem 0.75rem !important;
+    text-align: left;
+  }
+
+  .acoes-laterais-lista > .btn > i {
+    width: 1.1rem;
+    text-align: center;
+  }
+
+  .acoes-laterais-lista > .btn > span {
+    display: inline;
+  }
+
+  .acoes-footer-detalhe > summary {
+    background-color: #e9eff3;
+  }
+
+  .acoes-footer-recolher-label,
+  .acoes-footer-detalhe[open] > summary .acoes-footer-expandir-label {
+    display: none;
+  }
+
+  .acoes-footer-detalhe[open] > summary .acoes-footer-recolher-label {
+    display: inline;
+  }
+
+  .navegacao-meses-detalhe {
+    display: none !important;
+  }
+
+  .acoes-footer-detalhe-conteudo {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+    width: 100%;
+    padding-top: 0.5rem;
+  }
+
+  .acoes-footer-detalhe-conteudo > span,
+  .acoes-footer-detalhe-conteudo > div,
+  .acoes-footer-detalhe-conteudo .modal-footer-detalhe-right,
+  .acoes-footer-detalhe-conteudo .modal-footer-detalhe-right > span {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    width: 100%;
+    margin: 0 !important;
+  }
+
+  .acoes-footer-detalhe-conteudo button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.65rem;
+    width: 100%;
+    min-height: 2.8rem;
+    margin: 0 0 0.75rem !important;
+    padding: 0.55rem 0.75rem !important;
+    border-radius: 4px;
+    text-align: left;
+  }
+
+  .acoes-footer-detalhe-conteudo div[style*="250px"] {
+    width: 100%;
+  }
+
+  .acao-footer-detalhe-label {
+    display: inline;
+  }
+
+  .modal-footer-botoes-detalhe-despesas {
+    display: block;
+    padding-top: 0.65rem;
+  }
+
+  .col-sm-8-detalhe-despesas,
+  .scrollme-detalhe-despesas {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 48vh;
+    min-width: 0;
+    padding: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-detalhe-despesas {
+    width: max-content;
+    min-width: 1500px;
+    max-width: none;
+    table-layout: auto;
+  }
+
+  .table-detalhe-despesas th,
+  .table-detalhe-despesas td {
+    white-space: nowrap;
+  }
+
+  .table-detalhe-despesas input.form-control,
+  .table-detalhe-despesas select.form-control {
+    min-width: 6rem;
+  }
+
+  .table-detalhe-despesas td:nth-child(7) input,
+  .table-detalhe-despesas td:nth-child(8) input {
+    width: 18rem !important;
+  }
+
+  .table-detalhe-despesas td:nth-child(4) .descricao-detalhe-despesa-editavel {
+    width: 570px !important;
+  }
+
+  .table-detalhe-despesas td:nth-child(4) .descricao-detalhe-despesa-editavel input {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  .table-detalhe-despesas td:nth-child(14) select {
+    width: 16rem !important;
+  }
+
+  .modal-footer-botoes-detalhe-despesas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0.5rem 0 0;
+  }
+
+  .modal-footer-botoes-detalhe-despesas > * {
+    margin: 0 !important;
+  }
+
+  .modal-footer-botoes-detalhe-despesas .btn {
+    margin: 0 0 0.65rem !important;
+  }
+
+  .modal-dialog.modalDetalheDespesasMensais {
+    border: 1px solid #e1e7ed;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 12px 32px rgba(28, 42, 54, 0.18);
+  }
+
+  .modalDetalheDespesasMensais-body {
+    padding: 0.6rem !important;
+  }
+
+  .modalDetalheDespesasMensais-body .p-2.text-center.bg-light {
+    padding-right: 0.25rem !important;
+    padding-left: 0.25rem !important;
+  }
+
+  .titulo-detalhe-despesa {
+    color: #263746;
+    font-size: 1rem;
+  }
+
+  .titulo-detalhe-despesa .close {
+    color: #687783;
+    font-size: 1.35rem;
+    opacity: 0.8;
+  }
+
+  #modalDetalheDespesasMensais .form-control {
+    border: 1px solid #d9e1e8;
+    border-radius: 8px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  #modalDetalheDespesasMensais .form-control:focus {
+    border-color: #83a99e;
+    box-shadow: 0 0 0 0.15rem rgba(74, 132, 113, 0.14);
+  }
+
+  .input-group-header-titulo > .btn,
+  .acoes-laterais-lista > .btn,
+  .acoes-footer-detalhe-conteudo button,
+  #modalDetalheDespesasMensais .botao-salvar-detalhe-mobile {
+    border-radius: 8px;
+  }
+
+  .controles-detalhe-expansiveis > summary,
+  .acoes-laterais-expansiveis > summary,
+  .acoes-footer-detalhe > summary {
+    border-color: #e0e6eb;
+    border-radius: 8px;
+    background-color: #f7f9fa;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .controles-detalhe-expansiveis > summary:hover,
+  .acoes-laterais-expansiveis > summary:hover,
+  .acoes-footer-detalhe > summary:hover {
+    border-color: #cbd8d5;
+    background-color: #f0f5f3;
+  }
+
+  .controles-detalhe-expansiveis[open] > summary,
+  .acoes-laterais-expansiveis[open] > summary,
+  .acoes-footer-detalhe[open] > summary {
+    border-color: #cbd8d5;
+    background-color: #f0f5f3;
+  }
+
+  .check-visualizar-consolidadas {
+    margin: 0.2rem 0 0.45rem;
+    padding-left: 1.5rem !important;
+  }
+
+  .check-visualizar-consolidadas .form-text {
+    color: #53616d !important;
+  }
+
+  #modalDetalheDespesasMensais hr {
+    margin: 0.7rem 0 !important;
+    border-color: #e9edf0;
+  }
+
+  .scrollme-detalhe-despesas {
+    border: 1px solid #e2e8ed;
+    border-radius: 8px;
+    background-color: #fff;
+  }
+
+  .table-detalhe-despesas {
+    background-color: #fff;
+  }
+
+  .table-detalhe-despesas thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-color: #e2e8ed;
+    background-color: #f3f6f7;
+    color: #42515d;
+    font-weight: 600;
+  }
+
+  .table-detalhe-despesas tbody tr:nth-child(even) {
+    background-color: #f8fafb;
+  }
+
+  #modalDetalheDespesasMensais .botao-salvar-detalhe-mobile {
+    min-height: 2.9rem;
+    font-weight: 600;
+    box-shadow: 0 3px 8px rgba(59, 107, 211, 0.18);
+  }
+}
+

@@ -35,16 +35,27 @@
                   </option>
                 </select>
 
-                <button class="btn text-white " data-mdb-ripple-init style="background-color: #3aad3a; width: 5%;"
-                  role="button" id="buttonAdicionar" (click)="habilitarCampos(true)">
-                  <i class="fa fa-plus" aria-hidden="true" title="Novo lembrete"></i>
-                </button>
+                <details class="acoes-titulo-lembrete">
+                  <summary>
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                    Ações do lembrete
+                  </summary>
+                  <div class="acoes-titulo-lembrete-conteudo">
+                    <button class="btn text-white" data-mdb-ripple-init
+                      style="background-color: #3aad3a; width: 5%;" role="button" id="buttonAdicionar"
+                      title="Novo lembrete" (click)="habilitarCampos(true)">
+                      <i class="fa fa-plus" aria-hidden="true"></i>
+                      <span class="acao-lembrete-label">Novo lembrete</span>
+                    </button>
 
-                <button class="btn text-white " data-mdb-ripple-init
-                  style="background-color: #c90d0d; width: 5%; margin-left: 0%;" role="button" id="buttonExcluir"
-                  (click)="excluirLembrete()" [disabled]="!habilitarButtonExcluir">
-                  <i class="fa fa-trash-o" aria-hidden="true" title="Excluir lembrete"></i>
-                </button>
+                    <button class="btn text-white" data-mdb-ripple-init
+                      style="background-color: #c90d0d; width: 5%; margin-left: 0%;" role="button" id="buttonExcluir"
+                      title="Excluir lembrete" (click)="excluirLembrete()" [disabled]="!habilitarButtonExcluir">
+                      <i class="fa fa-trash-o" aria-hidden="true"></i>
+                      <span class="acao-lembrete-label">Excluir lembrete</span>
+                    </button>
+                  </div>
+                </details>
               </div>
 
               <small class="form-text text-muted checkbox-lembretes-em-aberto">
@@ -254,7 +265,7 @@
 <!------------------------  Modal Agendar Lembrete ------------------------>
 <div class="modal fade" id="modalAgendarLembrete" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document" style="margin: 1% 32%;">
-    <div class="modal-content">
+    <div class="modal-content modal-visualizar-lembretes">
       <div class="form-group modal-header">
         <div>
           <i class="fa fa-clock-o" aria-hidden="true"></i>

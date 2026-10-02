@@ -21,7 +21,7 @@
 }
 /* Aumentar a fonte do modal de alerta genérico do sistema */
 .form-group.modal-body {
-  font-size: 1.15rem !important;
+  font-size: 1.1rem !important;
 }
 /* Cursor pointer para linhas das tabelas de receita e despesas */
 .linha-cursor-pointer {
@@ -90,6 +90,667 @@
   margin: -1% -25% !important;
   font-family: 'Calibri', sans-serif !important;
 }
+
+.acoes-modal-consolidacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.acoes-modal-consolidacao > .btn {
+  margin: 0 1rem;
+}
+
+.acoes-modal-consolidacao .acao-modal-legenda {
+  display: none;
+}
+
+.acoes-expansiveis > summary {
+  display: none;
+}
+
+.table-mobile-list .acoes-item {
+  min-width: 0px;
+}
+
+.acoes-expansiveis {
+  display: block;
+  width: 100%;
+}
+
+.acoes-expansiveis > .acoes-expansiveis-conteudo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+@media (max-width: 767.98px) {
+  .modal-consolidacao-despesas {
+    display: flex;
+    flex-direction: column;
+    width: calc(100vw - 1rem) !important;
+    max-width: calc(100vw - 1rem) !important;
+    max-height: calc(100vh - 1rem);
+    margin: 0.5rem auto !important;
+    border: 1px solid #e1e7ed !important;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 12px 32px rgba(28, 42, 54, 0.18) !important;
+    overflow: hidden;
+  }
+
+  .modal-consolidacao-despesas .modal-header {
+    flex: 0 0 auto;
+    align-items: center;
+    padding: 0.85rem 0.9rem;
+    border-bottom: 1px solid #e9edf0;
+  }
+
+  .modal-consolidacao-despesas .modal-title {
+    padding-right: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #263746;
+  }
+
+  .modal-consolidacao-despesas .close {
+    color: #687783;
+    font-size: 1.35rem;
+    opacity: 0.8;
+  }
+
+  .aviso-rotacionar-mobile {
+    flex: 0 0 auto;
+    margin: 0.5rem 0.65rem;
+    padding: 0.5rem;
+    border: 1px solid #d4e4eb;
+    border-radius: 8px;
+    background-color: #f1f7f9;
+    color: #45616d;
+    font-size: 0.875rem;
+    line-height: 1.3;
+  }
+
+  .table-despesas-consolidadas-view {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 55vh;
+    margin: 0 0.65rem;
+    padding: 0.25rem;
+    border: 1px solid #e2e8ed;
+    border-radius: 8px;
+    background-color: #fff;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabela-consolidacao-despesas {
+    min-width: 680px;
+    margin-bottom: 0;
+    background-color: #fff;
+  }
+
+  .tabela-consolidacao-despesas thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-color: #e2e8ed;
+    background-color: #f3f6f7;
+    color: #42515d;
+    font-weight: 600;
+  }
+
+  .tabela-consolidacao-despesas tbody tr:nth-child(even) {
+    background-color: #f8fafb;
+  }
+
+  .modal-footer-consolidacao {
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-top: 1px solid #e9edf0;
+    background-color: #fff;
+  }
+
+  .toggle-acoes-consolidacao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 2.5rem;
+    margin: 0;
+    border-color: #d9e1e8;
+    border-radius: 8px;
+    background-color: #f7f9fa;
+    color: #42515d;
+    font-weight: 600;
+  }
+
+  .acoes-modal-consolidacao {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem;
+    width: 100%;
+  }
+
+  .acoes-modal-consolidacao > .btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-width: 0;
+    min-height: 2.75rem;
+    margin: 0;
+    padding: 0.4rem;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .acoes-modal-consolidacao .acao-modal-legenda {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 400;
+    white-space: normal;
+    line-height: 1.2;
+  }
+
+  .receitas-mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 2.5rem;
+    margin: 0 0 1rem;
+  }
+
+  .conteudoFixo .labelQuitacaoMes {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0.25rem 0 0.75rem;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.35;
+  }
+
+  .conteudoFixo .labelQuitacaoMes > .badge {
+    flex: 0 0 auto;
+    margin: 0;
+  }
+
+  .conteudoFixo .labelQuitacaoMes > span:last-child {
+    flex: 1 1 180px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .filtro-mes-ano {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(4.5rem, 0.6fr) 2.75rem;
+    align-items: center;
+    gap: 0.375rem;
+    width: calc(100% + 1rem);
+    margin: 0.5rem 0 0 !important;
+    transform: translateX(0.5rem);
+  }
+
+  .filtro-mes-ano > [class*="col-"] {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 0 !important;
+  }
+
+  .filtro-mes-ano .form-control {
+    width: 100%;
+    min-width: 0;
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .filtro-mes-ano .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    min-width: 2.75rem;
+    height: 2.75rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .conteudoFixo,
+  .conteudoNormal {
+    float: none;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .conteudoNormal {
+    padding-bottom: 7rem;
+  }
+
+  .conteudoFixo #header > .row,
+  .conteudoNormal .card > .bg-light > .row {
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  .conteudoFixo #header > .row > [class*="col-"],
+  .conteudoNormal .card > .bg-light > .row > [class*="col-sm-"] {
+    min-width: 0;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .table-mobile-list {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .table-mobile-list.table-receita {
+    margin-bottom: 2rem;
+  }
+
+  .table-mobile-list thead {
+    display: none;
+  }
+
+  .table-mobile-list tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .table-despesas.table-mobile-list tr.item-list-row,
+  .table-receita.table-mobile-list tr.item-list-row {
+    display: block;
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(190, 202, 214, 0.65);
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 4px 14px rgba(25, 39, 52, 0.1);
+  }
+
+  .table-despesas.table-mobile-list tr.item-list-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .table-despesas tr.item-list-row > [data-label="Descrição"] {
+    order: 1;
+  }
+
+  .table-despesas tr.item-list-row > [data-label="Total R$"] {
+    order: 2;
+  }
+
+  .table-despesas tr.item-list-row > [data-label="Utilização"] {
+    order: 4;
+    font-weight: 400;
+  }
+
+  .table-despesas tr.item-list-row > [data-label="Pago R$"] {
+    display: none;
+  }
+
+  .table-despesas tr.item-list-row > [data-label="Status"] {
+    order: 3;
+  }
+
+  .table-despesas tr.item-list-row > [data-label="Selecionar"] {
+    order: 0;
+  }
+
+  .table-despesas tr.item-list-row > [data-label="Ações"] {
+    order: 5;
+  }
+
+  .table-despesas tr.item-list-row > [data-label="Descrição"] {
+    font-weight: 400;
+  }
+
+  .table-despesas tr.linha-separacao-mobile-hidden {
+    display: none !important;
+  }
+
+  .table-mobile-list tr.item-list-row > th,
+  .table-mobile-list tr.item-list-row > td {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.45rem 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .table-mobile-list tr.item-list-row > [data-label]::before {
+    content: attr(data-label);
+    flex: 0 0 38%;
+    color: #495057;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .table-receita tr.item-list-row > td[data-label="Descrição"]::before {
+    flex-basis: 25%;
+  }
+
+  .table-receita tr.item-list-row > td[data-label="Descrição"] > span {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-align: right;
+  }
+
+  .table-receita tr.item-list-row > td[data-label="Valor R$"] > span {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .table-despesas tr.item-list-row > td[data-label="Descrição"]::before {
+    display: none;
+  }
+
+  .table-despesas tr.item-list-row > td[data-label="Descrição"] > span {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  .table-despesas tr.item-list-row > td[data-label="Total R$"] > .valor-despesa-mobile,
+  .table-despesas tr.item-list-row > td[data-label="Pago R$"] > .valor-despesa-mobile {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .table-despesas tr.item-list-row > td[data-label="Status"] .badge {
+    padding: 0.35em 0.65em;
+    font-size: 0.85rem;
+  }
+
+  .table-mobile-list tr.item-list-row > .acoes-item {
+    align-items: stretch;
+    flex-direction: column;
+    border-top: 1px solid #dee2e6;
+    min-width: 0;
+  }
+
+  .table-mobile-list tr.item-list-row > .acoes-item::before {
+    display: none;
+  }
+
+  .acoes-expansiveis > summary {
+    display: list-item;
+    cursor: pointer;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .acoes-expansiveis:not([open]) > .acoes-expansiveis-conteudo {
+    display: none;
+  }
+
+  .acoes-expansiveis[open] > .acoes-expansiveis-conteudo {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.25rem;
+  }
+
+  .table-mobile-list .acoes-expansiveis-conteudo > .btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.45rem 0;
+    text-align: left;
+  }
+
+  .table-mobile-list .acoes-expansiveis-conteudo > .btn::after {
+    content: attr(title);
+  }
+
+  .table-mobile-list tr.linha-rodape-acoes,
+  .table-mobile-list tr.linha-rodape-acoes > th,
+  .table-mobile-list tr.linha-rodape-acoes > td {
+    display: block;
+    width: 100%;
+  }
+
+  .toolbar-acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: calc(100% + 1rem);
+    margin-top: 0.75rem;
+    transform: translateX(0.5rem);
+  }
+
+  .toolbar-acoes > .btn-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    width: 2.5rem;
+    margin: 0;
+  }
+
+  .toolbar-acoes .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    min-width: 2.5rem;
+    height: 2.25rem;
+    margin: 0;
+    padding: 0.25rem;
+    text-align: center;
+  }
+
+  .toolbar-acoes > .btn-group > .btn {
+    border-radius: 0.25rem;
+  }
+
+  .toolbar-acoes > .toolbar-expander {
+    position: relative;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 2.25rem;
+    margin-bottom: 0.15rem;
+    padding: 0.35rem 0.65rem;
+    gap: 0.5rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .toolbar-expander > i {
+    position: absolute;
+    left: 0.65rem;
+  }
+
+  .toolbar-expander > span {
+    width: 100%;
+    text-align: center;
+  }
+
+  .btn-group-margin-custom button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin: 0.2rem 0;
+    text-align: left;
+  }
+
+  .btn-group-margin-custom button::after {
+    content: attr(title);
+  }
+
+  .toolbar-acoes .btn::after {
+    content: none;
+  }
+
+  .toolbar-acoes.acoes-expandidas > .btn-group {
+    align-self: center;
+    width: 18rem;
+    max-width: 100%;
+  }
+
+  .toolbar-acoes.acoes-expandidas .btn {
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 2.25rem;
+    padding: 0.4rem 0.65rem;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .toolbar-acoes.acoes-expandidas .btn::after {
+    content: attr(title);
+    font-size: 0.875rem;
+    font-weight: 400;
+    white-space: normal;
+  }
+
+  .btn-group-margin-custom button > i[title]::after {
+    content: attr(title);
+    margin-left: 0.5rem;
+    font-family: Calibri, sans-serif;
+    font-size: 0.875rem;
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  .btn-group-margin-custom,
+  .btn-group-margin-custom > span {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0 !important;
+  }
+
+  .barra-acoes-despesas.btn-group-margin-custom {
+    position: fixed;
+    right: 0.75rem;
+    bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    left: 3.25rem;
+    z-index: 950;
+    display: none !important;
+    width: auto;
+    margin: 0 !important;
+    padding: 0.45rem;
+    border: 1px solid #d4dce2;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+  }
+
+  .barra-acoes-despesas.btn-group-margin-custom.acoes-visiveis {
+    display: block !important;
+  }
+
+  .barra-acoes-despesas > span {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem;
+    width: 100%;
+    margin: 0;
+  }
+
+  .barra-acoes-despesas button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    height: 2.5rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .barra-acoes-despesas button::after,
+  .barra-acoes-despesas button > i[title]::after {
+    content: none;
+  }
+}
+
+@media (max-width: 1000px) and (max-height: 500px) and (orientation: landscape) {
+  .modal-consolidacao-despesas {
+    width: calc(100vw - 1rem) !important;
+    max-width: calc(100vw - 1rem) !important;
+    max-height: calc(100vh - 0.5rem);
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .aviso-rotacionar-mobile {
+    display: none;
+  }
+
+  .table-despesas-consolidadas-view {
+    max-height: none;
+  }
+
+  .modal-footer-consolidacao {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .toggle-acoes-consolidacao {
+    flex: 0 0 9rem;
+    width: 9rem;
+  }
+
+  .acoes-modal-consolidacao {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.3rem;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+  }
+
+  .acoes-modal-consolidacao > .btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 3rem;
+    margin: 0;
+    padding: 0.3rem;
+    font-size: 0.85rem;
+  }
+
+  .acoes-modal-consolidacao .acao-modal-legenda {
+    display: block;
+    text-align: center;
+  }
+
+  .acoes-modal-consolidacao .acao-modal-legenda {
+    font-size: 0.72rem;
+    line-height: 1.1;
+  }
+}
 /* Small de alerta informativo com font-size revert e cor #b90c0c */
 .small-info-alert {
   font-size: revert !important;
@@ -141,7 +802,7 @@
 /* Botão executar backup do modal */
 .btn-modal-backup {
   background-color: #317943 !important;
-  padding: 0% 22% 0% !important;
+  padding: 0% 21% 0% !important;
 }
 /* Botão aplicar do modal de parametrização */
 .btn-modal-aplicar {
@@ -310,7 +971,7 @@ label {
 }
 
  .labelQuitacaoMes {
-   padding: 0px 0 1%;
+   padding: 0px 5px 1%;
    font-family: system-ui;
    font-size: 13px;
    line-height: 0%;
@@ -378,16 +1039,16 @@ body {
 }
 
 .table-receita {
-  width: 115%;
-  max-width: 110%;
+  width: 100%;
+  max-width: 100%;
   margin-bottom: 1rem;
   background-color: #f8f9fa;
   font-size: 90%;
 }
 
 .table-categorias {
-  width: 110%;
-  /* max-width: 100%; */
+  width: 100%;
+  max-width: 100%;
   margin-bottom: 1rem;
   background-color: #f8f9fa;
   font-size: 88%;
@@ -615,15 +1276,7 @@ th {
 }
 
 .row {
-  margin-right: -8px;
-}
-
-.col-sm-8 {
-  -webkit-box-flex: 0;
-  flex: 0 0 66.666667%;
-  max-width: 66.666667%;
-  padding-right: 0.6%;
-  padding-left: 3%;
+  margin-right: -15px;
 }
 
 .font-color-receita-positiva {
@@ -709,6 +1362,32 @@ element.style {
   margin: 1.75rem auto;
 }
 
+@media (max-width: 767.98px) {
+  #modalCategorias .modal-footer {
+    display: flex;
+    flex-wrap: nowrap !important;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 0.5rem 0 0.6rem;
+  }
+
+  #modalCategorias .modal-footer > button {
+    flex: 0 0 3rem;
+    width: 3rem !important;
+    min-width: 0;
+    min-height: 3.25rem;
+    margin: 0 !important;
+    padding: 0.45rem 0.25rem;
+    white-space: nowrap;
+  }
+
+  #modalCategorias .modal-footer > button:nth-child(2) {
+    flex-basis: 6rem;
+    width: 6rem !important;
+  }
+}
+
 .modalAutenticarUsuario {
   text-align: center;
   width: 21%;
@@ -728,7 +1407,7 @@ input:focus {
 }
 
 .divContainer {
-  width: 100%;
+  width: 99%;
   float: left;
   position: relative;
   overflow: hidden;
@@ -737,7 +1416,7 @@ input:focus {
 .conteudoFixo {
   position: relative;
   float: left;
-  width: 100%;
+  width: 99.5%;
 }
 
 .conteudoNormal {

@@ -169,7 +169,7 @@ th {
 }
 
 .row {
-  margin-right: -8px;
+  margin-right: -15px;
 }
 
 
@@ -350,13 +350,6 @@ element.style {
   width: 91%;
 }
 
-.col-lg-4 {
-  -webkit-box-flex: 0;
-  -ms-flex: 0 0 33.333333%;
-  flex: 0 0 31.333333%;
-  max-width: 33.333333%;
-}
-
 .modalConsolidacoes {
   text-align: center;
   width: 60%;
@@ -458,4 +451,199 @@ element.style {
   text-align: left;
   width: 24%;
   margin: 1.75rem auto;
+}
+
+@media (max-width: 767.98px) {
+  #modalConsolidacoes .modal-dialog {
+    display: block !important;
+    width: calc(100vw - 1rem) !important;
+    max-width: calc(100vw - 1rem) !important;
+    max-height: calc(100vh - 1rem);
+    margin: 0.5rem auto !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #modalConsolidacoes .modalConsolidacoes-body {
+    width: 100% !important;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0.65rem !important;
+  }
+
+  #modalConsolidacoes .modalConsolidacoes-body > h6 {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 2.5rem;
+    margin-bottom: 0.5rem !important;
+    padding-right: 2rem;
+    text-align: left;
+  }
+
+  #modalConsolidacoes .modalConsolidacoes-body > h6 .close {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin: 0;
+    transform: translateY(-50%);
+  }
+
+  #modalConsolidacoes .modalConsolidacoes-body > br {
+    display: none;
+  }
+
+  #modalConsolidacoes .row-header-cadastro-despesas-parceladas {
+    display: flex;
+    flex-direction: column;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    gap: 0.6rem;
+  }
+
+  #modalConsolidacoes .row-header-cadastro-despesas-parceladas > [class*="col-"] {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  #modalConsolidacoes .input-group-header {
+    display: flex;
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 0.3rem;
+  }
+
+  #modalConsolidacoes .combo-titulo-despesas {
+    flex: 1 1 auto;
+    width: auto !important;
+    min-width: 0;
+  }
+
+  #modalConsolidacoes .input-group-header > button {
+    flex: 0 0 2.5rem;
+    width: 2.5rem !important;
+    min-height: 2.45rem;
+    margin: 0 !important;
+    padding: 0.35rem !important;
+  }
+
+  #modalConsolidacoes .checkbox-despesas-em-aberto {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    width: 100%;
+    margin: 0.3rem 0 !important;
+    padding: 0;
+    line-height: 1.35;
+  }
+
+  #modalConsolidacoes .checkbox-despesas-em-aberto .form-check-input {
+    position: static;
+    flex: 0 0 auto;
+    margin: 0.15rem 0 0 !important;
+  }
+
+  #modalConsolidacoes .checkbox-despesas-em-aberto .form-check-label {
+    flex: 1 1 auto;
+    margin: 0;
+    text-align: left;
+    white-space: normal;
+  }
+
+  #modalConsolidacoes .checkbox-despesas-em-aberto + br {
+    display: none;
+  }
+
+  #modalConsolidacoes .card-titulo-despesa {
+    width: 100%;
+    margin: 0;
+    padding: 0.5rem;
+  }
+
+  #modalConsolidacoes .row-card-titulo-despesas-parceladas {
+    width: 100%;
+    margin: 0;
+  }
+
+  #modalConsolidacoes .center-modal-lista-parcelas {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    margin: 0 !important;
+    gap: 0.4rem;
+  }
+
+  #modalConsolidacoes .center-modal-lista-parcelas > .col-sm-1 {
+    flex: 0 0 2.75rem;
+    width: 2.75rem;
+    max-width: 2.75rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  #modalConsolidacoes .center-modal-lista-parcelas > .col-sm-1 .d-grid {
+    display: flex !important;
+    align-items: center;
+    width: 100%;
+    margin: 0 0 0.5rem !important;
+  }
+
+  #modalConsolidacoes .center-modal-lista-parcelas > .col-sm-1 .d-grid > br {
+    display: none;
+  }
+
+  #modalConsolidacoes .center-modal-lista-parcelas > .col-sm-1 .d-grid > button {
+    flex: 0 0 2.75rem;
+    width: 2.75rem;
+    min-height: 2.5rem;
+    margin: 0 !important;
+    padding: 0.35rem !important;
+  }
+
+  #modalConsolidacoes .col-sm-8-parcelas,
+  #modalConsolidacoes .scrollme-parcelas {
+    display: block;
+    flex: 1 1 0;
+    width: auto !important;
+    max-width: none !important;
+    max-height: 48vh;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #modalConsolidacoes .table-lista-parcelas {
+    width: max-content;
+    min-width: 620px;
+    max-width: none;
+  }
+
+  #modalConsolidacoes .scrollme-parcelas .alert {
+    padding: 0.75rem !important;
+    text-align: center;
+  }
+
+  #modalConsolidacoes .modal-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 0.65rem;
+  }
+
+  #modalConsolidacoes .modal-footer > button {
+    width: 100%;
+    min-height: 2.6rem;
+    margin: 0 !important;
+  }
 }

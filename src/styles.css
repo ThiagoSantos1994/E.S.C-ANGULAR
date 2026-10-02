@@ -1,8 +1,199 @@
-@import '~bootstrap/dist/css/bootstrap.min.css';
-@import '~font-awesome/css/font-awesome.min.css';
-
 body {
   font-family: 'Calibri', sans-serif !important;
-  margin-right: 5px;
+  margin: 0;
+  overflow-x: hidden;
 }
 /* You can add global styles to this file, and also import other style files */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  max-width: 100%;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+@media (max-width: 767.98px) {
+  body.body {
+    margin-right: 0 !important;
+  }
+
+  .page-wrapper {
+    min-height: 100vh;
+    height: auto !important;
+  }
+
+  .page-wrapper .page-content > div {
+    padding: 12px !important;
+  }
+
+  .container {
+    margin-top: 1rem !important;
+  }
+
+  .modal-dialog {
+    width: calc(100vw - 1rem) !important;
+    max-width: calc(100vw - 1rem) !important;
+    margin: 0.5rem auto !important;
+  }
+
+  .modal-content,
+  .modal-content-custom,
+  .modalDespesasParceladas,
+  .modalLembretes,
+  .modalConsolidacoes,
+  .modalDetalheDespesasMensais,
+  .modalCriarEditarReceita,
+  .modalParametrizacao,
+  .modalCategorias,
+  .modalAutenticarUsuario,
+  .modalEditarParcelas {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .modalDespesasParceladas-body,
+  .modalLembretes-body,
+  .modalConsolidacoes-body,
+  .modalDetalheDespesasMensais-body {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0.5rem !important;
+  }
+
+  [class*="row-header-cadastro-"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  .input-group-header,
+  .input-group-header-cards {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .input-group-header > select {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .input-group-header > button {
+    width: auto !important;
+    flex: 0 0 auto;
+    margin: 0 0 0 0.25rem !important;
+  }
+
+  .card-vigencia,
+  .card-parcelas,
+  .card-vig-final,
+  .card-total-despesa,
+  .card-notificacao {
+    width: auto !important;
+    max-width: 100%;
+    flex: 1 1 130px;
+    margin: 0.25rem !important;
+  }
+
+  [class*="center-modal-"] {
+    width: 100%;
+    max-width: 100%;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  [class*="scrollme-"] {
+    display: block !important;
+    width: 100%;
+    max-width: 100%;
+    overflow: auto;
+  }
+
+  .table-receita,
+  .table-categorias {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .navbar {
+    flex-wrap: wrap;
+  }
+
+  .navbar > .row {
+    width: 100%;
+    margin: 0.5rem 0 0;
+  }
+
+  .modal-footer {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .modal-footer > button {
+    margin: 0.25rem !important;
+  }
+
+  .vh-100 {
+    min-height: 100vh;
+    height: auto !important;
+  }
+
+  .h-custom {
+    height: auto !important;
+    min-height: calc(100vh - 73px);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .input-group-header,
+  .input-group-header-cards {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .input-group-header > select,
+  .input-group-header > button,
+  .modal-footer > button {
+    flex: 1 1 auto;
+    width: 100% !important;
+    margin: 0.2rem 0 !important;
+  }
+
+  .card-vigencia,
+  .card-parcelas,
+  .card-vig-final,
+  .card-total-despesa,
+  .card-notificacao {
+    flex-basis: 100%;
+  }
+
+  .input-group-header-cards > * {
+    width: 100%;
+  }
+
+  .btn-group,
+  .btn-group-sm {
+    flex-direction: column;
+  }
+
+  .btn-group > .btn,
+  .btn-group-sm > .btn {
+    width: 100%;
+    margin: 0.2rem 0;
+  }
+}
+
+app-root {
+  display: block;
+  min-width: 0;
+}
+

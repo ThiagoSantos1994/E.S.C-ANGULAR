@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -27,6 +27,8 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
   styleUrls: ['./detalhe-despesas-form.component.css']
 })
 export class DetalheDespesasFormComponent implements OnInit {
+  isMobile = window.innerWidth <= 767.98;
+
   private _detalheDespesasChange = new BehaviorSubject<DetalheDespesasMensais[]>([]);
   private _parcelasAmortizacaoChange = new BehaviorSubject<Parcelas[]>([]);
   private tituloDespesasParcelada: TituloDespesaResponse;
@@ -74,6 +76,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   @ViewChild('modalCategoriaDetalheDespesa', { static: false }) modalCategoriaDetalheDespesa;
   @ViewChild('modalAssociarDespesaMensalExistente', { static: false }) modalAssociarDespesaMensalExistente;
   @ViewChild('fechaModalEditorValores', { static: false }) fechaModalEditorValores: ElementRef;
+  @ViewChild('scrollDetalheDespesas', { static: false }) scrollDetalheDespesas: ElementRef;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -86,6 +89,11 @@ export class DetalheDespesasFormComponent implements OnInit {
     private mensagem: MensagemService,
     private detalheDomain: DetalheDespesasMensaisDomain
   ) { }
+
+  @HostListener('window:resize')
+  onWindowResize() {
+    this.isMobile = window.innerWidth <= 767.98;
+  }
 
   ngOnInit() {
     this.tituloDespesasParcelada = {
@@ -384,6 +392,7 @@ export class DetalheDespesasFormComponent implements OnInit {
   }
 
   carregarDetalheDespesa(idDespesa: number, idDetalheDespesa: number, ordemExibicao: number) {
+    this.resetarScrollTabelaDetalhe();
     this.resetDetalheDespesasChange();
     this.carregarListaDespesasTipoRelatorio();
 
@@ -404,12 +413,26 @@ export class DetalheDespesasFormComponent implements OnInit {
 
       if (res.detalheDespesaMensal.length == 0) {
         this.addNovaLinhaDetalheDespesa();
+        this.resetarScrollTabelaDetalhe();
         return;
       }
 
       this.setDetalheDespesaMensalObservable(res.detalheDespesaMensal);
       this.carregarFormDetalheDespesasMensais(res.despesaMensal);
+      this.resetarScrollTabelaDetalhe();
     });
+  }
+
+  private resetarScrollTabelaDetalhe() {
+    const resetar = () => {
+      if (this.scrollDetalheDespesas) {
+        this.scrollDetalheDespesas.nativeElement.scrollLeft = 0;
+      }
+    };
+
+    resetar();
+    window.requestAnimationFrame(resetar);
+    window.setTimeout(resetar, 350);
   }
 
   bloquearControlesDespesaTipoRelatorio(isBloqueado: boolean) {
@@ -1310,51 +1333,59 @@ export class DetalheDespesasFormComponent implements OnInit {
 
   /* -------------- Modal Editor Valores -------------- */
   onEditarValores() {
-    var input = document.getElementById("inputNovoValor");
+    var input = document.getElementById("inputNovoValor") as HTMLInputElement;
+    if (!input) {
+      return;
+    }
+
     let gravar = this;
+
+    input.addEventListener('input', function () {
+      mascaraMoedaInputDinamico(input);
+    });
 
     input.addEventListener('keyup', function (e) {
       var key = e.which || e.keyCode;
 
-      if (key >= 96 && key <= 105) {
-        mascaraMoedaInputDinamico(input);
-      }
-
       if (key == 13) {
-        let valorAtual = parseFloat(formatRealNumber((document.getElementById("subTotalValores") as HTMLInputElement).value));
-        let inputValue = (document.getElementById("inputNovoValor") as HTMLInputElement).value;
-        let inputObservacoes = (document.getElementById("inputObservacoesEditorValores") as HTMLInputElement).value;
-        let observacoes = (document.getElementById("observacoes") as HTMLInputElement).value;
-
-        if (validarCaracteresInput(inputValue) && "" !== inputObservacoes) {
-          inputObservacoes = inputObservacoes.concat(inputValue);
-
-          (document.getElementById("observacoes") as HTMLInputElement).value = observacoes.concat(inputObservacoes.concat('\\n'));
-
-          console.log(observacoes.concat(inputObservacoes.concat('\\n')));
-
-          (document.getElementById("inputObservacoesEditorValores") as HTMLInputElement).value = "";
-        }
-
-        if (!validarCaracteresInput(inputValue) && parseFloat(formatRealNumber(inputValue)) >= 0) {
-          let novoValor = isValorNegativo(inputValue) ? parseFloat("-" + formatRealNumber(inputValue)) : parseFloat(formatRealNumber(inputValue));
-
-          let calculo = (novoValor + valorAtual).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
-
-          (<HTMLInputElement>document.getElementById("subTotalValores")).value = calculo;
-
-          if (!validarCaracteresInput(inputValue)) {
-            (<HTMLInputElement>document.getElementById("inputObservacoesEditorValores")).value = inputValue.concat(' - ');
-          }
-        } else if (inputValue == "") {
-          // Se não tiver input de valores, grava e fecha o modal automaticamente.
-          gravar.confirmGravarEditarValores();
-        }
-
-        //limpa o campo de input
-        (<HTMLInputElement>document.getElementById("inputNovoValor")).value = "";
+        gravar.processarNovoValorEditorValores(true);
       }
     });
+  }
+
+  aplicarNovoValorEditorValores() {
+    const input = document.getElementById("inputNovoValor") as HTMLInputElement;
+    if (input && input.value !== "") {
+      this.processarNovoValorEditorValores(false);
+    }
+
+    this.confirmGravarEditarValores();
+  }
+
+  private processarNovoValorEditorValores(salvarQuandoVazio: boolean) {
+    const valorAtual = parseFloat(formatRealNumber((document.getElementById("subTotalValores") as HTMLInputElement).value));
+    let inputValue = (document.getElementById("inputNovoValor") as HTMLInputElement).value;
+    let inputObservacoes = (document.getElementById("inputObservacoesEditorValores") as HTMLInputElement).value;
+    const observacoes = (document.getElementById("observacoes") as HTMLInputElement).value;
+
+    if (validarCaracteresInput(inputValue) && "" !== inputObservacoes) {
+      inputObservacoes = inputObservacoes.concat(inputValue);
+      (document.getElementById("observacoes") as HTMLInputElement).value = observacoes.concat(inputObservacoes.concat('\\n'));
+      (document.getElementById("inputObservacoesEditorValores") as HTMLInputElement).value = "";
+    }
+
+    if (!validarCaracteresInput(inputValue) && parseFloat(formatRealNumber(inputValue)) >= 0) {
+      const novoValor = isValorNegativo(inputValue) ? parseFloat("-" + formatRealNumber(inputValue)) : parseFloat(formatRealNumber(inputValue));
+      const calculo = (novoValor + valorAtual).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+
+      (document.getElementById("subTotalValores") as HTMLInputElement).value = calculo;
+      (document.getElementById("inputObservacoesEditorValores") as HTMLInputElement).value = inputValue.concat(' - ');
+    } else if (inputValue === "" && salvarQuandoVazio) {
+      this.confirmGravarEditarValores();
+      return;
+    }
+
+    (document.getElementById("inputNovoValor") as HTMLInputElement).value = "";
   }
 
   abrirModalCadastroDespesasParceladas(despesa) {
@@ -1565,10 +1596,15 @@ function mascaraMoedaInputDinamico(valor) {
     return;
   }
 
+  var negativo = valorAlterado.indexOf('-') >= 0;
   valorAlterado = valorAlterado.replace(/\D/g, ""); // Remove todos os não dígitos
+  if (valorAlterado === "") {
+    valor.value = negativo ? "-" : "";
+    return;
+  }
   valorAlterado = valorAlterado.replace(/(\d+)(\d{2})$/, "$1,$2"); // Adiciona a parte de centavos
   valorAlterado = valorAlterado.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."); // Adiciona pontos a cada três dígitos
-  valor.value = valorAlterado;
+  valor.value = (negativo ? "-" : "") + valorAlterado;
 }
 
 function validarCaracteresInput(valor): boolean {

@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -51,8 +51,16 @@ export type ChartOptions = {
   templateUrl: './lancamentos-financeiros-form.component.html',
   styleUrls: ['./lancamentos-financeiros-form.component.css']
 })
-export class LancamentosFinanceirosFormComponent implements OnInit {
+export class LancamentosFinanceirosFormComponent implements OnInit, OnDestroy {
   public carregando: boolean = false;
+  public isMobile = window.innerWidth < 768;
+  public isMobileLandscape = window.innerWidth <= 1000 && window.innerHeight <= 500;
+  public acoesCabecalhoExpandidas = false;
+  public receitasMobileExpandidas = false;
+  public acoesModalConsolidacaoExpandidas = false;
+  public mostrarBarraAcoesDespesas = false;
+  private linhaFinalDespesasVisivel = false;
+  private observadorTabelaDespesas: IntersectionObserver;
   private lancamentosFinanceiros$: Observable<LancamentosFinanceiros[]>;
   private lancamentosMensais: LancamentosMensais[];
   private lancamentosMensaisConsolidados: LancamentosMensais[];
@@ -89,6 +97,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
   @ViewChild('modalAutenticacaoUsuario', { static: false }) modalAutenticacaoUsuario;
   @ViewChild('modalConsolidacaoDespesasMensais', { static: false }) modalConsolidacaoDespesasMensais;
   @ViewChild('modalExibirDespesasConsolidadas', { static: false }) modalExibirDespesasConsolidadas;
+  @ViewChild('finalTabelaDespesasMobile', { static: false }) private finalTabelaDespesasMobile: ElementRef;
   @ViewChild("chart", { static: false }) chart: ChartComponent;
 
   constructor(
@@ -138,10 +147,61 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     });
   }
 
+  @HostListener('window:resize')
+  onWindowResize() {
+    const isMobile = window.innerWidth < 768;
+    const isMobileLandscape = window.innerWidth <= 1000 && window.innerHeight <= 500;
+    if (isMobile && !this.isMobile) {
+      this.acoesCabecalhoExpandidas = false;
+      this.receitasMobileExpandidas = false;
+      this.acoesModalConsolidacaoExpandidas = false;
+    }
+    if (isMobileLandscape !== this.isMobileLandscape) {
+      this.acoesModalConsolidacaoExpandidas = false;
+    }
+    if (!isMobile) {
+      this.mostrarBarraAcoesDespesas = false;
+    }
+    this.isMobile = isMobile;
+    this.isMobileLandscape = isMobileLandscape;
+    this.atualizarVisibilidadeBarraAcoesDespesas();
+  }
+
+  alternarAcoesCabecalho() {
+    this.acoesCabecalhoExpandidas = !this.acoesCabecalhoExpandidas;
+  }
+
+  alternarReceitasMobile() {
+    this.receitasMobileExpandidas = !this.receitasMobileExpandidas;
+  }
+
+  alternarAcoesModalConsolidacao() {
+    this.acoesModalConsolidacaoExpandidas = !this.acoesModalConsolidacaoExpandidas;
+  }
+
   ngAfterViewInit() {
+    if (typeof IntersectionObserver !== 'undefined' && this.finalTabelaDespesasMobile) {
+      this.observadorTabelaDespesas = new IntersectionObserver(entries => {
+        this.linhaFinalDespesasVisivel = entries.some(entry => entry.isIntersecting);
+        this.atualizarVisibilidadeBarraAcoesDespesas();
+      });
+      this.observadorTabelaDespesas.observe(this.finalTabelaDespesasMobile.nativeElement);
+    }
+
     setTimeout(() => {
       this.lembreteService.enviaMensagem("loadHome");
     }, 500);
+  }
+
+  ngOnDestroy() {
+    if (this.observadorTabelaDespesas) {
+      this.observadorTabelaDespesas.disconnect();
+    }
+  }
+
+  private atualizarVisibilidadeBarraAcoesDespesas() {
+    this.mostrarBarraAcoesDespesas = this.isMobile &&
+      (this.getDespesasChecked().length > 0 || this.linhaFinalDespesasVisivel);
   }
 
   carregarDespesas() {
@@ -257,6 +317,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   carregarDespesasConsolidadas(idDespesa: string, idDespesaConsolidacao: string) {
     this.modalRefExibirDespesasConsolidadas = undefined;
+    this.acoesModalConsolidacaoExpandidas = false;
 
     this.lancamentosService.getLancamentosMensaisConsolidados(idDespesa, idDespesaConsolidacao).subscribe((res: any) => {
       this.lancamentosMensaisConsolidados = res;
@@ -963,6 +1024,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     }
 
     this._despesasCheckbox.next(despesas);
+    this.atualizarVisibilidadeBarraAcoesDespesas();
   }
 
   onMarcarDesmarcarCheckBoxes() {
@@ -981,6 +1043,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
     });
 
     this._despesasCheckbox.next(despesas);
+    this.atualizarVisibilidadeBarraAcoesDespesas();
   }
 
   getDespesasChecked() {
@@ -1001,6 +1064,7 @@ export class LancamentosFinanceirosFormComponent implements OnInit {
 
   resetDespesasCheckbox() {
     this._despesasCheckbox.next([]);
+    this.atualizarVisibilidadeBarraAcoesDespesas();
   }
 
   /* -------------- Modal Detalhe Despesas Mensais -------------- */

@@ -37,6 +37,8 @@ export class HomeFormComponent implements OnInit {
   private tokenPayload: any = null;
   public circumference: number = 2 * Math.PI * 15.9155;
   public usedLength: number = 0;
+  public menuLateralAberto = true;
+  public isMobile = false;
 
   //Variaveis para controle da inatividade do usuario
   public userStatusText: string = 'Disponivel';
@@ -64,6 +66,7 @@ export class HomeFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.atualizarMenuParaViewport();
     this.sessaoService.validarSessao();
     this.startSessionTimer();
     this.carregarConfiguracaoLancamentos();
@@ -74,6 +77,29 @@ export class HomeFormComponent implements OnInit {
     }, error => {
       handleApiError(error, this.mensagens, 'Ocorreu um erro ao carregar as informações da configuração da home, tente novamente mais tarde.', true);
     });
+  }
+
+  @HostListener('window:resize')
+  onWindowResize() {
+    const isMobile = window.innerWidth < 768;
+    if (isMobile !== this.isMobile) {
+      this.isMobile = isMobile;
+      this.menuLateralAberto = !isMobile;
+    }
+  }
+
+  alternarMenuLateral(event: Event) {
+    event.preventDefault();
+    this.menuLateralAberto = !this.menuLateralAberto;
+  }
+
+  fecharMenuLateral() {
+    this.menuLateralAberto = false;
+  }
+
+  private atualizarMenuParaViewport() {
+    this.isMobile = window.innerWidth < 768;
+    this.menuLateralAberto = !this.isMobile;
   }
 
   carregarConfiguracaoLancamentos() {

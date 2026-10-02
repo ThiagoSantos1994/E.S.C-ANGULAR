@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -18,6 +18,8 @@ import { SessaoService } from 'src/app/core/services/sessao.service';
   styleUrls: ['./despesas-parceladas-form.component.css']
 })
 export class DespesasParceladasFormComponent implements OnInit {
+  isMobile = window.innerWidth <= 767.98;
+
   private _parcelas = new BehaviorSubject<Parcelas[]>([]);
   private despesaParceladaDetalhe: DespesaParceladaResponse;
   private tituloDespesasParceladas: TituloDespesaResponse;
@@ -46,6 +48,11 @@ export class DespesasParceladasFormComponent implements OnInit {
     private mensagem: MensagemService,
     private detalheDomain: DetalheDespesasMensaisDomain
   ) { }
+
+  @HostListener('window:resize')
+  onWindowResize() {
+    this.isMobile = window.innerWidth <= 767.98;
+  }
 
   ngOnInit() {
     this.loadFormDespesaParcelada(null);
@@ -76,7 +83,10 @@ export class DespesasParceladasFormComponent implements OnInit {
       vigenciaFinal: ['']
     });
 
-    (<HTMLInputElement>document.getElementById("parcelaAtual")).value = "0/0";
+    const parcelaAtual = document.getElementById("parcelaAtual") as HTMLInputElement;
+    if (parcelaAtual) {
+      parcelaAtual.value = "0/0";
+    }
     (<HTMLInputElement>document.getElementById("parcelas")).value = "";
     (<HTMLInputElement>document.getElementById("valorDespesa")).value = "0,00";
     (<HTMLInputElement>document.getElementById("valorParcela")).value = "0,00";
@@ -301,7 +311,10 @@ export class DespesasParceladasFormComponent implements OnInit {
         valorParcela: res.valorParcelaAtual
       });
 
-      (<HTMLInputElement>document.getElementById("parcelaAtual")).value = res.parcelaAtual.toString();
+      const parcelaAtual = document.getElementById("parcelaAtual") as HTMLInputElement;
+      if (parcelaAtual) {
+        parcelaAtual.value = res.parcelaAtual.toString();
+      }
       (<HTMLInputElement>document.getElementById("parcelas")).value = res.despesas.nrTotalParcelas.toString();
       (<HTMLInputElement>document.getElementById("valorDespesa")).value = res.valorTotalDespesa.toString();
       (<HTMLInputElement>document.getElementById("valorParcela")).value = res.valorParcelaAtual.toString();
